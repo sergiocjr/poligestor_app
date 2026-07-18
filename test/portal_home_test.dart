@@ -119,7 +119,7 @@ void main() {
         ProtocolStatusLabel.pt(home.recentProtocols.first.status),
         'Em andamento',
       );
-      expect(ProtocolStatusLabel.pt('recebido'), 'Aberta');
+      expect(ProtocolStatusLabel.pt('recebido'), 'Recebida');
 
       expect(home.appointments, hasLength(1));
       expect(home.appointments.first.location, 'Gabinete');
