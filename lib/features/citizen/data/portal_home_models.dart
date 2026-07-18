@@ -96,8 +96,9 @@ class PortalQuickAction {
   }
 
   RequestCategory toRequestCategory() {
+    final id = RequestCategory.normalizeId(key);
     return RequestCategory(
-      id: key,
+      id: id.isEmpty ? key : id,
       label: title,
       iconName: icon,
       description: description,

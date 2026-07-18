@@ -158,14 +158,79 @@ class ProtocolDetail extends ProtocolSummary {
 
 class ProtocolStatusLabel {
   static String pt(String? status) {
-    return switch (status) {
-      'open' || 'aberto' || 'recebido' => 'Aberta',
-      'in_progress' || 'andamento' || 'em_andamento' => 'Em andamento',
+    return switch ((status ?? '').toLowerCase().trim()) {
+      'open' || 'aberto' || 'recebido' || 'em_analise' || 'em análise' =>
+        'Aberta',
+      'in_progress' ||
+      'andamento' ||
+      'em_andamento' ||
+      'encaminhado' ||
+      'aguardando_cidadao' ||
+      'aguardando cidadão' =>
+        'Em andamento',
       'waiting' || 'aguardando' => 'Aguardando',
-      'resolved' || 'resolvido' => 'Resolvida',
-      'closed' || 'fechado' || 'concluido' => 'Concluída',
-      null => '—',
-      _ => status,
+      'resolved' || 'resolvido' || 'encerrado' => 'Resolvida',
+      'closed' || 'fechado' || 'concluido' || 'concluído' => 'Concluída',
+      '' => '—',
+      _ => status!,
+    };
+  }
+}
+
+/// Filtros de status usados na Home → Solicitações.
+enum RequestStatusFilter {
+  open,
+  inProgress,
+  resolved;
+
+  String get queryValue => switch (this) {
+        RequestStatusFilter.open => 'open',
+        RequestStatusFilter.inProgress => 'in_progress',
+        RequestStatusFilter.resolved => 'resolved',
+      };
+
+  String get label => switch (this) {
+        RequestStatusFilter.open => 'Abertas',
+        RequestStatusFilter.inProgress => 'Andamento',
+        RequestStatusFilter.resolved => 'Resolvidas',
+      };
+
+  static RequestStatusFilter? tryParse(String? raw) {
+    return switch ((raw ?? '').toLowerCase().trim()) {
+      'open' || 'aberto' || 'abertas' => RequestStatusFilter.open,
+      'in_progress' || 'andamento' || 'em_andamento' =>
+        RequestStatusFilter.inProgress,
+      'resolved' || 'resolvidas' || 'resolvido' => RequestStatusFilter.resolved,
+      _ => null,
+    };
+  }
+
+  bool matches(ProtocolSummary protocol) {
+    final s = (protocol.status ?? '').toLowerCase().trim();
+    return switch (this) {
+      RequestStatusFilter.open =>
+        s == 'open' ||
+            s == 'aberto' ||
+            s == 'recebido' ||
+            s == 'em_analise' ||
+            s == 'em análise' ||
+            s == 'waiting' ||
+            s == 'aguardando',
+      RequestStatusFilter.inProgress =>
+        s == 'in_progress' ||
+            s == 'andamento' ||
+            s == 'em_andamento' ||
+            s == 'encaminhado' ||
+            s == 'aguardando_cidadao' ||
+            s == 'aguardando cidadão',
+      RequestStatusFilter.resolved =>
+        s == 'resolved' ||
+            s == 'resolvido' ||
+            s == 'encerrado' ||
+            s == 'closed' ||
+            s == 'fechado' ||
+            s == 'concluido' ||
+            s == 'concluído',
     };
   }
 }
@@ -207,6 +272,12 @@ class RequestCategory {
     iconName: 'event',
     description: 'Marque um horário',
   );
+  static const visit = RequestCategory(
+    id: 'visita',
+    label: 'Solicitar visita',
+    iconName: 'home',
+    description: 'Peça visita no local',
+  );
   static const track = RequestCategory(
     id: 'acompanhar',
     label: 'Acompanhar protocolo',
@@ -220,5 +291,81 @@ class RequestCategory {
     description: 'Anexe arquivos',
   );
 
-  static const all = [help, report, suggestion, appointment, track, document];
+  /// Catálogo estável para formulários (sem acompanhar).
+  static const formOptions = [
+    help,
+    report,
+    suggestion,
+    appointment,
+    visit,
+    document,
+  ];
+
+  static const all = [
+    help,
+    report,
+    suggestion,
+    appointment,
+    visit,
+    track,
+    document,
+  ];
+
+  /// Normaliza slugs vindos da API (ex.: agenda → atendimento).
+  static String normalizeId(String? raw) {
+    final key = (raw ?? '').trim().toLowerCase();
+    return switch (key) {
+      'agenda' || 'agendamento' || 'appointment' => 'atendimento',
+      'visit' || 'visita_local' || 'solicitar_visita' => 'visita',
+      'denúncia' || 'denuncia' || 'report' => 'denuncia',
+      'sugestão' || 'sugestao' || 'idea' => 'sugestao',
+      'help' || 'ajuda' => 'ajuda',
+      'documento' || 'document' || 'arquivo' => 'documento',
+      'protocolo' || 'acompanhar' || 'track' => 'acompanhar',
+      'assistente' || 'chat' => 'assistente',
+      _ => key,
+    };
+  }
+
+  /// Remove duplicados por id, preservando a primeira ocorrência.
+  static List<RequestCategory> uniqueById(Iterable<RequestCategory> source) {
+    final seen = <String>{};
+    final out = <RequestCategory>[];
+    for (final item in source) {
+      final id = normalizeId(item.id);
+      if (id.isEmpty || !seen.add(id)) continue;
+      out.add(
+        RequestCategory(
+          id: id,
+          label: item.label,
+          iconName: item.iconName,
+          description: item.description,
+        ),
+      );
+    }
+    return out;
+  }
+
+  /// Itens seguros para DropdownButton (ids únicos).
+  static List<RequestCategory> dropdownCategories({
+    Iterable<RequestCategory>? source,
+  }) {
+    final list = uniqueById(source ?? formOptions)
+        .where((c) => c.id != 'acompanhar' && c.id != 'assistente')
+        .toList();
+    return list;
+  }
+
+  /// Retorna o value do dropdown somente se existir exatamente uma vez.
+  static String? sanitizeDropdownValue(
+    String? value, {
+    Iterable<RequestCategory>? source,
+  }) {
+    if (value == null || value.trim().isEmpty) return null;
+    final id = normalizeId(value);
+    final items = dropdownCategories(source: source);
+    final matches = items.where((c) => c.id == id).length;
+    if (matches == 1) return id;
+    return null;
+  }
 }

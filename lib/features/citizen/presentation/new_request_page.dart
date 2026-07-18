@@ -22,6 +22,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
   final _formKey = GlobalKey<FormState>();
   final _subjectCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
+  late final List<RequestCategory> _categories;
   String? _category;
   bool _busy = false;
   bool _locBusy = false;
@@ -33,14 +34,31 @@ class _NewRequestPageState extends State<NewRequestPage> {
   @override
   void initState() {
     super.initState();
-    _category = widget.initialCategory;
-    if (_category == 'ajuda') _subjectCtrl.text = 'Solicitação de ajuda';
-    if (_category == 'denuncia') _subjectCtrl.text = 'Denúncia';
-    if (_category == 'sugestao') _subjectCtrl.text = 'Sugestão';
-    if (_category == 'atendimento') {
-      _subjectCtrl.text = 'Agendamento de atendimento';
+    _categories = RequestCategory.dropdownCategories();
+    _category = RequestCategory.sanitizeDropdownValue(
+      widget.initialCategory,
+      source: _categories,
+    );
+    _applySubjectHint(_category);
+  }
+
+  void _applySubjectHint(String? category) {
+    switch (category) {
+      case 'ajuda':
+        _subjectCtrl.text = 'Solicitação de ajuda';
+      case 'denuncia':
+        _subjectCtrl.text = 'Denúncia';
+      case 'sugestao':
+        _subjectCtrl.text = 'Sugestão';
+      case 'atendimento':
+        _subjectCtrl.text = 'Agendamento de atendimento';
+      case 'visita':
+        _subjectCtrl.text = 'Solicitação de visita';
+      case 'documento':
+        _subjectCtrl.text = 'Envio de documento';
+      default:
+        break;
     }
-    if (_category == 'documento') _subjectCtrl.text = 'Envio de documento';
   }
 
   @override
@@ -118,6 +136,11 @@ class _NewRequestPageState extends State<NewRequestPage> {
 
   @override
   Widget build(BuildContext context) {
+    final dropdownValue = RequestCategory.sanitizeDropdownValue(
+      _category,
+      source: _categories,
+    );
+
     return Scaffold(
       appBar: AppBar(title: const Text('Nova solicitação')),
       body: ListView(
@@ -130,18 +153,28 @@ class _NewRequestPageState extends State<NewRequestPage> {
               children: [
                 DropdownButtonFormField<String>(
                   // ignore: deprecated_member_use
-                  value: _category,
+                  value: dropdownValue,
+                  hint: const Text('Selecione o tipo'),
                   decoration: const InputDecoration(labelText: 'Tipo'),
-                  items: RequestCategory.all
-                      .where((c) => c.id != 'acompanhar')
-                      .map(
-                        (c) => DropdownMenuItem(
-                          value: c.id,
-                          child: Text(c.label),
-                        ),
-                      )
-                      .toList(),
-                  onChanged: (v) => setState(() => _category = v),
+                  items: [
+                    for (final c in _categories)
+                      DropdownMenuItem<String>(
+                        value: c.id,
+                        child: Text(c.label),
+                      ),
+                  ],
+                  onChanged: (v) {
+                    final next = RequestCategory.sanitizeDropdownValue(
+                      v,
+                      source: _categories,
+                    );
+                    setState(() {
+                      _category = next;
+                      if (next != null) _applySubjectHint(next);
+                    });
+                  },
+                  validator: (v) =>
+                      v == null || v.isEmpty ? 'Selecione o tipo' : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(

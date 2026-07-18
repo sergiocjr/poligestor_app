@@ -7,6 +7,7 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
+import '../../features/citizen/presentation/citizen_content_pages.dart';
 import '../../features/citizen/presentation/citizen_home_page.dart';
 import '../../features/citizen/presentation/citizen_notifications_page.dart';
 import '../../features/citizen/presentation/citizen_profile_page.dart';
@@ -122,7 +123,9 @@ GoRouter createAppRouter(AuthController auth) {
             routes: [
               GoRoute(
                 path: '/citizen/requests',
-                builder: (_, _) => const CitizenRequestsPage(),
+                builder: (context, state) => CitizenRequestsPage(
+                  initialStatusFilter: state.uri.queryParameters['status'],
+                ),
                 routes: [
                   GoRoute(
                     path: 'new',
@@ -168,6 +171,54 @@ GoRouter createAppRouter(AuthController auth) {
         builder: (context, state) {
           final draft = state.extra is String ? state.extra as String : null;
           return AssistantChatPage(initialDraft: draft);
+        },
+      ),
+      GoRoute(
+        path: '/citizen/agenda',
+        builder: (context, state) => AgendaPage(
+          focusId: state.uri.queryParameters['focus'],
+        ),
+      ),
+      GoRoute(
+        path: '/citizen/appointments/detail',
+        builder: (context, state) {
+          final extra = state.extra;
+          final map =
+              extra is Map ? Map<String, dynamic>.from(extra) : const {};
+          return CitizenAppointmentDetailPage(
+            title: (map['title'] ?? 'Compromisso').toString(),
+            when: map['when']?.toString(),
+            location: map['location']?.toString(),
+            status: map['status']?.toString(),
+            description: map['description']?.toString(),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/citizen/news',
+        builder: (_, _) => const CitizenNewsListPage(),
+        routes: [
+          GoRoute(
+            path: ':id',
+            builder: (context, state) => CitizenNewsDetailPage(
+              newsId: state.pathParameters['id']!,
+            ),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/citizen/neighborhood',
+        builder: (context, state) {
+          final extra = state.extra;
+          final map =
+              extra is Map ? Map<String, dynamic>.from(extra) : const {};
+          return CitizenNeighborhoodPage(
+            neighborhoodLabel:
+                (map['neighborhoodLabel'] ?? 'Sua região').toString(),
+            unreadNotifications: (map['unread'] is int)
+                ? map['unread'] as int
+                : int.tryParse('${map['unread'] ?? 0}') ?? 0,
+          );
         },
       ),
     ],

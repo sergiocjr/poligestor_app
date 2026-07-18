@@ -9,7 +9,7 @@ import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
 import '../../agenda/data/appointments_repository.dart';
 import '../../protocols/data/protocol_models.dart';
-import '../data/portal_home_models.dart';
+import '../data/mock_news.dart';
 import '../data/portal_home_repository.dart';
 
 class CitizenHomePage extends StatefulWidget {
@@ -22,30 +22,6 @@ class CitizenHomePage extends StatefulWidget {
 class _CitizenHomePageState extends State<CitizenHomePage>
     with AutomaticKeepAliveClientMixin {
   Future<_HomeData>? _future;
-
-  static final _mockNews = [
-    NewsItem(
-      title: 'Mutirão de limpeza neste sábado',
-      summary:
-          'Equipes percorrem as principais avenidas do Taquaral a partir das 8h.',
-      category: 'Bairro',
-      publishedAt: DateTime.now().subtract(const Duration(hours: 5)),
-    ),
-    NewsItem(
-      title: 'Abertas as inscrições para capacitação',
-      summary:
-          'Cursos gratuitos de qualificação profissional com vagas limitadas.',
-      category: 'Oportunidades',
-      publishedAt: DateTime.now().subtract(const Duration(days: 1)),
-    ),
-    NewsItem(
-      title: 'Iluminação reforçada em pontos críticos',
-      summary:
-          'Novos postes foram instalados em trechos com maior circulação noturna.',
-      category: 'Cidade',
-      publishedAt: DateTime.now().subtract(const Duration(days: 2)),
-    ),
-  ];
 
   @override
   bool get wantKeepAlive => true;
@@ -64,7 +40,9 @@ class _CitizenHomePageState extends State<CitizenHomePage>
     try {
       final home = await repo.fetchHome(tenantSlug: auth.session?.tenantSlug);
       final actions = home.quickActions.isNotEmpty
-          ? home.quickActions.map((e) => e.toRequestCategory()).toList()
+          ? RequestCategory.uniqueById(
+              home.quickActions.map((e) => e.toRequestCategory()),
+            )
           : RequestCategory.all;
 
       return _HomeData(
@@ -99,16 +77,44 @@ class _CitizenHomePageState extends State<CitizenHomePage>
     context.push('/citizen/chat', extra: draft);
   }
 
+  void _openRequestsFiltered(RequestStatusFilter filter) {
+    context.go('/citizen/requests?status=${filter.queryValue}');
+  }
+
+  void _openAgenda({String? focusId}) {
+    final q = focusId == null || focusId.isEmpty
+        ? '/citizen/agenda'
+        : '/citizen/agenda?focus=$focusId';
+    context.push(q);
+  }
+
+  void _openAppointmentDetail(AppointmentItem a, DateFormat timeFmt) {
+    context.push(
+      '/citizen/appointments/detail',
+      extra: {
+        'title': a.title,
+        'when': a.startsAt == null
+            ? null
+            : timeFmt.format(a.startsAt!.toLocal()),
+        'location': a.location,
+        'status': a.status,
+        'description': a.description,
+        'id': '${a.id}',
+      },
+    );
+  }
+
   void _onQuickAction(RequestCategory c) {
-    if (c.id == 'protocolo' || c.id == 'acompanhar') {
+    final id = RequestCategory.normalizeId(c.id);
+    if (id == 'protocolo' || id == 'acompanhar') {
       context.go('/citizen/requests');
       return;
     }
-    if (c.id == 'assistente' || c.id == 'chat') {
+    if (id == 'assistente' || id == 'chat') {
       _openChat();
       return;
     }
-    context.push('/citizen/requests/new', extra: {'category': c.id});
+    context.push('/citizen/requests/new', extra: {'category': id});
   }
 
   IconData _iconFor(RequestCategory c) => switch (c.iconName) {
@@ -141,6 +147,7 @@ class _CitizenHomePageState extends State<CitizenHomePage>
     final horizontal = width >= 720 ? 32.0 : 20.0;
     final dateFmt = DateFormat("EEEE, d 'de' MMMM", 'pt_BR');
     final timeFmt = DateFormat('dd/MM · HH:mm');
+    final news = MockNewsCatalog.items;
 
     return Scaffold(
       body: SafeArea(
@@ -289,18 +296,30 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 label: 'Abertas',
                                 value: data.open,
                                 color: Theme.of(context).colorScheme.primary,
+                                semanticLabel: 'Solicitações abertas',
+                                onTap: () => _openRequestsFiltered(
+                                  RequestStatusFilter.open,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               _SummaryCard(
                                 label: 'Andamento',
                                 value: data.inProgress,
                                 color: const Color(0xFFC2410C),
+                                semanticLabel: 'Solicitações em andamento',
+                                onTap: () => _openRequestsFiltered(
+                                  RequestStatusFilter.inProgress,
+                                ),
                               ),
                               const SizedBox(width: 10),
                               _SummaryCard(
                                 label: 'Resolvidas',
                                 value: data.resolved,
                                 color: const Color(0xFF15803D),
+                                semanticLabel: 'Solicitações resolvidas',
+                                onTap: () => _openRequestsFiltered(
+                                  RequestStatusFilter.resolved,
+                                ),
                               ),
                             ],
                           ),
@@ -395,11 +414,14 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                   ],
                                 ),
                         ),
-                        const FadeSlideIn(
-                          delay: Duration(milliseconds: 260),
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 260),
                           child: SectionHeader(
                             title: 'Agenda',
                             subtitle: 'Próximos compromissos',
+                            actionLabel: 'Ver todos',
+                            onAction: () => _openAgenda(),
+                            onTitleTap: () => _openAgenda(),
                           ),
                         ),
                         FadeSlideIn(
@@ -409,10 +431,11 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                             child: data.appointments.isEmpty
                                 ? ListView(
                                     scrollDirection: Axis.horizontal,
-                                    children: const [
+                                    children: [
                                       AgendaMiniCard(
                                         title: 'Nenhum compromisso',
                                         when: 'Sua agenda está livre',
+                                        onTap: () => _openAgenda(),
                                       ),
                                     ],
                                   )
@@ -428,16 +451,21 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                             : timeFmt
                                                 .format(a.startsAt!.toLocal()),
                                         location: a.location,
+                                        onTap: () =>
+                                            _openAppointmentDetail(a, timeFmt),
                                       );
                                     },
                                   ),
                           ),
                         ),
-                        const FadeSlideIn(
-                          delay: Duration(milliseconds: 300),
+                        FadeSlideIn(
+                          delay: const Duration(milliseconds: 300),
                           child: SectionHeader(
                             title: 'Últimas notícias',
                             subtitle: 'Atualizações da cidade',
+                            actionLabel: 'Ver todas',
+                            onAction: () => context.push('/citizen/news'),
+                            onTitleTap: () => context.push('/citizen/news'),
                           ),
                         ),
                         FadeSlideIn(
@@ -446,9 +474,13 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                             height: 180,
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
-                              itemCount: _mockNews.length,
-                              itemBuilder: (context, index) =>
-                                  NewsCard(item: _mockNews[index]),
+                              itemCount: news.length,
+                              itemBuilder: (context, index) => NewsCard(
+                                item: news[index],
+                                onTap: () => context.push(
+                                  '/citizen/news/${news[index].id}',
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -461,6 +493,13 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                           delay: const Duration(milliseconds: 360),
                           child: NeighborhoodCard(
                             neighborhoodLabel: data.neighborhoodLabel,
+                            onTap: () => context.push(
+                              '/citizen/neighborhood',
+                              extra: {
+                                'neighborhoodLabel': data.neighborhoodLabel,
+                                'unread': data.unread,
+                              },
+                            ),
                           ),
                         ),
                       ]),
@@ -482,42 +521,69 @@ class _SummaryCard extends StatelessWidget {
     required this.label,
     required this.value,
     required this.color,
+    required this.onTap,
+    this.semanticLabel,
   });
 
   final String label;
   final int value;
   final Color color;
+  final VoidCallback onTap;
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: Theme.of(context).colorScheme.outlineVariant,
+      child: Semantics(
+        button: true,
+        label: semanticLabel ?? label,
+        child: PressableScale(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '$value',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  color: color,
+                                ),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 18,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
+            ),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '$value',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: color,
-                  ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-            ),
-          ],
         ),
       ),
     );

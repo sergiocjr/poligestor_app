@@ -10,15 +10,46 @@ class SectionHeader extends StatelessWidget {
     this.subtitle,
     this.actionLabel,
     this.onAction,
+    this.onTitleTap,
   });
 
   final String title;
   final String? subtitle;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final VoidCallback? onTitleTap;
 
   @override
   Widget build(BuildContext context) {
+    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+        );
+    final titleWidget = onTitleTap == null
+        ? Text(title, style: titleStyle)
+        : Semantics(
+            button: true,
+            label: title,
+            child: InkWell(
+              onTap: onTitleTap,
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 2),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(child: Text(title, style: titleStyle)),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 22,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+
     return Padding(
       padding: const EdgeInsets.only(top: 8, bottom: 12),
       child: Row(
@@ -28,12 +59,7 @@ class SectionHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
+                titleWidget,
                 if (subtitle != null) ...[
                   const SizedBox(height: 2),
                   Text(
@@ -320,7 +346,10 @@ class NeighborhoodCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PressableScale(
+    return Semantics(
+      button: onTap != null,
+      label: 'Meu Bairro: $neighborhoodLabel',
+      child: PressableScale(
       onTap: onTap ?? () {},
       enabled: onTap != null,
       child: Container(
@@ -384,81 +413,113 @@ class NeighborhoodCard extends StatelessWidget {
           ],
         ),
       ),
+      ),
     );
   }
 }
 
 class NewsItem {
   const NewsItem({
+    required this.id,
     required this.title,
     required this.summary,
     required this.category,
     required this.publishedAt,
+    this.content = '',
   });
 
+  final String id;
   final String title;
   final String summary;
   final String category;
   final DateTime publishedAt;
+  final String content;
 }
 
 class NewsCard extends StatelessWidget {
-  const NewsCard({super.key, required this.item});
+  const NewsCard({super.key, required this.item, this.onTap});
 
   final NewsItem item;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      width: 260,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(99),
-            ),
-            child: Text(
-              item.category,
-              style: TextStyle(
-                color: scheme.primary,
-                fontWeight: FontWeight.w700,
-                fontSize: 12,
-              ),
-            ),
+    return Semantics(
+      button: onTap != null,
+      label: 'Notícia: ${item.title}',
+      child: PressableScale(
+        onTap: onTap ?? () {},
+        enabled: onTap != null,
+        child: Container(
+          width: 260,
+          height: 180,
+          margin: const EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: scheme.outlineVariant),
           ),
-          const SizedBox(height: 12),
-          Text(
-            item.title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: 6),
-          Expanded(
-            child: Text(
-              item.summary,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                    height: 1.35,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(99),
+                      ),
+                      child: Text(
+                        item.category,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: scheme.primary,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
                   ),
-            ),
+                  if (onTap != null)
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: scheme.onSurfaceVariant,
+                      size: 20,
+                    ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                item.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+              const SizedBox(height: 6),
+              Expanded(
+                child: Text(
+                  item.summary,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                        height: 1.35,
+                      ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -470,60 +531,97 @@ class AgendaMiniCard extends StatelessWidget {
     required this.title,
     this.when,
     this.location,
+    this.onTap,
   });
 
   final String title;
   final String? when;
   final String? location;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      width: 220,
-      margin: const EdgeInsets.only(right: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(Icons.event_available, color: scheme.primary),
+    return Semantics(
+      button: onTap != null,
+      label: 'Compromisso: $title',
+      child: PressableScale(
+        onTap: onTap ?? () {},
+        enabled: onTap != null,
+        child: Container(
+          width: 220,
+          height: 150,
+          margin: const EdgeInsets.only(right: 12),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: scheme.outlineVariant),
           ),
-          const Spacer(),
-          Text(
-            title,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontWeight: FontWeight.w800),
-          ),
-          if (when != null) ...[
-            const SizedBox(height: 6),
-            Text(when!, style: TextStyle(color: scheme.onSurfaceVariant)),
-          ],
-          if (location != null) ...[
-            const SizedBox(height: 2),
-            Text(
-              location!,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: scheme.onSurfaceVariant,
-                fontSize: 12,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: scheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.event_available,
+                      color: scheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (onTap != null)
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: scheme.onSurfaceVariant,
+                      size: 20,
+                    ),
+                ],
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w800,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+              if (when != null)
+                Text(
+                  when!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 13,
+                  ),
+                ),
+              if (location != null) ...[
+                const SizedBox(height: 2),
+                Text(
+                  location!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
