@@ -254,17 +254,64 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                           delay: const Duration(milliseconds: 140),
                           child: LayoutBuilder(
                             builder: (context, constraints) {
-                              final cross = constraints.maxWidth >= 680 ? 3 : 2;
+                              final items = data.quickActions
+                                  .map(
+                                    (c) => (
+                                      title: c.label,
+                                      description: c.description,
+                                    ),
+                                  )
+                                  .toList();
+                              final cross =
+                                  FeatureActionGridMetrics.crossAxisCountFor(
+                                constraints.maxWidth,
+                                textScale: MediaQuery.textScalerOf(context)
+                                    .scale(1),
+                              );
+                              final aspectRatio =
+                                  FeatureActionGridMetrics.childAspectRatioFor(
+                                context: context,
+                                maxWidth: constraints.maxWidth,
+                                items: items,
+                              );
+                              if (cross == 1) {
+                                // Lista intrínseca: evita células altas demais em telas estreitas.
+                                return Column(
+                                  children: [
+                                    for (var i = 0;
+                                        i < data.quickActions.length;
+                                        i++) ...[
+                                      if (i > 0)
+                                        const SizedBox(
+                                          height:
+                                              FeatureActionGridMetrics.spacing,
+                                        ),
+                                      FeatureActionCard(
+                                        icon: _iconFor(data.quickActions[i]),
+                                        title: data.quickActions[i].label,
+                                        description:
+                                            data.quickActions[i].description,
+                                        color: _colorFor(
+                                          data.quickActions[i],
+                                          Theme.of(context).colorScheme,
+                                        ),
+                                        onTap: () => _onQuickAction(
+                                          data.quickActions[i],
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                );
+                              }
                               return GridView.count(
                                 crossAxisCount: cross,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                mainAxisSpacing: 12,
-                                crossAxisSpacing: 12,
-                                // Taller phone cells so FeatureActionCard
-                                // title + description fit without overflow.
-                                childAspectRatio:
-                                    constraints.maxWidth >= 680 ? 1.25 : 0.92,
+                                mainAxisSpacing:
+                                    FeatureActionGridMetrics.spacing,
+                                crossAxisSpacing:
+                                    FeatureActionGridMetrics.spacing,
+                                childAspectRatio: aspectRatio,
                                 children: [
                                   for (final c in data.quickActions)
                                     FeatureActionCard(

@@ -124,6 +124,83 @@ class _PressableScaleState extends State<PressableScale> {
   }
 }
 
+/// Métricas do grid de ações rápidas (aspect ratio / altura derivados da largura).
+class FeatureActionGridMetrics {
+  FeatureActionGridMetrics._();
+
+  static const double spacing = 12;
+
+  /// Largura mínima de conteúdo para a palavra mais longa dos títulos
+  /// (`atendimento` ≈ 153px em titleSmall w800) sem quebrar no meio.
+  static const double minTitleContentWidth = 156;
+
+  static int crossAxisCountFor(
+    double maxWidth, {
+    double textScale = 1.0,
+  }) {
+    if (maxWidth >= 900) return 4;
+    if (maxWidth >= 680) return 3;
+
+    final minContent = minTitleContentWidth * textScale;
+    final minCell =
+        minContent + FeatureActionCard.horizontalPadding * 2;
+    // 2 colunas só quando cada célula comporta títulos longos sem corte.
+    if (maxWidth >= minCell * 2 + spacing) return 2;
+    return 1;
+  }
+
+  static double cellWidthFor(double maxWidth, int crossAxisCount) {
+    return (maxWidth - spacing * (crossAxisCount - 1)) / crossAxisCount;
+  }
+
+  static double _textScaleOf(BuildContext context) {
+    return MediaQuery.textScalerOf(context).scale(1);
+  }
+
+  /// Altura mínima do grid cobrindo o maior card (cresce com texto/acessibilidade).
+  static double mainAxisExtentFor({
+    required BuildContext context,
+    required double maxWidth,
+    required Iterable<({String title, String description})> items,
+  }) {
+    final cross = crossAxisCountFor(
+      maxWidth,
+      textScale: _textScaleOf(context),
+    );
+    final cellWidth = cellWidthFor(maxWidth, cross);
+    var maxHeight = FeatureActionCard.minHeightForEmpty(context);
+    for (final item in items) {
+      final h = FeatureActionCard.estimateHeight(
+        context,
+        width: cellWidth,
+        title: item.title,
+        description: item.description,
+      );
+      if (h > maxHeight) maxHeight = h;
+    }
+    // Respiro Material 3 entre conteúdo e borda inferior da célula.
+    return maxHeight + 4;
+  }
+
+  static double childAspectRatioFor({
+    required BuildContext context,
+    required double maxWidth,
+    required Iterable<({String title, String description})> items,
+  }) {
+    final cross = crossAxisCountFor(
+      maxWidth,
+      textScale: _textScaleOf(context),
+    );
+    final cellWidth = cellWidthFor(maxWidth, cross);
+    final height = mainAxisExtentFor(
+      context: context,
+      maxWidth: maxWidth,
+      items: items,
+    );
+    return cellWidth / height;
+  }
+}
+
 class FeatureActionCard extends StatelessWidget {
   const FeatureActionCard({
     super.key,
@@ -134,11 +211,83 @@ class FeatureActionCard extends StatelessWidget {
     this.color,
   });
 
+  static const double horizontalPadding = 10;
+  static const double topPadding = 10;
+  static const double bottomPadding = 12;
+  static const double iconBox = 32;
+  static const double iconGlyph = 18;
+  static const double gapAfterIcon = 8;
+  static const double gapTitleDesc = 4;
+  static const int titleMaxLines = 3;
+  static const int descriptionMaxLines = 2;
+
   final IconData icon;
   final String title;
   final String description;
   final VoidCallback onTap;
   final Color? color;
+
+  static TextStyle? titleStyleOf(BuildContext context) {
+    return Theme.of(context).textTheme.titleSmall?.copyWith(
+          fontWeight: FontWeight.w800,
+          height: 1.25,
+        );
+  }
+
+  static TextStyle? descriptionStyleOf(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Theme.of(context).textTheme.bodySmall?.copyWith(
+          color: scheme.onSurfaceVariant,
+          height: 1.35,
+        );
+  }
+
+  /// Altura mínima com ícone + uma linha de título/descrição.
+  static double minHeightForEmpty(BuildContext context) {
+    return estimateHeight(
+      context,
+      width: 160,
+      title: 'Ação',
+      description: 'Desc',
+    );
+  }
+
+  /// Estima a altura necessária para o card na largura dada (sem altura fixa).
+  static double estimateHeight(
+    BuildContext context, {
+    required double width,
+    required String title,
+    required String description,
+  }) {
+    final contentWidth = (width - horizontalPadding * 2).clamp(1.0, width);
+    final scaler = MediaQuery.textScalerOf(context);
+
+    final titlePainter = TextPainter(
+      text: TextSpan(text: title, style: titleStyleOf(context)),
+      textDirection: TextDirection.ltr,
+      textScaler: scaler,
+      maxLines: titleMaxLines,
+      ellipsis: '…',
+    )..layout(maxWidth: contentWidth);
+
+    final descPainter = TextPainter(
+      text: TextSpan(text: description, style: descriptionStyleOf(context)),
+      textDirection: TextDirection.ltr,
+      textScaler: scaler,
+      maxLines: descriptionMaxLines,
+      ellipsis: '…',
+    )..layout(maxWidth: contentWidth);
+
+    return topPadding +
+        iconBox +
+        gapAfterIcon +
+        titlePainter.height +
+        gapTitleDesc +
+        descPainter.height +
+        bottomPadding +
+        // Folga para tipografia/acessibilidade vs TextPainter.
+        6;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,64 +296,59 @@ class FeatureActionCard extends StatelessWidget {
 
     return PressableScale(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.8)),
-          boxShadow: [
-            BoxShadow(
-              color: const Color(AppConfig.seedNavy).withValues(alpha: 0.04),
-              blurRadius: 18,
-              offset: const Offset(0, 8),
-            ),
-          ],
+      child: Material(
+        color: scheme.surfaceContainerLowest,
+        elevation: 0,
+        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: scheme.outlineVariant.withValues(alpha: 0.7),
+          ),
         ),
-        // Flexible texts keep the card usable inside tight GridView cells
-        // (phone + text scale) without bottom RenderFlex overflow.
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    accent.withValues(alpha: 0.18),
-                    accent.withValues(alpha: 0.08),
-                  ],
+        clipBehavior: Clip.antiAlias,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            horizontalPadding,
+            topPadding,
+            horizontalPadding,
+            bottomPadding,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Ícone compacto, próximo da borda — libera espaço para o título.
+              Container(
+                width: iconBox,
+                height: iconBox,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                borderRadius: BorderRadius.circular(14),
+                child: Icon(icon, color: accent, size: iconGlyph),
               ),
-              child: Icon(icon, color: accent, size: 24),
-            ),
-            const SizedBox(height: 10),
-            Flexible(
-              child: Text(
+              const SizedBox(height: gapAfterIcon),
+              // Título tem prioridade: altura intrínseca até 3 linhas (sem flex).
+              Text(
                 title,
-                maxLines: 2,
+                maxLines: titleMaxLines,
+                softWrap: true,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      height: 1.2,
-                    ),
+                textWidthBasis: TextWidthBasis.parent,
+                style: titleStyleOf(context),
               ),
-            ),
-            const SizedBox(height: 4),
-            Flexible(
-              child: Text(
+              const SizedBox(height: gapTitleDesc),
+              Text(
                 description,
-                maxLines: 2,
+                maxLines: descriptionMaxLines,
+                softWrap: true,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
-                      height: 1.3,
-                    ),
+                textWidthBasis: TextWidthBasis.parent,
+                style: descriptionStyleOf(context),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

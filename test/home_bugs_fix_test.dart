@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:poligestor_app/features/citizen/data/mock_news.dart';
 import 'package:poligestor_app/features/citizen/presentation/citizen_content_pages.dart';
@@ -192,40 +193,61 @@ void main() {
   });
 
   group('Widgets principais sem overflow', () {
-    testWidgets('FeatureActionCard no grid do telefone não estoura', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+    Future<void> pumpActionGrid(
+      WidgetTester tester, {
+      required Size size,
+      required double textScale,
+      required List<({IconData icon, String title, String description})> cards,
+      double? legacyAspectRatio,
+    }) async {
+      await tester.binding.setSurfaceSize(size);
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
       await tester.pumpWidget(
         MediaQuery(
-          data: const MediaQueryData(
-            size: Size(360, 640),
-            textScaler: TextScaler.linear(1.3),
+          data: MediaQueryData(
+            size: size,
+            textScaler: TextScaler.linear(textScale),
           ),
           child: MaterialApp(
+            theme: ThemeData(
+              useMaterial3: true,
+              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4C5C)),
+            ),
             home: Scaffold(
               body: Padding(
                 padding: const EdgeInsets.all(16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 0.92,
-                  children: [
-                    FeatureActionCard(
-                      icon: Icons.report_problem_outlined,
-                      title: 'Registrar reclamação',
-                      description:
-                          'Relate problemas e acompanhe o protocolo com detalhes longos',
-                      onTap: () {},
-                    ),
-                    FeatureActionCard(
-                      icon: Icons.event_available_outlined,
-                      title: 'Agendar atendimento presencial',
-                      description: 'Marque visita ou horário no gabinete do vereador',
-                      onTap: () {},
-                    ),
-                  ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final items = cards.map(
+                      (c) => (title: c.title, description: c.description),
+                    );
+                    final cross = FeatureActionGridMetrics.crossAxisCountFor(
+                      constraints.maxWidth,
+                      textScale: MediaQuery.textScalerOf(context).scale(1),
+                    );
+                    final aspect = legacyAspectRatio ??
+                        FeatureActionGridMetrics.childAspectRatioFor(
+                          context: context,
+                          maxWidth: constraints.maxWidth,
+                          items: items,
+                        );
+                    return GridView.count(
+                      crossAxisCount: cross,
+                      mainAxisSpacing: FeatureActionGridMetrics.spacing,
+                      crossAxisSpacing: FeatureActionGridMetrics.spacing,
+                      childAspectRatio: aspect,
+                      children: [
+                        for (final c in cards)
+                          FeatureActionCard(
+                            icon: c.icon,
+                            title: c.title,
+                            description: c.description,
+                            onTap: () {},
+                          ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),
@@ -233,44 +255,121 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
+    }
+
+    const criticalCards = <({IconData icon, String title, String description})>[
+      (
+        icon: Icons.report_rounded,
+        title: 'Fazer denúncia',
+        description: 'Relate um problema',
+      ),
+      (
+        icon: Icons.event_available_rounded,
+        title: 'Agendar atendimento',
+        description: 'Marque um horário',
+      ),
+      (
+        icon: Icons.travel_explore_rounded,
+        title: 'Acompanhar protocolo',
+        description: 'Veja o andamento',
+      ),
+      (
+        icon: Icons.upload_file_rounded,
+        title: 'Enviar documento',
+        description: 'Anexe arquivos',
+      ),
+      (
+        icon: Icons.forum_rounded,
+        title: 'Falar com o assistente',
+        description: 'Tire dúvidas em tempo real',
+      ),
+    ];
+
+    for (final width in [360.0, 393.0, 412.0, 800.0]) {
+      for (final scale in [1.0, 1.3, 1.5]) {
+        testWidgets(
+          'FeatureActionCard ${width.toInt()}dp scale $scale sem overflow',
+          (tester) async {
+            await pumpActionGrid(
+              tester,
+              size: Size(width, 900),
+              textScale: scale,
+              cards: criticalCards,
+            );
+            expect(tester.takeException(), isNull);
+            for (final card in criticalCards) {
+              expect(find.text(card.title), findsOneWidget);
+            }
+          },
+        );
+      }
+    }
+
+    testWidgets('FeatureActionCard no grid do telefone não estoura', (tester) async {
+      await pumpActionGrid(
+        tester,
+        size: const Size(360, 640),
+        textScale: 1.3,
+        cards: const [
+          (
+            icon: Icons.report_problem_outlined,
+            title: 'Registrar reclamação',
+            description:
+                'Relate problemas e acompanhe o protocolo com detalhes longos',
+          ),
+          (
+            icon: Icons.event_available_outlined,
+            title: 'Agendar atendimento presencial',
+            description: 'Marque visita ou horário no gabinete do vereador',
+          ),
+        ],
+      );
       expect(tester.takeException(), isNull);
       expect(find.text('Registrar reclamação'), findsOneWidget);
+      expect(find.text('Agendar atendimento presencial'), findsOneWidget);
     });
 
     testWidgets('FeatureActionCard resiste a aspect ratio legado 1.05', (tester) async {
-      await tester.binding.setSurfaceSize(const Size(360, 640));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-
-      await tester.pumpWidget(
-        MediaQuery(
-          data: const MediaQueryData(
-            size: Size(360, 640),
-            textScaler: TextScaler.linear(1.3),
+      await pumpActionGrid(
+        tester,
+        size: const Size(360, 640),
+        textScale: 1.3,
+        legacyAspectRatio: 1.05,
+        cards: const [
+          (
+            icon: Icons.help_outline,
+            title: 'Título longo de ação rápida do cidadão',
+            description:
+                'Descrição longa que antes estourava o grid da Home',
           ),
-          child: MaterialApp(
-            home: Scaffold(
-              body: Padding(
-                padding: const EdgeInsets.all(16),
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.05,
-                  children: [
-                    FeatureActionCard(
-                      icon: Icons.help_outline,
-                      title: 'Título longo de ação rápida do cidadão',
-                      description:
-                          'Descrição longa que antes estourava o grid da Home',
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        ],
       );
-      await tester.pumpAndSettle();
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('títulos críticos cabem em 360dp sem reticências forçadas', (tester) async {
+      await pumpActionGrid(
+        tester,
+        size: const Size(360, 900),
+        textScale: 1.0,
+        cards: criticalCards,
+      );
+
+      for (final card in criticalCards) {
+        final text = tester.widget<Text>(find.text(card.title));
+        expect(text.maxLines, FeatureActionCard.titleMaxLines);
+        final render = tester.renderObject<RenderParagraph>(
+          find.descendant(
+            of: find.widgetWithText(FeatureActionCard, card.title),
+            matching: find.text(card.title),
+          ),
+        );
+        expect(
+          render.didExceedMaxLines,
+          isFalse,
+          reason: 'Título "${card.title}" não deveria precisar de ellipsis',
+        );
+      }
     });
 
     testWidgets('AgendaMiniCard e NewsCard não estourom', (tester) async {
