@@ -49,6 +49,8 @@ class PortalHomeSummary {
     required this.protocolosResolvidos,
     required this.notificacoesNaoLidas,
     required this.proximosCompromissos,
+    this.mensagensNaoLidas = 0,
+    this.aguardandoResposta = 0,
   });
 
   final int protocolosAbertos;
@@ -56,6 +58,8 @@ class PortalHomeSummary {
   final int protocolosResolvidos;
   final int notificacoesNaoLidas;
   final int proximosCompromissos;
+  final int mensagensNaoLidas;
+  final int aguardandoResposta;
 
   factory PortalHomeSummary.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic v) {
@@ -69,6 +73,17 @@ class PortalHomeSummary {
       protocolosResolvidos: asInt(json['protocolos_resolvidos']),
       notificacoesNaoLidas: asInt(json['notificacoes_nao_lidas']),
       proximosCompromissos: asInt(json['proximos_compromissos']),
+      mensagensNaoLidas: asInt(
+        json['mensagens_nao_lidas'] ??
+            json['unread_messages'] ??
+            json['protocol_unread_messages'],
+      ),
+      aguardandoResposta: asInt(
+        json['aguardando_resposta'] ??
+            json['aguardando_cidadao'] ??
+            json['awaiting_citizen'] ??
+            json['needs_citizen_reply'],
+      ),
     );
   }
 }
@@ -188,16 +203,33 @@ class PortalHomeData {
     final updated = json['ultima_atualizacao'] ??
         json['updated_at'] ??
         json['created_at'];
+    final unread = () {
+      final v = json['unread_count'] ??
+          json['mensagens_nao_lidas'] ??
+          json['unread_messages'];
+      if (v is int) return v;
+      return int.tryParse(v?.toString() ?? '') ?? 0;
+    }();
     return ProtocolSummary(
       id: json['id'],
-      title: (json['titulo'] ?? json['title'] ?? json['subject'] ?? 'Protocolo')
+      title: (json['titulo'] ?? json['title'] ?? json['subject'] ?? 'Solicitação')
           .toString(),
       number: (json['protocolo'] ?? json['number'] ?? json['numero'])
           ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
       category: (json['categoria'] ?? json['category'])?.toString(),
       createdAt: updated != null ? DateTime.tryParse(updated.toString()) : null,
+      updatedAt: updated != null ? DateTime.tryParse(updated.toString()) : null,
       description: json['description']?.toString(),
+      unreadCount: unread,
+      hasUnread: unread > 0,
+      lastMessagePreview: (json['last_message_preview'] ??
+              json['ultima_resposta'] ??
+              json['preview'])
+          ?.toString(),
+      awaitingCitizen: (json['awaiting_citizen'] == true) ||
+          (json['aguardando_cidadao'] == true) ||
+          (json['status']?.toString() == 'aguardando_cidadao'),
     );
   }
 }

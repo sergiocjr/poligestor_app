@@ -58,9 +58,22 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
     return items.where(filter.matches).toList();
   }
 
+  String _relativeOrTime(DateTime? dt, DateFormat dateFmt, DateFormat timeFmt) {
+    if (dt == null) return '';
+    final local = dt.toLocal();
+    final now = DateTime.now();
+    final sameDay = local.year == now.year &&
+        local.month == now.month &&
+        local.day == now.day;
+    if (sameDay) return timeFmt.format(local);
+    return dateFmt.format(local);
+  }
+
   @override
   Widget build(BuildContext context) {
     final dateFmt = DateFormat('dd/MM/yyyy');
+    final timeFmt = DateFormat('HH:mm');
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -115,11 +128,11 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.all(20),
                     children: const [
-                      SkeletonBox(height: 72, radius: 18),
+                      SkeletonBox(height: 88, radius: 18),
                       SizedBox(height: 12),
-                      SkeletonBox(height: 72, radius: 18),
+                      SkeletonBox(height: 88, radius: 18),
                       SizedBox(height: 12),
-                      SkeletonBox(height: 72, radius: 18),
+                      SkeletonBox(height: 88, radius: 18),
                     ],
                   );
                 }
@@ -146,25 +159,104 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                     separatorBuilder: (_, _) => const SizedBox(height: 8),
                     itemBuilder: (context, index) {
                       final p = items[index];
-                      return Card(
-                        child: ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
+                      final unread = p.showUnreadBadge;
+                      final updated = p.updatedAt ?? p.createdAt;
+                      return Semantics(
+                        button: true,
+                        label: [
+                          p.title,
+                          if (unread) 'nova mensagem',
+                          if (p.awaitingCitizen) 'aguardando sua resposta',
+                        ].join(', '),
+                        child: Card(
+                          color: unread
+                              ? scheme.primaryContainer.withValues(alpha: 0.35)
+                              : null,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: unread
+                                ? BorderSide(color: scheme.primary, width: 1.2)
+                                : BorderSide.none,
                           ),
-                          title: Text(
-                            p.title,
-                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            leading: unread
+                                ? Badge(
+                                    smallSize: 10,
+                                    child: Icon(
+                                      Icons.mark_chat_unread_rounded,
+                                      color: scheme.primary,
+                                    ),
+                                  )
+                                : Icon(
+                                    p.awaitingCitizen
+                                        ? Icons.help_outline_rounded
+                                        : Icons.description_outlined,
+                                    color: scheme.primary,
+                                  ),
+                            title: Text(
+                              p.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontWeight:
+                                    unread ? FontWeight.w900 : FontWeight.w700,
+                              ),
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 4),
+                                Text(
+                                  [
+                                    if (p.number != null) 'nº ${p.number}',
+                                    ProtocolStatusLabel.pt(p.status),
+                                    if (updated != null)
+                                      _relativeOrTime(
+                                        updated,
+                                        dateFmt,
+                                        timeFmt,
+                                      ),
+                                  ].join(' · '),
+                                ),
+                                if (p.lastMessagePreview != null) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    p.lastMessagePreview!,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: scheme.onSurfaceVariant,
+                                      fontWeight: unread
+                                          ? FontWeight.w600
+                                          : FontWeight.w400,
+                                    ),
+                                  ),
+                                ],
+                                if (p.awaitingCitizen) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'O gabinete precisa de mais informações',
+                                    style: TextStyle(
+                                      color: scheme.tertiary,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            isThreeLine: true,
+                            trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () async {
+                              await context
+                                  .push('/citizen/requests/${p.id}');
+                              if (mounted) await _reload();
+                            },
                           ),
-                          subtitle: Text([
-                            if (p.number != null) '#${p.number}',
-                            ProtocolStatusLabel.pt(p.status),
-                            if (p.createdAt != null)
-                              dateFmt.format(p.createdAt!.toLocal()),
-                          ].join(' · ')),
-                          trailing: const Icon(Icons.chevron_right_rounded),
-                          onTap: () =>
-                              context.push('/citizen/requests/${p.id}'),
                         ),
                       );
                     },

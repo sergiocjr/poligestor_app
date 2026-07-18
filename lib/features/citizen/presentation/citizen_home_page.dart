@@ -57,6 +57,8 @@ class _CitizenHomePageState extends State<CitizenHomePage>
         resolved: home.summary.protocolosResolvidos,
         appointments: home.appointments,
         unread: home.summary.notificacoesNaoLidas,
+        unreadMessages: home.summary.mensagensNaoLidas,
+        awaitingReply: home.summary.aguardandoResposta,
         hasSyncIssue: false,
       );
     } catch (e) {
@@ -374,6 +376,93 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                           ),
                         ),
                         const SizedBox(height: 10),
+                        if (data.unreadMessages > 0 || data.awaitingReply > 0)
+                          FadeSlideIn(
+                            delay: const Duration(milliseconds: 190),
+                            child: Column(
+                              children: [
+                                if (data.unreadMessages > 0)
+                                  PressableScale(
+                                    onTap: () =>
+                                        context.go('/citizen/requests'),
+                                    child: Container(
+                                      width: double.infinity,
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primaryContainer
+                                            .withValues(alpha: 0.45),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.mark_chat_unread_rounded,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              data.unreadMessages == 1
+                                                  ? '1 mensagem nova do gabinete'
+                                                  : '${data.unreadMessages} mensagens novas do gabinete',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          const Icon(Icons.chevron_right),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                if (data.awaitingReply > 0)
+                                  PressableScale(
+                                    onTap: () => _openRequestsFiltered(
+                                      RequestStatusFilter.inProgress,
+                                    ),
+                                    child: Container(
+                                      width: double.infinity,
+                                      margin: const EdgeInsets.only(bottom: 8),
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .tertiaryContainer
+                                            .withValues(alpha: 0.45),
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                            Icons.help_outline_rounded,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .tertiary,
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: Text(
+                                              data.awaitingReply == 1
+                                                  ? '1 solicitação aguardando sua resposta'
+                                                  : '${data.awaitingReply} solicitações aguardando sua resposta',
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ),
+                                          const Icon(Icons.chevron_right),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
                         FadeSlideIn(
                           delay: const Duration(milliseconds: 200),
                           child: PressableScale(
@@ -451,9 +540,19 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                       RequestTimelineTile(
                                         title: data.protocols[i].title,
                                         number: data.protocols[i].number,
-                                        statusLabel: ProtocolStatusLabel.pt(
-                                          data.protocols[i].status,
-                                        ),
+                                        statusLabel: [
+                                          ProtocolStatusLabel.pt(
+                                            data.protocols[i].status,
+                                          ),
+                                          if (data.protocols[i].showUnreadBadge)
+                                            'nova mensagem',
+                                          if (data.protocols[i].updatedAt !=
+                                              null)
+                                            DateFormat('dd/MM HH:mm').format(
+                                              data.protocols[i].updatedAt!
+                                                  .toLocal(),
+                                            ),
+                                        ].join(' · '),
                                         isLast: i ==
                                             data.protocols.take(4).length - 1,
                                         onTap: () => context.push(
@@ -652,6 +751,8 @@ class _HomeData {
     required this.appointments,
     required this.unread,
     required this.hasSyncIssue,
+    this.unreadMessages = 0,
+    this.awaitingReply = 0,
     this.photoUrl,
     this.syncMessage,
   });
@@ -668,6 +769,8 @@ class _HomeData {
       resolved: 0,
       appointments: const [],
       unread: 0,
+      unreadMessages: 0,
+      awaitingReply: 0,
       hasSyncIssue: true,
       syncMessage: message,
     );
@@ -684,6 +787,8 @@ class _HomeData {
   final int resolved;
   final List<AppointmentItem> appointments;
   final int unread;
+  final int unreadMessages;
+  final int awaitingReply;
   final bool hasSyncIssue;
   final String? syncMessage;
 }
