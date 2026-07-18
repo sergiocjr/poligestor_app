@@ -25,6 +25,8 @@ class AssistantChatController {
 
   final List<ChatMessage> messages = [];
   String? conversationId;
+  bool finished = false;
+  List<dynamic> pendingRequests = const [];
   bool loading = false;
   bool loadedOnce = false;
   String? loadError;
@@ -42,6 +44,10 @@ class AssistantChatController {
     try {
       final conversation = await _fetch();
       conversationId = conversation.id ?? conversationId;
+      finished = conversation.finished;
+      pendingRequests = conversation.pendingRequests;
+      // Deduplicação de cards de protocolo ao recarregar histórico.
+      // Não limpa a conversa no servidor nem cria conversa nova.
       presenter.reset();
 
       if (conversation.hasMessages) {
@@ -53,6 +59,7 @@ class AssistantChatController {
           ..clear()
           ..addAll(assistantWelcomeMessages());
       }
+      // finished == true NÃO limpa o histórico — só indica fim do fluxo.
       loadedOnce = true;
     } catch (e) {
       // Não apaga histórico já carregado.
@@ -62,8 +69,11 @@ class AssistantChatController {
     }
   }
 
+  /// Única ação local que limpa histórico (após confirmação + API clear).
   void clearLocalForNewConversation() {
     conversationId = null;
+    finished = false;
+    pendingRequests = const [];
     presenter.reset();
     messages
       ..clear()

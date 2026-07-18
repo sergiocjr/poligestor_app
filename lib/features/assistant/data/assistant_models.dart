@@ -9,7 +9,7 @@ class AssistantReply {
     required this.reply,
     this.intent,
     this.nextAction,
-    this.finished,
+    this.finished = false,
     this.conversationId,
     this.protocol,
   });
@@ -17,7 +17,7 @@ class AssistantReply {
   final String reply;
   final String? intent;
   final String? nextAction;
-  final bool? finished;
+  final bool finished;
   final String? conversationId;
   final ChatProtocolInfo? protocol;
 
@@ -63,7 +63,7 @@ class AssistantReply {
       reply: reply,
       intent: stringOrNull(json['intent']),
       nextAction: stringOrNull(json['next_action'] ?? json['nextAction']),
-      finished: boolOrNull(json['finished']),
+      finished: boolOrNull(json['finished']) ?? false,
       conversationId: stringOrNull(
         json['conversation_id'] ?? json['conversationId'],
       ),
@@ -84,6 +84,13 @@ class AssistantReply {
     if (value == 'true' || value == '1') return true;
     if (value == 'false' || value == '0') return false;
     return null;
+  }
+
+  static int? intOrNull(Object? raw) {
+    if (raw == null) return null;
+    if (raw is int) return raw;
+    if (raw is num) return raw.toInt();
+    return int.tryParse(raw.toString().trim());
   }
 
   static Map<String, dynamic> asStringKeyMap(Map raw) {
@@ -152,7 +159,9 @@ class AssistantConversation {
     this.state = const {},
     this.slotsFilled = const {},
     this.slotsPending = const [],
-    this.finished,
+    this.pendingRequests = const [],
+    this.finished = false,
+    this.lastInteractionAt,
   });
 
   final String? id;
@@ -160,9 +169,26 @@ class AssistantConversation {
   final Map<String, dynamic> state;
   final Map<String, dynamic> slotsFilled;
   final List<dynamic> slotsPending;
-  final bool? finished;
+  final List<dynamic> pendingRequests;
+  final bool finished;
+  final DateTime? lastInteractionAt;
 
   bool get hasMessages => messages.isNotEmpty;
+
+  int? get firstSeq {
+    for (final m in messages) {
+      if (m.seq != null) return m.seq;
+    }
+    return null;
+  }
+
+  int? get lastSeq {
+    for (var i = messages.length - 1; i >= 0; i--) {
+      final seq = messages[i].seq;
+      if (seq != null) return seq;
+    }
+    return null;
+  }
 
   factory AssistantConversation.empty({String? id}) =>
       AssistantConversation(id: id);
@@ -175,6 +201,7 @@ class AssistantConversation {
           json['conversationId'],
     );
 
+    // Maps vazios ({}) são válidos — nunca tratar como erro.
     final state = _asMap(json['state']) ?? const <String, dynamic>{};
     final slotsFilled =
         _asMap(json['slots_filled'] ?? json['slotsFilled']) ??
@@ -182,12 +209,20 @@ class AssistantConversation {
     final slotsPending = _asList(
       json['slots_pending'] ?? json['slotsPending'],
     );
+    final pendingRequests = _asList(
+      json['pending_requests'] ?? json['pendingRequests'],
+    );
 
     final finished = AssistantReply.boolOrNull(json['finished']) ??
-        AssistantReply.boolOrNull(state['finished']);
+        AssistantReply.boolOrNull(state['finished']) ??
+        false;
 
-    // Fonte canônica: messages (List). Não usar state/slots/data como fallback.
-    final rawMessages = json['messages'] ?? json['history'] ?? json['items'];
+    final lastInteractionAt = AssistantHistoryMessage.parseDate(
+      json['last_interaction_at'] ?? json['lastInteractionAt'],
+    );
+
+    // Fonte canônica: messages (List). Sempre lista (vazia ou não).
+    final rawMessages = json['messages'];
     final messages = <AssistantHistoryMessage>[];
     if (rawMessages is List) {
       for (var i = 0; i < rawMessages.length; i++) {
@@ -202,13 +237,27 @@ class AssistantConversation {
       }
     }
 
+    // Se houver seq, ordenar crescente (não usar created_at).
+    if (messages.any((m) => m.seq != null)) {
+      messages.sort((a, b) {
+        final as = a.seq;
+        final bs = b.seq;
+        if (as == null && bs == null) return 0;
+        if (as == null) return 1;
+        if (bs == null) return -1;
+        return as.compareTo(bs);
+      });
+    }
+
     return AssistantConversation(
       id: id,
       messages: messages,
       state: state,
       slotsFilled: slotsFilled,
       slotsPending: slotsPending,
+      pendingRequests: pendingRequests,
       finished: finished,
+      lastInteractionAt: lastInteractionAt,
     );
   }
 
@@ -257,8 +306,10 @@ class AssistantConversation {
       '[assistant.conversation] status=${httpStatus ?? '-'} '
       'conversation_id=$id '
       'messages_count=${messages.length} '
+      'first_seq=$firstSeq '
+      'last_seq=$lastSeq '
       'finished=$finished '
-      'messages_runtime=${messages.runtimeType} '
+      'pending_requests_count=${pendingRequests.length} '
       'state_runtime=${state.runtimeType} '
       'slots_filled_runtime=${slotsFilled.runtimeType}',
     );
@@ -271,6 +322,7 @@ class AssistantHistoryMessage {
     required this.sender,
     required this.text,
     required this.createdAt,
+    this.seq,
     this.protocol,
     this.nextAction,
   });
@@ -279,6 +331,7 @@ class AssistantHistoryMessage {
   final ChatSender sender;
   final String text;
   final DateTime createdAt;
+  final int? seq;
   final ChatProtocolInfo? protocol;
   final String? nextAction;
 
@@ -307,10 +360,13 @@ class AssistantHistoryMessage {
         .trim();
 
     final sender = _parseSender(role);
-    final id =
-        (json['id'] ?? json['message_id'] ?? json['uuid'] ?? 'hist-$index')
-            .toString();
-    final createdAt = _parseDate(
+    final seq = AssistantReply.intOrNull(json['seq']);
+    final id = (json['id'] ??
+            json['message_id'] ??
+            json['uuid'] ??
+            (seq != null ? 'seq-$seq' : 'hist-$index'))
+        .toString();
+    final createdAt = parseDate(
           json['created_at'] ??
               json['createdAt'] ??
               json['timestamp'] ??
@@ -332,6 +388,7 @@ class AssistantHistoryMessage {
       sender: sender,
       text: text,
       createdAt: createdAt,
+      seq: seq,
       protocol: protocol,
       nextAction: AssistantReply.stringOrNull(
         json['next_action'] ?? json['nextAction'],
@@ -358,7 +415,7 @@ class AssistantHistoryMessage {
     return ChatSender.assistant;
   }
 
-  static DateTime? _parseDate(Object? raw) {
+  static DateTime? parseDate(Object? raw) {
     if (raw == null) return null;
     if (raw is DateTime) return raw;
     if (raw is int) {

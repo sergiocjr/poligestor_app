@@ -197,6 +197,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
         if (result.conversationId != null) {
           chat.conversationId = result.conversationId;
         }
+        chat.finished = result.finished;
         chat.messages.addAll(
           chat.presenter.present(result, nextId: () => _nextId('a')),
         );
