@@ -270,8 +270,8 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 textScale: MediaQuery.textScalerOf(context)
                                     .scale(1),
                               );
-                              final aspectRatio =
-                                  FeatureActionGridMetrics.childAspectRatioFor(
+                              final mainExtent =
+                                  FeatureActionGridMetrics.mainAxisExtentFor(
                                 context: context,
                                 maxWidth: constraints.maxWidth,
                                 items: items,
@@ -288,45 +288,53 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                           height:
                                               FeatureActionGridMetrics.spacing,
                                         ),
-                                      FeatureActionCard(
-                                        icon: _iconFor(data.quickActions[i]),
-                                        title: data.quickActions[i].label,
-                                        description:
-                                            data.quickActions[i].description,
-                                        color: _colorFor(
-                                          data.quickActions[i],
-                                          Theme.of(context).colorScheme,
-                                        ),
-                                        onTap: () => _onQuickAction(
-                                          data.quickActions[i],
+                                      SizedBox(
+                                        height: mainExtent,
+                                        width: double.infinity,
+                                        child: FeatureActionCard(
+                                          icon: _iconFor(data.quickActions[i]),
+                                          title: data.quickActions[i].label,
+                                          description:
+                                              data.quickActions[i].description,
+                                          color: _colorFor(
+                                            data.quickActions[i],
+                                            Theme.of(context).colorScheme,
+                                          ),
+                                          onTap: () => _onQuickAction(
+                                            data.quickActions[i],
+                                          ),
                                         ),
                                       ),
                                     ],
                                   ],
                                 );
                               }
-                              return GridView.count(
-                                crossAxisCount: cross,
+                              return GridView.builder(
+                                itemCount: data.quickActions.length,
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                mainAxisSpacing:
-                                    FeatureActionGridMetrics.spacing,
-                                crossAxisSpacing:
-                                    FeatureActionGridMetrics.spacing,
-                                childAspectRatio: aspectRatio,
-                                children: [
-                                  for (final c in data.quickActions)
-                                    FeatureActionCard(
-                                      icon: _iconFor(c),
-                                      title: c.label,
-                                      description: c.description,
-                                      color: _colorFor(
-                                        c,
-                                        Theme.of(context).colorScheme,
-                                      ),
-                                      onTap: () => _onQuickAction(c),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: cross,
+                                  mainAxisSpacing:
+                                      FeatureActionGridMetrics.spacing,
+                                  crossAxisSpacing:
+                                      FeatureActionGridMetrics.spacing,
+                                  mainAxisExtent: mainExtent,
+                                ),
+                                itemBuilder: (context, index) {
+                                  final c = data.quickActions[index];
+                                  return FeatureActionCard(
+                                    icon: _iconFor(c),
+                                    title: c.label,
+                                    description: c.description,
+                                    color: _colorFor(
+                                      c,
+                                      Theme.of(context).colorScheme,
                                     ),
-                                ],
+                                    onTap: () => _onQuickAction(c),
+                                  );
+                                },
                               );
                             },
                           ),

@@ -211,8 +211,8 @@ class FeatureActionCard extends StatelessWidget {
     this.color,
   });
 
-  static const double horizontalPadding = 10;
-  static const double topPadding = 10;
+  static const double horizontalPadding = 12;
+  static const double topPadding = 12;
   static const double bottomPadding = 12;
   static const double iconBox = 32;
   static const double iconGlyph = 18;
@@ -242,57 +242,55 @@ class FeatureActionCard extends StatelessWidget {
         );
   }
 
-  /// Altura mínima com ícone + uma linha de título/descrição.
-  static double minHeightForEmpty(BuildContext context) {
-    return estimateHeight(
-      context,
-      width: 160,
-      title: 'Ação',
-      description: 'Desc',
-    );
+  /// Altura reservada para N linhas (alinha todos os cards no mesmo eixo).
+  static double lineSlotHeight(
+    BuildContext context,
+    TextStyle? style,
+    int maxLines,
+  ) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final fontSize = style?.fontSize ?? 14;
+    final height = style?.height ?? 1.2;
+    return scaler.scale(fontSize) * height * maxLines;
   }
 
-  /// Estima a altura necessária para o card na largura dada (sem altura fixa).
+  static double minHeightForEmpty(BuildContext context) {
+    return topPadding +
+        iconBox +
+        gapAfterIcon +
+        lineSlotHeight(context, titleStyleOf(context), titleMaxLines) +
+        gapTitleDesc +
+        lineSlotHeight(
+          context,
+          descriptionStyleOf(context),
+          descriptionMaxLines,
+        ) +
+        bottomPadding;
+  }
+
+  /// Altura do card = slots fixos (não depende do texto de cada item).
   static double estimateHeight(
     BuildContext context, {
     required double width,
     required String title,
     required String description,
   }) {
-    final contentWidth = (width - horizontalPadding * 2).clamp(1.0, width);
-    final scaler = MediaQuery.textScalerOf(context);
-
-    final titlePainter = TextPainter(
-      text: TextSpan(text: title, style: titleStyleOf(context)),
-      textDirection: TextDirection.ltr,
-      textScaler: scaler,
-      maxLines: titleMaxLines,
-      ellipsis: '…',
-    )..layout(maxWidth: contentWidth);
-
-    final descPainter = TextPainter(
-      text: TextSpan(text: description, style: descriptionStyleOf(context)),
-      textDirection: TextDirection.ltr,
-      textScaler: scaler,
-      maxLines: descriptionMaxLines,
-      ellipsis: '…',
-    )..layout(maxWidth: contentWidth);
-
-    return topPadding +
-        iconBox +
-        gapAfterIcon +
-        titlePainter.height +
-        gapTitleDesc +
-        descPainter.height +
-        bottomPadding +
-        // Folga para tipografia/acessibilidade vs TextPainter.
-        6;
+    // width/title/description mantidos na assinatura para compatibilidade
+    // com o grid; o alinhamento usa slots fixos.
+    return minHeightForEmpty(context);
   }
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accent = color ?? scheme.primary;
+    final titleH =
+        lineSlotHeight(context, titleStyleOf(context), titleMaxLines);
+    final descH = lineSlotHeight(
+      context,
+      descriptionStyleOf(context),
+      descriptionMaxLines,
+    );
 
     return PressableScale(
       onTap: onTap,
@@ -307,47 +305,62 @@ class FeatureActionCard extends StatelessWidget {
           ),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(
-            horizontalPadding,
-            topPadding,
-            horizontalPadding,
-            bottomPadding,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Ícone compacto, próximo da borda — libera espaço para o título.
-              Container(
-                width: iconBox,
-                height: iconBox,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10),
+        child: SizedBox.expand(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              horizontalPadding,
+              topPadding,
+              horizontalPadding,
+              bottomPadding,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  width: iconBox,
+                  height: iconBox,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: accent, size: iconGlyph),
                 ),
-                child: Icon(icon, color: accent, size: iconGlyph),
-              ),
-              const SizedBox(height: gapAfterIcon),
-              // Título tem prioridade: altura intrínseca até 3 linhas (sem flex).
-              Text(
-                title,
-                maxLines: titleMaxLines,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                textWidthBasis: TextWidthBasis.parent,
-                style: titleStyleOf(context),
-              ),
-              const SizedBox(height: gapTitleDesc),
-              Text(
-                description,
-                maxLines: descriptionMaxLines,
-                softWrap: true,
-                overflow: TextOverflow.ellipsis,
-                textWidthBasis: TextWidthBasis.parent,
-                style: descriptionStyleOf(context),
-              ),
-            ],
+                const SizedBox(height: gapAfterIcon),
+                SizedBox(
+                  width: double.infinity,
+                  height: titleH,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      title,
+                      maxLines: titleMaxLines,
+                      softWrap: true,
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style: titleStyleOf(context),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: gapTitleDesc),
+                SizedBox(
+                  width: double.infinity,
+                  height: descH,
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      description,
+                      maxLines: descriptionMaxLines,
+                      softWrap: true,
+                      textAlign: TextAlign.start,
+                      overflow: TextOverflow.ellipsis,
+                      style: descriptionStyleOf(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

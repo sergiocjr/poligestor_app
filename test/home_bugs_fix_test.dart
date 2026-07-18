@@ -226,26 +226,46 @@ void main() {
                       constraints.maxWidth,
                       textScale: MediaQuery.textScalerOf(context).scale(1),
                     );
-                    final aspect = legacyAspectRatio ??
-                        FeatureActionGridMetrics.childAspectRatioFor(
-                          context: context,
-                          maxWidth: constraints.maxWidth,
-                          items: items,
+                    final extent = FeatureActionGridMetrics.mainAxisExtentFor(
+                      context: context,
+                      maxWidth: constraints.maxWidth,
+                      items: items,
+                    );
+                    if (legacyAspectRatio != null) {
+                      return GridView.count(
+                        crossAxisCount: cross,
+                        mainAxisSpacing: FeatureActionGridMetrics.spacing,
+                        crossAxisSpacing: FeatureActionGridMetrics.spacing,
+                        childAspectRatio: legacyAspectRatio,
+                        children: [
+                          for (final c in cards)
+                            FeatureActionCard(
+                              icon: c.icon,
+                              title: c.title,
+                              description: c.description,
+                              onTap: () {},
+                            ),
+                        ],
+                      );
+                    }
+                    return GridView.builder(
+                      itemCount: cards.length,
+                      gridDelegate:
+                          SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: cross,
+                        mainAxisSpacing: FeatureActionGridMetrics.spacing,
+                        crossAxisSpacing: FeatureActionGridMetrics.spacing,
+                        mainAxisExtent: extent,
+                      ),
+                      itemBuilder: (context, index) {
+                        final c = cards[index];
+                        return FeatureActionCard(
+                          icon: c.icon,
+                          title: c.title,
+                          description: c.description,
+                          onTap: () {},
                         );
-                    return GridView.count(
-                      crossAxisCount: cross,
-                      mainAxisSpacing: FeatureActionGridMetrics.spacing,
-                      crossAxisSpacing: FeatureActionGridMetrics.spacing,
-                      childAspectRatio: aspect,
-                      children: [
-                        for (final c in cards)
-                          FeatureActionCard(
-                            icon: c.icon,
-                            title: c.title,
-                            description: c.description,
-                            onTap: () {},
-                          ),
-                      ],
+                      },
                     );
                   },
                 ),
