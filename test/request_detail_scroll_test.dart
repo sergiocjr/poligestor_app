@@ -45,8 +45,6 @@ ProtocolDetail _sampleDetail({int messageCount = 8, int historyCount = 6}) {
   });
 }
 
-/// Replica a arquitetura corrigida da tela de detalhes (um scroll + TextFields
-/// sem physics própria) para validar o contrato anti-freeze.
 Widget _buildDetailScrollHarness({
   required ScrollController scrollController,
   required ProtocolDetail detail,
@@ -58,91 +56,91 @@ Widget _buildDetailScrollHarness({
   return MaterialApp(
     home: Scaffold(
       appBar: AppBar(title: const Text('Detalhes da solicitação')),
-      body: Stack(
+      body: Column(
         children: [
-          NotificationListener<ScrollNotification>(
-            onNotification: (n) {
-              if (n is ScrollStartNotification && n.dragDetails != null) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-              return false;
-            },
-            child: RefreshIndicator(
-              onRefresh: () async {},
-              child: CustomScrollView(
-                key: const Key('request_detail_scroll'),
-                controller: scrollController,
-                primary: false,
-                physics: const AlwaysScrollableScrollPhysics(),
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-                    sliver: SliverList(
-                      delegate: SliverChildListDelegate([
-                        Text(detail.title,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w800)),
-                        const SizedBox(height: 12),
-                        Text(detail.description ?? ''),
-                        const SizedBox(height: 16),
-                        OutlinedButton(
-                          key: const Key('btn_foto'),
-                          onPressed: blocking ? null : onPhoto,
-                          child: const Text('Foto'),
-                        ),
-                        ...detail.attachments.map(
-                          (a) => ProtocolAttachmentTile(attachment: a),
-                        ),
-                        const SizedBox(height: 12),
-                        ProtocolConversationPanel(
-                          messages: detail.messages,
-                          composer: TextField(
-                            key: const Key('request_detail_composer'),
-                            controller: messageCtrl,
-                            minLines: 2,
-                            maxLines: 5,
-                            scrollPhysics:
-                                const NeverScrollableScrollPhysics(),
-                            decoration: const InputDecoration(
-                              labelText: 'Escreva uma mensagem',
-                            ),
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (n) {
+                if (n is ScrollStartNotification && n.dragDetails != null) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
+                return false;
+              },
+              child: RefreshIndicator(
+                onRefresh: () async {},
+                child: CustomScrollView(
+                  key: const Key('request_detail_scroll'),
+                  controller: scrollController,
+                  primary: false,
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  slivers: [
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          Text(
+                            detail.title,
+                            style: const TextStyle(fontWeight: FontWeight.w800),
                           ),
-                        ),
-                        FilledButton(
-                          key: const Key('btn_enviar'),
-                          onPressed: blocking ? null : onSend,
-                          child: Text(blocking ? 'Enviando...' : 'Enviar'),
-                        ),
-                        const SizedBox(height: 12),
-                        ProtocolHistorySection(events: detail.history),
-                        const SizedBox(height: 12),
-                        ProtocolRatingCard(
-                          canRate: true,
-                          canEdit: false,
-                          existing: null,
-                          busy: blocking,
-                          onSubmit: (stars, resolved, comment) async {},
-                        ),
-                        const SizedBox(height: 400),
-                      ]),
+                          const SizedBox(height: 12),
+                          Text(detail.description ?? ''),
+                          const SizedBox(height: 16),
+                          OutlinedButton(
+                            key: const Key('btn_foto'),
+                            onPressed: blocking ? null : onPhoto,
+                            child: const Text('Foto'),
+                          ),
+                          ...detail.attachments.map(
+                            (a) => ProtocolAttachmentTile(attachment: a),
+                          ),
+                          const SizedBox(height: 12),
+                          ProtocolConversationPanel(messages: detail.messages),
+                          const SizedBox(height: 12),
+                          ProtocolHistorySection(events: detail.history),
+                          const SizedBox(height: 12),
+                          ProtocolRatingCard(
+                            canRate: true,
+                            canEdit: false,
+                            existing: null,
+                            busy: blocking,
+                            onSubmit: (stars, resolved, comment) async {},
+                          ),
+                          const SizedBox(height: 400),
+                        ]),
+                      ),
                     ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Material(
+            key: const Key('request_detail_composer_bar'),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (blocking) const LinearProgressIndicator(minHeight: 2),
+                  TextField(
+                    key: const Key('request_detail_composer'),
+                    controller: messageCtrl,
+                    enabled: !blocking,
+                    minLines: 1,
+                    maxLines: 4,
+                    scrollPhysics: const NeverScrollableScrollPhysics(),
+                  ),
+                  FilledButton(
+                    key: const Key('btn_enviar'),
+                    onPressed: blocking ? null : onSend,
+                    child: Text(blocking ? 'Enviando...' : 'Enviar'),
                   ),
                 ],
               ),
             ),
           ),
-          if (blocking)
-            const Positioned.fill(
-              key: Key('request_detail_blocking_overlay'),
-              child: AbsorbPointer(
-                child: ColoredBox(
-                  color: Color(0x33000000),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
-              ),
-            ),
         ],
       ),
     ),
@@ -154,45 +152,6 @@ void main() {
 
   group('RequestDetail scroll anti-freeze', () {
     testWidgets('consegue rolar até o fim e voltar ao topo', (tester) async {
-      final scroll = ScrollController();
-      final message = TextEditingController();
-      final detail = _sampleDetail();
-      addTearDown(() {
-        scroll.dispose();
-        message.dispose();
-      });
-
-      await tester.pumpWidget(
-        _buildDetailScrollHarness(
-          scrollController: scroll,
-          detail: detail,
-          messageCtrl: message,
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byKey(const Key('request_detail_scroll')), findsOneWidget);
-
-      // Desce até o final.
-      await tester.drag(
-        find.byKey(const Key('request_detail_scroll')),
-        const Offset(0, -2500),
-      );
-      await tester.pumpAndSettle();
-      final atBottom = scroll.offset;
-      expect(atBottom, greaterThan(100));
-
-      // Sobe de volta.
-      await tester.drag(
-        find.byKey(const Key('request_detail_scroll')),
-        const Offset(0, 2500),
-      );
-      await tester.pumpAndSettle();
-      expect(scroll.offset, lessThan(atBottom));
-      expect(scroll.offset, lessThan(80));
-    });
-
-    testWidgets('TextField interno nao impede scroll do pai', (tester) async {
       final scroll = ScrollController();
       final message = TextEditingController();
       addTearDown(() {
@@ -209,17 +168,51 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Garante composer visível e arrasta a partir dele.
-      await tester.ensureVisible(find.byKey(const Key('request_detail_composer')));
-      await tester.pumpAndSettle();
-      final before = scroll.offset;
+      expect(find.byKey(const Key('request_detail_scroll')), findsOneWidget);
 
       await tester.drag(
-        find.byKey(const Key('request_detail_composer')),
-        const Offset(0, -400),
+        find.byKey(const Key('request_detail_scroll')),
+        const Offset(0, -2500),
+      );
+      await tester.pumpAndSettle();
+      final atBottom = scroll.offset;
+      expect(atBottom, greaterThan(100));
+
+      await tester.drag(
+        find.byKey(const Key('request_detail_scroll')),
+        const Offset(0, 2500),
+      );
+      await tester.pumpAndSettle();
+      expect(scroll.offset, lessThan(atBottom));
+      expect(scroll.offset, lessThan(80));
+    });
+
+    testWidgets('composer fora do scroll nao captura gesto vertical',
+        (tester) async {
+      final scroll = ScrollController();
+      final message = TextEditingController();
+      addTearDown(() {
+        scroll.dispose();
+        message.dispose();
+      });
+
+      await tester.pumpWidget(
+        _buildDetailScrollHarness(
+          scrollController: scroll,
+          detail: _sampleDetail(),
+          messageCtrl: message,
+        ),
       );
       await tester.pumpAndSettle();
 
+      expect(find.byKey(const Key('request_detail_composer_bar')), findsOneWidget);
+
+      final before = scroll.offset;
+      await tester.drag(
+        find.byKey(const Key('request_detail_scroll')),
+        const Offset(0, -400),
+      );
+      await tester.pumpAndSettle();
       expect(scroll.offset, greaterThan(before));
     });
 
@@ -258,7 +251,7 @@ void main() {
       expect(taps, 1);
     });
 
-    testWidgets('overlay de loading bloqueia e some depois', (tester) async {
+    testWidgets('busy nao usa overlay AbsorbPointer na tela', (tester) async {
       final scroll = ScrollController();
       final message = TextEditingController();
       addTearDown(() {
@@ -278,12 +271,20 @@ void main() {
       await tester.pump();
 
       expect(
-        find.byKey(const Key('request_detail_blocking_overlay')),
-        findsOneWidget,
+        find.byWidgetPredicate(
+          (w) => w is AbsorbPointer && w.absorbing,
+        ),
+        findsNothing,
       );
-      expect(find.byType(AbsorbPointer), findsWidgets);
+      expect(
+        find.byKey(const Key('request_detail_blocking_overlay')),
+        findsNothing,
+      );
+      expect(
+        tester.widget<FilledButton>(find.byKey(const Key('btn_enviar'))).onPressed,
+        isNull,
+      );
 
-      // Rebuild sem blocking.
       await tester.pumpWidget(
         _buildDetailScrollHarness(
           scrollController: scroll,
@@ -294,10 +295,9 @@ void main() {
         ),
       );
       await tester.pump();
-
       expect(
-        find.byKey(const Key('request_detail_blocking_overlay')),
-        findsNothing,
+        tester.widget<FilledButton>(find.byKey(const Key('btn_enviar'))).onPressed,
+        isNotNull,
       );
     });
 
@@ -318,48 +318,16 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Só o CustomScrollView principal deve aceitar gesto vertical do usuário.
-      // TextFields ainda têm Scrollable interno, mas com NeverScrollableScrollPhysics.
-      final scrollables = tester.widgetList<Scrollable>(find.byType(Scrollable));
-      final userScrollables = scrollables.where((s) {
-        return s.physics is! NeverScrollableScrollPhysics;
-      }).toList();
+      final userScrollables = tester
+          .widgetList<Scrollable>(find.byType(Scrollable))
+          .where((s) => s.physics is! NeverScrollableScrollPhysics)
+          .toList();
       expect(userScrollables, hasLength(1));
-      expect(
-        userScrollables.single.physics,
-        isA<AlwaysScrollableScrollPhysics>(),
-      );
 
       final composer = tester.widget<TextField>(
-        find.byKey(
-          const Key('request_detail_composer'),
-          skipOffstage: false,
-        ),
+        find.byKey(const Key('request_detail_composer')),
       );
       expect(composer.scrollPhysics, isA<NeverScrollableScrollPhysics>());
-
-      // Avaliar physics do campo de avaliação em isolation (evita offstage no sliver).
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: ProtocolRatingCard(
-              canRate: true,
-              canEdit: false,
-              existing: null,
-              busy: false,
-              onSubmit: (stars, resolved, comment) async {},
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      final ratingComment = tester.widget<TextField>(
-        find.byKey(const Key('protocol_rating_comment')),
-      );
-      expect(
-        ratingComment.scrollPhysics,
-        isA<NeverScrollableScrollPhysics>(),
-      );
     });
 
     testWidgets('reentrada na tela mantem scroll funcional', (tester) async {
@@ -384,7 +352,6 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Simula sair/voltar.
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
       await tester.pumpWidget(buildOnce());

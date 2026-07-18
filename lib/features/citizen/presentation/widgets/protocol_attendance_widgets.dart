@@ -180,27 +180,64 @@ class ProtocolConversationPanel extends StatelessWidget {
   const ProtocolConversationPanel({
     super.key,
     required this.messages,
-    required this.composer,
+    this.composer,
+    this.errorMessage,
+    this.onRetry,
+    this.loading = false,
   });
 
   final List<ProtocolMessage> messages;
-  final Widget composer;
+  final Widget? composer;
+  final String? errorMessage;
+  final VoidCallback? onRetry;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     final dateFmt = DateFormat('dd/MM · HH:mm');
+    final scheme = Theme.of(context).colorScheme;
+
+    // Sem ListView/ScrollView próprio — o scroll é o da tela de detalhes.
     return Column(
+      key: const Key('protocol_conversation_column'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (messages.isEmpty)
+        if (loading)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 12),
+            child: Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          )
+        else if (errorMessage != null) ...[
+          Text(
+            errorMessage!,
+            style: TextStyle(color: scheme.error),
+          ),
+          if (onRetry != null)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const Key('conversation_retry'),
+                onPressed: onRetry,
+                child: const Text('Tentar novamente'),
+              ),
+            ),
+        ] else if (messages.isEmpty)
           const Padding(
             padding: EdgeInsets.only(bottom: 12),
             child: Text(UserMessages.emptyConversation),
           )
         else
           ...messages.map((m) => _MessageBubble(message: m, dateFmt: dateFmt)),
-        const SizedBox(height: 8),
-        composer,
+        if (composer != null) ...[
+          const SizedBox(height: 8),
+          composer!,
+        ],
       ],
     );
   }
@@ -341,11 +378,19 @@ class ProtocolAttachmentTile extends StatelessWidget {
       );
       return;
     }
-    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!ok && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
-      );
+    try {
+      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (!ok && context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
+        );
+      }
     }
   }
 
@@ -353,52 +398,86 @@ class ProtocolAttachmentTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final name = attachment.name ?? 'Arquivo';
+    // Layout simples (sem ListTile+Row de IconButtons) para evitar overflow
+    // e disputa de gestos no A10 ao entrar na região de anexos.
     return Card(
       margin: EdgeInsets.only(bottom: compact ? 6 : 8),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        leading: Icon(
-          attachment.isImage
-              ? Icons.image_outlined
-              : Icons.insert_drive_file_outlined,
-          color: scheme.primary,
-        ),
-        title: Text(name, maxLines: 2, overflow: TextOverflow.ellipsis),
-        subtitle: progress != null
-            ? LinearProgressIndicator(value: progress!.clamp(0, 1))
-            : (failed
-                ? const Text('Falha no envio')
-                : (attachment.isImage ? const Text('Imagem') : const Text('Documento'))),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (onCancel != null)
-              IconButton(
-                tooltip: 'Cancelar',
-                onPressed: onCancel,
-                icon: const Icon(Icons.close_rounded),
-              ),
-            if (failed && onRetry != null)
-              IconButton(
-                tooltip: 'Tentar novamente',
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-              ),
-            if (onRemove != null && progress == null && !failed)
-              IconButton(
-                tooltip: 'Remover',
-                onPressed: onRemove,
-                icon: const Icon(Icons.delete_outline_rounded),
-              ),
-            if (attachment.url != null)
-              IconButton(
-                tooltip: attachment.isImage ? 'Ver imagem' : 'Abrir documento',
-                onPressed: () => _open(context),
-                icon: const Icon(Icons.open_in_new_rounded),
-              ),
-          ],
-        ),
+      child: InkWell(
         onTap: attachment.url != null ? () => _open(context) : null,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: compact ? 8 : 10,
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                attachment.isImage
+                    ? Icons.image_outlined
+                    : Icons.insert_drive_file_outlined,
+                color: scheme.primary,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    const SizedBox(height: 4),
+                    if (progress != null)
+                      LinearProgressIndicator(value: progress!.clamp(0, 1))
+                    else
+                      Text(
+                        failed
+                            ? 'Falha no envio'
+                            : (attachment.isImage ? 'Imagem' : 'Documento'),
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: failed
+                                  ? scheme.error
+                                  : scheme.onSurfaceVariant,
+                            ),
+                      ),
+                  ],
+                ),
+              ),
+              if (onCancel != null)
+                IconButton(
+                  tooltip: 'Cancelar',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onCancel,
+                  icon: const Icon(Icons.close_rounded),
+                ),
+              if (failed && onRetry != null)
+                IconButton(
+                  tooltip: 'Tentar novamente',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+              if (onRemove != null && progress == null && !failed)
+                IconButton(
+                  tooltip: 'Remover',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.delete_outline_rounded),
+                ),
+              if (attachment.url != null)
+                IconButton(
+                  tooltip: attachment.isImage ? 'Ver imagem' : 'Abrir documento',
+                  visualDensity: VisualDensity.compact,
+                  onPressed: () => _open(context),
+                  icon: const Icon(Icons.open_in_new_rounded),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
