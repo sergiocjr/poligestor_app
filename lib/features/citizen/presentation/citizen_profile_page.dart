@@ -21,18 +21,23 @@ class CitizenProfilePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          if (auth.apiDegraded) ...[
-            const ApiDegradedBanner(),
-            const SizedBox(height: 12),
-          ],
           Center(
-            child: CircleAvatar(
-              radius: 40,
-              backgroundColor: scheme.primary.withValues(alpha: 0.15),
-              child: Icon(Icons.person, size: 42, color: scheme.primary),
+            child: Container(
+              width: 88,
+              height: 88,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    scheme.primary.withValues(alpha: 0.2),
+                    scheme.secondary.withValues(alpha: 0.15),
+                  ],
+                ),
+              ),
+              child: Icon(Icons.person_rounded, size: 44, color: scheme.primary),
             ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           Text(
             user?.name ?? 'Cidadão',
             textAlign: TextAlign.center,
@@ -46,39 +51,52 @@ class CitizenProfilePage extends StatelessWidget {
             style: TextStyle(color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 24),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.domain),
-            title: const Text('Organização'),
-            subtitle: Text(user?.tenantName ?? session?.tenantSlug ?? '—'),
-          ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.location_city_outlined),
-            title: const Text('Meu bairro'),
-            subtitle: Text(user?.neighborhoodLabel ?? '—'),
-          ),
-          if (user?.document != null)
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.badge_outlined),
-              title: const Text('Documento'),
-              subtitle: Text(user!.document!),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.domain_rounded),
+                  title: const Text('Organização'),
+                  subtitle:
+                      Text(user?.tenantName ?? session?.tenantSlug ?? '—'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.location_city_outlined),
+                  title: const Text('Meu bairro'),
+                  subtitle: Text(user?.neighborhoodLabel ?? '—'),
+                ),
+                if (user?.document != null) ...[
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.badge_outlined),
+                    title: const Text('Documento'),
+                    subtitle: Text(user!.document!),
+                  ),
+                ],
+              ],
             ),
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.cloud_outlined),
-            title: const Text('API'),
-            subtitle: Text(AppConfig.apiBaseUrl),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+          NeighborhoodCard(
+            neighborhoodLabel: user?.neighborhoodLabel ?? 'Sua região',
+          ),
+          const SizedBox(height: 24),
           FilledButton.tonalIcon(
             onPressed: () async {
               await auth.logout();
               if (context.mounted) context.go('/login');
             },
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_rounded),
             label: const Text('Sair'),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            AppConfig.appName,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: scheme.onSurfaceVariant,
+                ),
           ),
         ],
       ),

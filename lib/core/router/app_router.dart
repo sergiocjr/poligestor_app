@@ -165,7 +165,10 @@ GoRouter createAppRouter(AuthController auth) {
       ),
       GoRoute(
         path: '/citizen/chat',
-        builder: (_, _) => const CitizenChatPage(),
+        builder: (context, state) {
+          final draft = state.extra is String ? state.extra as String : null;
+          return CitizenChatPage(initialDraft: draft);
+        },
       ),
     ],
   );

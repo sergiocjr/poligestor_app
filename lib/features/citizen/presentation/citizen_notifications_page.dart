@@ -3,9 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
-import '../../../shared/widgets/error_view.dart';
-import '../../../shared/widgets/loading_view.dart';
-import '../../../shared/widgets/ui_kit.dart';
+import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_states.dart';
 import '../../notifications/data/notifications_repository.dart';
 
 class CitizenNotificationsPage extends StatefulWidget {
@@ -42,81 +41,92 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificações'),
+        title: const Text('Avisos'),
         actions: [
-          IconButton(onPressed: _reload, icon: const Icon(Icons.refresh)),
+          IconButton(
+            onPressed: _reload,
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'Atualizar',
+          ),
         ],
       ),
-      body: Column(
-        children: [
-          if (auth.apiDegraded)
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: ApiDegradedBanner(),
-            ),
-          Expanded(
-            child: FutureBuilder<List<AppNotification>>(
-              future: _future,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done) {
-                  return const LoadingView();
-                }
-                if (snapshot.hasError) {
-                  return ErrorView(
-                    message: snapshot.error.toString(),
-                    onRetry: _reload,
-                  );
-                }
-                final items = snapshot.data ?? const [];
-                if (items.isEmpty) {
-                  return const Center(child: Text('Sem notificações.'));
-                }
-                return RefreshIndicator(
-                  onRefresh: _reload,
-                  child: ListView.separated(
-                    itemCount: items.length,
-                    separatorBuilder: (_, _) => const Divider(height: 1),
-                    itemBuilder: (context, index) {
-                      final n = items[index];
-                      return ListTile(
-                        leading: Icon(
-                          n.isUnread
-                              ? Icons.notifications_active
-                              : Icons.notifications_none,
-                          color: n.isUnread
-                              ? Theme.of(context).colorScheme.primary
-                              : null,
-                        ),
-                        title: Text(
-                          n.title,
-                          style: TextStyle(
-                            fontWeight:
-                                n.isUnread ? FontWeight.w700 : FontWeight.w500,
+      body: FutureBuilder<List<AppNotification>>(
+        future: _future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return ListView(
+              padding: const EdgeInsets.all(20),
+              children: const [
+                SkeletonBox(height: 80, radius: 18),
+                SizedBox(height: 12),
+                SkeletonBox(height: 80, radius: 18),
+              ],
+            );
+          }
+          if (snapshot.hasError) {
+            return AppErrorState(error: snapshot.error, onRetry: _reload);
+          }
+          final items = snapshot.data ?? const [];
+          if (items.isEmpty) {
+            return const AppEmptyState(
+              message: UserMessages.emptyNotifications,
+              icon: Icons.notifications_none_rounded,
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: _reload,
+            child: ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final n = items[index];
+                return Card(
+                  child: ListTile(
+                    leading: Icon(
+                      n.isUnread
+                          ? Icons.notifications_active_rounded
+                          : Icons.notifications_none_rounded,
+                      color: n.isUnread
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                    ),
+                    title: Text(
+                      n.title,
+                      style: TextStyle(
+                        fontWeight:
+                            n.isUnread ? FontWeight.w800 : FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text([
+                      if (n.body != null) n.body!,
+                      if (n.createdAt != null)
+                        dateFmt.format(n.createdAt!.toLocal()),
+                    ].join('\n')),
+                    isThreeLine: n.body != null,
+                    onTap: () async {
+                      if (!n.isUnread) return;
+                      try {
+                        await context
+                            .read<NotificationsRepository>()
+                            .markRead(mode: auth.mode, id: n.id);
+                        await _reload();
+                      } catch (_) {
+                        if (!context.mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(UserMessages.syncFailed),
                           ),
-                        ),
-                        subtitle: Text([
-                          if (n.body != null) n.body!,
-                          if (n.createdAt != null)
-                            dateFmt.format(n.createdAt!.toLocal()),
-                        ].join('\n')),
-                        isThreeLine: n.body != null,
-                        onTap: () async {
-                          if (!n.isUnread) return;
-                          try {
-                            await context
-                                .read<NotificationsRepository>()
-                                .markRead(mode: auth.mode, id: n.id);
-                            await _reload();
-                          } catch (_) {}
-                        },
-                      );
+                        );
+                      }
                     },
                   ),
                 );
               },
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

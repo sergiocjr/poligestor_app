@@ -3,9 +3,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_controller.dart';
-import '../../../shared/widgets/ui_kit.dart';
+import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_states.dart';
 import '../../protocols/data/protocol_models.dart';
 import '../../protocols/data/protocols_repository.dart';
 
@@ -37,7 +37,9 @@ class _NewRequestPageState extends State<NewRequestPage> {
     if (_category == 'ajuda') _subjectCtrl.text = 'Solicitação de ajuda';
     if (_category == 'denuncia') _subjectCtrl.text = 'Denúncia';
     if (_category == 'sugestao') _subjectCtrl.text = 'Sugestão';
-    if (_category == 'atendimento') _subjectCtrl.text = 'Agendamento de atendimento';
+    if (_category == 'atendimento') {
+      _subjectCtrl.text = 'Agendamento de atendimento';
+    }
     if (_category == 'documento') _subjectCtrl.text = 'Envio de documento';
   }
 
@@ -56,7 +58,8 @@ class _NewRequestPageState extends State<NewRequestPage> {
     try {
       final enabled = await Geolocator.isLocationServiceEnabled();
       if (!enabled) {
-        throw ApiException(message: 'Ative a localização do dispositivo.');
+        setState(() => _error = UserMessages.locationUnavailable);
+        return;
       }
       var permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
@@ -64,7 +67,8 @@ class _NewRequestPageState extends State<NewRequestPage> {
       }
       if (permission == LocationPermission.denied ||
           permission == LocationPermission.deniedForever) {
-        throw ApiException(message: 'Permissão de localização negada.');
+        setState(() => _error = UserMessages.locationDenied);
+        return;
       }
       final pos = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
@@ -74,13 +78,10 @@ class _NewRequestPageState extends State<NewRequestPage> {
       setState(() {
         _lat = pos.latitude;
         _lng = pos.longitude;
-        _locLabel =
-            'Lat ${pos.latitude.toStringAsFixed(5)}, Lng ${pos.longitude.toStringAsFixed(5)}';
+        _locLabel = 'Localização capturada';
       });
-    } on ApiException catch (e) {
-      setState(() => _error = e.message);
-    } catch (e) {
-      setState(() => _error = 'Não foi possível obter a localização: $e');
+    } catch (_) {
+      setState(() => _error = UserMessages.locationUnavailable);
     } finally {
       setState(() => _locBusy = false);
     }
@@ -108,10 +109,8 @@ class _NewRequestPageState extends State<NewRequestPage> {
       );
       if (!mounted) return;
       context.pushReplacement('/citizen/requests/${created.id}');
-    } on ApiException catch (e) {
-      setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() => _error = UserMessages.fromError(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -119,16 +118,11 @@ class _NewRequestPageState extends State<NewRequestPage> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthController>();
     return Scaffold(
       appBar: AppBar(title: const Text('Nova solicitação')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          if (auth.apiDegraded) ...[
-            const ApiDegradedBanner(),
-            const SizedBox(height: 12),
-          ],
           Form(
             key: _formKey,
             child: Column(
@@ -153,8 +147,9 @@ class _NewRequestPageState extends State<NewRequestPage> {
                 TextFormField(
                   controller: _subjectCtrl,
                   decoration: const InputDecoration(labelText: 'Assunto'),
-                  validator: (v) =>
-                      (v == null || v.trim().isEmpty) ? 'Informe o assunto' : null,
+                  validator: (v) => (v == null || v.trim().isEmpty)
+                      ? 'Informe o assunto'
+                      : null,
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -178,16 +173,19 @@ class _NewRequestPageState extends State<NewRequestPage> {
                           height: 18,
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
-                      : const Icon(Icons.my_location),
-                  label: Text(_locLabel == null
-                      ? 'Enviar localização'
-                      : 'Localização: $_locLabel'),
+                      : const Icon(Icons.my_location_rounded),
+                  label: Text(
+                    _locLabel == null
+                        ? 'Enviar localização'
+                        : _locLabel!,
+                  ),
                 ),
                 if (_error != null) ...[
                   const SizedBox(height: 12),
-                  Text(_error!,
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.error)),
+                  SoftNotice(
+                    message: _error!,
+                    icon: Icons.error_outline_rounded,
+                  ),
                 ],
                 const SizedBox(height: 20),
                 FilledButton(
@@ -196,7 +194,10 @@ class _NewRequestPageState extends State<NewRequestPage> {
                       ? const SizedBox(
                           width: 22,
                           height: 22,
-                          child: CircularProgressIndicator(strokeWidth: 2),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Text('Enviar solicitação'),
                 ),

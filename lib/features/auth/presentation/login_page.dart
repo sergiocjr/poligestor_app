@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
 import '../../../core/storage/token_storage.dart';
+import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -74,10 +75,8 @@ class _LoginPageState extends State<LoginPage> {
       context.go(
         _mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
       );
-    } on ApiException catch (e) {
-      setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = e.toString());
+      setState(() => _error = UserMessages.fromError(e));
     }
   }
 
@@ -110,17 +109,9 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const SizedBox(height: 24),
-                    Icon(Icons.account_balance, size: 56, color: scheme.primary),
-                    const SizedBox(height: 12),
-                    Text(
-                      AppConfig.appName,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 16),
+                    const AppLogo(height: 150),
+                    const SizedBox(height: 8),
                     Text(
                       'Entre para continuar',
                       textAlign: TextAlign.center,

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
+import '../../../shared/widgets/app_logo.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -41,34 +42,21 @@ class _SplashPageState extends State<SplashPage> {
         width: double.infinity,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
-              const Color(AppConfig.seedNavy),
-              scheme.primary,
+              Colors.white,
+              scheme.primary.withValues(alpha: 0.08),
+              const Color(AppConfig.seedNavy).withValues(alpha: 0.06),
             ],
           ),
         ),
         child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.account_balance, size: 72, color: Colors.white),
-            SizedBox(height: 16),
-            Text(
-              AppConfig.appName,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 32,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            SizedBox(height: 8),
-            Text(
-              'Gestão política em campo',
-              style: TextStyle(color: Colors.white70),
-            ),
-            SizedBox(height: 32),
-            CircularProgressIndicator(color: Colors.white),
+            AppLogo(height: 180),
+            SizedBox(height: 40),
+            CircularProgressIndicator(),
           ],
         ),
       ),

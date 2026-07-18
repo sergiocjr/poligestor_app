@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../core/ux/user_messages.dart';
+import 'app_states.dart';
+
+/// Compatibilidade com telas legadas — usa estados amigáveis.
 class ErrorView extends StatelessWidget {
   const ErrorView({
     super.key,
@@ -12,32 +16,7 @@ class ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 48,
-              color: Theme.of(context).colorScheme.error,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-            ),
-            if (onRetry != null) ...[
-              const SizedBox(height: 16),
-              FilledButton(
-                onPressed: onRetry,
-                child: const Text('Tentar novamente'),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
+    final friendly = UserMessages.fromError(message);
+    return AppErrorState(message: friendly, onRetry: onRetry);
   }
 }

@@ -3,10 +3,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_controller.dart';
-import '../../../shared/widgets/error_view.dart';
-import '../../../shared/widgets/loading_view.dart';
+import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
 import '../../protocols/data/protocol_models.dart';
 import '../../protocols/data/protocols_repository.dart';
@@ -61,10 +60,11 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           );
       _commentCtrl.clear();
       await _reload();
-    } on ApiException catch (e) {
+    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(UserMessages.fromError(e))),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -92,8 +92,6 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   }
 
   Future<void> _attachDocument() async {
-    // PDF nativo via file_picker ficou incompatível com o AGP atual;
-    // usamos seletor de arquivos de mídia/galeria até migrar o plugin.
     final picker = ImagePicker();
     final file = await picker.pickMedia();
     if (file == null) return;
@@ -120,7 +118,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Falha no anexo: $e')),
+          SnackBar(content: Text(UserMessages.fromError(e))),
         );
       }
     } finally {
@@ -130,7 +128,6 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthController>();
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
 
     return Scaffold(
@@ -139,27 +136,31 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const LoadingView();
+            return ListView(
+              padding: const EdgeInsets.all(20),
+              children: const [
+                SkeletonBox(height: 28, width: 220),
+                SizedBox(height: 12),
+                SkeletonBox(height: 18, width: 160),
+                SizedBox(height: 20),
+                SkeletonBox(height: 120, radius: 18),
+              ],
+            );
           }
           if (snapshot.hasError) {
-            return ErrorView(
-              message: snapshot.error.toString(),
-              onRetry: _reload,
-            );
+            return AppErrorState(error: snapshot.error, onRetry: _reload);
           }
           final p = snapshot.data!;
           return ListView(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
             children: [
-              if (auth.apiDegraded) ...[
-                const ApiDegradedBanner(),
-                const SizedBox(height: 12),
-              ],
-              Text(
-                p.title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+              FadeSlideIn(
+                child: Text(
+                  p.title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
               ),
               const SizedBox(height: 10),
               Wrap(
@@ -177,10 +178,12 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
               Text('Descrição',
                   style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 6),
-              Text(p.description?.isNotEmpty == true
-                  ? p.description!
-                  : 'Sem descrição.'),
-              const SectionHeader(title: 'Anexos'),
+              Text(
+                p.description?.isNotEmpty == true
+                    ? p.description!
+                    : 'Sem descrição.',
+              ),
+              SectionHeader(title: 'Anexos'),
               Wrap(
                 spacing: 8,
                 children: [
@@ -210,23 +213,23 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(Icons.insert_drive_file_outlined),
                     title: Text(a.name ?? 'Arquivo'),
-                    subtitle: Text(a.mimeType ?? ''),
                   ),
                 ),
               const SectionHeader(title: 'Linha do tempo'),
               if (p.comments.isEmpty)
                 const Text('Sem atualizações ainda.')
               else
-                ...p.comments.map((c) {
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.timeline),
-                    title: Text(c.body),
-                    subtitle: Text([
+                ...p.comments.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final c = entry.value;
+                  return RequestTimelineTile(
+                    title: c.body,
+                    statusLabel: [
                       if (c.authorName != null) c.authorName!,
                       if (c.createdAt != null)
                         dateFmt.format(c.createdAt!.toLocal()),
-                    ].join(' · ')),
+                    ].join(' · '),
+                    isLast: i == p.comments.length - 1,
                   );
                 }),
               const SizedBox(height: 12),
@@ -236,7 +239,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
                   labelText: 'Adicionar comentário',
                   suffixIcon: IconButton(
                     onPressed: _busy ? null : _sendComment,
-                    icon: const Icon(Icons.send),
+                    icon: const Icon(Icons.send_rounded),
                   ),
                 ),
               ),
