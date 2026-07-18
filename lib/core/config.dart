@@ -27,6 +27,15 @@ class AppConfig {
 
   static const String appName = 'PoliGestor';
 
+  /// Espelha `pubspec.yaml` version até haver package_info em runtime.
+  static const String appVersion = '1.0.0+1';
+
+  /// FCM/Firebase só após contrato + `google-services.json`.
+  static const bool pushEnabled = bool.fromEnvironment(
+    'PUSH_ENABLED',
+    defaultValue: false,
+  );
+
   static const int primaryTeal = 0xFF0D9488;
   static const int seedNavy = 0xFF0B1F3A;
 

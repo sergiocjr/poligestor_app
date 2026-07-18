@@ -56,7 +56,7 @@ class AuthController extends ChangeNotifier {
         final user = await _fetchMe(mode);
         await _storage.saveUserJson(user.toJson());
         _session = AuthSession(mode: mode, user: user, tenantSlug: tenant);
-        await _registerDeviceSilently(mode);
+        // Registro de dispositivo: PushNotificationService.onAuthenticated.
       } on ApiException catch (e) {
         // Portal: tokens emitidos no login mas /me pode falhar (bug backend 401).
         // Mantém sessão com perfil cacheado para não perder UX após login fresco.
@@ -157,7 +157,7 @@ class AuthController extends ChangeNotifier {
       );
 
       _session = AuthSession(mode: mode, user: user, tenantSlug: tenant);
-      await _registerDeviceSilently(mode);
+      // Registro de dispositivo: PushNotificationService.onAuthenticated.
 
       // Detecta API portal degradada (token inválido nas rotas protegidas).
       if (mode == AuthMode.portal) {
@@ -203,26 +203,6 @@ class AuthController extends ChangeNotifier {
       },
     );
     return envelope.data;
-  }
-
-  Future<void> _registerDeviceSilently(AuthMode mode) async {
-    try {
-      await _api.postEnvelope<Map<String, dynamic>>(
-        mode.devicesPath,
-        data: {
-          'token':
-              'flutter-placeholder-${DateTime.now().millisecondsSinceEpoch}',
-          'platform': ApiClient.deviceName().replaceFirst('flutter-', ''),
-          'device_name': ApiClient.deviceName(),
-        },
-        mode: mode,
-        parse: (raw) {
-          if (raw is Map<String, dynamic>) return raw;
-          if (raw is Map) return Map<String, dynamic>.from(raw);
-          return <String, dynamic>{};
-        },
-      );
-    } catch (_) {}
   }
 
   Future<void> _handleSessionExpired() async {
