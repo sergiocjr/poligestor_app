@@ -529,9 +529,12 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
           ),
           const SizedBox(height: 12),
           TextField(
+            key: const Key('protocol_rating_comment'),
             controller: _comment,
             enabled: _editable && !widget.busy,
             maxLines: 3,
+            // Campo dentro do scroll principal: não competir pelo gesto vertical.
+            scrollPhysics: const NeverScrollableScrollPhysics(),
             decoration: const InputDecoration(
               labelText: 'Comentário (opcional)',
               alignLabelWithHint: true,
