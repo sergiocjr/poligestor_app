@@ -1,20 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/config.dart';
 import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../data/assistant_models.dart';
 import '../data/assistant_repository.dart';
 import '../domain/chat_message.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/chat_composer.dart';
+import 'widgets/confirmation_shortcuts.dart';
+import 'widgets/protocol_created_card.dart';
 import 'widgets/typing_indicator.dart';
 
-/// Tela de conversa do assistente — UI + POST /v1/portal/assistant/message.
+/// Tela de conversa do assistente — retoma histórico e envia mensagens.
 class AssistantChatPage extends StatefulWidget {
-  const AssistantChatPage({super.key, this.initialDraft});
+  const AssistantChatPage({
+    super.key,
+    this.initialDraft,
+    this.onTrackProtocol,
+  });
 
   final String? initialDraft;
+
+  /// Hook de teste / override de navegação.
+  final ProtocolTrackCallback? onTrackProtocol;
 
   @override
   State<AssistantChatPage> createState() => _AssistantChatPageState();
@@ -23,27 +34,20 @@ class AssistantChatPage extends StatefulWidget {
 class _AssistantChatPageState extends State<AssistantChatPage> {
   final _ctrl = TextEditingController();
   final _scroll = ScrollController();
-  late final List<ChatMessage> _messages;
+  final List<ChatMessage> _messages = [];
+  final _presenter = AssistantReplyPresenter();
+  bool _loadingConversation = true;
   bool _typing = false;
+  bool _clearing = false;
   bool _sentInitial = false;
   int _seq = 100;
+
+  String _nextId([String prefix = 'm']) => '$prefix${_seq++}';
 
   @override
   void initState() {
     super.initState();
-    _messages = assistantWelcomeMessages();
-    final draft = widget.initialDraft?.trim();
-    if (draft != null && draft.isNotEmpty) {
-      _ctrl.text = draft;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!_sentInitial && mounted) {
-          _sentInitial = true;
-          _send();
-        }
-      });
-    } else {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToEnd());
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
   }
 
   @override
@@ -53,15 +57,120 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     super.dispose();
   }
 
-  Future<void> _send() async {
-    final text = _ctrl.text.trim();
-    if (text.isEmpty || _typing) return;
+  Future<void> _bootstrap() async {
+    await _loadConversation();
+    if (!mounted) return;
+
+    final draft = widget.initialDraft?.trim();
+    if (draft != null && draft.isNotEmpty && !_sentInitial) {
+      _sentInitial = true;
+      _ctrl.text = draft;
+      await _send();
+    }
+  }
+
+  Future<void> _loadConversation() async {
+    setState(() => _loadingConversation = true);
+    final repo = context.read<AssistantRepository>();
+
+    try {
+      final conversation = await repo.fetchConversation();
+      if (!mounted) return;
+
+      _presenter.reset();
+      setState(() {
+        _messages
+          ..clear()
+          ..addAll(
+            conversation?.toChatMessages(presenter: _presenter) ??
+                assistantWelcomeMessages(),
+          );
+        _loadingConversation = false;
+      });
+      _scrollToEnd(animated: false);
+    } catch (_) {
+      if (!mounted) return;
+      _presenter.reset();
+      setState(() {
+        _messages
+          ..clear()
+          ..addAll(assistantWelcomeMessages());
+        _loadingConversation = false;
+      });
+      _scrollToEnd(animated: false);
+    }
+  }
+
+  Future<void> _confirmNewConversation() async {
+    if (_typing || _clearing || _loadingConversation) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Nova conversa'),
+          content: const Text(
+            'Isso apaga o histórico atual desta conversa. Deseja continuar?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Confirmar'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true || !mounted) return;
+    await _startNewConversation();
+  }
+
+  Future<void> _startNewConversation() async {
+    setState(() => _clearing = true);
+    final repo = context.read<AssistantRepository>();
+
+    try {
+      await repo.clearConversation();
+      if (!mounted) return;
+      _presenter.reset();
+      setState(() {
+        _messages
+          ..clear()
+          ..addAll(assistantWelcomeMessages());
+        _clearing = false;
+      });
+      _scrollToEnd();
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _clearing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            UserMessages.fromError(e) == UserMessages.offline
+                ? UserMessages.offline
+                : 'Não foi possível iniciar uma nova conversa. Tente novamente.',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _sendText(String text) async {
+    final trimmed = text.trim();
+    if (trimmed.isEmpty || _typing || _loadingConversation || _clearing) {
+      return;
+    }
 
     final userMsg = ChatMessage(
-      id: 'u${_seq++}',
+      id: _nextId('u'),
       sender: ChatSender.user,
       createdAt: DateTime.now(),
-      text: text,
+      text: trimmed,
     );
 
     setState(() {
@@ -74,16 +183,11 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     final repo = context.read<AssistantRepository>();
 
     try {
-      final result = await repo.sendMessage(text);
+      final result = await repo.sendMessage(trimmed);
       if (!mounted) return;
       setState(() {
-        _messages.add(
-          ChatMessage(
-            id: 'a${_seq++}',
-            sender: ChatSender.assistant,
-            createdAt: DateTime.now(),
-            text: result.reply,
-          ),
+        _messages.addAll(
+          _presenter.present(result, nextId: () => _nextId('a')),
         );
       });
     } catch (e) {
@@ -91,7 +195,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
       setState(() {
         _messages.add(
           ChatMessage(
-            id: 'e${_seq++}',
+            id: _nextId('e'),
             sender: ChatSender.assistant,
             createdAt: DateTime.now(),
             text: _friendlyAssistantError(e),
@@ -106,10 +210,25 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     }
   }
 
+  Future<void> _send() => _sendText(_ctrl.text);
+
   String _friendlyAssistantError(Object error) {
     final mapped = UserMessages.fromError(error);
     if (mapped == UserMessages.offline) return mapped;
     return UserMessages.assistantFailed;
+  }
+
+  void _trackProtocol(ChatProtocolInfo protocol) {
+    if (widget.onTrackProtocol != null) {
+      widget.onTrackProtocol!(protocol);
+      return;
+    }
+    final id = protocol.id.trim();
+    if (id.isNotEmpty) {
+      context.push('/citizen/requests/$id');
+    } else {
+      context.go('/citizen/requests');
+    }
   }
 
   void _onPickAttachment(ChatAttachmentKind kind) {
@@ -124,7 +243,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     setState(() {
       _messages.add(
         ChatMessage(
-          id: 'att${_seq++}',
+          id: _nextId('att'),
           sender: ChatSender.user,
           createdAt: DateTime.now(),
           text: 'Anexo preparado para envio futuro.',
@@ -140,19 +259,59 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     );
   }
 
-  void _scrollToEnd() {
+  void _scrollToEnd({bool animated = true}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_scroll.hasClients) return;
+      final extent = _scroll.position.maxScrollExtent;
+      if (!animated) {
+        _scroll.jumpTo(extent);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!_scroll.hasClients) return;
+          _scroll.jumpTo(_scroll.position.maxScrollExtent);
+        });
+        return;
+      }
       _scroll.animateTo(
-        _scroll.position.maxScrollExtent + 120,
+        extent + 120,
         duration: const Duration(milliseconds: 320),
         curve: Curves.easeOutCubic,
       );
     });
   }
 
+  Widget _buildMessageItem(ChatMessage msg) {
+    if (msg.isProtocolCard && msg.protocol != null) {
+      return FadeSlideIn(
+        key: ValueKey(msg.id),
+        child: ProtocolCreatedCard(
+          protocol: msg.protocol!,
+          onTrack: _trackProtocol,
+        ),
+      );
+    }
+
+    return FadeSlideIn(
+      key: ValueKey(msg.id),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (msg.text != null && msg.text!.isNotEmpty)
+            ChatBubble(message: msg),
+          if (msg.showConfirmShortcuts)
+            ConfirmationShortcuts(
+              enabled: !_typing && !_loadingConversation && !_clearing,
+              onConfirm: () => _sendText('Confirmar'),
+              onCorrect: () => _sendText('Corrigir informações'),
+            ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final busy = _loadingConversation || _clearing;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7F8),
       appBar: AppBar(
@@ -195,29 +354,53 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
             ),
           ],
         ),
+        actions: [
+          PopupMenuButton<_AssistantMenuAction>(
+            tooltip: 'Mais opções',
+            enabled: !busy && !_typing,
+            onSelected: (action) {
+              if (action == _AssistantMenuAction.newConversation) {
+                _confirmNewConversation();
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: _AssistantMenuAction.newConversation,
+                child: Text('Nova conversa'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              controller: _scroll,
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-              itemCount: _messages.length + (_typing ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (_typing && index == _messages.length) {
-                  return const FadeSlideIn(child: TypingIndicator());
-                }
-                final msg = _messages[index];
-                return FadeSlideIn(
-                  key: ValueKey(msg.id),
-                  child: ChatBubble(message: msg),
-                );
-              },
-            ),
+            child: busy && _messages.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : Stack(
+                    children: [
+                      ListView.builder(
+                        controller: _scroll,
+                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                        itemCount: _messages.length + (_typing ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (_typing && index == _messages.length) {
+                            return const FadeSlideIn(child: TypingIndicator());
+                          }
+                          return _buildMessageItem(_messages[index]);
+                        },
+                      ),
+                      if (_clearing)
+                        const ColoredBox(
+                          color: Color(0x66FFFFFF),
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                    ],
+                  ),
           ),
           ChatComposer(
             controller: _ctrl,
-            enabled: !_typing,
+            enabled: !_typing && !busy,
             onSend: _send,
             onPickAttachment: _onPickAttachment,
           ),
@@ -226,3 +409,5 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     );
   }
 }
+
+enum _AssistantMenuAction { newConversation }

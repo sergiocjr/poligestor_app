@@ -14,6 +14,8 @@ class UserMessages {
   static const sendFailed = 'Não foi possível enviar. Tente novamente.';
   static const assistantFailed =
       'Não foi possível obter resposta do assistente. Tente novamente.';
+  static const conversationLoadFailed =
+      'Não foi possível carregar a conversa anterior.';
   static const locationDenied = 'Precisamos da sua permissão de localização.';
   static const locationUnavailable = 'Não foi possível obter a localização.';
 

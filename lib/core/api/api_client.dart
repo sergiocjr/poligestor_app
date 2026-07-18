@@ -252,16 +252,43 @@ class ApiClient {
     }
   }
 
+  Future<ApiEnvelope<T>> deleteEnvelope<T>(
+    String path, {
+    Object? data,
+    required T Function(dynamic raw) parse,
+    AuthMode? mode,
+    String? tenantSlug,
+  }) async {
+    try {
+      final response = await _dio.delete<Map<String, dynamic>>(
+        path,
+        data: data,
+        options: Options(
+          extra: {
+            if (mode != null) 'authMode': mode,
+            if (tenantSlug != null) 'tenantSlug': tenantSlug,
+          },
+        ),
+      );
+      return ApiEnvelope.fromJson(response.data ?? {}, parse);
+    } on DioException catch (e) {
+      throw _mapError(e);
+    }
+  }
+
   ApiException _mapError(DioException e) {
     final status = e.response?.statusCode;
     final data = e.response?.data;
 
     if (data is Map<String, dynamic>) {
-      final message = (data['message'] ??
-              data['error'] ??
-              data['msg'] ??
-              'Erro na requisição')
-          .toString();
+      dynamic rawMessage =
+          data['message'] ?? data['error'] ?? data['msg'] ?? 'Erro na requisição';
+      if (rawMessage is Map) {
+        rawMessage = rawMessage['message'] ??
+            rawMessage['code'] ??
+            'Erro na requisição';
+      }
+      final message = rawMessage.toString();
       final errors = data['errors'] is Map<String, dynamic>
           ? data['errors'] as Map<String, dynamic>
           : null;

@@ -5,19 +5,75 @@ import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'assistant_models.dart';
 
-/// Provider HTTP do assistente (POST /v1/portal/assistant/message).
-/// Sem histórico, streaming ou WebSocket.
+/// Provider HTTP do assistente portal.
 class AssistantRepository {
   AssistantRepository(this._api);
 
   final ApiClient _api;
 
   static const path = '/v1/portal/assistant/message';
+  static const conversationPath = '/v1/portal/assistant/conversation';
   static const maxAttempts = 2;
   static const connectTimeout = Duration(seconds: 20);
   static const sendTimeout = Duration(seconds: 20);
   static const receiveTimeout = Duration(seconds: 60);
   static const retryDelay = Duration(milliseconds: 500);
+
+  /// Retorna a conversa ativa, ou `null` se não existir (404 / vazia).
+  Future<AssistantConversation?> fetchConversation({String? tenantSlug}) async {
+    try {
+      final envelope = await _api.getEnvelope<AssistantConversation?>(
+        conversationPath,
+        mode: AuthMode.portal,
+        tenantSlug: tenantSlug,
+        parse: (raw) {
+          if (raw == null) return null;
+          if (raw is Map<String, dynamic>) {
+            return AssistantConversation.fromJson(raw);
+          }
+          if (raw is Map) {
+            return AssistantConversation.fromJson(
+              Map<String, dynamic>.from(raw),
+            );
+          }
+          throw const FormatException(
+            'Resposta inválida de /v1/portal/assistant/conversation',
+          );
+        },
+      );
+      final conversation = envelope.data;
+      if (conversation == null || !conversation.hasMessages) return null;
+      return conversation;
+    } on ApiException catch (e) {
+      if (e.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  /// Limpa o histórico no servidor para iniciar uma nova conversa.
+  Future<void> clearConversation({String? tenantSlug}) async {
+    try {
+      await _api.deleteEnvelope<bool>(
+        conversationPath,
+        mode: AuthMode.portal,
+        tenantSlug: tenantSlug,
+        parse: (_) => true,
+      );
+    } on ApiException catch (e) {
+      // Fallback caso o backend exponha POST /conversation/new.
+      if (e.statusCode == 404 || e.statusCode == 405) {
+        await _api.postEnvelope<bool>(
+          '$conversationPath/new',
+          data: const <String, dynamic>{},
+          mode: AuthMode.portal,
+          tenantSlug: tenantSlug,
+          parse: (_) => true,
+        );
+        return;
+      }
+      rethrow;
+    }
+  }
 
   Future<AssistantReply> sendMessage(String message, {String? tenantSlug}) async {
     final text = message.trim();
