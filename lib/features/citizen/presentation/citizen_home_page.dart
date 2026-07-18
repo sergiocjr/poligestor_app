@@ -261,8 +261,10 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 physics: const NeverScrollableScrollPhysics(),
                                 mainAxisSpacing: 12,
                                 crossAxisSpacing: 12,
+                                // Taller phone cells so FeatureActionCard
+                                // title + description fit without overflow.
                                 childAspectRatio:
-                                    constraints.maxWidth >= 680 ? 1.35 : 1.05,
+                                    constraints.maxWidth >= 680 ? 1.25 : 0.92,
                                 children: [
                                   for (final c in data.quickActions)
                                     FeatureActionCard(

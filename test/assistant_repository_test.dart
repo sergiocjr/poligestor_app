@@ -6,6 +6,7 @@ import 'package:poligestor_app/core/ux/user_messages.dart';
 import 'package:poligestor_app/features/assistant/data/assistant_models.dart';
 import 'package:poligestor_app/features/assistant/data/assistant_repository.dart';
 import 'package:poligestor_app/features/assistant/domain/chat_message.dart';
+import 'package:poligestor_app/features/assistant/presentation/widgets/confirmation_shortcuts.dart';
 import 'package:poligestor_app/features/assistant/presentation/widgets/protocol_created_card.dart';
 
 void main() {
@@ -139,6 +140,45 @@ void main() {
       await tester.pump();
       expect(tracked?.id, 'uuid-1');
       expect(tracked?.number, 'PG-2026-000042');
+    });
+
+    testWidgets('card de confirmação e atalhos não estouram em tela pequena', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(360, 640),
+            textScaler: TextScaler.linear(1.2),
+          ),
+          child: MaterialApp(
+            home: Scaffold(
+              body: ListView(
+                padding: const EdgeInsets.all(16),
+                children: [
+                  ProtocolCreatedCard(
+                    protocol: const ChatProtocolInfo(
+                      id: '1',
+                      number: '2026-000123',
+                      status: 'open',
+                    ),
+                    onTrack: (_) {},
+                  ),
+                  ConfirmationShortcuts(
+                    onConfirm: () {},
+                    onCorrect: () {},
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(const Key('protocol-created-card')), findsOneWidget);
+      expect(find.byKey(const Key('shortcut-confirm')), findsOneWidget);
     });
 
     testWidgets('não assume sucesso sem dados válidos no presenter', (tester) async {

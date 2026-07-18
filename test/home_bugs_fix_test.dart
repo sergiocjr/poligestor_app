@@ -192,6 +192,87 @@ void main() {
   });
 
   group('Widgets principais sem overflow', () {
+    testWidgets('FeatureActionCard no grid do telefone não estoura', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(360, 640),
+            textScaler: TextScaler.linear(1.3),
+          ),
+          child: MaterialApp(
+            home: Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.all(16),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 12,
+                  childAspectRatio: 0.92,
+                  children: [
+                    FeatureActionCard(
+                      icon: Icons.report_problem_outlined,
+                      title: 'Registrar reclamação',
+                      description:
+                          'Relate problemas e acompanhe o protocolo com detalhes longos',
+                      onTap: () {},
+                    ),
+                    FeatureActionCard(
+                      icon: Icons.event_available_outlined,
+                      title: 'Agendar atendimento presencial',
+                      description: 'Marque visita ou horário no gabinete do vereador',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+      expect(find.text('Registrar reclamação'), findsOneWidget);
+    });
+
+    testWidgets('FeatureActionCard resiste a aspect ratio legado 1.05', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+
+      await tester.pumpWidget(
+        MediaQuery(
+          data: const MediaQueryData(
+            size: Size(360, 640),
+            textScaler: TextScaler.linear(1.3),
+          ),
+          child: MaterialApp(
+            home: Scaffold(
+              body: Padding(
+                padding: const EdgeInsets.all(16),
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.05,
+                  children: [
+                    FeatureActionCard(
+                      icon: Icons.help_outline,
+                      title: 'Título longo de ação rápida do cidadão',
+                      description:
+                          'Descrição longa que antes estourava o grid da Home',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('AgendaMiniCard e NewsCard não estourom', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
