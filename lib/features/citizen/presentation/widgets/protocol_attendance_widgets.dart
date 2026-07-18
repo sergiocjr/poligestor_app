@@ -1,0 +1,572 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../../../core/ux/user_messages.dart';
+import '../../../protocols/data/protocol_models.dart';
+
+IconData historyIcon(IconDataForHistory kind) => switch (kind) {
+      IconDataForHistory.inbox => Icons.inbox_rounded,
+      IconDataForHistory.search => Icons.search_rounded,
+      IconDataForHistory.forward => Icons.forward_to_inbox_rounded,
+      IconDataForHistory.progress => Icons.autorenew_rounded,
+      IconDataForHistory.help => Icons.help_outline_rounded,
+      IconDataForHistory.reply => Icons.mark_chat_read_rounded,
+      IconDataForHistory.done => Icons.check_circle_rounded,
+      IconDataForHistory.dot => Icons.circle,
+    };
+
+class ProtocolAwaitingBanner extends StatelessWidget {
+  const ProtocolAwaitingBanner({
+    super.key,
+    required this.question,
+  });
+
+  final String question;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      container: true,
+      label: 'O gabinete precisa de mais informações',
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: scheme.tertiaryContainer.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: scheme.tertiary.withValues(alpha: 0.35)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.info_rounded, color: scheme.tertiary),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'O gabinete precisa de mais informações.',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+              question,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    height: 1.35,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ProtocolHistorySection extends StatelessWidget {
+  const ProtocolHistorySection({super.key, required this.events});
+
+  final List<ProtocolHistoryEvent> events;
+
+  @override
+  Widget build(BuildContext context) {
+    final dateFmt = DateFormat('dd/MM/yyyy');
+    final timeFmt = DateFormat('HH:mm');
+    if (events.isEmpty) {
+      return const Text(UserMessages.emptyHistory);
+    }
+    return Column(
+      children: [
+        for (var i = 0; i < events.length; i++)
+          _HistoryTile(
+            event: events[i],
+            isLast: i == events.length - 1,
+            dateFmt: dateFmt,
+            timeFmt: timeFmt,
+          ),
+      ],
+    );
+  }
+}
+
+class _HistoryTile extends StatelessWidget {
+  const _HistoryTile({
+    required this.event,
+    required this.isLast,
+    required this.dateFmt,
+    required this.timeFmt,
+  });
+
+  final ProtocolHistoryEvent event;
+  final bool isLast;
+  final DateFormat dateFmt;
+  final DateFormat timeFmt;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final icon = historyIcon(ProtocolHistoryLabels.iconFor(event.kind));
+    final when = event.createdAt?.toLocal();
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 32,
+          child: Column(
+            children: [
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: scheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, size: 16, color: scheme.onPrimaryContainer),
+              ),
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 48,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  color: scheme.outlineVariant,
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  event.title,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                if (event.description != null &&
+                    event.description!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    event.description!,
+                    style: TextStyle(color: scheme.onSurfaceVariant),
+                  ),
+                ],
+                if (when != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    '${dateFmt.format(when)} · ${timeFmt.format(when)}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: scheme.onSurfaceVariant,
+                        ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ProtocolConversationPanel extends StatelessWidget {
+  const ProtocolConversationPanel({
+    super.key,
+    required this.messages,
+    required this.composer,
+  });
+
+  final List<ProtocolMessage> messages;
+  final Widget composer;
+
+  @override
+  Widget build(BuildContext context) {
+    final dateFmt = DateFormat('dd/MM · HH:mm');
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (messages.isEmpty)
+          const Padding(
+            padding: EdgeInsets.only(bottom: 12),
+            child: Text(UserMessages.emptyConversation),
+          )
+        else
+          ...messages.map((m) => _MessageBubble(message: m, dateFmt: dateFmt)),
+        const SizedBox(height: 8),
+        composer,
+      ],
+    );
+  }
+}
+
+class _MessageBubble extends StatelessWidget {
+  const _MessageBubble({required this.message, required this.dateFmt});
+
+  final ProtocolMessage message;
+  final DateFormat dateFmt;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final mine = !message.isFromCabinet;
+    final bg = mine
+        ? scheme.primaryContainer.withValues(alpha: 0.65)
+        : scheme.surfaceContainerHighest;
+    final align = mine ? Alignment.centerRight : Alignment.centerLeft;
+    final radius = BorderRadius.only(
+      topLeft: const Radius.circular(16),
+      topRight: const Radius.circular(16),
+      bottomLeft: Radius.circular(mine ? 16 : 4),
+      bottomRight: Radius.circular(mine ? 4 : 16),
+    );
+
+    return Align(
+      alignment: align,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.86,
+        ),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: radius,
+            border: message.isUnread && message.isFromCabinet
+                ? Border.all(color: scheme.primary, width: 1.5)
+                : null,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      message.isFromCabinet
+                          ? (message.authorName ?? 'Gabinete')
+                          : (message.authorName ?? 'Você'),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                            fontWeight: FontWeight.w800,
+                          ),
+                    ),
+                  ),
+                  if (message.isUnread && message.isFromCabinet)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                      child: Text(
+                        'Nova',
+                        style: TextStyle(
+                          color: scheme.onPrimary,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+              if (message.body.trim().isNotEmpty) ...[
+                const SizedBox(height: 6),
+                Text(message.body, softWrap: true),
+              ],
+              if (message.attachments.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                ...message.attachments.map(
+                  (a) => ProtocolAttachmentTile(attachment: a, compact: true),
+                ),
+              ],
+              if (message.createdAt != null) ...[
+                const SizedBox(height: 6),
+                Text(
+                  dateFmt.format(message.createdAt!.toLocal()),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProtocolAttachmentTile extends StatelessWidget {
+  const ProtocolAttachmentTile({
+    super.key,
+    required this.attachment,
+    this.compact = false,
+    this.progress,
+    this.failed = false,
+    this.onRetry,
+    this.onCancel,
+    this.onRemove,
+  });
+
+  final ProtocolAttachment attachment;
+  final bool compact;
+  final double? progress;
+  final bool failed;
+  final VoidCallback? onRetry;
+  final VoidCallback? onCancel;
+  final VoidCallback? onRemove;
+
+  Future<void> _open(BuildContext context) async {
+    final url = attachment.url;
+    if (url == null || url.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
+      );
+      return;
+    }
+    final uri = Uri.tryParse(url);
+    if (uri == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
+      );
+      return;
+    }
+    final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!ok && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(UserMessages.openAttachmentFailed)),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final name = attachment.name ?? 'Arquivo';
+    return Card(
+      margin: EdgeInsets.only(bottom: compact ? 6 : 8),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+        leading: Icon(
+          attachment.isImage
+              ? Icons.image_outlined
+              : Icons.insert_drive_file_outlined,
+          color: scheme.primary,
+        ),
+        title: Text(name, maxLines: 2, overflow: TextOverflow.ellipsis),
+        subtitle: progress != null
+            ? LinearProgressIndicator(value: progress!.clamp(0, 1))
+            : (failed
+                ? const Text('Falha no envio')
+                : (attachment.isImage ? const Text('Imagem') : const Text('Documento'))),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (onCancel != null)
+              IconButton(
+                tooltip: 'Cancelar',
+                onPressed: onCancel,
+                icon: const Icon(Icons.close_rounded),
+              ),
+            if (failed && onRetry != null)
+              IconButton(
+                tooltip: 'Tentar novamente',
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+              ),
+            if (onRemove != null && progress == null && !failed)
+              IconButton(
+                tooltip: 'Remover',
+                onPressed: onRemove,
+                icon: const Icon(Icons.delete_outline_rounded),
+              ),
+            if (attachment.url != null)
+              IconButton(
+                tooltip: attachment.isImage ? 'Ver imagem' : 'Abrir documento',
+                onPressed: () => _open(context),
+                icon: const Icon(Icons.open_in_new_rounded),
+              ),
+          ],
+        ),
+        onTap: attachment.url != null ? () => _open(context) : null,
+      ),
+    );
+  }
+}
+
+class ProtocolRatingCard extends StatefulWidget {
+  const ProtocolRatingCard({
+    super.key,
+    required this.canRate,
+    required this.canEdit,
+    required this.existing,
+    required this.onSubmit,
+    required this.busy,
+  });
+
+  final bool canRate;
+  final bool canEdit;
+  final ProtocolRating? existing;
+  final Future<void> Function(int stars, bool resolved, String? comment)
+      onSubmit;
+  final bool busy;
+
+  @override
+  State<ProtocolRatingCard> createState() => _ProtocolRatingCardState();
+}
+
+class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
+  late int _stars;
+  bool? _resolved;
+  final _comment = TextEditingController();
+  bool _sent = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _stars = widget.existing?.stars ?? 0;
+    _resolved = widget.existing?.resolved;
+    _comment.text = widget.existing?.comment ?? '';
+    _sent = widget.existing != null;
+  }
+
+  @override
+  void didUpdateWidget(covariant ProtocolRatingCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.existing != oldWidget.existing && widget.existing != null) {
+      _stars = widget.existing!.stars;
+      _resolved = widget.existing!.resolved;
+      _comment.text = widget.existing!.comment ?? '';
+      _sent = true;
+    }
+  }
+
+  @override
+  void dispose() {
+    _comment.dispose();
+    super.dispose();
+  }
+
+  bool get _editable =>
+      (widget.canRate && !_sent) || (widget.canEdit && _sent);
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.canRate && widget.existing == null) {
+      return const SizedBox.shrink();
+    }
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Como foi o atendimento?',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (var i = 1; i <= 5; i++)
+                IconButton(
+                  onPressed: !_editable || widget.busy
+                      ? null
+                      : () => setState(() => _stars = i),
+                  icon: Icon(
+                    i <= _stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                    color: scheme.primary,
+                    size: 32,
+                  ),
+                  tooltip: '$i estrela${i > 1 ? 's' : ''}',
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Seu problema foi resolvido?',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 8,
+            children: [
+              ChoiceChip(
+                label: const Text('Sim'),
+                selected: _resolved == true,
+                onSelected: !_editable || widget.busy
+                    ? null
+                    : (_) => setState(() => _resolved = true),
+              ),
+              ChoiceChip(
+                label: const Text('Não'),
+                selected: _resolved == false,
+                onSelected: !_editable || widget.busy
+                    ? null
+                    : (_) => setState(() => _resolved = false),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _comment,
+            enabled: _editable && !widget.busy,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              labelText: 'Comentário (opcional)',
+              alignLabelWithHint: true,
+            ),
+          ),
+          const SizedBox(height: 12),
+          if (_sent && !_editable)
+            Text(
+              UserMessages.ratingSent,
+              style: TextStyle(
+                color: scheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            )
+          else
+            FilledButton(
+              onPressed: !_editable ||
+                      widget.busy ||
+                      _stars < 1 ||
+                      _resolved == null
+                  ? null
+                  : () async {
+                      await widget.onSubmit(
+                        _stars,
+                        _resolved!,
+                        _comment.text.trim().isEmpty
+                            ? null
+                            : _comment.text.trim(),
+                      );
+                      if (mounted) setState(() => _sent = true);
+                    },
+              child: Text(widget.busy ? 'Enviando...' : 'Enviar avaliação'),
+            ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -7,8 +8,10 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
+import '../../notifications/data/notifications_repository.dart';
 import '../../protocols/data/protocol_models.dart';
 import '../../protocols/data/protocols_repository.dart';
+import 'widgets/protocol_attendance_widgets.dart';
 
 class RequestDetailPage extends StatefulWidget {
   const RequestDetailPage({super.key, required this.id});
@@ -19,10 +22,30 @@ class RequestDetailPage extends StatefulWidget {
   State<RequestDetailPage> createState() => _RequestDetailPageState();
 }
 
+class _PendingUpload {
+  _PendingUpload({
+    required this.id,
+    required this.path,
+    required this.name,
+    this.mimeType,
+  });
+
+  final String id;
+  final String path;
+  final String name;
+  final String? mimeType;
+  double? progress;
+  bool failed = false;
+}
+
 class _RequestDetailPageState extends State<RequestDetailPage> {
   Future<ProtocolDetail>? _future;
-  final _commentCtrl = TextEditingController();
+  final _messageCtrl = TextEditingController();
+  final _messageFocus = FocusNode();
   bool _busy = false;
+  bool _ratingBusy = false;
+  final List<_PendingUpload> _pending = [];
+  bool _markedRead = false;
 
   @override
   void didChangeDependencies() {
@@ -32,33 +55,87 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   @override
   void dispose() {
-    _commentCtrl.dispose();
+    _messageCtrl.dispose();
+    _messageFocus.dispose();
     super.dispose();
   }
 
-  Future<ProtocolDetail> _load() {
+  Future<ProtocolDetail> _load() async {
     final auth = context.read<AuthController>();
     final repo = context.read<ProtocolsRepository>();
-    return repo.getById(mode: auth.mode, id: widget.id);
+    final detail = await repo.getById(mode: auth.mode, id: widget.id);
+    if (!_markedRead) {
+      _markedRead = true;
+      // ignore: unawaited_futures
+      _markAsRead(detail);
+    }
+    return detail;
   }
 
   Future<void> _reload() async {
-    setState(() => _future = _load());
+    setState(() {
+      _markedRead = false;
+      _future = _load();
+    });
     await _future;
   }
 
-  Future<void> _sendComment() async {
-    final text = _commentCtrl.text.trim();
-    if (text.isEmpty) return;
+  Future<void> _markAsRead(ProtocolDetail detail) async {
+    if (!mounted) return;
+    final auth = context.read<AuthController>();
+    final protocolsRepo = context.read<ProtocolsRepository>();
+    final notificationsRepo = context.read<NotificationsRepository>();
+    try {
+      await protocolsRepo.markMessagesRead(
+        mode: auth.mode,
+        detail: detail,
+      );
+    } catch (_) {}
+
+    // Marca avisos relacionados via endpoint real de notificações.
+    try {
+      final notes = await notificationsRepo.list(mode: auth.mode);
+      if (!mounted) return;
+      final idStr = '${detail.id}';
+      final number = detail.number;
+      for (final n in notes.where((e) => e.isUnread)) {
+        final link = (n.link ?? '').toLowerCase();
+        final blob = '${n.title} ${n.body ?? ''} ${n.link ?? ''}'.toLowerCase();
+        final match = link.contains(idStr) ||
+            link.contains('/requests/$idStr') ||
+            link.contains('/protocols/$idStr') ||
+            (number != null && blob.contains(number.toLowerCase()));
+        if (!match) continue;
+        try {
+          await notificationsRepo.markRead(mode: auth.mode, id: n.id);
+        } catch (_) {}
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _sendMessage() async {
+    final text = _messageCtrl.text.trim();
+    if (text.isEmpty && _pending.isEmpty) return;
     setState(() => _busy = true);
     try {
       final auth = context.read<AuthController>();
-      await context.read<ProtocolsRepository>().addComment(
-            mode: auth.mode,
-            protocolId: widget.id,
-            body: text,
-          );
-      _commentCtrl.clear();
+      final repo = context.read<ProtocolsRepository>();
+      if (text.isNotEmpty) {
+        await repo.addComment(
+          mode: auth.mode,
+          protocolId: widget.id,
+          body: text,
+        );
+      }
+      for (final p in List<_PendingUpload>.from(_pending)) {
+        await _uploadOne(p);
+      }
+      _messageCtrl.clear();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(UserMessages.messageSent)),
+        );
+      }
       await _reload();
     } catch (e) {
       if (mounted) {
@@ -71,50 +148,113 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
     }
   }
 
-  Future<void> _attachPhoto() async {
+  Future<void> _pick(ImageSource source) async {
     final picker = ImagePicker();
-    final file = await picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 85,
-    );
+    final file = await picker.pickImage(source: source, imageQuality: 85);
     if (file == null) return;
-    await _upload(file.path, file.name, file.mimeType);
+    setState(() {
+      _pending.add(
+        _PendingUpload(
+          id: '${DateTime.now().microsecondsSinceEpoch}',
+          path: file.path,
+          name: file.name,
+          mimeType: file.mimeType,
+        ),
+      );
+    });
   }
 
-  Future<void> _attachGallery() async {
-    final picker = ImagePicker();
-    final file = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (file == null) return;
-    await _upload(file.path, file.name, file.mimeType);
-  }
-
-  Future<void> _attachDocument() async {
+  Future<void> _pickDocument() async {
     final picker = ImagePicker();
     final file = await picker.pickMedia();
     if (file == null) return;
-    await _upload(file.path, file.name, file.mimeType);
+    setState(() {
+      _pending.add(
+        _PendingUpload(
+          id: '${DateTime.now().microsecondsSinceEpoch}',
+          path: file.path,
+          name: file.name,
+          mimeType: file.mimeType,
+        ),
+      );
+    });
   }
 
-  Future<void> _upload(String path, String name, String? mime) async {
-    setState(() => _busy = true);
+  Future<void> _uploadOne(_PendingUpload item) async {
+    setState(() {
+      item.failed = false;
+      item.progress = 0;
+    });
     try {
       final auth = context.read<AuthController>();
       await context.read<ProtocolsRepository>().uploadAttachment(
             mode: auth.mode,
             protocolId: widget.id,
-            filePath: path,
-            fileName: name,
-            mimeType: mime,
+            filePath: item.path,
+            fileName: item.name,
+            mimeType: item.mimeType,
+            uploadId: item.id,
+            onProgress: (p) {
+              if (!mounted) return;
+              setState(() => item.progress = p);
+            },
           );
-      await _reload();
       if (mounted) {
+        setState(() => _pending.removeWhere((e) => e.id == item.id));
+      }
+    } on DioException catch (e) {
+      if (CancelToken.isCancel(e)) {
+        if (mounted) {
+          setState(() => _pending.removeWhere((x) => x.id == item.id));
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(UserMessages.uploadCanceled)),
+          );
+        }
+        return;
+      }
+      if (mounted) {
+        setState(() {
+          item.failed = true;
+          item.progress = null;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Anexo enviado.')),
+          const SnackBar(content: Text(UserMessages.uploadFailed)),
         );
       }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          item.failed = true;
+          item.progress = null;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(UserMessages.uploadFailed)),
+        );
+      }
+    }
+  }
+
+  Future<void> _submitRating(int stars, bool resolved, String? comment) async {
+    final detail = await _future;
+    if (detail == null || !mounted) return;
+    setState(() => _ratingBusy = true);
+    try {
+      final auth = context.read<AuthController>();
+      await context.read<ProtocolsRepository>().submitRating(
+            mode: auth.mode,
+            detail: detail,
+            input: ProtocolRatingInput(
+              stars: stars,
+              resolved: resolved,
+              comment: comment,
+            ),
+          );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(UserMessages.ratingSent)),
+        );
+      }
+      await _reload();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -122,13 +262,25 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
         );
       }
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) setState(() => _ratingBusy = false);
     }
+  }
+
+  String _prazoText(ProtocolDetail p) {
+    if (p.isOverdue) return 'Atrasado';
+    if (p.deadlineLabel != null && p.deadlineLabel!.trim().isNotEmpty) {
+      return p.deadlineLabel!;
+    }
+    if (p.deadlineAt != null) {
+      return DateFormat("dd/MM/yyyy 'às' HH:mm").format(p.deadlineAt!.toLocal());
+    }
+    return 'Sem prazo informado';
   }
 
   @override
   Widget build(BuildContext context) {
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Detalhes da solicitação')),
@@ -144,6 +296,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
                 SkeletonBox(height: 18, width: 160),
                 SizedBox(height: 20),
                 SkeletonBox(height: 120, radius: 18),
+                SizedBox(height: 16),
+                SkeletonBox(height: 180, radius: 18),
               ],
             );
           }
@@ -151,101 +305,272 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
             return AppErrorState(error: snapshot.error, onRetry: _reload);
           }
           final p = snapshot.data!;
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-            children: [
-              FadeSlideIn(
-                child: Text(
-                  p.title,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+          final highlightComposer = p.isAwaitingCitizen;
+
+          return RefreshIndicator(
+            onRefresh: _reload,
+            child: ListView(
+              padding: EdgeInsets.fromLTRB(
+                20,
+                12,
+                20,
+                24 + MediaQuery.viewInsetsOf(context).bottom,
+              ),
+              children: [
+                FadeSlideIn(
+                  child: Text(
+                    p.title,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    if (p.number != null)
+                      Chip(label: Text('Protocolo nº ${p.number}')),
+                    Chip(label: Text(ProtocolStatusLabel.pt(p.status))),
+                    if (p.category != null) Chip(label: Text(p.category!)),
+                    if (p.priority != null)
+                      Chip(
+                        label: Text(
+                          'Prioridade: ${ProtocolPriorityLabel.pt(p.priority)}',
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _MetaRow(
+                  label: 'Aberta em',
+                  value: p.createdAt != null
+                      ? dateFmt.format(p.createdAt!.toLocal())
+                      : '—',
+                ),
+                _MetaRow(
+                  label: 'Última atualização',
+                  value: (p.updatedAt ?? p.createdAt) != null
+                      ? dateFmt.format((p.updatedAt ?? p.createdAt)!.toLocal())
+                      : '—',
+                ),
+                if (p.address != null)
+                  _MetaRow(label: 'Endereço', value: p.address!),
+                if (p.publicAssignee != null)
+                  _MetaRow(label: 'Responsável', value: p.publicAssignee!),
+                _MetaRow(
+                  label: 'Prazo',
+                  value: _prazoText(p),
+                  emphasize: p.isOverdue,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'Descrição',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w800,
                       ),
                 ),
-              ),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  if (p.number != null) Chip(label: Text('#${p.number}')),
-                  Chip(label: Text(ProtocolStatusLabel.pt(p.status))),
-                  if (p.category != null) Chip(label: Text(p.category!)),
-                  if (p.createdAt != null)
-                    Chip(label: Text(dateFmt.format(p.createdAt!.toLocal()))),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text('Descrição',
-                  style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 6),
-              Text(
-                p.description?.isNotEmpty == true
-                    ? p.description!
-                    : 'Sem descrição.',
-              ),
-              SectionHeader(title: 'Anexos'),
-              Wrap(
-                spacing: 8,
-                children: [
-                  OutlinedButton.icon(
-                    onPressed: _busy ? null : _attachPhoto,
-                    icon: const Icon(Icons.photo_camera_outlined),
-                    label: const Text('Foto'),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _busy ? null : _attachGallery,
-                    icon: const Icon(Icons.image_outlined),
-                    label: const Text('Galeria'),
-                  ),
-                  OutlinedButton.icon(
-                    onPressed: _busy ? null : _attachDocument,
-                    icon: const Icon(Icons.attach_file),
-                    label: const Text('Documento'),
+                const SizedBox(height: 6),
+                Text(
+                  p.description?.isNotEmpty == true
+                      ? p.description!
+                      : 'Sem descrição.',
+                  softWrap: true,
+                ),
+                if (p.isAwaitingCitizen && p.pendingQuestion != null) ...[
+                  const SizedBox(height: 16),
+                  ProtocolAwaitingBanner(question: p.pendingQuestion!),
+                ] else if (p.isAwaitingCitizen) ...[
+                  const SizedBox(height: 16),
+                  ProtocolAwaitingBanner(
+                    question:
+                        'Responda na conversa abaixo para continuar o atendimento.',
                   ),
                 ],
-              ),
-              const SizedBox(height: 8),
-              if (p.attachments.isEmpty)
-                const Text('Nenhum anexo.')
-              else
-                ...p.attachments.map(
-                  (a) => ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.insert_drive_file_outlined),
-                    title: Text(a.name ?? 'Arquivo'),
+                const SectionHeader(title: 'Anexos'),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: _busy ? null : () => _pick(ImageSource.camera),
+                      icon: const Icon(Icons.photo_camera_outlined),
+                      label: const Text('Foto'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed:
+                          _busy ? null : () => _pick(ImageSource.gallery),
+                      icon: const Icon(Icons.image_outlined),
+                      label: const Text('Galeria'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: _busy ? null : _pickDocument,
+                      icon: const Icon(Icons.attach_file),
+                      label: const Text('Documento'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                if (p.attachments.isEmpty && _pending.isEmpty)
+                  const Text('Nenhum anexo.')
+                else ...[
+                  ...p.attachments.map(
+                    (a) => ProtocolAttachmentTile(attachment: a),
+                  ),
+                  ..._pending.map(
+                    (u) => ProtocolAttachmentTile(
+                      attachment: ProtocolAttachment(
+                        id: u.id,
+                        name: u.name,
+                        mimeType: u.mimeType,
+                      ),
+                      progress: u.progress,
+                      failed: u.failed,
+                      onCancel: () {
+                        context
+                            .read<ProtocolsRepository>()
+                            .cancelUpload(u.id);
+                        setState(
+                          () => _pending.removeWhere((e) => e.id == u.id),
+                        );
+                      },
+                      onRetry: () => _uploadOne(u),
+                      onRemove: u.progress == null
+                          ? () => setState(
+                                () =>
+                                    _pending.removeWhere((e) => e.id == u.id),
+                              )
+                          : null,
+                    ),
+                  ),
+                ],
+                const SectionHeader(
+                  title: 'Conversa',
+                  subtitle: 'Troca de mensagens com o gabinete',
+                ),
+                ProtocolConversationPanel(
+                  messages: p.messages,
+                  composer: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: highlightComposer
+                          ? scheme.tertiaryContainer.withValues(alpha: 0.45)
+                          : scheme.surfaceContainerLowest,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: highlightComposer
+                            ? scheme.tertiary
+                            : scheme.outlineVariant,
+                        width: highlightComposer ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _messageCtrl,
+                          focusNode: _messageFocus,
+                          minLines: highlightComposer ? 3 : 2,
+                          maxLines: 5,
+                          textInputAction: TextInputAction.newline,
+                          decoration: InputDecoration(
+                            labelText: highlightComposer
+                                ? 'Sua resposta ao gabinete'
+                                : 'Escreva uma mensagem',
+                            alignLabelWithHint: true,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            IconButton(
+                              tooltip: 'Anexar foto',
+                              onPressed: _busy
+                                  ? null
+                                  : () => _pick(ImageSource.gallery),
+                              icon: const Icon(Icons.image_outlined),
+                            ),
+                            IconButton(
+                              tooltip: 'Anexar documento',
+                              onPressed: _busy ? null : _pickDocument,
+                              icon: const Icon(Icons.attach_file),
+                            ),
+                            const Spacer(),
+                            FilledButton.icon(
+                              onPressed: _busy ? null : () => _sendMessage(),
+                              icon: const Icon(Icons.send_rounded),
+                              label: Text(_busy ? 'Enviando...' : 'Enviar'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              const SectionHeader(title: 'Linha do tempo'),
-              if (p.comments.isEmpty)
-                const Text('Sem atualizações ainda.')
-              else
-                ...p.comments.asMap().entries.map((entry) {
-                  final i = entry.key;
-                  final c = entry.value;
-                  return RequestTimelineTile(
-                    title: c.body,
-                    statusLabel: [
-                      if (c.authorName != null) c.authorName!,
-                      if (c.createdAt != null)
-                        dateFmt.format(c.createdAt!.toLocal()),
-                    ].join(' · '),
-                    isLast: i == p.comments.length - 1,
-                  );
-                }),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _commentCtrl,
-                decoration: InputDecoration(
-                  labelText: 'Adicionar comentário',
-                  suffixIcon: IconButton(
-                    onPressed: _busy ? null : _sendComment,
-                    icon: const Icon(Icons.send_rounded),
+                const SectionHeader(title: 'Histórico'),
+                ProtocolHistorySection(events: p.history),
+                if (p.canRate || p.rating != null) ...[
+                  const SizedBox(height: 8),
+                  const SectionHeader(title: 'Avaliação'),
+                  ProtocolRatingCard(
+                    canRate: p.canRate,
+                    canEdit: p.canEditRating,
+                    existing: p.rating,
+                    busy: _ratingBusy,
+                    onSubmit: _submitRating,
                   ),
-                ),
-              ),
-            ],
+                ],
+                const SizedBox(height: 24),
+              ],
+            ),
           );
         },
+      ),
+    );
+  }
+}
+
+class _MetaRow extends StatelessWidget {
+  const _MetaRow({
+    required this.label,
+    required this.value,
+    this.emphasize = false,
+  });
+
+  final String label;
+  final String value;
+  final bool emphasize;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              softWrap: true,
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: emphasize ? scheme.error : null,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
