@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +13,10 @@ import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
 import '../../notifications/data/notifications_repository.dart';
+import '../../notifications/domain/notifications_controller.dart';
 import '../../protocols/data/protocol_models.dart';
 import '../../protocols/data/protocols_repository.dart';
+import '../../protocols/domain/protocol_message_merge.dart';
 import 'widgets/protocol_attendance_widgets.dart';
 
 class RequestDetailPage extends StatefulWidget {
@@ -51,6 +55,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   final List<_PendingUpload> _pending = [];
   bool _markedRead = false;
   bool _openedSuccessfully = false;
+  ProtocolDetail? _cached;
+  Timer? _pollTimer;
+  bool _newMessagesBanner = false;
 
   /// Loading local do composer/envio — nunca cobre a tela inteira.
   bool get _composerBusy => _busy || _picking;
@@ -69,11 +76,21 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   @override
   void dispose() {
+    _pollTimer?.cancel();
     _messageFocus.removeListener(_onComposerFocusChange);
     _scrollController.dispose();
     _messageCtrl.dispose();
     _messageFocus.dispose();
     super.dispose();
+  }
+
+  void _startPolling() {
+    _pollTimer?.cancel();
+    // Fallback REST enquanto não há WebSocket/contrato Fase 7.
+    _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      // ignore: discarded_futures
+      _softRefresh();
+    });
   }
 
   void _onComposerFocusChange() {
@@ -129,6 +146,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       }
       final detail = await repo.getById(mode: auth.mode, id: widget.id);
       _openedSuccessfully = true;
+      _cached = detail;
+      _startPolling();
       _logConversation(detail);
       if (kDebugMode) {
         final keys = detail.raw?.keys.toList() ?? const [];
@@ -178,6 +197,80 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           _busy = false;
           _picking = false;
         });
+      }
+    }
+  }
+
+  Future<void> _softRefresh() async {
+    if (!mounted || _busy || _picking) return;
+    try {
+      final auth = context.read<AuthController>();
+      final repo = context.read<ProtocolsRepository>();
+      final fresh = await repo.getById(mode: auth.mode, id: widget.id);
+      if (!mounted) return;
+      final prev = _cached;
+      final msgChanged = prev == null ||
+          prev.messages.length != fresh.messages.length ||
+          prev.status != fresh.status ||
+          prev.updatedAt != fresh.updatedAt;
+      if (!msgChanged) return;
+
+      final nearEnd = !_scrollController.hasClients ||
+          isNearScrollEnd(
+            _scrollController.offset,
+            _scrollController.position.maxScrollExtent,
+          );
+
+      final mergedMessages = mergeProtocolMessages(
+        prev?.messages ?? const [],
+        fresh.messages,
+      );
+      final merged = ProtocolDetail(
+        id: fresh.id,
+        title: fresh.title,
+        number: fresh.number,
+        status: fresh.status,
+        priority: fresh.priority,
+        category: fresh.category,
+        createdAt: fresh.createdAt,
+        updatedAt: fresh.updatedAt,
+        description: fresh.description,
+        unreadCount: fresh.unreadCount,
+        hasUnread: fresh.hasUnread,
+        lastMessagePreview: fresh.lastMessagePreview,
+        awaitingCitizen: fresh.awaitingCitizen,
+        address: fresh.address,
+        publicAssignee: fresh.publicAssignee,
+        deadlineAt: fresh.deadlineAt,
+        deadlineLabel: fresh.deadlineLabel,
+        isOverdue: fresh.isOverdue,
+        messages: mergedMessages,
+        history: fresh.history,
+        attachments: fresh.attachments,
+        pendingQuestion: fresh.pendingQuestion,
+        canRate: fresh.canRate,
+        canEditRating: fresh.canEditRating,
+        rating: fresh.rating,
+        markReadUrl: fresh.markReadUrl,
+        rateUrl: fresh.rateUrl,
+        raw: fresh.raw,
+      );
+
+      setState(() {
+        _cached = merged;
+        _future = Future.value(merged);
+        _newMessagesBanner = !nearEnd &&
+            (prev?.messages.length ?? 0) < merged.messages.length;
+      });
+      if (nearEnd) {
+        _scrollToEnd();
+        _newMessagesBanner = false;
+      }
+      // ignore: discarded_futures
+      context.read<NotificationsController>().refresh();
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[RequestDetail] softRefresh error=$e');
       }
     }
   }
@@ -734,6 +827,21 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
         final content = hasData && detail != null
             ? Column(
                 children: [
+                  if (_newMessagesBanner)
+                    Material(
+                      color: scheme.primaryContainer,
+                      child: ListTile(
+                        dense: true,
+                        title: const Text('Há novas mensagens'),
+                        trailing: TextButton(
+                          onPressed: () {
+                            setState(() => _newMessagesBanner = false);
+                            _scrollToEnd();
+                          },
+                          child: const Text('Ver'),
+                        ),
+                      ),
+                    ),
                   Expanded(child: body),
                   _buildComposer(detail, scheme),
                 ],
