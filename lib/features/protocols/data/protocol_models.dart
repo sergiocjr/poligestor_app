@@ -41,11 +41,6 @@ class ProtocolSummary {
             json['descricao'] ??
             'Solicitação')
         .toString();
-    final createdRaw = json['created_at'] ?? json['createdAt'] ?? json['data'];
-    final updatedRaw = json['updated_at'] ??
-        json['updatedAt'] ??
-        json['ultima_atualizacao'] ??
-        json['last_update'];
     final unread = _asInt(
       json['unread_count'] ??
           json['mensagens_nao_lidas'] ??
@@ -64,15 +59,21 @@ class ProtocolSummary {
             json['last_public_message'] ??
             json['preview'])
         ?.toString();
+    final updatedRaw = json['updated_at'] ??
+        json['updatedAt'] ??
+        json['last_updated_at'] ??
+        json['ultima_atualizacao'] ??
+        json['last_update'];
+    final createdRaw = json['created_at'] ?? json['createdAt'] ?? json['data'];
 
     return ProtocolSummary(
-      id: json['id'],
+      id: json['id'] ?? json['uuid'] ?? json['protocol_id'] ?? '',
       title: title,
       number: (json['number'] ?? json['numero'] ?? json['code'] ?? json['protocolo'])
           ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
       priority: (json['priority'] ?? json['prioridade'])?.toString(),
-      category: (json['category'] ?? json['categoria'])?.toString(),
+      category: _categoryLabel(json['category'] ?? json['categoria']),
       description: (json['description'] ?? json['descricao'])?.toString(),
       createdAt:
           createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
@@ -80,7 +81,11 @@ class ProtocolSummary {
           updatedRaw != null ? DateTime.tryParse(updatedRaw.toString()) : null,
       unreadCount: unread,
       hasUnread: unread > 0 ||
-          _asBool(json['has_unread'] ?? json['tem_nao_lidas']),
+          _asBool(
+            json['has_unread'] ??
+                json['tem_nao_lidas'] ??
+                json['has_new_message'],
+          ),
       lastMessagePreview:
           preview != null && preview.trim().isNotEmpty ? preview.trim() : null,
       awaitingCitizen: awaiting,
@@ -141,6 +146,13 @@ class ProtocolMessage {
     if (author is Map) {
       name = (author['name'] ?? author['nome'])?.toString();
       role = (author['role'] ?? author['tipo'] ?? author['type'])?.toString();
+    } else if (author is String && author.trim().isNotEmpty) {
+      name = author.trim();
+      // Contrato portal: author "you" = cidadão.
+      if (name.toLowerCase() == 'you' || name.toLowerCase() == 'voce') {
+        role = 'citizen';
+        name = 'Você';
+      }
     }
     name ??= (json['author_name'] ??
             json['remetente'] ??
@@ -378,33 +390,40 @@ class ProtocolDetail extends ProtocolSummary {
         json['status_history'] ??
         json['timeline'] ??
         const [];
-    // Se timeline foi usada como comments no legado e também como history,
-    // preferimos messages/comments para conversa e history/events para histórico.
-    final usingTimelineAsHistory = json['history'] == null &&
-        json['historico'] == null &&
-        json['events'] == null &&
-        json['status_history'] == null &&
-        json['messages'] == null &&
-        json['conversation'] == null &&
-        json['comments'] != null;
 
     final attachmentsRaw = json['attachments'] ?? json['anexos'] ?? const [];
 
     final messages = _parseMessages(messagesRaw)
         .where((m) => !m.isInternal)
-        .toList();
+        .toList()
+      ..sort((a, b) {
+        final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return aAt.compareTo(bAt);
+      });
 
-    var history = _parseHistory(historyRaw).where((e) => !e.isInternal).toList();
-    if (usingTimelineAsHistory && history.isEmpty) {
-      // Legado: timeline era só comments — histórico fica vazio aqui;
-      // a conversa usa comments.
+    var history = _parseHistory(historyRaw).where((e) => !e.isInternal).toList()
+      ..sort((a, b) {
+        final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return aAt.compareTo(bAt);
+      });
+    // API atual: timeline = histórico; comments = conversa.
+    // Se só comments existirem e timeline vazia, não inventar histórico.
+    if (json['timeline'] == null &&
+        json['history'] == null &&
+        json['historico'] == null &&
+        json['events'] == null &&
+        json['status_history'] == null) {
       history = const [];
     }
-    // Se a API mandou timeline como history e comments separados:
-    if (json['timeline'] != null &&
-        json['comments'] != null &&
-        history.isEmpty) {
-      history = _parseHistory(json['timeline']).where((e) => !e.isInternal).toList();
+    if (json['timeline'] != null && history.isEmpty) {
+      history = _parseHistory(json['timeline']).where((e) => !e.isInternal).toList()
+        ..sort((a, b) {
+          final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+          return aAt.compareTo(bAt);
+        });
     }
 
     final links = json['links'] ?? json['_links'] ?? json['actions'];
@@ -430,7 +449,21 @@ class ProtocolDetail extends ProtocolSummary {
     ProtocolRating? rating;
     if (ratingRaw is Map) {
       rating = ProtocolRating.fromJson(Map<String, dynamic>.from(ratingRaw));
+    } else if (ratingRaw != null) {
+      final stars = _asInt(ratingRaw);
+      if (stars > 0) {
+        rating = ProtocolRating(
+          stars: stars.clamp(1, 5),
+          resolved: _asBoolOrNull(json['rating_resolved']),
+          comment: (json['rating_comment'] ?? json['comentario_avaliacao'])
+              ?.toString(),
+        );
+      }
     }
+
+    // links.rate pode vir null explicitamente.
+    if (rateUrl == 'null' || rateUrl == 'NULL') rateUrl = null;
+    if (markReadUrl == 'null' || markReadUrl == 'NULL') markReadUrl = null;
 
     final canRate = _asBool(
           json['can_rate'] ??
@@ -525,13 +558,7 @@ class ProtocolDetail extends ProtocolSummary {
       isOverdue: overdue,
       messages: messages,
       history: history,
-      attachments: (attachmentsRaw is List)
-          ? attachmentsRaw
-              .whereType<Map>()
-              .map((e) =>
-                  ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
-          : const [],
+      attachments: _parseAttachments(attachmentsRaw),
       pendingQuestion:
           pending != null && pending.trim().isNotEmpty ? pending.trim() : null,
       canRate: canRate,
@@ -545,20 +572,47 @@ class ProtocolDetail extends ProtocolSummary {
 
   static List<ProtocolMessage> _parseMessages(dynamic raw) {
     if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
-        .map((e) => ProtocolMessage.fromJson(Map<String, dynamic>.from(e)))
-        .where((m) => m.body.trim().isNotEmpty || m.attachments.isNotEmpty)
-        .toList();
+    final out = <ProtocolMessage>[];
+    for (final e in raw) {
+      if (e is! Map) continue;
+      try {
+        final m = ProtocolMessage.fromJson(Map<String, dynamic>.from(e));
+        if (m.body.trim().isNotEmpty || m.attachments.isNotEmpty) {
+          out.add(m);
+        }
+      } catch (_) {
+        // Item opcional inválido não derruba o detalhe.
+      }
+    }
+    return out;
   }
 
   static List<ProtocolHistoryEvent> _parseHistory(dynamic raw) {
     if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
-        .map((e) =>
-            ProtocolHistoryEvent.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
+    final out = <ProtocolHistoryEvent>[];
+    for (final e in raw) {
+      if (e is! Map) continue;
+      try {
+        out.add(
+          ProtocolHistoryEvent.fromJson(Map<String, dynamic>.from(e)),
+        );
+      } catch (_) {
+        // Item opcional inválido não derruba o detalhe.
+      }
+    }
+    return out;
+  }
+
+  static List<ProtocolAttachment> _parseAttachments(dynamic raw) {
+    if (raw is! List) return const [];
+    final out = <ProtocolAttachment>[];
+    for (final e in raw) {
+      if (e is! Map) continue;
+      try {
+        out.add(ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)));
+      } catch (_) {}
+    }
+    return out;
   }
 }
 
@@ -861,6 +915,21 @@ bool _roleIsCabinet(String? role) {
       r == 'cabinet' ||
       r == 'admin' ||
       r == 'agent';
+}
+
+String? _categoryLabel(dynamic raw) {
+  if (raw == null) return null;
+  if (raw is String) {
+    final t = raw.trim();
+    return t.isEmpty ? null : t;
+  }
+  if (raw is Map) {
+    final name = (raw['name'] ?? raw['nome'] ?? raw['label'] ?? raw['slug'])
+        ?.toString()
+        .trim();
+    if (name != null && name.isNotEmpty) return name;
+  }
+  return null;
 }
 
 int _asInt(dynamic v) {

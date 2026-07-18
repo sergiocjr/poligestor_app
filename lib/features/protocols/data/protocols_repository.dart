@@ -13,6 +13,7 @@ class CreateProtocolInput {
     this.latitude,
     this.longitude,
     this.locationLabel,
+    this.dataConsent = true,
   });
 
   final String subject;
@@ -22,12 +23,15 @@ class CreateProtocolInput {
   final double? latitude;
   final double? longitude;
   final String? locationLabel;
+  final bool dataConsent;
 
   Map<String, dynamic> toJson() => {
         'subject': subject,
+        'title': subject,
         'description': description,
         if (category != null) 'category': category,
         'priority': priority,
+        'data_consent': dataConsent,
         if (latitude != null || longitude != null || locationLabel != null)
           'metadata': {
             if (latitude != null) 'latitude': latitude,
@@ -144,8 +148,7 @@ class ProtocolsRepository {
     return envelope.data;
   }
 
-  /// Marca mensagens como lidas quando a API expõe URL dedicada no detalhe.
-  /// Caso contrário retorna `false` (sem inventar rota).
+  /// Marca mensagens como lidas via POST em links.read (contrato atual).
   Future<bool> markMessagesRead({
     required AuthMode mode,
     required ProtocolDetail detail,
@@ -167,20 +170,7 @@ class ProtocolsRepository {
       );
       return true;
     } catch (_) {
-      try {
-        await _api.patchEnvelope<Map<String, dynamic>>(
-          path,
-          data: const {'read': true},
-          parse: (raw) {
-            if (raw is Map<String, dynamic>) return raw;
-            if (raw is Map) return Map<String, dynamic>.from(raw);
-            return <String, dynamic>{};
-          },
-        );
-        return true;
-      } catch (_) {
-        return false;
-      }
+      return false;
     }
   }
 

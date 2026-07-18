@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../auth/auth_controller.dart';
@@ -20,8 +21,13 @@ import '../../features/more/presentation/more_page.dart';
 import '../../features/protocols/presentation/protocol_detail_page.dart';
 import '../../features/protocols/presentation/protocols_page.dart';
 
+/// Navigator raiz — detalhes de solicitação sobem acima do CitizenShell
+/// para não cair no IndexedStack da aba (tela branca com AppBar/nav).
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 GoRouter createAppRouter(AuthController auth) {
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: '/splash',
     refreshListenable: auth,
     redirect: (context, state) {
@@ -140,6 +146,8 @@ GoRouter createAppRouter(AuthController auth) {
                   ),
                   GoRoute(
                     path: ':id',
+                    // Fora do IndexedStack do shell — evita body vazio.
+                    parentNavigatorKey: rootNavigatorKey,
                     builder: (context, state) => RequestDetailPage(
                       id: state.pathParameters['id']!,
                     ),

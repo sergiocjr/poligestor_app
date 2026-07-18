@@ -202,6 +202,7 @@ class PortalHomeData {
   static ProtocolSummary _protocolFromHomeJson(Map<String, dynamic> json) {
     final updated = json['ultima_atualizacao'] ??
         json['updated_at'] ??
+        json['last_updated_at'] ??
         json['created_at'];
     final unread = () {
       final v = json['unread_count'] ??
@@ -210,6 +211,14 @@ class PortalHomeData {
       if (v is int) return v;
       return int.tryParse(v?.toString() ?? '') ?? 0;
     }();
+    final category = json['categoria'] ?? json['category'];
+    String? categoryLabel;
+    if (category is Map) {
+      categoryLabel = (category['name'] ?? category['nome'] ?? category['slug'])
+          ?.toString();
+    } else {
+      categoryLabel = category?.toString();
+    }
     return ProtocolSummary(
       id: json['id'],
       title: (json['titulo'] ?? json['title'] ?? json['subject'] ?? 'Solicitação')
@@ -217,14 +226,15 @@ class PortalHomeData {
       number: (json['protocolo'] ?? json['number'] ?? json['numero'])
           ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
-      category: (json['categoria'] ?? json['category'])?.toString(),
+      category: categoryLabel,
       createdAt: updated != null ? DateTime.tryParse(updated.toString()) : null,
       updatedAt: updated != null ? DateTime.tryParse(updated.toString()) : null,
       description: json['description']?.toString(),
       unreadCount: unread,
-      hasUnread: unread > 0,
+      hasUnread: unread > 0 || json['has_new_message'] == true,
       lastMessagePreview: (json['last_message_preview'] ??
               json['ultima_resposta'] ??
+              json['last_public_message'] ??
               json['preview'])
           ?.toString(),
       awaitingCitizen: (json['awaiting_citizen'] == true) ||

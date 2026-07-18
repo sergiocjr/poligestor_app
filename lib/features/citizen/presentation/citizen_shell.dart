@@ -15,16 +15,11 @@ class CitizenShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Sem AnimatedSwitcher/KeyedSubtree por índice: ao abrir
+    // /citizen/requests/:id o índice da aba não muda e o switcher
+    // deixava o body vazio (tela branca com AppBar/nav).
     return Scaffold(
-      body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 220),
-        switchInCurve: Curves.easeOut,
-        switchOutCurve: Curves.easeIn,
-        child: KeyedSubtree(
-          key: ValueKey(navigationShell.currentIndex),
-          child: navigationShell,
-        ),
-      ),
+      body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _onTap,
