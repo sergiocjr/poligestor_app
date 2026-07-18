@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/config.dart';
+import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../data/assistant_repository.dart';
 import '../domain/chat_message.dart';
 import 'widgets/chat_bubble.dart';
 import 'widgets/chat_composer.dart';
 import 'widgets/typing_indicator.dart';
 
-/// Tela de conversa do assistente — interface apenas (dados mockados).
-/// Sem Gemini, WebSocket ou streaming nesta sprint.
+/// Tela de conversa do assistente — UI + POST /v1/portal/assistant/message.
 class AssistantChatPage extends StatefulWidget {
   const AssistantChatPage({super.key, this.initialDraft});
 
@@ -29,7 +31,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
   @override
   void initState() {
     super.initState();
-    _messages = MockAssistantConversation.seed();
+    _messages = assistantWelcomeMessages();
     final draft = widget.initialDraft?.trim();
     if (draft != null && draft.isNotEmpty) {
       _ctrl.text = draft;
@@ -69,22 +71,45 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     });
     _scrollToEnd();
 
-    // Simulação local de digitação — sem rede / IA.
-    await Future<void>.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
+    final repo = context.read<AssistantRepository>();
 
-    final reply = ChatMessage(
-      id: 'a${_seq++}',
-      sender: ChatSender.assistant,
-      createdAt: DateTime.now(),
-      text: MockAssistantConversation.mockReply(text),
-    );
+    try {
+      final result = await repo.sendMessage(text);
+      if (!mounted) return;
+      setState(() {
+        _messages.add(
+          ChatMessage(
+            id: 'a${_seq++}',
+            sender: ChatSender.assistant,
+            createdAt: DateTime.now(),
+            text: result.reply,
+          ),
+        );
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _messages.add(
+          ChatMessage(
+            id: 'e${_seq++}',
+            sender: ChatSender.assistant,
+            createdAt: DateTime.now(),
+            text: _friendlyAssistantError(e),
+          ),
+        );
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _typing = false);
+        _scrollToEnd();
+      }
+    }
+  }
 
-    setState(() {
-      _messages.add(reply);
-      _typing = false;
-    });
-    _scrollToEnd();
+  String _friendlyAssistantError(Object error) {
+    final mapped = UserMessages.fromError(error);
+    if (mapped == UserMessages.offline) return mapped;
+    return UserMessages.assistantFailed;
   }
 
   void _onPickAttachment(ChatAttachmentKind kind) {
@@ -158,7 +183,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
                     style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
                   ),
                   Text(
-                    'Demonstração da interface',
+                    'Pronto para ajudar',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,

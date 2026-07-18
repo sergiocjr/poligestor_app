@@ -44,6 +44,6 @@ enum AuthMode {
 
   String get aiChatPath => switch (this) {
         AuthMode.staff => '/v1/ai/chat',
-        AuthMode.portal => '/v1/portal/ai/chat',
+        AuthMode.portal => '/v1/portal/assistant/message',
       };
 }

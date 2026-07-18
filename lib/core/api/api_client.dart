@@ -210,6 +210,9 @@ class ApiClient {
     String? tenantSlug,
     bool skipAuth = false,
     bool skipRefresh = false,
+    Duration? connectTimeout,
+    Duration? sendTimeout,
+    Duration? receiveTimeout,
   }) async {
     try {
       final response = await _dio.post<Map<String, dynamic>>(
@@ -222,6 +225,9 @@ class ApiClient {
             if (mode != null) 'authMode': mode,
             if (tenantSlug != null) 'tenantSlug': tenantSlug,
           },
+          connectTimeout: connectTimeout,
+          sendTimeout: sendTimeout,
+          receiveTimeout: receiveTimeout,
         ),
       );
       return ApiEnvelope.fromJson(response.data ?? {}, parse);

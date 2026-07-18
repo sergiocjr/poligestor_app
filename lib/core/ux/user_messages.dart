@@ -12,12 +12,18 @@ class UserMessages {
   static const emptyAgenda = 'Nenhum compromisso agendado.';
   static const generic = 'Algo deu errado. Tente novamente em instantes.';
   static const sendFailed = 'Não foi possível enviar. Tente novamente.';
+  static const assistantFailed =
+      'Não foi possível obter resposta do assistente. Tente novamente.';
   static const locationDenied = 'Precisamos da sua permissão de localização.';
   static const locationUnavailable = 'Não foi possível obter a localização.';
 
   static String fromError(Object? error) {
     if (error is ApiException) {
       if (error.isUnauthorized || error.isForbidden) return syncFailed;
+      if (error.message.toLowerCase().contains('tempo esgotado') ||
+          error.message.toLowerCase().contains('timeout')) {
+        return assistantFailed;
+      }
       if (error.statusCode == null &&
           (error.message.toLowerCase().contains('conexão') ||
               error.message.toLowerCase().contains('connection'))) {

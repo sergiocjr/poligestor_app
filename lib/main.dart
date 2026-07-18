@@ -10,6 +10,7 @@ import 'core/router/app_router.dart';
 import 'core/storage/token_storage.dart';
 import 'core/theme/app_theme.dart';
 import 'features/agenda/data/appointments_repository.dart';
+import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
 import 'features/notifications/data/notifications_repository.dart';
 import 'features/protocols/data/protocols_repository.dart';
@@ -24,6 +25,7 @@ Future<void> main() async {
   final notificationsRepo = NotificationsRepository(api);
   final appointmentsRepo = AppointmentsRepository(api);
   final portalHomeRepo = PortalHomeRepository(api);
+  final assistantRepo = AssistantRepository(api);
   final router = createAppRouter(auth);
 
   runApp(
@@ -35,6 +37,7 @@ Future<void> main() async {
         Provider.value(value: notificationsRepo),
         Provider.value(value: appointmentsRepo),
         Provider.value(value: portalHomeRepo),
+        Provider.value(value: assistantRepo),
         ChangeNotifierProvider.value(value: auth),
       ],
       child: PoliGestorApp(router: router),
