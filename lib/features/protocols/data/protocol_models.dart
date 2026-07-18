@@ -1,3 +1,7 @@
+/// Models do protocolo / solicitação (portal e staff).
+/// Parsing defensivo: aceita aliases PT/EN sem inventar campos obrigatórios.
+library;
+
 class ProtocolSummary {
   ProtocolSummary({
     required this.id,
@@ -7,7 +11,12 @@ class ProtocolSummary {
     this.priority,
     this.category,
     this.createdAt,
+    this.updatedAt,
     this.description,
+    this.unreadCount = 0,
+    this.hasUnread = false,
+    this.lastMessagePreview,
+    this.awaitingCitizen = false,
   });
 
   final dynamic id;
@@ -17,69 +26,177 @@ class ProtocolSummary {
   final String? priority;
   final String? category;
   final DateTime? createdAt;
+  final DateTime? updatedAt;
   final String? description;
+  final int unreadCount;
+  final bool hasUnread;
+  final String? lastMessagePreview;
+  final bool awaitingCitizen;
 
   factory ProtocolSummary.fromJson(Map<String, dynamic> json) {
     final title = (json['subject'] ??
             json['title'] ??
+            json['titulo'] ??
             json['assunto'] ??
             json['descricao'] ??
-            'Protocolo')
+            'Solicitação')
         .toString();
     final createdRaw = json['created_at'] ?? json['createdAt'] ?? json['data'];
+    final updatedRaw = json['updated_at'] ??
+        json['updatedAt'] ??
+        json['ultima_atualizacao'] ??
+        json['last_update'];
+    final unread = _asInt(
+      json['unread_count'] ??
+          json['mensagens_nao_lidas'] ??
+          json['unread_messages'] ??
+          json['new_messages'],
+    );
+    final awaiting = _asBool(
+          json['awaiting_citizen'] ??
+              json['aguardando_cidadao'] ??
+              json['needs_citizen_reply'] ??
+              json['aguardando_informacao'],
+        ) ||
+        _statusIsAwaitingCitizen(json['status']?.toString());
+    final preview = (json['last_message_preview'] ??
+            json['ultima_resposta'] ??
+            json['last_public_message'] ??
+            json['preview'])
+        ?.toString();
+
     return ProtocolSummary(
       id: json['id'],
       title: title,
-      number: (json['number'] ?? json['numero'] ?? json['code'])?.toString(),
+      number: (json['number'] ?? json['numero'] ?? json['code'] ?? json['protocolo'])
+          ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
-      priority: json['priority']?.toString(),
-      category: json['category']?.toString(),
+      priority: (json['priority'] ?? json['prioridade'])?.toString(),
+      category: (json['category'] ?? json['categoria'])?.toString(),
       description: (json['description'] ?? json['descricao'])?.toString(),
       createdAt:
           createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      updatedAt:
+          updatedRaw != null ? DateTime.tryParse(updatedRaw.toString()) : null,
+      unreadCount: unread,
+      hasUnread: unread > 0 ||
+          _asBool(json['has_unread'] ?? json['tem_nao_lidas']),
+      lastMessagePreview:
+          preview != null && preview.trim().isNotEmpty ? preview.trim() : null,
+      awaitingCitizen: awaiting,
     );
   }
 
   bool get isOpen =>
-      status == 'open' || status == 'aberto' || status == 'waiting';
+      status == 'open' ||
+      status == 'aberto' ||
+      status == 'waiting' ||
+      status == 'recebido' ||
+      status == 'em_analise';
   bool get isInProgress =>
-      status == 'in_progress' || status == 'andamento' || status == 'em_andamento';
+      status == 'in_progress' ||
+      status == 'andamento' ||
+      status == 'em_andamento' ||
+      status == 'encaminhado' ||
+      status == 'respondida';
   bool get isResolved =>
       status == 'resolved' ||
       status == 'closed' ||
       status == 'resolvido' ||
       status == 'concluido';
+  bool get isAwaitingCitizen =>
+      awaitingCitizen || _statusIsAwaitingCitizen(status);
+
+  bool get showUnreadBadge => hasUnread || unreadCount > 0;
 }
 
-class ProtocolComment {
-  ProtocolComment({
+class ProtocolMessage {
+  ProtocolMessage({
     required this.id,
     required this.body,
     this.createdAt,
     this.authorName,
+    this.isFromCabinet = false,
+    this.isUnread = false,
+    this.isInternal = false,
+    this.attachments = const [],
   });
 
   final dynamic id;
   final String body;
   final DateTime? createdAt;
   final String? authorName;
+  final bool isFromCabinet;
+  final bool isUnread;
+  final bool isInternal;
+  final List<ProtocolAttachment> attachments;
 
-  factory ProtocolComment.fromJson(Map<String, dynamic> json) {
+  /// Compatível com usos antigos de [ProtocolComment].
+  String get content => body;
+
+  factory ProtocolMessage.fromJson(Map<String, dynamic> json) {
     final author = json['user'] ?? json['author'] ?? json['creator'];
     String? name;
+    String? role;
     if (author is Map) {
       name = (author['name'] ?? author['nome'])?.toString();
+      role = (author['role'] ?? author['tipo'] ?? author['type'])?.toString();
     }
-    final createdRaw = json['created_at'] ?? json['createdAt'];
-    return ProtocolComment(
-      id: json['id'],
-      body: (json['body'] ?? json['content'] ?? json['message'] ?? '').toString(),
+    name ??= (json['author_name'] ??
+            json['remetente'] ??
+            json['sender_name'] ??
+            json['from'])
+        ?.toString();
+    role ??= (json['author_role'] ?? json['role'] ?? json['sender_role'])
+        ?.toString();
+
+    final visibility =
+        (json['visibility'] ?? json['visibilidade'] ?? 'public').toString();
+    final isInternal = _asBool(json['is_internal'] ?? json['internal']) ||
+        visibility.toLowerCase() == 'internal' ||
+        visibility.toLowerCase() == 'interna';
+
+    final fromCabinet = _asBool(
+          json['is_from_cabinet'] ??
+              json['from_cabinet'] ??
+              json['is_staff'] ??
+              json['from_gabinete'],
+        ) ||
+        _roleIsCabinet(role) ||
+        (name != null &&
+            name.toLowerCase().contains('gabinete'));
+
+    final createdRaw = json['created_at'] ?? json['createdAt'] ?? json['sent_at'];
+    final attachmentsRaw = json['attachments'] ?? json['anexos'] ?? const [];
+    final bodyText = (json['body'] ??
+            json['content'] ??
+            json['message'] ??
+            json['texto'] ??
+            '')
+        .toString();
+
+    return ProtocolMessage(
+      id: json['id'] ?? json['uuid'] ?? createdRaw ?? bodyText.hashCode,
+      body: bodyText,
       authorName: name,
       createdAt:
           createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      isFromCabinet: fromCabinet,
+      isUnread: _asBool(json['is_unread'] ?? json['unread'] ?? json['nova']),
+      isInternal: isInternal,
+      attachments: (attachmentsRaw is List)
+          ? attachmentsRaw
+              .whereType<Map>()
+              .map((e) =>
+                  ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+          : const [],
     );
   }
 }
+
+/// Alias legado.
+typedef ProtocolComment = ProtocolMessage;
 
 class ProtocolAttachment {
   ProtocolAttachment({
@@ -94,13 +211,104 @@ class ProtocolAttachment {
   final String? url;
   final String? mimeType;
 
+  bool get isImage {
+    final m = (mimeType ?? '').toLowerCase();
+    final n = (name ?? '').toLowerCase();
+    return m.startsWith('image/') ||
+        n.endsWith('.jpg') ||
+        n.endsWith('.jpeg') ||
+        n.endsWith('.png') ||
+        n.endsWith('.webp') ||
+        n.endsWith('.gif');
+  }
+
   factory ProtocolAttachment.fromJson(Map<String, dynamic> json) {
     return ProtocolAttachment(
-      id: json['id'],
+      id: json['id'] ?? json['uuid'] ?? json['name'],
       name: (json['name'] ?? json['filename'] ?? json['original_name'])
           ?.toString(),
-      url: (json['url'] ?? json['path'] ?? json['download_url'])?.toString(),
+      url: (json['url'] ??
+              json['path'] ??
+              json['download_url'] ??
+              json['signed_url'])
+          ?.toString(),
       mimeType: (json['mime_type'] ?? json['content_type'])?.toString(),
+    );
+  }
+}
+
+class ProtocolHistoryEvent {
+  ProtocolHistoryEvent({
+    required this.id,
+    required this.title,
+    this.description,
+    this.createdAt,
+    this.kind,
+  });
+
+  final dynamic id;
+  final String title;
+  final String? description;
+  final DateTime? createdAt;
+  final String? kind;
+
+  factory ProtocolHistoryEvent.fromJson(Map<String, dynamic> json) {
+    final createdRaw =
+        json['created_at'] ?? json['createdAt'] ?? json['occurred_at'];
+    final kind = (json['kind'] ??
+            json['type'] ??
+            json['event'] ??
+            json['status'] ??
+            json['codigo'])
+        ?.toString();
+    final title = (json['title'] ??
+            json['titulo'] ??
+            json['label'] ??
+            ProtocolHistoryLabels.titleFor(kind) ??
+            'Atualização')
+        .toString();
+    return ProtocolHistoryEvent(
+      id: json['id'] ?? json['uuid'] ?? createdRaw ?? title.hashCode,
+      title: title,
+      description: (json['description'] ??
+              json['descricao'] ??
+              json['body'] ??
+              json['message'])
+          ?.toString(),
+      createdAt:
+          createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      kind: kind,
+    );
+  }
+
+  bool get isInternal {
+    final k = (kind ?? '').toLowerCase();
+    return k.contains('internal') || k.contains('interna') || k.contains('nota');
+  }
+}
+
+class ProtocolRating {
+  ProtocolRating({
+    required this.stars,
+    this.resolved,
+    this.comment,
+  });
+
+  final int stars;
+  final bool? resolved;
+  final String? comment;
+
+  factory ProtocolRating.fromJson(Map<String, dynamic> json) {
+    final stars = _asInt(
+      json['stars'] ?? json['rating'] ?? json['score'] ?? json['nota'],
+    );
+    return ProtocolRating(
+      stars: stars.clamp(1, 5),
+      resolved: _asBoolOrNull(
+        json['resolved'] ?? json['problema_resolvido'] ?? json['was_resolved'],
+      ),
+      comment: (json['comment'] ?? json['comentario'] ?? json['feedback'])
+          ?.toString(),
     );
   }
 }
@@ -114,20 +322,185 @@ class ProtocolDetail extends ProtocolSummary {
     super.priority,
     super.category,
     super.createdAt,
+    super.updatedAt,
     super.description,
-    this.comments = const [],
+    super.unreadCount,
+    super.hasUnread,
+    super.lastMessagePreview,
+    super.awaitingCitizen,
+    this.address,
+    this.publicAssignee,
+    this.deadlineAt,
+    this.deadlineLabel,
+    this.isOverdue = false,
+    this.messages = const [],
+    this.history = const [],
     this.attachments = const [],
+    this.pendingQuestion,
+    this.canRate = false,
+    this.canEditRating = false,
+    this.rating,
+    this.markReadUrl,
+    this.rateUrl,
     this.raw,
   });
 
-  final List<ProtocolComment> comments;
+  final String? address;
+  final String? publicAssignee;
+  final DateTime? deadlineAt;
+  final String? deadlineLabel;
+  final bool isOverdue;
+  final List<ProtocolMessage> messages;
+  final List<ProtocolHistoryEvent> history;
   final List<ProtocolAttachment> attachments;
+  final String? pendingQuestion;
+  final bool canRate;
+  final bool canEditRating;
+  final ProtocolRating? rating;
+  final String? markReadUrl;
+  final String? rateUrl;
   final Map<String, dynamic>? raw;
+
+  /// Compat: comentários = mensagens públicas.
+  List<ProtocolMessage> get comments => messages;
 
   factory ProtocolDetail.fromJson(Map<String, dynamic> json) {
     final base = ProtocolSummary.fromJson(json);
-    final commentsRaw = json['comments'] ?? json['timeline'] ?? const [];
-    final attachmentsRaw = json['attachments'] ?? const [];
+
+    final messagesRaw = json['messages'] ??
+        json['conversation'] ??
+        json['public_messages'] ??
+        json['comments'] ??
+        const [];
+    final historyRaw = json['history'] ??
+        json['historico'] ??
+        json['events'] ??
+        json['status_history'] ??
+        json['timeline'] ??
+        const [];
+    // Se timeline foi usada como comments no legado e também como history,
+    // preferimos messages/comments para conversa e history/events para histórico.
+    final usingTimelineAsHistory = json['history'] == null &&
+        json['historico'] == null &&
+        json['events'] == null &&
+        json['status_history'] == null &&
+        json['messages'] == null &&
+        json['conversation'] == null &&
+        json['comments'] != null;
+
+    final attachmentsRaw = json['attachments'] ?? json['anexos'] ?? const [];
+
+    final messages = _parseMessages(messagesRaw)
+        .where((m) => !m.isInternal)
+        .toList();
+
+    var history = _parseHistory(historyRaw).where((e) => !e.isInternal).toList();
+    if (usingTimelineAsHistory && history.isEmpty) {
+      // Legado: timeline era só comments — histórico fica vazio aqui;
+      // a conversa usa comments.
+      history = const [];
+    }
+    // Se a API mandou timeline como history e comments separados:
+    if (json['timeline'] != null &&
+        json['comments'] != null &&
+        history.isEmpty) {
+      history = _parseHistory(json['timeline']).where((e) => !e.isInternal).toList();
+    }
+
+    final links = json['links'] ?? json['_links'] ?? json['actions'];
+    String? markReadUrl;
+    String? rateUrl;
+    if (links is Map) {
+      markReadUrl = (links['mark_read'] ??
+              links['read'] ??
+              links['messages_read'] ??
+              links['marcar_lida'])
+          ?.toString();
+      rateUrl = (links['rate'] ??
+              links['rating'] ??
+              links['avaliacao'] ??
+              links['evaluate'])
+          ?.toString();
+    }
+    markReadUrl ??= (json['mark_read_url'] ?? json['read_url'])?.toString();
+    rateUrl ??= (json['rate_url'] ?? json['rating_url'] ?? json['avaliacao_url'])
+        ?.toString();
+
+    final ratingRaw = json['rating'] ?? json['avaliacao'] ?? json['evaluation'];
+    ProtocolRating? rating;
+    if (ratingRaw is Map) {
+      rating = ProtocolRating.fromJson(Map<String, dynamic>.from(ratingRaw));
+    }
+
+    final canRate = _asBool(
+          json['can_rate'] ??
+              json['can_evaluate'] ??
+              json['avaliacao_disponivel'] ??
+              json['permite_avaliacao'],
+        ) ||
+        (rateUrl != null && rateUrl.isNotEmpty && rating == null);
+
+    final canEdit = _asBool(
+      json['can_edit_rating'] ??
+          json['permite_editar_avaliacao'] ??
+          json['rating_editable'],
+    );
+
+    final deadlineRaw = json['deadline_at'] ??
+        json['due_at'] ??
+        json['prazo_em'] ??
+        json['sla_due_at'];
+    final deadlineLabel = (json['deadline_label'] ??
+            json['prazo'] ??
+            json['prazo_texto'] ??
+            json['sla_label'])
+        ?.toString();
+    final overdue = _asBool(
+          json['is_overdue'] ??
+              json['atrasado'] ??
+              json['breached'] ??
+              json['sla_breached'],
+        ) ||
+        (deadlineLabel?.toLowerCase().contains('atras') ?? false);
+
+    final pending = (json['pending_question'] ??
+            json['pergunta_pendente'] ??
+            json['info_request'] ??
+            json['pedido_informacao'])
+        ?.toString();
+
+    final address = (json['address'] ??
+            json['endereco'] ??
+            json['location_label'] ??
+            (json['metadata'] is Map
+                ? (json['metadata']['location_label'] ??
+                    json['metadata']['address'] ??
+                    json['metadata']['endereco'])
+                : null))
+        ?.toString();
+
+    final assigneeRaw = json['assignee_public'] ??
+        json['responsavel_publico'] ??
+        json['setor_publico'] ??
+        json['public_assignee'] ??
+        json['assigned_to_public'];
+    String? assignee;
+    if (assigneeRaw is Map) {
+      assignee = (assigneeRaw['name'] ??
+              assigneeRaw['nome'] ??
+              assigneeRaw['setor'] ??
+              assigneeRaw['department'])
+          ?.toString();
+    } else if (assigneeRaw != null) {
+      assignee = assigneeRaw.toString();
+    }
+    // Só exibe se marcado como público.
+    final assigneeIsPublic = json.containsKey('assignee_public') ||
+        json.containsKey('responsavel_publico') ||
+        json.containsKey('setor_publico') ||
+        json.containsKey('public_assignee') ||
+        _asBool(json['show_assignee'] ?? json['exibir_responsavel']);
+    if (!assigneeIsPublic) assignee = null;
 
     return ProtocolDetail(
       id: base.id,
@@ -137,13 +510,21 @@ class ProtocolDetail extends ProtocolSummary {
       priority: base.priority,
       category: base.category,
       createdAt: base.createdAt,
+      updatedAt: base.updatedAt,
       description: base.description,
-      comments: (commentsRaw is List)
-          ? commentsRaw
-              .whereType<Map>()
-              .map((e) => ProtocolComment.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
-          : const [],
+      unreadCount: base.unreadCount,
+      hasUnread: base.hasUnread || messages.any((m) => m.isUnread),
+      lastMessagePreview: base.lastMessagePreview,
+      awaitingCitizen: base.awaitingCitizen ||
+          (pending != null && pending.trim().isNotEmpty),
+      address: address != null && address.trim().isNotEmpty ? address : null,
+      publicAssignee: assignee,
+      deadlineAt:
+          deadlineRaw != null ? DateTime.tryParse(deadlineRaw.toString()) : null,
+      deadlineLabel: deadlineLabel,
+      isOverdue: overdue,
+      messages: messages,
+      history: history,
       attachments: (attachmentsRaw is List)
           ? attachmentsRaw
               .whereType<Map>()
@@ -151,23 +532,51 @@ class ProtocolDetail extends ProtocolSummary {
                   ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)))
               .toList()
           : const [],
+      pendingQuestion:
+          pending != null && pending.trim().isNotEmpty ? pending.trim() : null,
+      canRate: canRate,
+      canEditRating: canEdit,
+      rating: rating,
+      markReadUrl: markReadUrl,
+      rateUrl: rateUrl,
       raw: json,
     );
+  }
+
+  static List<ProtocolMessage> _parseMessages(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((e) => ProtocolMessage.fromJson(Map<String, dynamic>.from(e)))
+        .where((m) => m.body.trim().isNotEmpty || m.attachments.isNotEmpty)
+        .toList();
+  }
+
+  static List<ProtocolHistoryEvent> _parseHistory(dynamic raw) {
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((e) =>
+            ProtocolHistoryEvent.fromJson(Map<String, dynamic>.from(e)))
+        .toList();
   }
 }
 
 class ProtocolStatusLabel {
   static String pt(String? status) {
     return switch ((status ?? '').toLowerCase().trim()) {
-      'open' || 'aberto' || 'recebido' || 'em_analise' || 'em análise' =>
-        'Aberta',
-      'in_progress' ||
-      'andamento' ||
-      'em_andamento' ||
-      'encaminhado' ||
+      'open' || 'aberto' || 'recebido' || 'received' => 'Recebida',
+      'em_analise' || 'em análise' || 'under_review' || 'analise' => 'Em análise',
+      'encaminhado' || 'encaminhada' || 'forwarded' || 'assigned' =>
+        'Encaminhada',
+      'in_progress' || 'andamento' || 'em_andamento' => 'Em andamento',
       'aguardando_cidadao' ||
-      'aguardando cidadão' =>
-        'Em andamento',
+      'aguardando cidadão' ||
+      'aguardando_informacao' ||
+      'waiting_citizen' ||
+      'info_requested' =>
+        'Aguardando informação',
+      'respondida' || 'answered' || 'replied' => 'Respondida',
       'waiting' || 'aguardando' => 'Aguardando',
       'resolved' || 'resolvido' || 'encerrado' => 'Resolvida',
       'closed' || 'fechado' || 'concluido' || 'concluído' => 'Concluída',
@@ -177,7 +586,73 @@ class ProtocolStatusLabel {
   }
 }
 
-/// Filtros de status usados na Home → Solicitações.
+class ProtocolPriorityLabel {
+  static String pt(String? priority) {
+    return switch ((priority ?? '').toLowerCase().trim()) {
+      'low' || 'baixa' => 'Baixa',
+      'medium' || 'media' || 'média' || 'normal' => 'Normal',
+      'high' || 'alta' => 'Alta',
+      'urgent' || 'urgente' => 'Urgente',
+      '' => '—',
+      _ => priority!,
+    };
+  }
+}
+
+class ProtocolHistoryLabels {
+  static String? titleFor(String? kind) {
+    return switch ((kind ?? '').toLowerCase().trim()) {
+      'received' || 'recebido' || 'recebida' || 'created' || 'aberta' =>
+        'Solicitação recebida',
+      'under_review' || 'em_analise' || 'analise' => 'Em análise',
+      'forwarded' || 'encaminhada' || 'encaminhado' || 'assigned' =>
+        'Encaminhada',
+      'in_progress' || 'em_andamento' || 'andamento' => 'Em andamento',
+      'awaiting_citizen' ||
+      'aguardando_cidadao' ||
+      'aguardando_informacao' ||
+      'info_requested' =>
+        'Aguardando informação',
+      'answered' || 'respondida' || 'replied' => 'Respondida',
+      'resolved' || 'resolvida' || 'resolvido' || 'closed' => 'Resolvida',
+      _ => null,
+    };
+  }
+
+  static IconDataForHistory iconFor(String? kind) {
+    return switch ((kind ?? '').toLowerCase().trim()) {
+      'received' || 'recebido' || 'recebida' || 'created' || 'aberta' =>
+        IconDataForHistory.inbox,
+      'under_review' || 'em_analise' || 'analise' => IconDataForHistory.search,
+      'forwarded' || 'encaminhada' || 'encaminhado' || 'assigned' =>
+        IconDataForHistory.forward,
+      'in_progress' || 'em_andamento' || 'andamento' =>
+        IconDataForHistory.progress,
+      'awaiting_citizen' ||
+      'aguardando_cidadao' ||
+      'aguardando_informacao' ||
+      'info_requested' =>
+        IconDataForHistory.help,
+      'answered' || 'respondida' || 'replied' => IconDataForHistory.reply,
+      'resolved' || 'resolvida' || 'resolvido' || 'closed' =>
+        IconDataForHistory.done,
+      _ => IconDataForHistory.dot,
+    };
+  }
+}
+
+/// Evita importar Flutter em models; a UI mapeia para IconData.
+enum IconDataForHistory {
+  inbox,
+  search,
+  forward,
+  progress,
+  help,
+  reply,
+  done,
+  dot,
+}
+
 enum RequestStatusFilter {
   open,
   inProgress,
@@ -222,7 +697,10 @@ enum RequestStatusFilter {
             s == 'em_andamento' ||
             s == 'encaminhado' ||
             s == 'aguardando_cidadao' ||
-            s == 'aguardando cidadão',
+            s == 'aguardando cidadão' ||
+            s == 'aguardando_informacao' ||
+            s == 'respondida' ||
+            protocol.awaitingCitizen,
       RequestStatusFilter.resolved =>
         s == 'resolved' ||
             s == 'resolvido' ||
@@ -291,7 +769,6 @@ class RequestCategory {
     description: 'Anexe arquivos',
   );
 
-  /// Catálogo estável para formulários (sem acompanhar).
   static const formOptions = [
     help,
     report,
@@ -311,7 +788,6 @@ class RequestCategory {
     document,
   ];
 
-  /// Normaliza slugs vindos da API (ex.: agenda → atendimento).
   static String normalizeId(String? raw) {
     final key = (raw ?? '').trim().toLowerCase();
     return switch (key) {
@@ -327,7 +803,6 @@ class RequestCategory {
     };
   }
 
-  /// Remove duplicados por id, preservando a primeira ocorrência.
   static List<RequestCategory> uniqueById(Iterable<RequestCategory> source) {
     final seen = <String>{};
     final out = <RequestCategory>[];
@@ -346,7 +821,6 @@ class RequestCategory {
     return out;
   }
 
-  /// Itens seguros para DropdownButton (ids únicos).
   static List<RequestCategory> dropdownCategories({
     Iterable<RequestCategory>? source,
   }) {
@@ -356,7 +830,6 @@ class RequestCategory {
     return list;
   }
 
-  /// Retorna o value do dropdown somente se existir exatamente uma vez.
   static String? sanitizeDropdownValue(
     String? value, {
     Iterable<RequestCategory>? source,
@@ -368,4 +841,46 @@ class RequestCategory {
     if (matches == 1) return id;
     return null;
   }
+}
+
+bool _statusIsAwaitingCitizen(String? status) {
+  final s = (status ?? '').toLowerCase().trim();
+  return s == 'aguardando_cidadao' ||
+      s == 'aguardando cidadão' ||
+      s == 'aguardando_informacao' ||
+      s == 'waiting_citizen' ||
+      s == 'info_requested';
+}
+
+bool _roleIsCabinet(String? role) {
+  final r = (role ?? '').toLowerCase().trim();
+  return r == 'staff' ||
+      r == 'operator' ||
+      r == 'operador' ||
+      r == 'gabinete' ||
+      r == 'cabinet' ||
+      r == 'admin' ||
+      r == 'agent';
+}
+
+int _asInt(dynamic v) {
+  if (v is int) return v;
+  return int.tryParse(v?.toString() ?? '') ?? 0;
+}
+
+bool _asBool(dynamic v) {
+  if (v is bool) return v;
+  final s = v?.toString().toLowerCase().trim();
+  return s == '1' || s == 'true' || s == 'yes' || s == 'sim';
+}
+
+bool? _asBoolOrNull(dynamic v) {
+  if (v == null) return null;
+  if (v is bool) return v;
+  final s = v.toString().toLowerCase().trim();
+  if (s == '1' || s == 'true' || s == 'yes' || s == 'sim') return true;
+  if (s == '0' || s == 'false' || s == 'no' || s == 'nao' || s == 'não') {
+    return false;
+  }
+  return null;
 }

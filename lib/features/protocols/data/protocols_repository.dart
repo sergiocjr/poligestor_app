@@ -37,10 +37,35 @@ class CreateProtocolInput {
       };
 }
 
+class ProtocolRatingInput {
+  ProtocolRatingInput({
+    required this.stars,
+    required this.resolved,
+    this.comment,
+  });
+
+  final int stars;
+  final bool resolved;
+  final String? comment;
+
+  Map<String, dynamic> toJson() => {
+        'stars': stars,
+        'rating': stars,
+        'score': stars,
+        'resolved': resolved,
+        'problema_resolvido': resolved,
+        if (comment != null && comment!.trim().isNotEmpty)
+          'comment': comment!.trim(),
+        if (comment != null && comment!.trim().isNotEmpty)
+          'comentario': comment!.trim(),
+      };
+}
+
 class ProtocolsRepository {
   ProtocolsRepository(this._api);
 
   final ApiClient _api;
+  final Map<String, CancelToken> _uploads = {};
 
   Future<List<ProtocolSummary>> list({
     required AuthMode mode,
@@ -98,19 +123,20 @@ class ProtocolsRepository {
     return envelope.data;
   }
 
-  Future<ProtocolComment> addComment({
+  /// Envia complemento/resposta pública (conversa cidadão ↔ gabinete).
+  Future<ProtocolMessage> addComment({
     required AuthMode mode,
     required dynamic protocolId,
     required String body,
   }) async {
-    final envelope = await _api.postEnvelope<ProtocolComment>(
+    final envelope = await _api.postEnvelope<ProtocolMessage>(
       '${mode.protocolsPath}/$protocolId/comments',
       data: {'body': body},
       mode: mode,
       parse: (raw) {
-        if (raw is Map<String, dynamic>) return ProtocolComment.fromJson(raw);
+        if (raw is Map<String, dynamic>) return ProtocolMessage.fromJson(raw);
         if (raw is Map) {
-          return ProtocolComment.fromJson(Map<String, dynamic>.from(raw));
+          return ProtocolMessage.fromJson(Map<String, dynamic>.from(raw));
         }
         throw Exception('Comentário inválido');
       },
@@ -118,30 +144,139 @@ class ProtocolsRepository {
     return envelope.data;
   }
 
-  Future<void> uploadAttachment({
+  /// Marca mensagens como lidas quando a API expõe URL dedicada no detalhe.
+  /// Caso contrário retorna `false` (sem inventar rota).
+  Future<bool> markMessagesRead({
+    required AuthMode mode,
+    required ProtocolDetail detail,
+  }) async {
+    final url = detail.markReadUrl;
+    if (url == null || url.trim().isEmpty) return false;
+    final path = _toApiPath(url);
+    if (path == null) return false;
+    try {
+      await _api.postEnvelope<Map<String, dynamic>>(
+        path,
+        data: const {'read': true},
+        mode: mode,
+        parse: (raw) {
+          if (raw is Map<String, dynamic>) return raw;
+          if (raw is Map) return Map<String, dynamic>.from(raw);
+          return <String, dynamic>{};
+        },
+      );
+      return true;
+    } catch (_) {
+      try {
+        await _api.patchEnvelope<Map<String, dynamic>>(
+          path,
+          data: const {'read': true},
+          parse: (raw) {
+            if (raw is Map<String, dynamic>) return raw;
+            if (raw is Map) return Map<String, dynamic>.from(raw);
+            return <String, dynamic>{};
+          },
+        );
+        return true;
+      } catch (_) {
+        return false;
+      }
+    }
+  }
+
+  /// Envia avaliação somente se a API indicar URL/`can_rate`.
+  Future<bool> submitRating({
+    required AuthMode mode,
+    required ProtocolDetail detail,
+    required ProtocolRatingInput input,
+  }) async {
+    final url = detail.rateUrl;
+    if (url == null || url.trim().isEmpty) {
+      throw const ProtocolFeatureUnavailable(
+        'A avaliação ainda não está disponível para esta solicitação.',
+      );
+    }
+    final path = _toApiPath(url);
+    if (path == null) {
+      throw const ProtocolFeatureUnavailable(
+        'A avaliação ainda não está disponível para esta solicitação.',
+      );
+    }
+    await _api.postEnvelope<Map<String, dynamic>>(
+      path,
+      data: input.toJson(),
+      mode: mode,
+      parse: (raw) {
+        if (raw is Map<String, dynamic>) return raw;
+        if (raw is Map) return Map<String, dynamic>.from(raw);
+        return <String, dynamic>{};
+      },
+    );
+    return true;
+  }
+
+  Future<ProtocolAttachment> uploadAttachment({
     required AuthMode mode,
     required dynamic protocolId,
     required String filePath,
     required String fileName,
     String? mimeType,
+    void Function(double progress)? onProgress,
+    String? uploadId,
   }) async {
-    final form = FormData.fromMap({
-      'file': await MultipartFile.fromFile(filePath, filename: fileName),
-      if (mimeType != null) 'mime_type': mimeType,
-    });
-    await _api.raw.post(
-      '${mode.protocolsPath}/$protocolId/attachments',
-      data: form,
-      options: Options(
-        contentType: 'multipart/form-data',
-        extra: {'authMode': mode},
-      ),
-    );
+    final id = uploadId ?? filePath;
+    final token = CancelToken();
+    _uploads[id] = token;
+    try {
+      final form = FormData.fromMap({
+        'file': await MultipartFile.fromFile(filePath, filename: fileName),
+        if (mimeType != null) 'mime_type': mimeType,
+      });
+      final response = await _api.raw.post<Map<String, dynamic>>(
+        '${mode.protocolsPath}/$protocolId/attachments',
+        data: form,
+        cancelToken: token,
+        onSendProgress: (sent, total) {
+          if (total > 0 && onProgress != null) {
+            onProgress(sent / total);
+          }
+        },
+        options: Options(
+          contentType: 'multipart/form-data',
+          extra: {'authMode': mode},
+        ),
+      );
+      final raw = response.data?['data'] ?? response.data;
+      if (raw is Map) {
+        return ProtocolAttachment.fromJson(Map<String, dynamic>.from(raw));
+      }
+      return ProtocolAttachment(id: id, name: fileName, mimeType: mimeType);
+    } finally {
+      _uploads.remove(id);
+    }
+  }
+
+  void cancelUpload(String uploadId) {
+    final token = _uploads.remove(uploadId);
+    token?.cancel('cancelado');
   }
 
   Future<ProtocolStats> stats({required AuthMode mode}) async {
     final items = await list(mode: mode);
     return ProtocolStats.fromList(items);
+  }
+
+  String? _toApiPath(String urlOrPath) {
+    final trimmed = urlOrPath.trim();
+    if (trimmed.isEmpty) return null;
+    if (trimmed.startsWith('/v1/')) return trimmed;
+    final uri = Uri.tryParse(trimmed);
+    if (uri == null) return null;
+    final path = uri.path;
+    final idx = path.indexOf('/v1/');
+    if (idx >= 0) return path.substring(idx);
+    if (path.startsWith('/api/v1/')) return path.substring(4);
+    return null;
   }
 
   List<dynamic> _asList(dynamic raw) {
@@ -154,6 +289,14 @@ class ProtocolsRepository {
     }
     return const [];
   }
+}
+
+class ProtocolFeatureUnavailable implements Exception {
+  const ProtocolFeatureUnavailable(this.message);
+  final String message;
+
+  @override
+  String toString() => message;
 }
 
 class ProtocolStats {
@@ -174,7 +317,7 @@ class ProtocolStats {
     for (final i in items) {
       if (i.isResolved) {
         resolved++;
-      } else if (i.isInProgress) {
+      } else if (i.isInProgress || i.isAwaitingCitizen) {
         inProgress++;
       } else {
         open++;

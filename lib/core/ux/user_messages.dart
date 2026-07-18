@@ -1,4 +1,5 @@
 import '../api/api_exception.dart';
+import '../../features/protocols/data/protocols_repository.dart';
 
 /// Mensagens amigáveis para a interface — nunca expor detalhes técnicos.
 class UserMessages {
@@ -11,7 +12,17 @@ class UserMessages {
   static const emptyNotifications = 'Nenhuma notificação por enquanto.';
   static const emptyAgenda = 'Nenhum compromisso agendado.';
   static const generic = 'Algo deu errado. Tente novamente em instantes.';
-  static const sendFailed = 'Não foi possível enviar. Tente novamente.';
+  static const uploadFailed = 'Não foi possível enviar o arquivo. Tente novamente.';
+  static const uploadCanceled = 'Envio cancelado.';
+  static const messageSent = 'Mensagem enviada.';
+  static const ratingSent = 'Obrigado! Sua avaliação foi registrada.';
+  static const ratingUnavailable =
+      'A avaliação ainda não está disponível para esta solicitação.';
+  static const openAttachmentFailed =
+      'Não foi possível abrir o anexo. Tente novamente.';
+  static const emptyConversation =
+      'Ainda não há mensagens nesta solicitação.';
+  static const emptyHistory = 'Ainda não há atualizações no histórico.';
   static const assistantFailed =
       'Não foi possível obter resposta do assistente. Tente novamente.';
   static const conversationLoadFailed =
@@ -20,6 +31,9 @@ class UserMessages {
   static const locationUnavailable = 'Não foi possível obter a localização.';
 
   static String fromError(Object? error) {
+    if (error is ProtocolFeatureUnavailable) {
+      return error.message;
+    }
     if (error is ApiException) {
       if (error.isUnauthorized || error.isForbidden) return syncFailed;
       if (error.message.toLowerCase().contains('tempo esgotado') ||
