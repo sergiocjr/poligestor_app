@@ -6,7 +6,7 @@ import '../../features/agenda/presentation/agenda_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/chat/presentation/chat_page.dart';
-import '../../features/citizen/presentation/citizen_chat_page.dart';
+import '../../features/assistant/presentation/assistant_chat_page.dart';
 import '../../features/citizen/presentation/citizen_home_page.dart';
 import '../../features/citizen/presentation/citizen_notifications_page.dart';
 import '../../features/citizen/presentation/citizen_profile_page.dart';
@@ -167,7 +167,7 @@ GoRouter createAppRouter(AuthController auth) {
         path: '/citizen/chat',
         builder: (context, state) {
           final draft = state.extra is String ? state.extra as String : null;
-          return CitizenChatPage(initialDraft: draft);
+          return AssistantChatPage(initialDraft: draft);
         },
       ),
     ],
