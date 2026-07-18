@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../notifications/domain/notifications_controller.dart';
 
 class CitizenShell extends StatelessWidget {
   const CitizenShell({super.key, required this.navigationShell});
@@ -15,31 +18,38 @@ class CitizenShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Sem AnimatedSwitcher/KeyedSubtree por índice: ao abrir
-    // /citizen/requests/:id o índice da aba não muda e o switcher
-    // deixava o body vazio (tela branca com AppBar/nav).
+    final unread = context.watch<NotificationsController>().unreadCount;
+
     return Scaffold(
       body: navigationShell,
       bottomNavigationBar: NavigationBar(
         selectedIndex: navigationShell.currentIndex,
         onDestinationSelected: _onTap,
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home_rounded),
             label: 'Início',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.assignment_outlined),
             selectedIcon: Icon(Icons.assignment_rounded),
             label: 'Solicitações',
           ),
           NavigationDestination(
-            icon: Icon(Icons.notifications_outlined),
-            selectedIcon: Icon(Icons.notifications_rounded),
+            icon: Badge(
+              isLabelVisible: unread > 0,
+              label: Text(unread > 99 ? '99+' : '$unread'),
+              child: const Icon(Icons.notifications_outlined),
+            ),
+            selectedIcon: Badge(
+              isLabelVisible: unread > 0,
+              label: Text(unread > 99 ? '99+' : '$unread'),
+              child: const Icon(Icons.notifications_rounded),
+            ),
             label: 'Avisos',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.person_outline_rounded),
             selectedIcon: Icon(Icons.person_rounded),
             label: 'Perfil',
