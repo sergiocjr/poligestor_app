@@ -159,7 +159,7 @@ class ProtocolDetail extends ProtocolSummary {
 class ProtocolStatusLabel {
   static String pt(String? status) {
     return switch (status) {
-      'open' || 'aberto' => 'Aberta',
+      'open' || 'aberto' || 'recebido' => 'Aberta',
       'in_progress' || 'andamento' || 'em_andamento' => 'Em andamento',
       'waiting' || 'aguardando' => 'Aguardando',
       'resolved' || 'resolvido' => 'Resolvida',

@@ -185,9 +185,11 @@ class AssistantHero extends StatefulWidget {
     required this.greeting,
     required this.onSubmit,
     this.onOpenChat,
+    this.prompt = 'Como podemos ajudar você hoje?',
   });
 
   final String greeting;
+  final String prompt;
   final ValueChanged<String> onSubmit;
   final VoidCallback? onOpenChat;
 
@@ -247,7 +249,7 @@ class _AssistantHeroState extends State<AssistantHero> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Como podemos ajudar você hoje?',
+            widget.prompt,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: Colors.white.withValues(alpha: 0.88),
                   fontWeight: FontWeight.w500,

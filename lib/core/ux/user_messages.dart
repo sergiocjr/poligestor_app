@@ -5,6 +5,7 @@ class UserMessages {
   UserMessages._();
 
   static const syncFailed = 'Não foi possível sincronizar seus dados.';
+  static const homeUpdateFailed = 'Não foi possível atualizar seus dados.';
   static const offline = 'Você parece estar offline. Verifique a conexão.';
   static const emptyRequests = 'Você ainda não tem solicitações.';
   static const emptyNotifications = 'Nenhuma notificação por enquanto.';

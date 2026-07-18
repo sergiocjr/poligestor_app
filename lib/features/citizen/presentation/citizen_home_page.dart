@@ -8,9 +8,9 @@ import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
 import '../../agenda/data/appointments_repository.dart';
-import '../../notifications/data/notifications_repository.dart';
 import '../../protocols/data/protocol_models.dart';
-import '../../protocols/data/protocols_repository.dart';
+import '../data/portal_home_models.dart';
+import '../data/portal_home_repository.dart';
 
 class CitizenHomePage extends StatefulWidget {
   const CitizenHomePage({super.key});
@@ -19,7 +19,8 @@ class CitizenHomePage extends StatefulWidget {
   State<CitizenHomePage> createState() => _CitizenHomePageState();
 }
 
-class _CitizenHomePageState extends State<CitizenHomePage> {
+class _CitizenHomePageState extends State<CitizenHomePage>
+    with AutomaticKeepAliveClientMixin {
   Future<_HomeData>? _future;
 
   static final _mockNews = [
@@ -47,78 +48,78 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
   ];
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _future ??= _load();
+  bool get wantKeepAlive => true;
+
+  @override
+  void initState() {
+    super.initState();
+    // Carga única na criação da aba; IndexedStack preserva o estado.
+    _future = _load();
   }
 
   Future<_HomeData> _load() async {
     final auth = context.read<AuthController>();
-    final protocols = context.read<ProtocolsRepository>();
-    final notifications = context.read<NotificationsRepository>();
-    final appointments = context.read<AppointmentsRepository>();
-    final mode = auth.mode;
-
-    List<ProtocolSummary> protocolItems = const [];
-    ProtocolStats stats =
-        ProtocolStats(open: 0, inProgress: 0, resolved: 0, total: 0);
-    List<AppointmentItem> next = const [];
-    var unread = 0;
-    String? syncMessage;
-    var hasSyncIssue = false;
+    final repo = context.read<PortalHomeRepository>();
 
     try {
-      protocolItems = await protocols.list(mode: mode);
-      stats = ProtocolStats.fromList(protocolItems);
+      final home = await repo.fetchHome(tenantSlug: auth.session?.tenantSlug);
+      final actions = home.quickActions.isNotEmpty
+          ? home.quickActions.map((e) => e.toRequestCategory()).toList()
+          : RequestCategory.all;
+
+      return _HomeData(
+        displayName: home.user.firstName,
+        neighborhoodLabel: home.user.neighborhoodLabel,
+        photoUrl: home.user.foto,
+        assistantPrompt: home.assistant.message,
+        quickActions: actions,
+        protocols: home.recentProtocols,
+        open: home.summary.protocolosAbertos,
+        inProgress: home.summary.protocolosAndamento,
+        resolved: home.summary.protocolosResolvidos,
+        appointments: home.appointments,
+        unread: home.summary.notificacoesNaoLidas,
+        hasSyncIssue: false,
+      );
     } catch (e) {
-      hasSyncIssue = true;
-      syncMessage = UserMessages.fromError(e);
+      final offline = UserMessages.fromError(e) == UserMessages.offline;
+      return _HomeData.error(
+        offline ? UserMessages.offline : UserMessages.homeUpdateFailed,
+      );
     }
-
-    try {
-      unread = await notifications.unreadCount(mode: mode);
-    } catch (_) {
-      hasSyncIssue = true;
-      syncMessage ??= UserMessages.syncFailed;
-    }
-
-    try {
-      next = await appointments.upcoming(mode: mode);
-    } catch (_) {
-      // Agenda pode falhar sem bloquear a home.
-    }
-
-    if (auth.apiDegraded) {
-      hasSyncIssue = true;
-      syncMessage ??= UserMessages.syncFailed;
-    }
-
-    return _HomeData(
-      protocols: protocolItems,
-      stats: stats,
-      appointments: next,
-      unread: unread,
-      hasSyncIssue: hasSyncIssue,
-      syncMessage: syncMessage,
-    );
   }
 
   Future<void> _reload() async {
-    setState(() => _future = _load());
-    await _future;
+    final next = _load();
+    setState(() => _future = next);
+    await next;
   }
 
   void _openChat([String? draft]) {
     context.push('/citizen/chat', extra: draft);
   }
 
+  void _onQuickAction(RequestCategory c) {
+    if (c.id == 'protocolo' || c.id == 'acompanhar') {
+      context.go('/citizen/requests');
+      return;
+    }
+    if (c.id == 'assistente' || c.id == 'chat') {
+      _openChat();
+      return;
+    }
+    context.push('/citizen/requests/new', extra: {'category': c.id});
+  }
+
   IconData _iconFor(RequestCategory c) => switch (c.iconName) {
         'help' => Icons.handshake_rounded,
-        'report' => Icons.report_rounded,
-        'lightbulb' => Icons.lightbulb_rounded,
-        'event' => Icons.event_available_rounded,
+        'alert' || 'report' => Icons.report_rounded,
+        'idea' || 'lightbulb' => Icons.lightbulb_rounded,
+        'home' => Icons.home_work_rounded,
+        'calendar' || 'event' => Icons.event_available_rounded,
         'search' => Icons.travel_explore_rounded,
-        'attach' => Icons.upload_file_rounded,
+        'file' || 'attach' => Icons.upload_file_rounded,
+        'chat' => Icons.forum_rounded,
         _ => Icons.apps_rounded,
       };
 
@@ -126,16 +127,16 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
         'ajuda' => scheme.primary,
         'denuncia' => const Color(0xFFC2410C),
         'sugestao' => const Color(0xFFCA8A04),
-        'atendimento' => const Color(0xFF0369A1),
-        'acompanhar' => const Color(0xFF0F766E),
+        'agenda' || 'atendimento' || 'visita' => const Color(0xFF0369A1),
+        'protocolo' || 'acompanhar' => const Color(0xFF0F766E),
         'documento' => const Color(0xFF4338CA),
+        'assistente' => const Color(0xFF0F766E),
         _ => scheme.primary,
       };
 
   @override
   Widget build(BuildContext context) {
-    final auth = context.watch<AuthController>();
-    final user = auth.session?.user;
+    super.build(context);
     final width = MediaQuery.sizeOf(context).width;
     final horizontal = width >= 720 ? 32.0 : 20.0;
     final dateFmt = DateFormat("EEEE, d 'de' MMMM", 'pt_BR');
@@ -155,19 +156,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
               }
 
               final data = snapshot.data ??
-                  _HomeData(
-                    protocols: const [],
-                    stats: ProtocolStats(
-                      open: 0,
-                      inProgress: 0,
-                      resolved: 0,
-                      total: 0,
-                    ),
-                    appointments: const [],
-                    unread: 0,
-                    hasSyncIssue: snapshot.hasError,
-                    syncMessage: UserMessages.fromError(snapshot.error),
-                  );
+                  _HomeData.error(UserMessages.homeUpdateFailed);
 
               return CustomScrollView(
                 physics: const AlwaysScrollableScrollPhysics(
@@ -175,7 +164,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                 ),
                 slivers: [
                   SliverPadding(
-                    padding: EdgeInsets.fromLTRB(horizontal, 12, horizontal, 120),
+                    padding:
+                        EdgeInsets.fromLTRB(horizontal, 12, horizontal, 120),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         FadeSlideIn(
@@ -195,7 +185,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                         FadeSlideIn(
                           delay: const Duration(milliseconds: 40),
                           child: Text(
-                            'Olá, ${user?.firstName ?? 'Cidadão'}',
+                            'Olá, ${data.displayName}',
                             style: Theme.of(context)
                                 .textTheme
                                 .headlineMedium
@@ -206,10 +196,22 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                           const SizedBox(height: 12),
                           FadeSlideIn(
                             delay: const Duration(milliseconds: 60),
-                            child: SoftNotice(
-                              message:
-                                  data.syncMessage ?? UserMessages.syncFailed,
-                              icon: Icons.sync_problem_rounded,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                SoftNotice(
+                                  message: data.syncMessage ??
+                                      UserMessages.homeUpdateFailed,
+                                  icon: Icons.sync_problem_rounded,
+                                ),
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: TextButton(
+                                    onPressed: _reload,
+                                    child: const Text('Tentar novamente'),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -217,7 +219,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                         FadeSlideIn(
                           delay: const Duration(milliseconds: 80),
                           child: AssistantHero(
-                            greeting: 'Olá, ${user?.firstName ?? 'Cidadão'}',
+                            greeting: 'Olá, ${data.displayName}',
+                            prompt: data.assistantPrompt,
                             onSubmit: _openChat,
                             onOpenChat: () => _openChat(),
                           ),
@@ -233,8 +236,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                           ),
                         ),
                         const SizedBox(height: 10),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 120),
+                        const FadeSlideIn(
+                          delay: Duration(milliseconds: 120),
                           child: SectionHeader(
                             title: 'Ações rápidas',
                             subtitle: 'Escolha o que deseja fazer agora',
@@ -254,7 +257,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                                 childAspectRatio:
                                     constraints.maxWidth >= 680 ? 1.35 : 1.05,
                                 children: [
-                                  for (final c in RequestCategory.all)
+                                  for (final c in data.quickActions)
                                     FeatureActionCard(
                                       icon: _iconFor(c),
                                       title: c.label,
@@ -263,16 +266,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                                         c,
                                         Theme.of(context).colorScheme,
                                       ),
-                                      onTap: () {
-                                        if (c.id == 'acompanhar') {
-                                          context.go('/citizen/requests');
-                                        } else {
-                                          context.push(
-                                            '/citizen/requests/new',
-                                            extra: {'category': c.id},
-                                          );
-                                        }
-                                      },
+                                      onTap: () => _onQuickAction(c),
                                     ),
                                 ],
                               );
@@ -280,8 +274,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 160),
+                        const FadeSlideIn(
+                          delay: Duration(milliseconds: 160),
                           child: SectionHeader(
                             title: 'Resumo',
                             subtitle: 'Acompanhe seu andamento',
@@ -293,19 +287,19 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                             children: [
                               _SummaryCard(
                                 label: 'Abertas',
-                                value: data.stats.open,
+                                value: data.open,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
                               const SizedBox(width: 10),
                               _SummaryCard(
                                 label: 'Andamento',
-                                value: data.stats.inProgress,
+                                value: data.inProgress,
                                 color: const Color(0xFFC2410C),
                               ),
                               const SizedBox(width: 10),
                               _SummaryCard(
                                 label: 'Resolvidas',
-                                value: data.stats.resolved,
+                                value: data.resolved,
                                 color: const Color(0xFF15803D),
                               ),
                             ],
@@ -377,7 +371,7 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                                   ),
                                   child: Text(
                                     data.hasSyncIssue
-                                        ? UserMessages.syncFailed
+                                        ? UserMessages.homeUpdateFailed
                                         : UserMessages.emptyRequests,
                                   ),
                                 )
@@ -401,8 +395,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                                   ],
                                 ),
                         ),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 260),
+                        const FadeSlideIn(
+                          delay: Duration(milliseconds: 260),
                           child: SectionHeader(
                             title: 'Agenda',
                             subtitle: 'Próximos compromissos',
@@ -439,8 +433,8 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                                   ),
                           ),
                         ),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 300),
+                        const FadeSlideIn(
+                          delay: Duration(milliseconds: 300),
                           child: SectionHeader(
                             title: 'Últimas notícias',
                             subtitle: 'Atualizações da cidade',
@@ -459,15 +453,14 @@ class _CitizenHomePageState extends State<CitizenHomePage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        FadeSlideIn(
-                          delay: const Duration(milliseconds: 340),
+                        const FadeSlideIn(
+                          delay: Duration(milliseconds: 340),
                           child: SectionHeader(title: 'Meu Bairro'),
                         ),
                         FadeSlideIn(
                           delay: const Duration(milliseconds: 360),
                           child: NeighborhoodCard(
-                            neighborhoodLabel:
-                                user?.neighborhoodLabel ?? 'Sua região',
+                            neighborhoodLabel: data.neighborhoodLabel,
                           ),
                         ),
                       ]),
@@ -533,16 +526,47 @@ class _SummaryCard extends StatelessWidget {
 
 class _HomeData {
   _HomeData({
+    required this.displayName,
+    required this.neighborhoodLabel,
+    required this.assistantPrompt,
+    required this.quickActions,
     required this.protocols,
-    required this.stats,
+    required this.open,
+    required this.inProgress,
+    required this.resolved,
     required this.appointments,
     required this.unread,
     required this.hasSyncIssue,
+    this.photoUrl,
     this.syncMessage,
   });
 
+  factory _HomeData.error(String message) {
+    return _HomeData(
+      displayName: 'Cidadão',
+      neighborhoodLabel: 'Sua região',
+      assistantPrompt: 'Como podemos ajudar você hoje?',
+      quickActions: RequestCategory.all,
+      protocols: const [],
+      open: 0,
+      inProgress: 0,
+      resolved: 0,
+      appointments: const [],
+      unread: 0,
+      hasSyncIssue: true,
+      syncMessage: message,
+    );
+  }
+
+  final String displayName;
+  final String neighborhoodLabel;
+  final String? photoUrl;
+  final String assistantPrompt;
+  final List<RequestCategory> quickActions;
   final List<ProtocolSummary> protocols;
-  final ProtocolStats stats;
+  final int open;
+  final int inProgress;
+  final int resolved;
   final List<AppointmentItem> appointments;
   final int unread;
   final bool hasSyncIssue;
