@@ -19,21 +19,22 @@ class AssistantRepository {
   static const receiveTimeout = Duration(seconds: 60);
   static const retryDelay = Duration(milliseconds: 500);
 
-  /// Retorna a conversa ativa, ou `null` se não existir (404 / vazia).
-  Future<AssistantConversation?> fetchConversation({String? tenantSlug}) async {
+  /// Carrega a conversa ativa.
+  ///
+  /// - 200 com mensagens → conversa completa
+  /// - 200 sem mensagens → conversa vazia (mantém conversation_id)
+  /// - 404 → conversa vazia
+  Future<AssistantConversation> fetchConversation({String? tenantSlug}) async {
     try {
-      final envelope = await _api.getEnvelope<AssistantConversation?>(
+      final envelope = await _api.getEnvelope<AssistantConversation>(
         conversationPath,
         mode: AuthMode.portal,
         tenantSlug: tenantSlug,
         parse: (raw) {
-          if (raw == null) return null;
-          if (raw is Map<String, dynamic>) {
-            return AssistantConversation.fromJson(raw);
-          }
+          if (raw == null) return AssistantConversation.empty();
           if (raw is Map) {
             return AssistantConversation.fromJson(
-              Map<String, dynamic>.from(raw),
+              AssistantReply.asStringKeyMap(raw),
             );
           }
           throw const FormatException(
@@ -42,12 +43,30 @@ class AssistantRepository {
         },
       );
       final conversation = envelope.data;
-      if (conversation == null || !conversation.hasMessages) return null;
+      _debugLogFetch(status: 200, conversation: conversation);
       return conversation;
     } on ApiException catch (e) {
-      if (e.statusCode == 404) return null;
+      _debugLogFetch(status: e.statusCode, conversation: null, error: e);
+      if (e.statusCode == 404) return AssistantConversation.empty();
       rethrow;
     }
+  }
+
+  void _debugLogFetch({
+    int? status,
+    AssistantConversation? conversation,
+    Object? error,
+  }) {
+    if (!kDebugMode) return;
+    if (conversation != null) {
+      conversation.debugLogMeta(httpStatus: status);
+      return;
+    }
+    debugPrint(
+      '[assistant.conversation] status=${status ?? '-'} '
+      'error=${error is ApiException ? error.statusCode : error.runtimeType} '
+      'conversation_id=- messages_count=- finished=-',
+    );
   }
 
   /// Limpa o histórico no servidor para iniciar uma nova conversa.
@@ -60,7 +79,6 @@ class AssistantRepository {
         parse: (_) => true,
       );
     } on ApiException catch (e) {
-      // Fallback caso o backend exponha POST /conversation/new.
       if (e.statusCode == 404 || e.statusCode == 405) {
         await _api.postEnvelope<bool>(
           '$conversationPath/new',
@@ -105,11 +123,8 @@ class AssistantRepository {
       sendTimeout: sendTimeout,
       receiveTimeout: receiveTimeout,
       parse: (raw) {
-        if (raw is Map<String, dynamic>) {
-          return AssistantReply.fromJson(raw);
-        }
         if (raw is Map) {
-          return AssistantReply.fromJson(Map<String, dynamic>.from(raw));
+          return AssistantReply.fromJson(AssistantReply.asStringKeyMap(raw));
         }
         throw const FormatException(
           'Resposta inválida de /v1/portal/assistant/message',

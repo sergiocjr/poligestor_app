@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/config.dart';
 import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../data/assistant_models.dart';
+import '../data/assistant_chat_controller.dart';
 import '../data/assistant_repository.dart';
 import '../domain/chat_message.dart';
 import 'widgets/chat_bubble.dart';
@@ -20,12 +20,16 @@ class AssistantChatPage extends StatefulWidget {
     super.key,
     this.initialDraft,
     this.onTrackProtocol,
+    this.controller,
   });
 
   final String? initialDraft;
 
   /// Hook de teste / override de navegação.
   final ProtocolTrackCallback? onTrackProtocol;
+
+  /// Controller injetável para testes.
+  final AssistantChatController? controller;
 
   @override
   State<AssistantChatPage> createState() => _AssistantChatPageState();
@@ -34,20 +38,33 @@ class AssistantChatPage extends StatefulWidget {
 class _AssistantChatPageState extends State<AssistantChatPage> {
   final _ctrl = TextEditingController();
   final _scroll = ScrollController();
-  final List<ChatMessage> _messages = [];
-  final _presenter = AssistantReplyPresenter();
-  bool _loadingConversation = true;
+  AssistantChatController? _chat;
   bool _typing = false;
   bool _clearing = false;
   bool _sentInitial = false;
+  bool _bootstrapped = false;
   int _seq = 100;
+
+  AssistantChatController get chat => _chat!;
 
   String _nextId([String prefix = 'm']) => '$prefix${_seq++}';
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+    _chat = widget.controller;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _chat ??= AssistantChatController(
+      repository: context.read<AssistantRepository>(),
+    );
+    if (!_bootstrapped) {
+      _bootstrapped = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+    }
   }
 
   @override
@@ -70,39 +87,33 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
   }
 
   Future<void> _loadConversation() async {
-    setState(() => _loadingConversation = true);
-    final repo = context.read<AssistantRepository>();
+    setState(() {
+      chat.loading = true;
+      chat.loadError = null;
+    });
 
     try {
-      final conversation = await repo.fetchConversation();
+      await chat.loadConversation();
       if (!mounted) return;
-
-      _presenter.reset();
-      setState(() {
-        _messages
-          ..clear()
-          ..addAll(
-            conversation?.toChatMessages(presenter: _presenter) ??
-                assistantWelcomeMessages(),
-          );
-        _loadingConversation = false;
-      });
+      setState(() {});
       _scrollToEnd(animated: false);
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
-      _presenter.reset();
       setState(() {
-        _messages
-          ..clear()
-          ..addAll(assistantWelcomeMessages());
-        _loadingConversation = false;
+        chat.loading = false;
+        chat.loadError = _friendlyLoadError(e);
       });
-      _scrollToEnd(animated: false);
     }
   }
 
+  String _friendlyLoadError(Object error) {
+    final mapped = UserMessages.fromError(error);
+    if (mapped == UserMessages.offline) return mapped;
+    return UserMessages.conversationLoadFailed;
+  }
+
   Future<void> _confirmNewConversation() async {
-    if (_typing || _clearing || _loadingConversation) return;
+    if (_typing || _clearing || chat.loading) return;
 
     final confirmed = await showDialog<bool>(
       context: context,
@@ -137,11 +148,8 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     try {
       await repo.clearConversation();
       if (!mounted) return;
-      _presenter.reset();
       setState(() {
-        _messages
-          ..clear()
-          ..addAll(assistantWelcomeMessages());
+        chat.clearLocalForNewConversation();
         _clearing = false;
       });
       _scrollToEnd();
@@ -162,7 +170,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
 
   Future<void> _sendText(String text) async {
     final trimmed = text.trim();
-    if (trimmed.isEmpty || _typing || _loadingConversation || _clearing) {
+    if (trimmed.isEmpty || _typing || chat.loading || _clearing) {
       return;
     }
 
@@ -174,7 +182,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     );
 
     setState(() {
-      _messages.add(userMsg);
+      chat.messages.add(userMsg);
       _ctrl.clear();
       _typing = true;
     });
@@ -186,14 +194,17 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
       final result = await repo.sendMessage(trimmed);
       if (!mounted) return;
       setState(() {
-        _messages.addAll(
-          _presenter.present(result, nextId: () => _nextId('a')),
+        if (result.conversationId != null) {
+          chat.conversationId = result.conversationId;
+        }
+        chat.messages.addAll(
+          chat.presenter.present(result, nextId: () => _nextId('a')),
         );
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _messages.add(
+        chat.messages.add(
           ChatMessage(
             id: _nextId('e'),
             sender: ChatSender.assistant,
@@ -241,7 +252,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     };
 
     setState(() {
-      _messages.add(
+      chat.messages.add(
         ChatMessage(
           id: _nextId('att'),
           sender: ChatSender.user,
@@ -299,7 +310,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
             ChatBubble(message: msg),
           if (msg.showConfirmShortcuts)
             ConfirmationShortcuts(
-              enabled: !_typing && !_loadingConversation && !_clearing,
+              enabled: !_typing && !chat.loading && !_clearing,
               onConfirm: () => _sendText('Confirmar'),
               onCorrect: () => _sendText('Corrigir informações'),
             ),
@@ -308,9 +319,90 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     );
   }
 
+  Widget _buildBody() {
+    if (_chat == null || (chat.loading && chat.messages.isEmpty)) {
+      return const _ConversationSkeleton();
+    }
+
+    if (chat.loadError != null && chat.messages.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                chat.loadError!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 15, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: _loadConversation,
+                child: const Text('Tentar novamente'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Stack(
+      children: [
+        ListView.builder(
+          controller: _scroll,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+          itemCount: chat.messages.length + (_typing ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (_typing && index == chat.messages.length) {
+              return const FadeSlideIn(child: TypingIndicator());
+            }
+            return _buildMessageItem(chat.messages[index]);
+          },
+        ),
+        if (chat.loadError != null && chat.messages.isNotEmpty)
+          Positioned(
+            left: 12,
+            right: 12,
+            top: 8,
+            child: Material(
+              elevation: 2,
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.white,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        chat.loadError!,
+                        style: const TextStyle(fontSize: 13),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: _loadConversation,
+                      child: const Text('Tentar novamente'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        if (_clearing)
+          const ColoredBox(
+            color: Color(0x66FFFFFF),
+            child: Center(child: CircularProgressIndicator()),
+          ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final busy = _loadingConversation || _clearing;
+    final busy = _chat == null || chat.loading || _clearing;
+    final composerEnabled =
+        !busy && !_typing && (chat.loadError == null || chat.messages.isNotEmpty);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7F8),
@@ -374,33 +466,10 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: busy && _messages.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : Stack(
-                    children: [
-                      ListView.builder(
-                        controller: _scroll,
-                        padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-                        itemCount: _messages.length + (_typing ? 1 : 0),
-                        itemBuilder: (context, index) {
-                          if (_typing && index == _messages.length) {
-                            return const FadeSlideIn(child: TypingIndicator());
-                          }
-                          return _buildMessageItem(_messages[index]);
-                        },
-                      ),
-                      if (_clearing)
-                        const ColoredBox(
-                          color: Color(0x66FFFFFF),
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                    ],
-                  ),
-          ),
+          Expanded(child: _buildBody()),
           ChatComposer(
             controller: _ctrl,
-            enabled: !_typing && !busy,
+            enabled: composerEnabled,
             onSend: _send,
             onPickAttachment: _onPickAttachment,
           ),
@@ -411,3 +480,47 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
 }
 
 enum _AssistantMenuAction { newConversation }
+
+class _ConversationSkeleton extends StatelessWidget {
+  const _ConversationSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+      children: const [
+        _SkeletonBubble(widthFactor: 0.72, alignEnd: false),
+        SizedBox(height: 12),
+        _SkeletonBubble(widthFactor: 0.55, alignEnd: true),
+        SizedBox(height: 12),
+        _SkeletonBubble(widthFactor: 0.8, alignEnd: false),
+        SizedBox(height: 12),
+        _SkeletonBubble(widthFactor: 0.48, alignEnd: true),
+      ],
+    );
+  }
+}
+
+class _SkeletonBubble extends StatelessWidget {
+  const _SkeletonBubble({required this.widthFactor, required this.alignEnd});
+
+  final double widthFactor;
+  final bool alignEnd;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: alignEnd ? Alignment.centerRight : Alignment.centerLeft,
+      child: FractionallySizedBox(
+        widthFactor: widthFactor,
+        child: Container(
+          height: 56,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE6EEF0),
+            borderRadius: BorderRadius.circular(18),
+          ),
+        ),
+      ),
+    );
+  }
+}

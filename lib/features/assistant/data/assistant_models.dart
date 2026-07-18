@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 import '../domain/chat_message.dart';
 
 typedef AssistantProtocolInfo = ChatProtocolInfo;
@@ -50,12 +52,8 @@ class AssistantReply {
 
     ChatProtocolInfo? protocol;
     final rawProtocol = json['protocol'];
-    if (rawProtocol is Map<String, dynamic>) {
-      protocol = ChatProtocolInfo.fromJson(rawProtocol);
-    } else if (rawProtocol is Map) {
-      protocol = ChatProtocolInfo.fromJson(
-        Map<String, dynamic>.from(rawProtocol),
-      );
+    if (rawProtocol is Map) {
+      protocol = ChatProtocolInfo.fromJson(asStringKeyMap(rawProtocol));
     }
     if (protocol != null && !protocol.isValid) {
       protocol = null;
@@ -65,7 +63,7 @@ class AssistantReply {
       reply: reply,
       intent: stringOrNull(json['intent']),
       nextAction: stringOrNull(json['next_action'] ?? json['nextAction']),
-      finished: json['finished'] is bool ? json['finished'] as bool : null,
+      finished: boolOrNull(json['finished']),
       conversationId: stringOrNull(
         json['conversation_id'] ?? json['conversationId'],
       ),
@@ -77,6 +75,19 @@ class AssistantReply {
     if (raw == null) return null;
     final value = raw.toString().trim();
     return value.isEmpty ? null : value;
+  }
+
+  static bool? boolOrNull(Object? raw) {
+    if (raw is bool) return raw;
+    if (raw == null) return null;
+    final value = raw.toString().trim().toLowerCase();
+    if (value == 'true' || value == '1') return true;
+    if (value == 'false' || value == '0') return false;
+    return null;
+  }
+
+  static Map<String, dynamic> asStringKeyMap(Map raw) {
+    return Map<String, dynamic>.from(raw);
   }
 }
 
@@ -138,35 +149,52 @@ class AssistantConversation {
   const AssistantConversation({
     this.id,
     this.messages = const [],
+    this.state = const {},
+    this.slotsFilled = const {},
+    this.slotsPending = const [],
+    this.finished,
   });
 
   final String? id;
   final List<AssistantHistoryMessage> messages;
+  final Map<String, dynamic> state;
+  final Map<String, dynamic> slotsFilled;
+  final List<dynamic> slotsPending;
+  final bool? finished;
 
   bool get hasMessages => messages.isNotEmpty;
 
+  factory AssistantConversation.empty({String? id}) =>
+      AssistantConversation(id: id);
+
   factory AssistantConversation.fromJson(Map<String, dynamic> json) {
-    final id = (json['id'] ??
-            json['conversation_id'] ??
-            json['uuid'] ??
-            json['conversationId'])
-        ?.toString();
+    final id = AssistantReply.stringOrNull(
+      json['conversation_id'] ??
+          json['id'] ??
+          json['uuid'] ??
+          json['conversationId'],
+    );
 
-    final rawMessages = json['messages'] ??
-        json['history'] ??
-        json['items'] ??
-        json['data'];
+    final state = _asMap(json['state']) ?? const <String, dynamic>{};
+    final slotsFilled =
+        _asMap(json['slots_filled'] ?? json['slotsFilled']) ??
+            const <String, dynamic>{};
+    final slotsPending = _asList(
+      json['slots_pending'] ?? json['slotsPending'],
+    );
 
+    final finished = AssistantReply.boolOrNull(json['finished']) ??
+        AssistantReply.boolOrNull(state['finished']);
+
+    // Fonte canônica: messages (List). Não usar state/slots/data como fallback.
+    final rawMessages = json['messages'] ?? json['history'] ?? json['items'];
     final messages = <AssistantHistoryMessage>[];
     if (rawMessages is List) {
       for (var i = 0; i < rawMessages.length; i++) {
         final item = rawMessages[i];
-        if (item is Map<String, dynamic>) {
-          final parsed = AssistantHistoryMessage.tryParse(item, index: i);
-          if (parsed != null) messages.add(parsed);
-        } else if (item is Map) {
+        if (item is Map) {
           final parsed = AssistantHistoryMessage.tryParse(
-            Map<String, dynamic>.from(item),
+            AssistantReply.asStringKeyMap(item),
             index: i,
           );
           if (parsed != null) messages.add(parsed);
@@ -174,7 +202,14 @@ class AssistantConversation {
       }
     }
 
-    return AssistantConversation(id: id, messages: messages);
+    return AssistantConversation(
+      id: id,
+      messages: messages,
+      state: state,
+      slotsFilled: slotsFilled,
+      slotsPending: slotsPending,
+      finished: finished,
+    );
   }
 
   List<ChatMessage> toChatMessages({AssistantReplyPresenter? presenter}) {
@@ -202,6 +237,32 @@ class AssistantConversation {
     }
     return out;
   }
+
+  static Map<String, dynamic>? _asMap(Object? raw) {
+    if (raw == null) return null;
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    return null;
+  }
+
+  static List<dynamic> _asList(Object? raw) {
+    if (raw is List) return List<dynamic>.from(raw);
+    return const [];
+  }
+
+  /// Log técnico apenas em debug — sem conteúdo das mensagens.
+  void debugLogMeta({int? httpStatus}) {
+    if (!kDebugMode) return;
+    debugPrint(
+      '[assistant.conversation] status=${httpStatus ?? '-'} '
+      'conversation_id=$id '
+      'messages_count=${messages.length} '
+      'finished=$finished '
+      'messages_runtime=${messages.runtimeType} '
+      'state_runtime=${state.runtimeType} '
+      'slots_filled_runtime=${slotsFilled.runtimeType}',
+    );
+  }
 }
 
 class AssistantHistoryMessage {
@@ -225,8 +286,8 @@ class AssistantHistoryMessage {
     Map<String, dynamic> json, {
     required int index,
   }) {
-    final text = (json['content'] ??
-            json['text'] ??
+    final text = (json['text'] ??
+            json['content'] ??
             json['message'] ??
             json['body'] ??
             json['reply'] ??
@@ -259,11 +320,9 @@ class AssistantHistoryMessage {
 
     ChatProtocolInfo? protocol;
     final rawProtocol = json['protocol'];
-    if (rawProtocol is Map<String, dynamic>) {
-      protocol = ChatProtocolInfo.fromJson(rawProtocol);
-    } else if (rawProtocol is Map) {
+    if (rawProtocol is Map) {
       protocol = ChatProtocolInfo.fromJson(
-        Map<String, dynamic>.from(rawProtocol),
+        AssistantReply.asStringKeyMap(rawProtocol),
       );
     }
     if (protocol != null && !protocol.isValid) protocol = null;
@@ -295,6 +354,7 @@ class AssistantHistoryMessage {
         role == 'portal') {
       return ChatSender.user;
     }
+    // API usa "model" para o assistente (Gemini).
     return ChatSender.assistant;
   }
 
