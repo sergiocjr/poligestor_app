@@ -48,7 +48,9 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = _load());
+    setState(() {
+      _future = _load();
+    });
     await _future;
   }
 

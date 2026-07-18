@@ -108,6 +108,117 @@ void main() {
       expect(detail.messages.single.body, 'Público');
     });
 
+    test('parse do contrato real portal (fixture API)', () {
+      final envelope = {
+        'data': {
+          'id': '5f3d010e-1dc6-44ab-957c-b8df9febc611',
+          'number': 'PG-2026-000008',
+          'subject': 'cachorro / animal abandonado',
+          'title': 'cachorro / animal abandonado',
+          'description': 'cachorro / animal abandonado',
+          'status': 'recebido',
+          'priority': 'medium',
+          'category': {
+            'id': '7208b2f1-90b7-463c-b3ee-8e741363851b',
+            'name': 'Proteção animal',
+            'slug': 'protecao-animal',
+          },
+          'address': 'Rua das Flores, próximo ao número 20.',
+          'deadline_label': 'Dentro do prazo',
+          'due_at': '2026-07-20T05:49:31-03:00',
+          'can_rate': false,
+          'can_reply': true,
+          'awaiting_citizen': false,
+          'has_new_message': true,
+          'unread_messages': 2,
+          'unread_count': 2,
+          'last_public_message': 'Vamos verificar o local.',
+          'last_updated_at': '2026-07-18T17:52:37-03:00',
+          'created_at': '2026-07-18T02:49:30-03:00',
+          'updated_at': '2026-07-18T17:52:37-03:00',
+          'links': {
+            'read':
+                '/api/v1/portal/protocols/5f3d010e-1dc6-44ab-957c-b8df9febc611/read',
+            'rate': null,
+          },
+          'timeline': [
+            {
+              'id': '2177dd5c-e3ad-4646-882b-6399763e47e5',
+              'type': 'created',
+              'title': 'Solicitação recebida',
+              'description':
+                  'Sua solicitação foi registrada e receberá um número de protocolo.',
+              'created_at': '2026-07-18T02:49:30-03:00',
+            },
+            {
+              'id': 'h2',
+              'type': 'comment_added',
+              'title': 'Nova mensagem',
+              'created_at': '2026-07-18T17:52:38-03:00',
+            },
+          ],
+          'comments': [
+            {
+              'id': '73d72ae6-f1ac-47d4-80d7-7b5734f62563',
+              'body': 'Complemento validacao fase 6 cidadao.',
+              'author': 'you',
+              'created_at': '2026-07-18T17:52:38-03:00',
+            },
+          ],
+          'attachments': [],
+        },
+      };
+
+      final detail = ProtocolDetail.fromJson(
+        Map<String, dynamic>.from(envelope['data'] as Map),
+      );
+      expect(detail.number, 'PG-2026-000008');
+      expect(detail.category, 'Proteção animal');
+      expect(detail.address, contains('Flores'));
+      expect(detail.deadlineLabel, 'Dentro do prazo');
+      expect(detail.showUnreadBadge, isTrue);
+      expect(detail.lastMessagePreview, contains('verificar'));
+      expect(detail.markReadUrl, contains('/read'));
+      expect(detail.rateUrl, isNull);
+      expect(detail.canRate, isFalse);
+      expect(detail.messages, hasLength(1));
+      expect(detail.messages.single.isFromCabinet, isFalse);
+      expect(detail.messages.single.authorName, 'Você');
+      expect(detail.history, hasLength(2));
+      expect(detail.history.first.title, 'Solicitação recebida');
+      expect(
+        detail.history.first.createdAt!
+            .isBefore(detail.history.last.createdAt!),
+        isTrue,
+      );
+    });
+
+    test('notificação usa data.protocol_id e link /portal/solicitacoes', () {
+      final n = AppNotification.fromJson({
+        'id': '861c0494-2203-4f20-b6d7-b1cad25dd91c',
+        'type': 'protocol_received',
+        'title': 'Solicitação recebida',
+        'body': 'Protocolo PG-2026-000008 registrado com sucesso.',
+        'data': {
+          'protocol_id': '5f3d010e-1dc6-44ab-957c-b8df9febc611',
+          'number': 'PG-2026-000008',
+        },
+        'link': '/portal/solicitacoes/5f3d010e-1dc6-44ab-957c-b8df9febc611',
+        'read_at': null,
+      });
+      expect(n.protocolId, '5f3d010e-1dc6-44ab-957c-b8df9febc611');
+    });
+
+    test('create payload inclui data_consent', () {
+      final json = CreateProtocolInput(
+        subject: 'Teste',
+        description: 'Desc',
+        category: 'ajuda',
+      ).toJson();
+      expect(json['data_consent'], isTrue);
+      expect(json['subject'], 'Teste');
+    });
+
     test('status usa linguagem simples', () {
       expect(
         ProtocolStatusLabel.pt('aguardando_cidadao'),

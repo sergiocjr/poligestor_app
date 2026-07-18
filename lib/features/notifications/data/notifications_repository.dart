@@ -19,6 +19,7 @@ class AppNotification {
     this.createdAt,
     this.link,
     this.protocolId,
+    this.protocolNumber,
     this.kind = NotificationKind.generic,
   });
 
@@ -29,6 +30,7 @@ class AppNotification {
   final DateTime? createdAt;
   final String? link;
   final String? protocolId;
+  final String? protocolNumber;
   final NotificationKind kind;
 
   bool get isUnread => readAt == null;
@@ -43,11 +45,29 @@ class AppNotification {
             '')
         .toString()
         .toLowerCase();
-    final protocolId = (json['protocol_id'] ??
+    final data = json['data'];
+    String? protocolId = (json['protocol_id'] ??
             json['protocolo_id'] ??
             json['request_id'] ??
             json['solicitacao_id'])
         ?.toString();
+    String? protocolNumber = (json['protocol_number'] ??
+            json['number'] ??
+            json['numero'] ??
+            json['protocolo'])
+        ?.toString();
+    if (data is Map) {
+      protocolId ??= (data['protocol_id'] ??
+              data['protocolo_id'] ??
+              data['request_id'])
+          ?.toString();
+      // Não usar data['id'] genérico: pode ser id do aviso/evento.
+      protocolNumber ??= (data['protocol_number'] ??
+              data['number'] ??
+              data['numero'] ??
+              data['protocolo'])
+          ?.toString();
+    }
     final link = json['link']?.toString();
 
     return AppNotification(
@@ -56,6 +76,7 @@ class AppNotification {
       body: (json['body'] ?? json['message'] ?? json['conteudo'])?.toString(),
       link: link,
       protocolId: protocolId ?? _protocolIdFromLink(link),
+      protocolNumber: protocolNumber,
       kind: _kindFrom(type, title: json['title']?.toString(), body: json['body']?.toString()),
       readAt: readRaw != null ? DateTime.tryParse(readRaw.toString()) : null,
       createdAt:
@@ -71,7 +92,9 @@ class AppNotification {
     for (var i = 0; i < segments.length - 1; i++) {
       if (segments[i] == 'requests' ||
           segments[i] == 'protocols' ||
-          segments[i] == 'solicitacoes') {
+          segments[i] == 'solicitacoes' ||
+          segments[i] == 'solicitação' ||
+          segments[i] == 'protocolos') {
         return segments[i + 1];
       }
     }

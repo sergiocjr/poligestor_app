@@ -29,7 +29,16 @@ class UserMessages {
       'Não foi possível carregar a conversa anterior.';
   static const locationDenied = 'Precisamos da sua permissão de localização.';
   static const locationUnavailable = 'Não foi possível obter a localização.';
+  static const protocolNotFound = 'Esta solicitação não foi encontrada.';
+  static const protocolNoAccess = 'Você não tem acesso a esta solicitação.';
+  static const protocolOpenFailed =
+      'Não foi possível abrir a solicitação. Tente novamente.';
+  static const notificationWithoutProtocol =
+      'Este aviso não possui uma solicitação válida.';
+  static const notificationMarkReadFailed =
+      'O aviso foi aberto, mas não foi possível marcá-lo como lido.';
 
+  /// Erros da Home/sessão — mantém mensagem genérica de sincronização.
   static String fromError(Object? error) {
     if (error is ProtocolFeatureUnavailable) {
       return error.message;
@@ -63,5 +72,39 @@ class UserMessages {
       return syncFailed;
     }
     return syncFailed;
+  }
+
+  /// Erros ao abrir detalhe/aviso de protocolo — nunca usa [syncFailed].
+  static String forProtocolError(Object? error) {
+    if (error is ProtocolFeatureUnavailable) {
+      return error.message;
+    }
+    if (error is ApiException) {
+      if (error.statusCode == 404) return protocolNotFound;
+      if (error.isForbidden) return protocolNoAccess;
+      if (error.isUnauthorized) return protocolNoAccess;
+      if (error.statusCode == null &&
+          (error.message.toLowerCase().contains('conexão') ||
+              error.message.toLowerCase().contains('connection') ||
+              error.message.toLowerCase().contains('socket'))) {
+        return offline;
+      }
+      if (error.message.toLowerCase().contains('tempo esgotado') ||
+          error.message.toLowerCase().contains('timeout')) {
+        return protocolOpenFailed;
+      }
+      return protocolOpenFailed;
+    }
+    final raw = error?.toString().toLowerCase() ?? '';
+    if (raw.contains('socket') ||
+        raw.contains('network') ||
+        raw.contains('connection') ||
+        raw.contains('offline')) {
+      return offline;
+    }
+    if (raw.contains('404') || raw.contains('not found')) {
+      return protocolNotFound;
+    }
+    return protocolOpenFailed;
   }
 }

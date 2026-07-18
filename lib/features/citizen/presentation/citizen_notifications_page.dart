@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -7,6 +8,7 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../notifications/data/notifications_repository.dart';
+import '../../protocols/data/protocol_navigation.dart';
 
 class CitizenNotificationsPage extends StatefulWidget {
   const CitizenNotificationsPage({super.key});
@@ -31,7 +33,9 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
   }
 
   Future<void> _reload() async {
-    setState(() => _future = _load());
+    setState(() {
+      _future = _load();
+    });
     await _future;
   }
 
@@ -45,25 +49,74 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
       };
 
   Future<void> _open(AppNotification n) async {
-    final auth = context.read<AuthController>();
-    if (n.isUnread) {
-      try {
-        await context
-            .read<NotificationsRepository>()
-            .markRead(mode: auth.mode, id: n.id);
-      } catch (_) {
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(UserMessages.syncFailed)),
-        );
-      }
+    final target = ProtocolNavigationTarget.resolve(
+      protocolId: n.protocolId,
+      protocolNumber: n.protocolNumber,
+      link: n.link,
+    );
+
+    if (kDebugMode) {
+      debugPrint(
+        '[Avisos] open type=${n.kind.name} '
+        'protocol_id=${n.protocolId} '
+        'protocol_number=${n.protocolNumber} '
+        'link=${n.link} '
+        'resolved=${target?.protocolId} source=${target?.source}',
+      );
     }
 
-    final protocolId = n.protocolId;
-    if (protocolId != null && protocolId.isNotEmpty && mounted) {
-      await context.push('/citizen/requests/$protocolId');
-      if (mounted) await _reload();
+    if (target == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(UserMessages.notificationWithoutProtocol)),
+      );
       return;
+    }
+
+    // Abre o detalhe; marca como lida só se o carregamento teve sucesso.
+    bool openedOk = false;
+    try {
+      final result = await context.push<bool>(target.citizenDetailPath);
+      openedOk = result == true;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('[Avisos] navigate error type=${e.runtimeType} $e');
+      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(UserMessages.forProtocolError(e))),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    if (!openedOk) {
+      if (kDebugMode) {
+        debugPrint('[Avisos] open failed — not marking as read');
+      }
+      return;
+    }
+
+    if (n.isUnread) {
+      try {
+        final auth = context.read<AuthController>();
+        await context.read<NotificationsRepository>().markRead(
+              mode: auth.mode,
+              id: n.id,
+            );
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('[Avisos] markRead error type=${e.runtimeType} $e');
+        }
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(UserMessages.notificationMarkReadFailed),
+            ),
+          );
+        }
+      }
     }
 
     if (mounted) await _reload();
@@ -99,7 +152,11 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
             );
           }
           if (snapshot.hasError) {
-            return AppErrorState(error: snapshot.error, onRetry: _reload);
+            return AppErrorState(
+              message: UserMessages.forProtocolError(snapshot.error),
+              error: snapshot.error,
+              onRetry: _reload,
+            );
           }
           final items = snapshot.data ?? const [];
           if (items.isEmpty) {
@@ -117,6 +174,12 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
               separatorBuilder: (_, _) => const SizedBox(height: 8),
               itemBuilder: (context, index) {
                 final n = items[index];
+                final canOpen = ProtocolNavigationTarget.resolve(
+                      protocolId: n.protocolId,
+                      protocolNumber: n.protocolNumber,
+                      link: n.link,
+                    ) !=
+                    null;
                 return Card(
                   color: n.isUnread
                       ? scheme.primaryContainer.withValues(alpha: 0.28)
@@ -148,7 +211,7 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     isThreeLine: true,
-                    trailing: n.protocolId != null
+                    trailing: canOpen
                         ? const Icon(Icons.chevron_right_rounded)
                         : null,
                     onTap: () => _open(n),
