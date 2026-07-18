@@ -44,6 +44,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   Future<ProtocolDetail>? _future;
   final _messageCtrl = TextEditingController();
   final _messageFocus = FocusNode();
+  final _scrollController = ScrollController();
   bool _busy = false;
   bool _ratingBusy = false;
   bool _picking = false;
@@ -55,6 +56,12 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   bool get _composerBusy => _busy || _picking;
 
   @override
+  void initState() {
+    super.initState();
+    _messageFocus.addListener(_onComposerFocusChange);
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _future ??= _load();
@@ -62,9 +69,29 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   @override
   void dispose() {
+    _messageFocus.removeListener(_onComposerFocusChange);
+    _scrollController.dispose();
     _messageCtrl.dispose();
     _messageFocus.dispose();
     super.dispose();
+  }
+
+  void _onComposerFocusChange() {
+    if (_messageFocus.hasFocus) {
+      _scrollToEnd();
+    }
+  }
+
+  void _scrollToEnd() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_scrollController.hasClients) return;
+      final max = _scrollController.position.maxScrollExtent;
+      _scrollController.animateTo(
+        max,
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+      );
+    });
   }
 
   void _clearFocus() {
@@ -213,6 +240,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
         );
       }
       await _reload();
+      _scrollToEnd();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -413,8 +441,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   Widget _buildComposer(ProtocolDetail p, ColorScheme scheme) {
     final highlight = p.isAwaitingCitizen;
-    // Barra compacta: Column+TextField multiline no bottomNavigationBar
-    // zerava a pintura do body no SM-A105M.
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    // Composer no rodapé do Column (não em bottomNavigationBar): o Scaffold
+    // com resizeToAvoidBottomInset sobe o bloco junto com o teclado.
     return Material(
       key: const Key('request_detail_composer_bar'),
       color: highlight
@@ -423,6 +452,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       elevation: 4,
       child: SafeArea(
         top: false,
+        // Com teclado aberto o inset já vem do Scaffold; evita padding duplo.
+        bottom: !keyboardOpen,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
           child: Row(
@@ -500,6 +531,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       onRefresh: _reload,
       child: ListView(
         key: const Key('request_detail_scroll'),
+        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
@@ -695,6 +727,19 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           );
         }
 
+        // Scaffold
+        // └── Column
+        //     ├── Expanded → lista
+        //     └── Composer  (sobe com o teclado via resizeToAvoidBottomInset)
+        final content = hasData && detail != null
+            ? Column(
+                children: [
+                  Expanded(child: body),
+                  _buildComposer(detail, scheme),
+                ],
+              )
+            : body;
+
         return PopScope(
           canPop: false,
           onPopInvokedWithResult: (didPop, _) {
@@ -705,6 +750,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           },
           child: Scaffold(
             backgroundColor: scheme.surface,
+            resizeToAvoidBottomInset: true,
             appBar: AppBar(
               title: const Text('Detalhes da solicitação'),
               leading: BackButton(
@@ -715,10 +761,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
                 },
               ),
             ),
-            bottomNavigationBar: hasData && detail != null
-                ? _buildComposer(detail, scheme)
-                : null,
-            body: body,
+            body: content,
           ),
         );
       },
