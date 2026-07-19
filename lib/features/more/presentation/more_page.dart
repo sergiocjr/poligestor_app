@@ -35,6 +35,12 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/chat'),
           ),
           ListTile(
+            leading: const Icon(Icons.groups_outlined),
+            title: const Text('Equipe Virtual'),
+            subtitle: const Text('Agentes, tarefas e operação'),
+            onTap: () => context.push('/home/virtual-team'),
+          ),
+          ListTile(
             leading: const Icon(Icons.auto_awesome_outlined),
             title: const Text('Inteligência'),
             onTap: () => context.go('/home/intelligence'),

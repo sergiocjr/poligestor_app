@@ -30,6 +30,16 @@ class NotificationRouter {
             location: '/citizen/notifications',
           );
         }
+        // Sprint 10.1 — Equipe Virtual
+        if (uri.host == 'virtual-team' ||
+            uri.host == 'virtual_team' ||
+            uri.host == 'equipe-virtual') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/virtual-team'
+              : '/home/virtual-team/$rest';
+          return NotificationRouteTarget(location: location);
+        }
       }
     }
 

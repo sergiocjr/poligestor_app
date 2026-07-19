@@ -6,13 +6,22 @@
 | 6 | Atendimento / avaliação / conversa | Concluída |
 | 7 | FCM, notificações, Reverb, deep links | CONCLUÍDA |
 | 8 | Gestão do mandato (dashboard staff) | CONCLUÍDA |
-| **9** | Inteligência do mandato (briefing/insights/trends) | **CONCLUÍDA** |
-| **9.5** | Hardening completo (produção) | **CONCLUÍDA** |
-| 10+ | Evoluções futuras | Não iniciada |
+| 9 | Inteligência do mandato (briefing/insights/trends) | CONCLUÍDA |
+| 9.5 | Hardening completo (produção) | CONCLUÍDA |
+| **10.1** | Equipe Virtual (agentes / operação) | **CONCLUÍDA** |
+| 10+ | Evoluções restantes | Em aberto |
 
-## Fase 8 (fechada)
+## Sprint 10.1 (fechada)
 
-**STATUS: CONCLUÍDA.** Mandato operacional staff.
+**STATUS: CONCLUÍDA.**
+
+Centro operacional Equipe Virtual consumindo `/api/v1/virtual-team/*` (descobertos) + `/api/v1/ai/handoffs`. Endpoints 404 preparados no repository/UI sem mocks.
+
+## Sprint 9.5 (fechada)
+
+**STATUS: CONCLUÍDA.**
+
+Hardening de produção: sync/realtime, segurança (FCM/CPF), UX Mais, a11y, dispose, testes.
 
 ## Fase 9 (fechada)
 
@@ -20,12 +29,10 @@
 
 Módulo Inteligência consumindo `/api/v1/mandate/{briefing,analytics,trends,insights,briefings}`.
 
-## Sprint 9.5 (fechada)
+## Fase 8 (fechada)
 
-**STATUS: CONCLUÍDA.**
-
-Hardening de produção: sync/realtime, segurança (FCM/CPF), UX Mais, a11y, dispose, testes. Sem Fase 10.
+**STATUS: CONCLUÍDA.** Mandato operacional staff.
 
 ## Fase 10+
 
-Não iniciar até haver escopo aprovado.
+Continuar conforme contratos VPS e prioridades do produto.

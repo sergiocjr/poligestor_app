@@ -35,6 +35,10 @@ import '../../features/mandate/presentation/mandate_tv_page.dart';
 import '../../features/more/presentation/more_page.dart';
 import '../../features/protocols/presentation/protocol_detail_page.dart';
 import '../../features/protocols/presentation/protocols_page.dart';
+import '../../features/virtual_team/presentation/virtual_team_agent_detail_page.dart';
+import '../../features/virtual_team/presentation/virtual_team_agents_page.dart';
+import '../../features/virtual_team/presentation/virtual_team_dashboard_page.dart';
+import '../../features/virtual_team/presentation/virtual_team_lists_page.dart';
 
 /// Navigator raiz — detalhes de solicitação sobem acima do CitizenShell
 /// para não cair no IndexedStack da aba (tela branca com AppBar/nav).
@@ -59,6 +63,7 @@ GoRouter createAppRouter(AuthController auth) {
       final isStaffPath = loc.startsWith('/home');
       final isMandatePath = loc.startsWith('/home/mandate');
       final isIntelPath = loc.startsWith('/home/intelligence');
+      final isVirtualTeamPath = loc.startsWith('/home/virtual-team');
 
       if (isSplash || isLogin) {
         return auth.mode == AuthMode.portal
@@ -72,8 +77,9 @@ GoRouter createAppRouter(AuthController auth) {
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
       }
-      // Mandato / Inteligência exclusivos de staff.
-      if ((isMandatePath || isIntelPath) && auth.mode != AuthMode.staff) {
+      // Mandato / Inteligência / Equipe Virtual exclusivos de staff.
+      if ((isMandatePath || isIntelPath || isVirtualTeamPath) &&
+          auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
 
@@ -227,6 +233,76 @@ GoRouter createAppRouter(AuthController auth) {
         path: '/home/chat',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const ChatPage(),
+      ),
+
+      // Equipe Virtual (Sprint 10.1) — acesso via Mais / deep link.
+      GoRoute(
+        path: '/home/virtual-team',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const VirtualTeamDashboardPage(),
+        routes: [
+          GoRoute(
+            path: 'agents',
+            builder: (_, _) => const VirtualTeamAgentsPage(),
+            routes: [
+              GoRoute(
+                path: ':slug',
+                builder: (context, state) => VirtualTeamAgentDetailPage(
+                  slug: state.pathParameters['slug']!,
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'tasks',
+            builder: (_, _) => const VirtualTeamTasksPage(),
+          ),
+          GoRoute(
+            path: 'executions',
+            builder: (_, _) => const VirtualTeamExecutionsPage(),
+          ),
+          GoRoute(
+            path: 'handoffs',
+            builder: (_, _) => const VirtualTeamHandoffsPage(),
+          ),
+          GoRoute(
+            path: 'events',
+            builder: (_, _) => const VirtualTeamEventsPage(),
+          ),
+          GoRoute(
+            path: 'memory',
+            builder: (_, _) => const VirtualTeamMemoryPage(),
+          ),
+          GoRoute(
+            path: 'learning',
+            builder: (_, _) => const VirtualTeamLearningPage(),
+          ),
+          GoRoute(
+            path: 'queue',
+            builder: (_, _) => const VirtualTeamQueuePage(),
+          ),
+          GoRoute(
+            path: 'audit',
+            builder: (_, _) => VirtualTeamPendingEndpointPage(
+              title: 'Auditoria',
+              loader: (repo) => repo.audit(),
+            ),
+          ),
+          GoRoute(
+            path: 'logs',
+            builder: (_, _) => VirtualTeamPendingEndpointPage(
+              title: 'Logs',
+              loader: (repo) => repo.logs(),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => VirtualTeamPendingEndpointPage(
+              title: 'Busca',
+              loader: (repo) => repo.search(query: ''),
+            ),
+          ),
+        ],
       ),
 
       // Citizen shell

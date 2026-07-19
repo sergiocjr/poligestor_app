@@ -95,4 +95,28 @@ enum AuthMode {
   String get mandateTrendsPath => '/v1/mandate/trends';
   String get mandateInsightsPath => '/v1/mandate/insights';
   String get mandateBriefingsPath => '/v1/mandate/briefings';
+
+  // --- Sprint 10.1: Equipe Virtual (staff) ---
+  String get virtualTeamDashboardPath => '/v1/virtual-team/dashboard';
+  String get virtualTeamAgentsPath => '/v1/virtual-team/agents';
+  String virtualTeamAgentPath(String slug) => '/v1/virtual-team/agents/$slug';
+  String get virtualTeamTasksPath => '/v1/virtual-team/tasks';
+  String get virtualTeamExecutionsPath => '/v1/virtual-team/executions';
+  String get virtualTeamEventsPath => '/v1/virtual-team/events';
+  String get virtualTeamMemoryPath => '/v1/virtual-team/memory';
+  String get virtualTeamLearningPath => '/v1/virtual-team/learning';
+  String get virtualTeamQueuePath => '/v1/virtual-team/queue';
+  // Catálogo legado + hand-offs (namespace /v1/ai)
+  String get aiAgentsCatalogPath => '/v1/ai/agents';
+  String get aiHandoffsPath => '/v1/ai/handoffs';
+  String get aiConversationsPath => '/v1/ai/conversations';
+
+  // Reservados (ainda 404 na VPS — preparados no repository)
+  String get virtualTeamLogsPath => '/v1/virtual-team/logs';
+  String get virtualTeamAuditPath => '/v1/virtual-team/audit';
+  String get virtualTeamSearchPath => '/v1/virtual-team/search';
+  String get virtualTeamMetricsPath => '/v1/virtual-team/metrics';
+  String get virtualTeamTimelinePath => '/v1/virtual-team/timeline';
+  String get virtualTeamAlertsPath => '/v1/virtual-team/alerts';
+  String get virtualTeamHandoffsPath => '/v1/virtual-team/handoffs';
 }

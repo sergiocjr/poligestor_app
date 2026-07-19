@@ -82,6 +82,16 @@ Produção: sync coalescido, FCM seguro, CPF mascarado, UX Mais, a11y básica, d
 
 **SPRINT 9.5 — STATUS: CONCLUÍDA.**
 
+## Sprint 10.1 — Equipe Virtual (CONCLUÍDA)
+
+Staff — **Mais → Equipe Virtual** (`/home/virtual-team/*`):
+
+- Dashboard, agentes (slug), tarefas, execuções, hand-offs, eventos, memória, aprendizado, fila
+- APIs descobertas na VPS; endpoints 404 com UI honesta (sem mocks)
+- Deep links `poligestor://virtual-team/...`
+
+**SPRINT 10.1 — STATUS: CONCLUÍDA.**
+
 ## Estrutura
 
 ```
@@ -95,6 +105,7 @@ lib/
     notifications/  # FCM, prefs, Reverb sync
     mandate/        # Fase 8 — gestão do mandato (staff)
     intelligence/   # Fase 9 — inteligência do mandato (staff)
+    virtual_team/   # Sprint 10.1 — equipe virtual (staff)
     home/           # shell staff
     more/
     assistant/
