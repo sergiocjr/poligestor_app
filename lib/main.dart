@@ -165,6 +165,8 @@ class _PoliGestorAppState extends State<PoliGestorApp> {
   void dispose() {
     _auth?.removeListener(_onAuthChanged);
     _sync?.stop();
+    // ignore: discarded_futures
+    _push?.dispose();
     super.dispose();
   }
 

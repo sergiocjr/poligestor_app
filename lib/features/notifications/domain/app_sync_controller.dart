@@ -60,8 +60,9 @@ class AppSyncController with WidgetsBindingObserver {
     if (kDebugMode) {
       debugPrint('[AppSync] sync reason=$reason');
     }
+    // Uma única refresh de inbox; onAuthenticated soft evita segunda + force FCM.
     await _notifications.refresh();
-    await _push.onAuthenticated();
+    await _push.onAuthenticated(soft: true);
     if (_auth.mode == AuthMode.staff) {
       _mandateRefresh?.bump(reason: reason);
     }

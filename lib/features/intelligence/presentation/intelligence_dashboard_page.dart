@@ -49,9 +49,10 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
       _lastGen = refresh.generation;
     } else if (refresh.generation != _lastGen) {
       _lastGen = refresh.generation;
-      _future = _load();
+      // Resume/realtime: sem generate=1 (evita job IA a cada bump).
+      _future = _load(generateInsights: false);
     }
-    _future ??= _load();
+    _future ??= _load(generateInsights: true);
   }
 
   IntelligenceFilter get _filter {
@@ -64,12 +65,12 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
     return IntelligenceFilter(period: _period == 'custom' ? '7d' : _period);
   }
 
-  Future<_DashboardBundle> _load() async {
+  Future<_DashboardBundle> _load({bool generateInsights = false}) async {
     final repo = context.read<IntelligenceRepository>();
     final filter = _filter;
     final results = await Future.wait([
       repo.briefing(filter: filter),
-      repo.insights(filter: filter, generate: true),
+      repo.insights(filter: filter, generate: generateInsights),
       repo.trends(filter: filter),
       repo.analytics(filter: filter),
     ]);
@@ -82,7 +83,7 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
   }
 
   Future<void> _refresh() async {
-    setState(() => _future = _load());
+    setState(() => _future = _load(generateInsights: true));
     await _future;
   }
 
@@ -99,7 +100,7 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
     setState(() {
       _customRange = picked;
       _period = 'custom';
-      _future = _load();
+      _future = _load(generateInsights: false);
     });
   }
 
@@ -122,7 +123,7 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
             value: _period,
             onChanged: (v) => setState(() {
               _period = v;
-              _future = _load();
+              _future = _load(generateInsights: false);
             }),
             onCustomRange: _pickRange,
           ),

@@ -25,6 +25,7 @@ class NotificationsController extends ChangeNotifier {
   int _unreadCount = 0;
   int _page = 1;
   int _lastPage = 1;
+  Future<void>? _refreshInFlight;
 
   List<AppNotification> get items => _items;
   NotificationFilter get filter => _filter;
@@ -54,7 +55,16 @@ class NotificationsController extends ChangeNotifier {
     await refresh();
   }
 
-  Future<void> refresh() async {
+  /// Coalescido: chamadas concorrentes compartilham a mesma Future.
+  Future<void> refresh() {
+    if (_refreshInFlight != null) return _refreshInFlight!;
+    _refreshInFlight = _refreshBody().whenComplete(() {
+      _refreshInFlight = null;
+    });
+    return _refreshInFlight!;
+  }
+
+  Future<void> _refreshBody() async {
     if (!_auth.isAuthenticated) {
       _items = const [];
       _unreadCount = 0;

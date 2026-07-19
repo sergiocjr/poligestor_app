@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/auth/auth_controller.dart';
@@ -41,6 +42,9 @@ class PushNotificationService {
   final NotificationsController _notifications;
   final RealtimeSyncService _realtime;
   final NotificationRouter _router;
+  final FlutterSecureStorage _secure = const FlutterSecureStorage(
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+  );
 
   final _appLinks = AppLinks();
   final _localNotifications = FlutterLocalNotificationsPlugin();
@@ -88,11 +92,14 @@ class PushNotificationService {
     }
   }
 
-  Future<void> onAuthenticated() async {
+  Future<void> onAuthenticated({bool soft = false}) async {
     await initialize();
     _lastMode = _auth.mode;
-    await _registerDeviceToken(force: true);
-    await _notifications.refresh();
+    // soft (resume): não força re-registro nem 2ª refresh de inbox.
+    await _registerDeviceToken(force: !soft);
+    if (!soft) {
+      await _notifications.refresh();
+    }
     await _realtime.start();
     _flushPendingNavigation();
   }
@@ -100,8 +107,7 @@ class PushNotificationService {
   /// Chamar **antes** de `auth.logout()` — precisa do Bearer ainda válido.
   Future<void> onLogout() async {
     final mode = _auth.isAuthenticated ? _auth.mode : _lastMode;
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_kLastToken) ?? _lastFcmToken;
+    final token = await _readStoredToken() ?? _lastFcmToken;
 
     if (mode != null) {
       try {
@@ -129,6 +135,8 @@ class PushNotificationService {
     await _realtime.stop();
     if (clearToken) {
       _lastFcmToken = null;
+      await _secure.delete(key: _kLastToken);
+      // Limpa legado em SharedPreferences (versão pré-9.5).
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_kLastToken);
     }
@@ -145,9 +153,11 @@ class PushNotificationService {
         'protocol_id=${payload.protocolId} fromTap=$fromUserTap',
       );
     }
-    // ignore: discarded_futures
-    _notifications.refresh();
-
+    // Se Reverb já atualiza a inbox, evita refresh REST duplicado no push.
+    if (!_realtime.isConnected) {
+      // ignore: discarded_futures
+      _notifications.refresh();
+    }
     if (fromUserTap) {
       enqueueNavigation(payload);
     }
@@ -367,8 +377,7 @@ class PushNotificationService {
         return;
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      final last = prefs.getString(_kLastToken);
+      final last = await _readStoredToken();
       if (!force && last == token) return;
 
       await _devices.register(
@@ -376,7 +385,10 @@ class PushNotificationService {
         token: token,
       );
       _lastFcmToken = token;
-      await prefs.setString(_kLastToken, token);
+      await _secure.write(key: _kLastToken, value: token);
+      // Remove cópia legada em claro.
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_kLastToken);
       if (kDebugMode) {
         debugPrint(
           '[Push] device registered platform=android token=${_maskToken(token)}',
@@ -387,6 +399,20 @@ class PushNotificationService {
         debugPrint('[Push] register device failed: $e');
       }
     }
+  }
+
+  Future<String?> _readStoredToken() async {
+    final secure = await _secure.read(key: _kLastToken);
+    if (secure != null && secure.isNotEmpty) return secure;
+    // Migração one-shot do prefs legado.
+    final prefs = await SharedPreferences.getInstance();
+    final legacy = prefs.getString(_kLastToken);
+    if (legacy != null && legacy.isNotEmpty) {
+      await _secure.write(key: _kLastToken, value: legacy);
+      await prefs.remove(_kLastToken);
+      return legacy;
+    }
+    return null;
   }
 
   /// Somente token FCM real — sem substituto local.

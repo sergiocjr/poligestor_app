@@ -25,17 +25,17 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= _load();
+    _future ??= _load(generate: true);
   }
 
-  Future<IntelligenceInsightsData> _load() =>
+  Future<IntelligenceInsightsData> _load({bool generate = false}) =>
       context.read<IntelligenceRepository>().insights(
             filter: IntelligenceFilter(period: _period),
-            generate: true,
+            generate: generate,
           );
 
   Future<void> _refresh() async {
-    setState(() => _future = _load());
+    setState(() => _future = _load(generate: true));
     await _future;
   }
 
@@ -51,7 +51,7 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
             value: _period,
             onChanged: (v) => setState(() {
               _period = v;
-              _future = _load();
+              _future = _load(generate: false);
             }),
           ),
           Expanded(

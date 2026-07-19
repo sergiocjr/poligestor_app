@@ -30,6 +30,7 @@ class RealtimeSyncService {
   PusherReverbClient? _client;
   StreamSubscription<ProtocolRealtimeEvent>? _eventsSub;
   StreamSubscription<bool>? _connSub;
+  Timer? _eventDebounce;
   final _protocolWatchers =
       <String, void Function(ProtocolRealtimeEvent event)>{};
 
@@ -64,6 +65,8 @@ class RealtimeSyncService {
 
   Future<void> stop() async {
     _started = false;
+    _eventDebounce?.cancel();
+    _eventDebounce = null;
     _protocolWatchers.clear();
     await _eventsSub?.cancel();
     await _connSub?.cancel();
@@ -123,12 +126,17 @@ class RealtimeSyncService {
         'protocol_id=${event.protocolId}',
       );
     }
-    // ignore: discarded_futures
-    _notifications.refresh();
-    if (_auth.mode == AuthMode.staff) {
-      _mandateRefresh?.bump(reason: 'realtime');
-    }
     final watcher = _protocolWatchers[event.protocolId];
     watcher?.call(event);
+
+    // Debounce: vários eventos em rajada → uma refresh + um bump.
+    _eventDebounce?.cancel();
+    _eventDebounce = Timer(const Duration(milliseconds: 450), () {
+      // ignore: discarded_futures
+      _notifications.refresh();
+      if (_auth.mode == AuthMode.staff) {
+        _mandateRefresh?.bump(reason: 'realtime');
+      }
+    });
   }
 }
