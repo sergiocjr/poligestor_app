@@ -1,10 +1,30 @@
 # Changelog — PoliGestor Flutter
 
-## [Unreleased]
+## [Fase 8] — 2026-07-18 — CONCLUÍDA
 
-### Fase 8 (em andamento)
+### Added
 
-- Módulo Mandato (staff) e integração com `/v1/mandate/*`
+- Feature `lib/features/mandate/` (models, cache, repository, pages, widgets)
+- Aba Mandato no `HomeShell` + rotas `/home/mandate/*` (staff only)
+- Overview executiva, briefing, pontos de atenção
+- Agenda, bairros, assuntos, equipe, pesquisa (debounce), relatórios, mapa, painel TV
+- `MandateRefreshController` ligado a resume (`AppSyncController`) e eventos Reverb
+- Testes unitários/widget `test/phase8_mandate_test.dart`
+
+### Changed
+
+- Paths `/v1/mandate/*` em `AuthMode`
+- Documentação STATUS / ROADMAP / README / arquitetura
+
+### Validated
+
+- Todos os endpoints mandato HTTP 200 na VPS
+- Build debug no SM-A105M
+
+### Known limitations
+
+- Exportação de relatórios e mapa cartográfico dependem de campos futuros da API
+- iOS não validado
 
 ## [Fase 7] — 2026-07-18 — CONCLUÍDA
 

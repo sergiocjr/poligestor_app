@@ -41,6 +41,13 @@ presentation (pages/widgets)
 3. Detalhe de protocolo → `private-protocol.{id}`
 4. Evento `protocol.realtime` → refresh inbox / soft refresh
 5. Queda WSS → REST + polling na tela aberta + sync no resume
+6. Staff: `MandateRefreshController.bump` no resume e em `protocol.realtime`
+
+## Mandato (Fase 8)
+
+- Paths em `AuthMode` → `MandateRepository` → páginas em `features/mandate/presentation`
+- Cache SharedPreferences com `saved_at` (`MandateCache`)
+- Rotas só sob `/home/mandate/*` (redirect se não for staff)
 
 ## Segurança
 

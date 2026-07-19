@@ -31,7 +31,7 @@ Contas demo (podem variar conforme o tenant ativo na VPS):
 |------|------|--------|
 | 1–6 | Auth, cidadão, protocolos, assistente | Concluídas |
 | **7** | Push FCM, notificações, Reverb, deep links | **CONCLUÍDA** |
-| 8 | Módulo Mandato (gestão) | Em andamento |
+| **8** | Módulo Mandato (gestão staff) | **CONCLUÍDA** |
 | 9+ | — | Não iniciada |
 
 ## Fase 7 — comunicação em tempo real (CONCLUÍDA)
@@ -52,6 +52,15 @@ Validado no **Samsung SM-A105M**:
 - Push iOS / APNs **não** validados nesta fase
 - `GoogleService-Info.plist` e fluxo APNs ficam para configuração futura
 - O código Flutter usa `firebase_messaging` de forma multiplataforma, mas o build/teste oficial foi só Android
+
+## Fase 8 — Mandato (CONCLUÍDA)
+
+Staff only — aba **Mandato** no bottom nav:
+
+- Visão geral (`/v1/mandate/executive` + `briefing`)
+- Agenda, bairros, assuntos, equipe, pesquisa, relatórios, mapa, painel TV
+- Cache offline carimbado; refresh no resume e em eventos realtime
+- Validado: endpoints HTTP 200 na VPS; APK debug no SM-A105M
 
 ## Estrutura
 

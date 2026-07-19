@@ -10,8 +10,8 @@ Atualizado: 2026-07-18
 | Portal do cidadão | Concluído |
 | Protocolos / conversa / avaliação | Concluído |
 | Assistente IA (via Laravel) | Concluído |
-| **Fase 7 — FCM + Reverb + deep links** | **CONCLUÍDA** |
-| Fase 8 — Mandato | Em implementação |
+| Fase 7 — FCM + Reverb + deep links | CONCLUÍDA |
+| **Fase 8 — Mandato (staff)** | **CONCLUÍDA** |
 | Fase 9+ | Não iniciada |
 
 ## Fase 7 — CONCLUÍDA
@@ -40,6 +40,25 @@ Atualizado: 2026-07-18
 - `google-services.json` fora do Git (política do projeto)
 - Envio FCM no servidor depende de `FCM_MODE` / chaves no backend (fora do escopo Flutter)
 
-## Fase 8
+## Fase 8 — CONCLUÍDA
 
-Módulo Mandato (staff): visão executiva, agenda, bairros, assuntos, equipe, busca, relatórios, mapa, painel TV, briefing IA — APIs `/v1/mandate/*`.
+### Entregue
+
+- Aba **Mandato** no shell staff (`/home/mandate/*`); cidadão não vê o módulo
+- APIs exatas: `executive`, `briefing`, `agenda`, `neighborhoods`, `subjects`, `team`, `search`, `reports`, `map`, `tv`
+- Overview com indicadores, pontos de atenção, resumo do dia e hub interno
+- Cache local carimbado + refresh no resume / realtime (`MandateRefreshController`)
+- Relatórios listam linhas da API; exportação só quando o backend expor links
+- Testes `test/phase8_mandate_test.dart` + `flutter analyze` sem errors
+
+### Validação
+
+- Endpoints `/v1/mandate/*` responderam **HTTP 200** com login staff (`admin@demo.local`)
+- Build debug instalável no SM-A105M (`RX8M70CLXKP`)
+- Parsing defensivo alinhado aos payloads reais da VPS
+
+### Limitações
+
+- Mapa cartográfico depende de coordenadas; hoje concentra por bairro via API
+- Exportação PDF/Excel/CSV aguarda URLs/jobs no payload de `reports`
+- iOS não validado nesta fase
