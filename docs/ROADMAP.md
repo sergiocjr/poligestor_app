@@ -8,8 +8,13 @@
 | 8 | Gestão do mandato (dashboard staff) | CONCLUÍDA |
 | 9 | Inteligência do mandato (briefing/insights/trends) | CONCLUÍDA |
 | 9.5 | Hardening completo (produção) | CONCLUÍDA |
-| **10.1** | Equipe Virtual (agentes / operação) | **CONCLUÍDA (Final)** |
+| 10.1 | Equipe Virtual (agentes / operação) | CONCLUÍDA (Final) |
+| **10.2** | Identidade, autenticação e multi-tenant | **CONCLUÍDA (Flutter)** |
 | 10+ | Evoluções restantes | Em aberto |
+
+## Sprint 10.2 (Flutter fechado — pendências na VPS)
+
+Fluxo org-first, branding dinâmico, sessão/perfil/recuperação. App pronto; backend ainda precisa estabilizar resolve/branding/providers/register/forgot/OAuth (ver relatório de endpoints).
 
 ## Sprint 10.1 (fechada)
 

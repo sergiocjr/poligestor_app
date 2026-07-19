@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../account/data/account_repository.dart';
+import '../../identity/domain/tenant_controller.dart';
 import '../../notifications/domain/push_notification_service.dart';
 
 class MorePage extends StatelessWidget {
@@ -11,6 +13,7 @@ class MorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final auth = context.watch<AuthController>();
+    final tenant = context.watch<TenantController>();
     final session = auth.session;
 
     return Scaffold(
@@ -24,10 +27,41 @@ class MorePage extends StatelessWidget {
                   ? session.user.email
                   : session.user.name),
               subtitle: Text(
-                '${session.mode.label} · ${session.tenantSlug}\n${session.user.email}',
+                '${session.mode.label} · ${tenant.displayName}\n${session.user.email}',
               ),
               isThreeLine: true,
+              onTap: () => context.push('/account/profile'),
             ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.manage_accounts_outlined),
+            title: const Text('Meu perfil'),
+            onTap: () => context.push('/account/profile'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.devices_outlined),
+            title: const Text('Sessões'),
+            subtitle: const Text('Dispositivos ativos'),
+            onTap: () => context.push('/account/sessions'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.swap_horiz),
+            title: const Text('Trocar organização'),
+            onTap: () async {
+              final push = context.read<PushNotificationService>();
+              final account = context.read<AccountRepository>();
+              final tenantCtrl = context.read<TenantController>();
+              try {
+                await push.onLogout();
+              } catch (_) {}
+              try {
+                await account.logoutRemote(mode: auth.mode);
+              } catch (_) {}
+              await tenantCtrl.clearOrganization();
+              await auth.logout();
+              if (context.mounted) context.go('/org');
+            },
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.smart_toy_outlined),
@@ -75,8 +109,13 @@ class MorePage extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             onTap: () async {
+              final push = context.read<PushNotificationService>();
+              final account = context.read<AccountRepository>();
               try {
-                await context.read<PushNotificationService>().onLogout();
+                await push.onLogout();
+              } catch (_) {}
+              try {
+                await account.logoutRemote(mode: auth.mode);
               } catch (_) {}
               await auth.logout();
               if (context.mounted) context.go('/login');

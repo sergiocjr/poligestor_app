@@ -3,8 +3,12 @@ import 'package:go_router/go_router.dart';
 
 import '../auth/auth_controller.dart';
 import '../auth/auth_mode.dart';
+import '../../features/account/presentation/account_profile_page.dart';
+import '../../features/account/presentation/account_sessions_page.dart';
 import '../../features/agenda/presentation/agenda_page.dart';
+import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -17,6 +21,8 @@ import '../../features/citizen/presentation/citizen_shell.dart';
 import '../../features/citizen/presentation/new_request_page.dart';
 import '../../features/citizen/presentation/request_detail_page.dart';
 import '../../features/home/presentation/home_shell.dart';
+import '../../features/identity/domain/tenant_controller.dart';
+import '../../features/identity/presentation/organization_select_page.dart';
 import '../../features/intelligence/presentation/intelligence_analytics_page.dart';
 import '../../features/intelligence/presentation/intelligence_briefing_page.dart';
 import '../../features/intelligence/presentation/intelligence_dashboard_page.dart';
@@ -45,28 +51,39 @@ import '../../features/virtual_team/presentation/virtual_team_ops_pages.dart';
 /// para não cair no IndexedStack da aba (tela branca com AppBar/nav).
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
-GoRouter createAppRouter(AuthController auth) {
+GoRouter createAppRouter({
+  required AuthController auth,
+  required TenantController tenant,
+}) {
   return GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/splash',
-    refreshListenable: auth,
+    refreshListenable: Listenable.merge([auth, tenant]),
     redirect: (context, state) {
-      final booting = auth.isBooting;
+      final booting = auth.isBooting || !tenant.ready;
       final loggedIn = auth.isAuthenticated;
       final loc = state.matchedLocation;
       final isSplash = loc == '/splash';
-      final isLogin = loc == '/login';
+      final isOrg = loc == '/org';
+      final isLoginFlow = loc == '/login' || loc.startsWith('/login/');
 
       if (booting) return isSplash ? null : '/splash';
-      if (!loggedIn) return isLogin ? null : '/login';
+
+      if (!loggedIn) {
+        if (!tenant.hasOrganization) {
+          return isOrg ? null : '/org';
+        }
+        return isLoginFlow ? null : '/login';
+      }
 
       final isCitizenPath = loc.startsWith('/citizen');
       final isStaffPath = loc.startsWith('/home');
+      final isAccountPath = loc.startsWith('/account');
       final isMandatePath = loc.startsWith('/home/mandate');
       final isIntelPath = loc.startsWith('/home/intelligence');
       final isVirtualTeamPath = loc.startsWith('/home/virtual-team');
 
-      if (isSplash || isLogin) {
+      if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
             ? '/citizen/home'
             : '/home/protocols';
@@ -84,11 +101,38 @@ GoRouter createAppRouter(AuthController auth) {
         return '/citizen/home';
       }
 
+      // Conta compartilhada staff/portal.
+      if (isAccountPath) return null;
+
       return null;
     },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashPage()),
-      GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
+      GoRoute(path: '/org', builder: (_, _) => const OrganizationSelectPage()),
+      GoRoute(
+        path: '/login',
+        builder: (_, _) => const LoginPage(),
+        routes: [
+          GoRoute(
+            path: 'register',
+            builder: (_, _) => const RegisterPage(),
+          ),
+          GoRoute(
+            path: 'forgot',
+            builder: (_, _) => const ForgotPasswordPage(),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: '/account/profile',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AccountProfilePage(),
+      ),
+      GoRoute(
+        path: '/account/sessions',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AccountSessionsPage(),
+      ),
 
       // Staff shell
       StatefulShellRoute.indexedStack(

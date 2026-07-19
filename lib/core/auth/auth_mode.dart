@@ -129,4 +129,70 @@ enum AuthMode {
   String get aiTeamPath => '/v1/ai/team';
   String get aiHandoffsPath => '/v1/ai/handoffs';
   String get aiConversationsPath => '/v1/ai/conversations';
+
+  // --- Sprint 10.2: Identidade / sessão ---
+  String get logoutPath => switch (this) {
+        AuthMode.staff => '/v1/auth/logout',
+        AuthMode.portal => '/v1/portal/auth/logout',
+      };
+
+  String get sessionsPath => switch (this) {
+        AuthMode.staff => '/v1/auth/sessions',
+        AuthMode.portal => '/v1/portal/auth/sessions',
+      };
+
+  String sessionPath(String sessionId) => '$sessionsPath/$sessionId';
+
+  String get sessionsRevokeAllPath => '$sessionsPath/revoke-all';
+
+  String get authProvidersPath => switch (this) {
+        AuthMode.staff => '/v1/auth/providers',
+        AuthMode.portal => '/v1/portal/auth/providers',
+      };
+
+  String get registerPath => switch (this) {
+        AuthMode.staff => '/v1/auth/register',
+        AuthMode.portal => '/v1/portal/auth/register',
+      };
+
+  String get forgotPasswordPath => switch (this) {
+        AuthMode.staff => '/v1/auth/forgot-password',
+        AuthMode.portal => '/v1/portal/auth/forgot-password',
+      };
+
+  String get resetPasswordPath => switch (this) {
+        AuthMode.staff => '/v1/auth/reset-password',
+        AuthMode.portal => '/v1/portal/auth/reset-password',
+      };
+
+  String get linkedAccountsPath => switch (this) {
+        AuthMode.staff => '/v1/auth/linked-accounts',
+        AuthMode.portal => '/v1/portal/auth/linked-accounts',
+      };
+
+  String get profilePath => switch (this) {
+        AuthMode.staff => '/v1/auth/profile',
+        AuthMode.portal => '/v1/portal/auth/profile',
+      };
+
+  String get oauthGooglePath => switch (this) {
+        AuthMode.staff => '/v1/auth/google',
+        AuthMode.portal => '/v1/portal/auth/google',
+      };
+
+  String get oauthApplePath => switch (this) {
+        AuthMode.staff => '/v1/auth/apple',
+        AuthMode.portal => '/v1/portal/auth/apple',
+      };
+
+  String get oauthGovBrPath => switch (this) {
+        AuthMode.staff => '/v1/auth/govbr',
+        AuthMode.portal => '/v1/portal/auth/govbr',
+      };
+
+  /// Branding do tenant (portal — rota detectada na VPS).
+  String get brandingPath => '/v1/portal/branding';
+
+  /// Resolução de organização (pública — rota detectada na VPS).
+  String get tenantsResolvePath => '/v1/identity/tenants/resolve';
 }

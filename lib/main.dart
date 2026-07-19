@@ -1,8 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -11,10 +11,13 @@ import 'core/auth/auth_controller.dart';
 import 'core/config.dart';
 import 'core/router/app_router.dart';
 import 'core/storage/token_storage.dart';
-import 'core/theme/app_theme.dart';
+import 'features/account/data/account_repository.dart';
 import 'features/agenda/data/appointments_repository.dart';
 import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
+import 'features/identity/data/identity_cache.dart';
+import 'features/identity/data/identity_repository.dart';
+import 'features/identity/domain/tenant_controller.dart';
 import 'features/intelligence/data/intelligence_repository.dart';
 import 'features/mandate/data/mandate_repository.dart';
 import 'features/mandate/domain/mandate_refresh_controller.dart';
@@ -44,6 +47,15 @@ Future<void> main() async {
   final storage = TokenStorage();
   final api = ApiClient(tokenStorage: storage);
   final auth = AuthController(api: api, storage: storage);
+  final identityCache = IdentityCache();
+  final identityRepo = IdentityRepository(api);
+  final accountRepo = AccountRepository(api);
+  final tenant = TenantController(
+    repository: identityRepo,
+    cache: identityCache,
+    storage: storage,
+    api: api,
+  );
   final protocolsRepo = ProtocolsRepository(api);
   final notificationsRepo = NotificationsRepository(api);
   final devicesRepo = DevicesRepository(api);
@@ -77,7 +89,7 @@ Future<void> main() async {
     push: push,
     mandateRefresh: mandateRefresh,
   );
-  final router = createAppRouter(auth);
+  final router = createAppRouter(auth: auth, tenant: tenant);
 
   await push.initialize();
 
@@ -86,6 +98,9 @@ Future<void> main() async {
       providers: [
         Provider.value(value: storage),
         Provider.value(value: api),
+        Provider.value(value: identityRepo),
+        Provider.value(value: identityCache),
+        Provider.value(value: accountRepo),
         Provider.value(value: protocolsRepo),
         Provider.value(value: notificationsRepo),
         Provider.value(value: devicesRepo),
@@ -100,6 +115,7 @@ Future<void> main() async {
         Provider.value(value: push),
         Provider.value(value: appSync),
         ChangeNotifierProvider.value(value: auth),
+        ChangeNotifierProvider.value(value: tenant),
         ChangeNotifierProvider.value(value: notificationsController),
         ChangeNotifierProvider.value(value: mandateRefresh),
       ],
@@ -175,10 +191,11 @@ class _PoliGestorAppState extends State<PoliGestorApp> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = context.watch<TenantController>().theme;
     return MaterialApp.router(
       title: AppConfig.appName,
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
+      theme: theme,
       routerConfig: widget.router,
       locale: const Locale('pt', 'BR'),
       supportedLocales: const [

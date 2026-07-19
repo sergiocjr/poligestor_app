@@ -34,7 +34,9 @@ Contas demo (podem variar conforme o tenant ativo na VPS):
 | **8** | Módulo Mandato (gestão staff) | **CONCLUÍDA** |
 | **9** | Inteligência do mandato | **CONCLUÍDA** |
 | **9.5** | Hardening produção | **CONCLUÍDA** |
-| 10+ | — | Não iniciada |
+| **10.1** | Equipe Virtual | **CONCLUÍDA** |
+| **10.2** | Identidade / Auth / Multi-tenant | **CONCLUÍDA (Flutter)** |
+| 10+ | — | Em evolução |
 
 ## Fase 7 — comunicação em tempo real (CONCLUÍDA)
 

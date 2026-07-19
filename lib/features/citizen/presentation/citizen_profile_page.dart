@@ -148,6 +148,26 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
             ),
           ),
           const SizedBox(height: 16),
+          Card(
+            child: Column(
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.manage_accounts_outlined),
+                  title: const Text('Conta e sessão'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/account/profile'),
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.devices_outlined),
+                  title: const Text('Sessões ativas'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/account/sessions'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           NeighborhoodCard(
             neighborhoodLabel: user?.neighborhoodLabel ?? 'Sua região',
           ),

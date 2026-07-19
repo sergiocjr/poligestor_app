@@ -1,5 +1,26 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.2] — 2026-07-19 — CONCLUÍDA (Flutter)
+
+### Added
+
+- Fluxo org-first: `/org` → branding → `/login` (staff/portal)
+- `lib/features/identity/` (models, cache, repository, TenantController, UI)
+- `lib/features/account/` (sessions LIVE, perfil, linked accounts preparados)
+- Cadastro, recuperação de senha, OAuth Google/Apple/Gov.br — estrutura + estados reais
+- Branding dinâmico (`AppTheme.lightFromBranding`)
+- Deep links `poligestor://org|tenant/{slug}`; intent-filters Android; URL scheme iOS
+- Testes `test/sprint102_identity_test.dart`
+
+### Integrated (HTTP 200)
+
+- `/v1/auth/me`, `/v1/auth/sessions`, `DELETE /v1/auth/sessions/{id}`
+- Login/refresh existentes
+
+### Pending backend
+
+- Resolve/branding/providers/register/forgot e espelhos portal ainda 500/404 — app conecta automaticamente quando HTTP 200
+
 ## [Sprint 10.1 Final] — 2026-07-19 — CONCLUÍDA
 
 ### Added / Completed

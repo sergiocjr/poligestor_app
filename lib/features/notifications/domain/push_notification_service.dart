@@ -13,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
+import '../../identity/domain/identity_deep_link.dart';
 import '../data/devices_repository.dart';
 import '../data/push_payload.dart';
 import 'notification_router.dart';
@@ -165,10 +166,49 @@ class PushNotificationService {
 
   void handleDeepLinkUri(Uri uri) {
     if (kDebugMode) debugPrint('[Push] deep link $uri');
+    // Org / tenant: navega sem exigir sessão (fluxo org-first Sprint 10.2).
+    if (IdentityDeepLink.isIdentityUri(uri)) {
+      final location = IdentityDeepLink.toOrgLocation(uri);
+      final nav = _navigate;
+      if (nav != null) {
+        nav(location);
+      } else {
+        _pendingPayload = PushPayload(
+          type: PushEventType.unknown,
+          deepLink: uri.toString(),
+          link: location,
+        );
+      }
+      return;
+    }
     enqueueNavigation(PushPayload.fromUri(uri));
   }
 
   void enqueueNavigation(PushPayload payload) {
+    // Deep link de organização pode chegar antes do login.
+    final deep = payload.deepLink ?? payload.link;
+    if (deep != null) {
+      final uri = Uri.tryParse(deep);
+      if (uri != null && IdentityDeepLink.isIdentityUri(uri)) {
+        final location = IdentityDeepLink.toOrgLocation(uri);
+        final nav = _navigate;
+        if (nav != null) {
+          nav(location);
+        } else {
+          _pendingPayload = payload;
+        }
+        return;
+      }
+      if (deep.startsWith('/org')) {
+        final nav = _navigate;
+        if (nav != null) {
+          nav(deep);
+        } else {
+          _pendingPayload = payload;
+        }
+        return;
+      }
+    }
     if (!_auth.isAuthenticated) {
       _pendingPayload = payload;
       return;
@@ -178,7 +218,21 @@ class PushNotificationService {
 
   void _flushPendingNavigation() {
     final pending = _pendingPayload;
-    if (pending == null || !_auth.isAuthenticated) return;
+    if (pending == null) return;
+    final deep = pending.deepLink ?? pending.link;
+    if (deep != null) {
+      final uri = Uri.tryParse(deep);
+      if ((uri != null && IdentityDeepLink.isIdentityUri(uri)) ||
+          deep.startsWith('/org')) {
+        _pendingPayload = null;
+        final location = uri != null && IdentityDeepLink.isIdentityUri(uri)
+            ? IdentityDeepLink.toOrgLocation(uri)
+            : deep;
+        _navigate?.call(location);
+        return;
+      }
+    }
+    if (!_auth.isAuthenticated) return;
     _pendingPayload = null;
     _navigateTo(pending);
   }

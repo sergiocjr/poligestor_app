@@ -6,6 +6,7 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
 import '../../../shared/widgets/app_logo.dart';
+import '../../identity/domain/tenant_controller.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -22,15 +23,19 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _boot() async {
+    final tenant = context.read<TenantController>();
     final auth = context.read<AuthController>();
+    await tenant.bootstrap();
     await auth.bootstrap();
     if (!mounted) return;
     if (auth.isAuthenticated) {
       context.go(
         auth.mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
       );
-    } else {
+    } else if (tenant.hasOrganization) {
       context.go('/login');
+    } else {
+      context.go('/org');
     }
   }
 

@@ -40,6 +40,19 @@ class NotificationRouter {
               : '/home/virtual-team/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 10.2 — Organização / tenant
+        if (uri.host == 'org' ||
+            uri.host == 'tenant' ||
+            uri.host == 'organization' ||
+            uri.host == 'organizacao') {
+          final slug = uri.pathSegments.isNotEmpty
+              ? uri.pathSegments.first
+              : (uri.queryParameters['slug'] ?? '');
+          final location = slug.isEmpty
+              ? '/org'
+              : Uri(path: '/org', queryParameters: {'slug': slug}).toString();
+          return NotificationRouteTarget(location: location);
+        }
       }
     }
 
