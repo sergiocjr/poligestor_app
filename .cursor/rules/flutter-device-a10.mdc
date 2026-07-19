@@ -1,50 +1,69 @@
 ---
-description: Sempre executar o app Flutter no Samsung Galaxy A10 físico (RX8M70CLXKP); nunca usar emulador
+description: Dispositivo Android oficial SM-A105M; nunca emulador; limpeza obrigatória de processos Flutter/Gradle/Java/ADB
 alwaysApply: true
 ---
 
-# Dispositivo de execução Flutter
+# Política permanente — Android + limpeza de processos
 
-Dispositivo obrigatório:
-- Nome: SM A105M (Samsung Galaxy A10)
-- ID: `RX8M70CLXKP`
+## Dispositivo oficial
 
-## Antes de qualquer run/rebuild/teste
+- **Samsung Galaxy A10 (SM-A105M)** via USB ADB — ID `RX8M70CLXKP`
+- Sempre o padrão para: `flutter run`, `flutter install`, `flutter attach`, testes manuais, notificações, deep links, Firebase, auth, UI, E2E
 
-1. Confirmar com `flutter devices`.
-2. O dispositivo selecionado deve ser sempre `RX8M70CLXKP`.
-3. Se o celular não estiver listado, **não** iniciar emulador. Informar que o dispositivo físico não foi encontrado.
-
-## Comando obrigatório
-
-Preferir o wrapper (garante cleanup ao parar):
+Antes de qualquer execução:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_run_a10.ps1
+adb devices
+flutter devices
 ```
 
-Equivalente direto:
+## Proibido (salvo pedido explícito do dono do projeto)
 
-```bash
-flutter run -d RX8M70CLXKP
-```
+- Iniciar Android Emulator / `emulator.exe` / `qemu-system-*` / AVD Manager / qualquer dispositivo virtual
+- Trocar o dispositivo de teste sem autorização
 
-Usar o mesmo `-d RX8M70CLXKP` para recompilar, testar, reiniciar ou validar alterações.
+## Limpeza obrigatória ao terminar qualquer tarefa
 
-## Cleanup ao parar (obrigatório)
+Encerrar processos iniciados pela tarefa e órfãos do ambiente Flutter/Android:
 
-- Debug/Stop no Cursor: `postDebugTask` em `.vscode/launch.json` executa `flutter: cleanup processes`.
-- Após `flutter run` no terminal (ou se restarem órfãos):
+- OpenJDK / `java.exe` / `javaw.exe` ligados a Gradle, Kotlin, Flutter ou este projeto
+- Gradle Daemon / `gradle.exe` / Kotlin daemon
+- `adb.exe` **somente** se não houver mais install, debug ou uso ativo do celular
+- `emulator.exe`, `qemu-system-*`, Android Emulator
+- Flutter/Dart órfãos (`dart.exe`, `dartaotruntime.exe`), builds pendentes, `flutter run` web de teste
+- Filhos de flutter/gradle/adb/java que sobrarem
+
+### Não encerrar
+
+- Cursor, terminal principal do usuário, Git, navegador, ChatGPT
+- Java **sem** relação comprovada com Flutter/Gradle/Android deste projeto
+- Analysis server do IDE
+
+### Como encerrar
+
+1. Identificar comando, PID e processo pai
+2. Parada normal primeiro; forçada só se não responder
+3. No Android do projeto:
 
 ```powershell
+cd android
+.\gradlew.bat --stop
+cd ..
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_cleanup.ps1
 ```
 
-O cleanup encerra: daemons Gradle deste projeto (`gradlew --stop`), `dart.exe`/`dartaotruntime.exe` órfãos do poligestor. Não mata o analysis server do IDE nem Java de outros projetos.
+Gradle/Java/OpenJDK só ficam ativos durante build, teste ou instalação em andamento.
 
-## Proibido
+## Run no A10
 
-- Iniciar ou abrir emulador Android
-- Executar em `emulator-5554` ou qualquer outro emulador
-- Trocar o dispositivo de execução sem autorização explícita do usuário
-- Configurar Gradle acima de 1536 MB sem autorização (ver regra `gradle-memory-cleanup`)
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_run_a10.ps1
+# ou: flutter run -d RX8M70CLXKP
+```
+
+## Relatório final (obrigatório)
+
+1. `flutter run` encerrado (ou N/A)
+2. `gradlew --stop` executado
+3. PIDs encerrados e se sobrou algo relacionado
+4. Confirmação: nenhum emulador iniciado/aberto

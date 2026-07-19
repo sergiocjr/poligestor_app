@@ -59,7 +59,8 @@ Get-Process java, javaw -ErrorAction SilentlyContinue |
 
 - Preferir testes necessários durante o desenvolvimento; suíte completa só no final.
 - Não rodar vários `flutter test`/`build` em paralelo.
-- Com o A10 conectado: **não** usar emulador.
+- Com o A10 conectado: **não** usar emulador (ver regra `flutter-device-a10`).
+- Ao final: limpar daemons e órfãos; `adb` só se não houver mais uso do celular.
 
 ## Validação final (obrigatória no relatório)
 
