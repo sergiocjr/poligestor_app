@@ -33,13 +33,15 @@ class _MandateTvPageState extends State<MandateTvPage> {
     super.dispose();
   }
 
+  Future<MandateTvData> _fetch() => context.read<MandateRepository>().tv();
+
   Future<MandateTvData> _load() async {
-    final data = await context.read<MandateRepository>().tv();
+    final data = await _fetch();
     _refreshTimer?.cancel();
     final sec = data.refreshSeconds.clamp(15, 120);
     _refreshTimer = Timer.periodic(Duration(seconds: sec), (_) {
       if (!mounted) return;
-      setState(() => _future = context.read<MandateRepository>().tv());
+      setState(() => _future = _fetch());
     });
     return data;
   }

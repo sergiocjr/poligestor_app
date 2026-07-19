@@ -63,7 +63,11 @@ class InsightCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final attention = insight.priority == 'attention';
-    return Card(
+    return Semantics(
+      label:
+          '${insight.categoryLabel}. ${insight.title}. ${insight.body}. '
+          'Sugestão: ${insight.recommendedAction}',
+      child: Card(
       color: attention
           ? scheme.errorContainer.withValues(alpha: 0.28)
           : null,
@@ -113,6 +117,7 @@ class InsightCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

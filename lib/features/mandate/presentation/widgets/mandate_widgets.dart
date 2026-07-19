@@ -68,11 +68,16 @@ class MandateIndicatorCard extends StatelessWidget {
         ),
       ),
     );
-    if (onTap == null) return child;
+    final semantic = Semantics(
+      label: hint == null ? '$label: $value' : '$label: $value. $hint',
+      button: onTap != null,
+      child: child,
+    );
+    if (onTap == null) return semantic;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
-      child: child,
+      child: semantic,
     );
   }
 }
@@ -192,27 +197,6 @@ class MandateAttentionTile extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class MandateStaleBanner extends StatelessWidget {
-  const MandateStaleBanner({super.key, required this.ageLabel});
-
-  final String ageLabel;
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialBanner(
-      content: Text('Exibindo dados salvos ($ageLabel). Puxe para atualizar.'),
-      leading: const Icon(Icons.cloud_off_outlined),
-      actions: [
-        TextButton(
-          onPressed: () =>
-              ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
-          child: const Text('Ok'),
-        ),
-      ],
     );
   }
 }

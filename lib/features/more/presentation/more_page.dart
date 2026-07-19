@@ -39,25 +39,27 @@ class MorePage extends StatelessWidget {
             title: const Text('Inteligência'),
             onTap: () => context.go('/home/intelligence'),
           ),
-          const ListTile(
-            leading: Icon(Icons.notifications_outlined),
-            title: Text('Notificações'),
+          const Divider(),
+          const _SoonTile(
+            icon: Icons.notifications_outlined,
+            title: 'Notificações',
           ),
-          const ListTile(
-            leading: Icon(Icons.folder_outlined),
-            title: Text('Documentos'),
+          const _SoonTile(
+            icon: Icons.folder_outlined,
+            title: 'Documentos',
           ),
-          const ListTile(
-            leading: Icon(Icons.badge_outlined),
-            title: Text('Carteira Digital'),
+          const _SoonTile(
+            icon: Icons.badge_outlined,
+            title: 'Carteira Digital',
           ),
-          const ListTile(
-            leading: Icon(Icons.qr_code_scanner),
-            title: Text('Scanner QR'),
+          const _SoonTile(
+            icon: Icons.qr_code_scanner,
+            title: 'Scanner QR',
           ),
-          const ListTile(
-            leading: Icon(Icons.map_outlined),
-            title: Text('Mapa'),
+          ListTile(
+            leading: const Icon(Icons.map_outlined),
+            title: const Text('Mapa do mandato'),
+            onTap: () => context.push('/home/mandate/map'),
           ),
           const Divider(),
           ListTile(
@@ -76,6 +78,23 @@ class MorePage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SoonTile extends StatelessWidget {
+  const _SoonTile({required this.icon, required this.title});
+
+  final IconData icon;
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      enabled: false,
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: const Text('Em breve'),
     );
   }
 }
