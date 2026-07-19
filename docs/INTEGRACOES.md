@@ -1,10 +1,31 @@
 # Integrações LIVE — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.7)
+Atualizado: 2026-07-19 (Sprint 10.9)
 
 Base API: `https://poligestor.onnexis.com.br/api`
 
 Regra permanente: consumir somente contratos publicados pela VPS. Sem mocks na entrega final. Sem backend local. Ausência → `EndpointPendingState`.
+
+## Sprint 10.9 — `/v1/works/*`
+
+Namespace dedicado **ainda não publicado** na VPS (probe 404 em todos os paths abaixo). App preparado com Models/Repo/UI/Cache e `EndpointPendingState`.
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/works/dashboard` | Preparado (404) |
+| GET | `/v1/works/projects` (+ `/{id}`) | Preparado (404) |
+| GET | `/v1/works/demands` | Preparado (404) |
+| GET | `/v1/works/inspections` | Preparado (404) |
+| GET | `/v1/works/schedule` | Preparado (404) |
+| GET | `/v1/works/map` | Preparado (404) — reuso `/v1/mandate/map` LIVE |
+| GET | `/v1/works/timeline` | Preparado (404) |
+| GET | `/v1/works/photos` | Preparado (404) |
+| GET | `/v1/works/attachments` | Preparado (404) |
+| GET | `/v1/works/checklist` | Preparado (404) |
+| GET | `/v1/works/indicators` | Preparado (404) |
+| GET | `/v1/works/reports` | Preparado (404) |
+| GET | `/v1/works/search` | Preparado (404) — filtros locais nas listas |
+| GET | `/v1/mandate/map` | LIVE (reuso mapa) |
 
 ## Sprint 10.8 — `/v1/parliament/*`
 

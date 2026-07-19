@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.8 — Painel Parlamentar CONCLUÍDA)
+Atualizado: 2026-07-19 (Sprint 10.9 — Painel Obras CONCLUÍDA)
 
 ## Resumo
 
@@ -20,40 +20,40 @@ Atualizado: 2026-07-19 (Sprint 10.8 — Painel Parlamentar CONCLUÍDA)
 | Sprint 10.6 — Automação Inteligente | **CONCLUÍDA** |
 | Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** |
 | Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
-| Sprint 10.9 | **Não iniciada** |
+| Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
+| Sprint 11.0 | **Não iniciada** |
 
-## Sprint 10.8 — Painel Parlamentar
+## Sprint 10.9 — Painel Obras
 
-Hub próprio em **Mais → Painel Parlamentar** (`/home/parliament`).
+Hub próprio em **Mais → Painel Obras** (`/home/works`).
 
-Namespace LIVE `/v1/parliament/*`. Interface em PT-BR.
+Namespace preparado `/v1/works/*` (ainda não publicado na VPS). Mapa territorial reusa mandato LIVE (`/v1/mandate/map`). Interface em PT-BR.
 
-### LIVE
+### Telas
 
-| Recurso | Contrato | Rota |
-|---------|----------|------|
-| Painel | `/v1/parliament/dashboard` | `/home/parliament/dashboard` |
-| Projetos de Lei | `/v1/parliament/bills` (+ detalhe) | `/home/parliament/bills` |
-| Projetos | `/v1/parliament/projects` | `/home/parliament/projects` |
-| Indicações | `/v1/parliament/indications` | `/home/parliament/indications` |
-| Requerimentos | `/v1/parliament/requests` | `/home/parliament/requests` |
-| Moções | `/v1/parliament/motions` | `/home/parliament/motions` |
-| Emendas | `/v1/parliament/amendments` | `/home/parliament/amendments` |
-| Agenda / Sessões / Votações | agenda, sessions, votes | rotas correspondentes |
-| Base de Apoio / Demandas | support-base, demands | rotas correspondentes |
-| Pesquisa | busca local + pending `/search` | `/home/parliament/search` |
+Painel · Lista · Detalhes · Mapa · Linha do tempo · Fotos · Relatórios · Pesquisa · Filtros (locais nas listas).
 
-### Preparado (EndpointPending)
+### Domínios cobertos (UI + Models + Repo + Cache + EndpointPending)
 
-| Recurso | Path |
-|---------|------|
-| Promessas | `/v1/parliament/promises` |
-| Pesquisa dedicada | `/v1/parliament/search` |
-| Linha do tempo | `/v1/parliament/timeline` |
-| Histórico | `/v1/parliament/history` |
-| Anexos | `/v1/parliament/attachments` |
+| Recurso | Contrato preparado | Rota |
+|---------|--------------------|------|
+| Painel / Indicadores | `/v1/works/dashboard` | `/home/works/dashboard` |
+| Obras | `/v1/works/projects` (+ `/{id}`) | `/home/works/list` |
+| Demandas | `/v1/works/demands` | `/home/works/demands` |
+| Fiscalizações | `/v1/works/inspections` | `/home/works/inspections` |
+| Cronograma | `/v1/works/schedule` | `/home/works/schedule` |
+| Mapa dedicado | `/v1/works/map` | `/home/works/map` (+ mandate map LIVE) |
+| Linha do tempo | `/v1/works/timeline` | `/home/works/timeline` |
+| Fotos | `/v1/works/photos` | `/home/works/photos` |
+| Anexos | `/v1/works/attachments` | `/home/works/attachments` |
+| Checklist | `/v1/works/checklist` | `/home/works/checklist` |
+| Indicadores | `/v1/works/indicators` | `/home/works/indicators` |
+| Relatórios | `/v1/works/reports` | `/home/works/reports` |
+| Pesquisa | `/v1/works/search` | `/home/works/search` |
 
-Cache: `pg_parl_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://parliament|parlamentar|legislativo|painel-parlamentar/...`.
+Cache: `pg_works_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://works|obras|painel-obras/...` (redirect GoRouter → `/home/works/...`).
+
+**Nota:** não há tela dedicada “Visitas”; cobertura via **Fiscalizações**. Filtros são locais nas listas (query + status).
 
 ## Idioma (regra permanente)
 
@@ -63,7 +63,7 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 
 - `flutter analyze` / `flutter test` / APK + web + SM-A105M
 - Nenhum emulador
-- Sprint 10.9 não iniciada
+- Sprint 11.0 não iniciada
 
 ## Repositório
 

@@ -13,6 +13,7 @@ import '../../features/auth/presentation/splash_page.dart';
 import '../../features/automation/presentation/automation_pages.dart';
 import '../../features/strategy/presentation/strategy_pages.dart';
 import '../../features/parliament/presentation/parliament_pages.dart';
+import '../../features/works/presentation/works_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -44,6 +45,8 @@ import '../../features/mandate/presentation/mandate_team_page.dart';
 import '../../features/mandate/presentation/mandate_tv_page.dart';
 import '../../features/communication/presentation/communication_pages.dart';
 import '../../features/more/presentation/more_page.dart';
+import '../../features/notifications/data/push_payload.dart';
+import '../../features/notifications/domain/notification_router.dart';
 import '../../features/protocols/presentation/protocol_detail_page.dart';
 import '../../features/protocols/presentation/protocols_page.dart';
 import '../../features/virtual_team/presentation/virtual_team_agent_detail_page.dart';
@@ -65,6 +68,18 @@ GoRouter createAppRouter({
     initialLocation: '/splash',
     refreshListenable: Listenable.merge([auth, tenant]),
     redirect: (context, state) {
+      // Intent filters Android entregam `poligestor://…` ao GoRouter.
+      // Converte para rotas internas antes do match (evita Page Not Found).
+      if (state.uri.scheme == 'poligestor') {
+        final target = const NotificationRouter().resolve(
+          PushPayload(
+            type: PushEventType.systemNotice,
+            deepLink: state.uri.toString(),
+          ),
+        );
+        if (target != null) return target.location;
+      }
+
       final booting = auth.isBooting || !tenant.ready;
       final loggedIn = auth.isAuthenticated;
       final loc = state.matchedLocation;
@@ -91,6 +106,7 @@ GoRouter createAppRouter({
       final isAutomationPath = loc.startsWith('/home/automation');
       final isStrategyPath = loc.startsWith('/home/strategy');
       final isParliamentPath = loc.startsWith('/home/parliament');
+      final isWorksPath = loc.startsWith('/home/works');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -111,7 +127,8 @@ GoRouter createAppRouter({
               isCommunicationPath ||
               isAutomationPath ||
               isStrategyPath ||
-              isParliamentPath) &&
+              isParliamentPath ||
+              isWorksPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -511,6 +528,118 @@ GoRouter createAppRouter({
               probe: (repo) => repo.attachments(),
             ),
           ),
+        ],
+      ),
+
+      // Painel Obras (Sprint 10.9) — staff only.
+      GoRoute(
+        path: '/home/works',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const WorksHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const WorksDashboardPage(),
+          ),
+          GoRoute(
+            path: 'list',
+            builder: (_, _) => WorksListPage(
+              title: 'Obras',
+              detailRoutePrefix: '/home/works/list',
+              emptyMessage: 'Nenhuma obra encontrada.',
+              loader: (repo, tenant) => repo.projects(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) =>
+                    WorksDetailPage(id: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'demands',
+            builder: (_, _) => WorksListPage(
+              title: 'Demandas',
+              detailRoutePrefix: '/home/works/demands',
+              emptyMessage: 'Nenhuma demanda encontrada.',
+              loader: (repo, tenant) => repo.demands(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'inspections',
+            builder: (_, _) => WorksListPage(
+              title: 'Fiscalizações',
+              detailRoutePrefix: '/home/works/inspections',
+              emptyMessage: 'Nenhuma fiscalização encontrada.',
+              loader: (repo, tenant) => repo.inspections(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'schedule',
+            builder: (_, _) => WorksListPage(
+              title: 'Cronograma',
+              detailRoutePrefix: '/home/works/schedule',
+              emptyMessage: 'Cronograma vazio.',
+              loader: (repo, tenant) => repo.schedule(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(path: 'map', builder: (_, _) => const WorksMapPage()),
+          GoRoute(
+            path: 'timeline',
+            builder: (_, _) => WorksListPage(
+              title: 'Linha do Tempo',
+              detailRoutePrefix: '/home/works/timeline',
+              emptyMessage: 'Linha do tempo vazia.',
+              loader: (repo, tenant) => repo.timeline(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'photos',
+            builder: (_, _) => WorksListPage(
+              title: 'Fotos',
+              detailRoutePrefix: '/home/works/photos',
+              emptyMessage: 'Nenhuma foto encontrada.',
+              loader: (repo, tenant) => repo.photos(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attachments',
+            builder: (_, _) => WorksListPage(
+              title: 'Anexos',
+              detailRoutePrefix: '/home/works/attachments',
+              emptyMessage: 'Nenhum anexo encontrado.',
+              loader: (repo, tenant) => repo.attachments(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'checklist',
+            builder: (_, _) => WorksListPage(
+              title: 'Checklist',
+              detailRoutePrefix: '/home/works/checklist',
+              emptyMessage: 'Checklist vazio.',
+              loader: (repo, tenant) => repo.checklist(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => WorksListPage(
+              title: 'Indicadores',
+              detailRoutePrefix: '/home/works/indicators',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => WorksListPage(
+              title: 'Relatórios',
+              detailRoutePrefix: '/home/works/reports',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(path: 'search', builder: (_, _) => const WorksSearchPage()),
         ],
       ),
 

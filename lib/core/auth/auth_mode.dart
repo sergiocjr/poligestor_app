@@ -145,6 +145,23 @@ enum AuthMode {
   String get parliamentHistoryPath => '/v1/parliament/history';
   String get parliamentAttachmentsPath => '/v1/parliament/attachments';
 
+  // --- Sprint 10.9: Painel Obras (staff) — namespace dedicado (ainda pending VPS) ---
+  String get worksRootPath => '/v1/works';
+  String get worksDashboardPath => '/v1/works/dashboard';
+  String get worksListPath => '/v1/works/projects';
+  String worksItemPath(String id) => '/v1/works/projects/$id';
+  String get worksDemandsPath => '/v1/works/demands';
+  String get worksInspectionsPath => '/v1/works/inspections';
+  String get worksSchedulePath => '/v1/works/schedule';
+  String get worksMapPath => '/v1/works/map';
+  String get worksTimelinePath => '/v1/works/timeline';
+  String get worksPhotosPath => '/v1/works/photos';
+  String get worksAttachmentsPath => '/v1/works/attachments';
+  String get worksChecklistPath => '/v1/works/checklist';
+  String get worksIndicatorsPath => '/v1/works/indicators';
+  String get worksReportsPath => '/v1/works/reports';
+  String get worksSearchPath => '/v1/works/search';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';

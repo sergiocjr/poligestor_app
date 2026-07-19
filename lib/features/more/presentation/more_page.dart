@@ -100,6 +100,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/parliament'),
           ),
           ListTile(
+            leading: const Icon(Icons.construction_outlined),
+            title: const Text('Painel Obras'),
+            subtitle: const Text(
+              'Obras, demandas, fiscalizações, mapa e cronograma',
+            ),
+            onTap: () => context.push('/home/works'),
+          ),
+          ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
             subtitle: const Text('Canais, modelos e campanhas'),

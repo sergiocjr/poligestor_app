@@ -15,13 +15,18 @@
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
-| 10.9 | — | **Não iniciada** |
+| **10.9** | Painel Obras | **CONCLUÍDA** |
+| 11.0 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
 
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
+
+## Sprint 10.9 (CONCLUÍDA)
+
+Painel Obras em `/home/works`. Namespace preparado `/v1/works/*` com EndpointPendingState; mapa reusa mandato LIVE.
 
 ## Sprint 10.8 (CONCLUÍDA)
 

@@ -40,6 +40,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **automation** (Sprint 10.6) — Central de Automação (`/home/automation`)
 - **strategy** (Sprint 10.7) — Painel Estratégico (`/home/strategy`)
 - **parliament** (Sprint 10.8) — Painel Parlamentar (`/home/parliament`)
+- **works** (Sprint 10.9) — Painel Obras (`/home/works`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -157,6 +158,13 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - LIVE `/v1/parliament/{dashboard,bills,projects,indications,requests,motions,amendments,agenda,sessions,votes,support-base,demands}`
 - Pending: promises, search, timeline, history, attachments
 - Cache `pg_parl_{tenant}_*`
+
+## Sprint 10.9 — Painel Obras
+
+- Feature `lib/features/works/` — hub próprio
+- Namespace preparado `/v1/works/{dashboard,projects,demands,inspections,schedule,map,timeline,photos,attachments,checklist,indicators,reports,search}`
+- Reuse mapa mandato LIVE; `EndpointPendingState` até a VPS publicar o namespace
+- Cache `pg_works_{tenant}_*`
 
 ## Segurança
 

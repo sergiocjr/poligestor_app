@@ -45,7 +45,8 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
-| 10.9 | — | **Não iniciada** |
+| **10.9** | Painel Obras | **CONCLUÍDA** |
+| 11.0 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -58,6 +59,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.9 — Painel Obras
+
+Staff — **Mais → Painel Obras** (`/home/works`): painel, obras, demandas, fiscalizações, cronograma, mapa, fotos, anexos, checklist, indicadores e relatórios. Namespace `/v1/works/*` preparado (EndpointPending); mapa reusa mandato LIVE.
 
 ## Sprint 10.8 — Painel Parlamentar
 
@@ -146,6 +151,7 @@ lib/
     automation/     # Sprint 10.6 — Central de Automação
     strategy/       # Sprint 10.7 — Painel Estratégico
     parliament/     # Sprint 10.8 — Painel Parlamentar
+    works/          # Sprint 10.9 — Painel Obras
     home/
     more/
     assistant/

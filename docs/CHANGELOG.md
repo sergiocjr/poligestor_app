@@ -1,5 +1,25 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.9 — Painel Obras] — 2026-07-19
+
+### Added
+
+- Hub `/home/works` (painel, obras, demandas, fiscalizações, cronograma, mapa, linha do tempo, fotos, anexos, checklist, indicadores, relatórios, pesquisa)
+- Contratos preparados `/v1/works/*` com `EndpointPendingState` honesto (namespace ainda ausente na VPS)
+- Reuso do mapa do mandato LIVE (`/v1/mandate/map`) na tela de mapa
+- Cache `pg_works_*`, realtime via `MandateRefreshController`, filtros locais nas listas
+- Deep links `poligestor://works|obras|painel-obras`
+- Testes `test/sprint109_works_test.dart`
+
+### Fixed
+
+- Redirect do `GoRouter` para converter intents `poligestor://…` em rotas internas (`/home/works/…`), evitando `Page Not Found` no deep link Android
+- Hub Painel Obras: 1 coluna no telefone (A10) e títulos com ellipsis — elimina `BOTTOM OVERFLOWED` nos cards
+
+### Not started
+
+- Sprint 11.0
+
 ## [Sprint 10.8 — Painel Parlamentar] — 2026-07-19
 
 ### Added
