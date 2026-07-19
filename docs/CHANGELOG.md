@@ -1,5 +1,26 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 9.5] — 2026-07-19 — CONCLUÍDA
+
+### Fixed / Improved
+
+- Coalesce `NotificationsController.refresh` + debounce Reverb + throttle mandate bump
+- AppSync resume soft (`onAuthenticated(soft: true)`) evita refresh/FCM duplicados
+- Push ignora refresh de inbox quando Reverb está conectado
+- Insights sem `generate=1` em refreshes passivos
+- FCM token em FlutterSecureStorage; CPF mascarado no cache/perfil
+- Login demo gated por `kDebugMode`
+- Mais: itens órfãos “Em breve”; mapa do mandato funcional
+- Semantics em indicadores/insights; dispose Push no app; remove `MandateStaleBanner`
+
+### Tests
+
+- `test/sprint95_hardening_test.dart`
+
+### Validated
+
+- `flutter test` 153 · analyze 0 errors · SM-A105M
+
 ## [Fase 9] — 2026-07-19 — CONCLUÍDA
 
 ### Added

@@ -64,6 +64,16 @@ presentation (pages/widgets)
 
 **STATUS: CONCLUÍDA.**
 
+## Sprint 9.5 — Hardening
+
+- Inbox refresh coalescida; Reverb debounced; mandate bump throttled
+- FCM em secure storage; documento mascarado em `AuthUser.toJson` / perfil
+- `generate=1` só sob demanda explícita
+
+### Encerramento Sprint 9.5
+
+**STATUS: CONCLUÍDA.**
+
 ## Segurança
 
 - Não versionar `google-services.json`

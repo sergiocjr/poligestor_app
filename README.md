@@ -33,6 +33,7 @@ Contas demo (podem variar conforme o tenant ativo na VPS):
 | **7** | Push FCM, notificações, Reverb, deep links | **CONCLUÍDA** |
 | **8** | Módulo Mandato (gestão staff) | **CONCLUÍDA** |
 | **9** | Inteligência do mandato | **CONCLUÍDA** |
+| **9.5** | Hardening produção | **CONCLUÍDA** |
 | 10+ | — | Não iniciada |
 
 ## Fase 7 — comunicação em tempo real (CONCLUÍDA)
@@ -74,6 +75,12 @@ Staff only — aba **Inteligência**:
 - Validado: APIs HTTP 200; APK debug no SM-A105M
 
 **FASE 9 — STATUS: CONCLUÍDA.**
+
+## Sprint 9.5 — Hardening (CONCLUÍDA)
+
+Produção: sync coalescido, FCM seguro, CPF mascarado, UX Mais, a11y básica, dispose.
+
+**SPRINT 9.5 — STATUS: CONCLUÍDA.**
 
 ## Estrutura
 
