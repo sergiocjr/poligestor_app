@@ -120,7 +120,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
                     child: Text(
-                      'Cache ${root.cacheAgeLabel ?? ''}',
+                      'Dados salvos ${root.cacheAgeLabel ?? ''}',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ),
@@ -177,20 +177,20 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                       VtNavTile(
                         icon: Icons.play_circle_outline,
                         title: 'Execuções',
-                        subtitle: 'Runs e duração',
+                        subtitle: 'Execuções e duração',
                         onTap: () =>
                             context.push('/home/virtual-team/executions'),
                       ),
                       VtNavTile(
                         icon: Icons.swap_horiz_outlined,
-                        title: 'Hand-offs',
+                        title: 'TransferÃªncias',
                         subtitle: 'Transferências entre agentes',
                         onTap: () =>
                             context.push('/home/virtual-team/handoffs'),
                       ),
                       VtNavTile(
                         icon: Icons.timeline_outlined,
-                        title: 'Timeline',
+                        title: 'Linha do tempo',
                         subtitle: 'Linha do tempo unificada',
                         onTap: () =>
                             context.push('/home/virtual-team/timeline'),
@@ -266,7 +266,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                       ),
                       VtNavTile(
                         icon: Icons.article_outlined,
-                        title: 'Logs',
+                        title: 'Registros',
                         subtitle: 'Trilha técnica',
                         onTap: () => context.push('/home/virtual-team/logs'),
                       ),
@@ -276,7 +276,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                 if (root.recentHandoffs.isNotEmpty) ...[
                   const SizedBox(height: 12),
                   Text(
-                    'Hand-offs recentes',
+                    'TransferÃªncias recentes',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),

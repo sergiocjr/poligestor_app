@@ -114,7 +114,7 @@ class VtAgent {
       'idle' => 'Aguardando',
       'busy' || 'running' => 'Em execução',
       'error' => 'Com falha',
-      'offline' => 'Offline',
+      'offline' => 'Desconectado',
       _ => state,
     };
   }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/api/api_exception.dart';
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/virtual_team_models.dart';
@@ -50,7 +51,7 @@ class _VirtualTeamLogsPageState extends State<VirtualTeamLogsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          widget.agentSlug == null ? 'Logs' : 'Logs · ${widget.agentSlug}',
+          widget.agentSlug == null ? 'Registros' : 'Registros · ${widget.agentSlug}',
         ),
         actions: [
           IconButton(
@@ -271,8 +272,8 @@ class _VirtualTeamTimelinePageState extends State<VirtualTeamTimelinePage> {
       appBar: AppBar(
         title: Text(
           widget.agentSlug == null
-              ? 'Timeline'
-              : 'Timeline · ${widget.agentSlug}',
+              ? 'Linha do tempo'
+              : 'Linha do tempo · ${widget.agentSlug}',
         ),
         actions: [
           IconButton(
@@ -296,7 +297,7 @@ class _VirtualTeamTimelinePageState extends State<VirtualTeamTimelinePage> {
           }
           final items = snap.data!.items;
           if (items.isEmpty) {
-            return const AppEmptyState(message: 'Timeline vazia.');
+            return const AppEmptyState(message: 'Linha do tempo vazia.');
           }
           return RefreshIndicator(
             onRefresh: _refresh,
@@ -446,8 +447,8 @@ class _VirtualTeamAlertsPageState extends State<VirtualTeamAlertsPage> {
                     title: Text(a.title),
                     subtitle: Text(
                       [
-                        a.severity,
-                        a.status,
+                        uiSeverityLabel(a.severity),
+                        uiStatusLabel(a.status),
                         if (a.agentSlug != null) a.agentSlug!,
                         a.body,
                       ].join(' · '),
@@ -646,7 +647,7 @@ class _VirtualTeamSearchPageState extends State<VirtualTeamSearchPage> {
                           ),
                           ..._section('Tarefas', data.tasks),
                           ..._section('Agentes', data.agents),
-                          ..._section('Hand-offs', data.handoffs),
+                          ..._section('TransferÃªncias', data.handoffs),
                           ..._section('Memória', data.memory),
                           ..._section('Execuções', data.executions),
                         ],

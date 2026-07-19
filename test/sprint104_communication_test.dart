@@ -128,7 +128,7 @@ void main() {
         'last_seen_at': null,
       });
       expect(op.id, '1');
-      expect(op.statusLabel, 'Offline');
+      expect(op.statusLabel, 'Desconectado');
       expect(op.isOnline, isFalse);
     });
 

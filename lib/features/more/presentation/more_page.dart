@@ -68,7 +68,7 @@ class MorePage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.smart_toy_outlined),
             title: const Text('Assistente Inteligente'),
-            subtitle: const Text('Hub IA, chat, briefings e insights'),
+            subtitle: const Text('Central de IA, chat, resumos e análises'),
             onTap: () => context.push('/home/chat'),
           ),
           ListTile(

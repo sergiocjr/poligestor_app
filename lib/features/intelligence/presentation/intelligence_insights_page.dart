@@ -41,7 +41,7 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.opportunitiesOnly ? 'Oportunidades' : 'Insights';
+    final title = widget.opportunitiesOnly ? 'Oportunidades' : 'Análises';
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Column(

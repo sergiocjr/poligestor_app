@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_mode.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
@@ -17,14 +18,14 @@ class StrategyHubPage extends StatelessWidget {
 
   static const _entries = <_Entry>[
     _Entry(
-      'Dashboard Executivo',
-      'KPIs estratégicos LIVE',
+      'Painel executivo',
+      'Indicadores estratégicos ativos',
       Icons.dashboard_outlined,
       '/home/strategy/dashboard',
       true,
     ),
     _Entry(
-      'KPIs',
+      'Indicadores',
       'Indicadores e categorias',
       Icons.speed_outlined,
       '/home/strategy/kpis',
@@ -32,13 +33,13 @@ class StrategyHubPage extends StatelessWidget {
     ),
     _Entry(
       'Mapa',
-      'Território (mandato LIVE)',
+      'Território (mandato ativo)',
       Icons.map_outlined,
       '/home/strategy/map',
       true,
     ),
     _Entry(
-      'Heatmap',
+      'Mapa de calor',
       'Concentração geográfica',
       Icons.bubble_chart_outlined,
       '/home/strategy/heatmap',
@@ -60,7 +61,7 @@ class StrategyHubPage extends StatelessWidget {
     ),
     _Entry(
       'Alertas',
-      'Insights e avisos',
+      'Análises e avisos',
       Icons.notification_important_outlined,
       '/home/strategy/alerts',
       true,
@@ -74,7 +75,7 @@ class StrategyHubPage extends StatelessWidget {
     ),
     _Entry(
       'Regiões',
-      'Heatmap + findings',
+      'Mapa de calor e achados',
       Icons.public_outlined,
       '/home/strategy/regions',
       true,
@@ -152,7 +153,7 @@ class StrategyHubPage extends StatelessWidget {
                           ),
                         ),
                         Chip(
-                          label: Text(e.live ? 'LIVE' : 'Prep.'),
+                          label: Text(uiContractChip(available: e.live)),
                           visualDensity: VisualDensity.compact,
                           backgroundColor: e.live ? Colors.green.shade50 : null,
                         ),
@@ -245,7 +246,7 @@ class _StrategyPendingPageState extends State<StrategyPendingPage> {
             return EndpointPendingState(
               path: err.path,
               message:
-                  '${widget.title} preparado. Aguardando contrato LIVE estável na VPS.',
+                  '${widget.title} preparado. Aguardando contrato ativo estável na VPS.',
             );
           }
           if (snap.hasError) {
@@ -272,7 +273,7 @@ Widget _cacheBanner(
   return Padding(
     padding: const EdgeInsets.only(bottom: 8),
     child: Text(
-      'Cache offline ${age ?? ''}',
+      'Dados salvos ${age ?? ''}',
       style: Theme.of(context).textTheme.bodySmall,
     ),
   );
@@ -284,8 +285,8 @@ Widget _kpiGrid(BuildContext context, StrategyKpiSummary d) {
     ('Criados', '${d.protocolsCreated}', Icons.add_circle_outline),
     ('Resolvidos', '${d.protocolsResolved}', Icons.check_circle_outline),
     ('Atrasados', '${d.protocolsOverdue}', Icons.schedule),
-    ('SLA risco', '${d.slaAtRisk}', Icons.warning_amber_outlined),
-    ('SLA violado', '${d.slaBreached}', Icons.error_outline),
+    ('Risco de prazo', '${d.slaAtRisk}', Icons.warning_amber_outlined),
+    ('Prazo violado', '${d.slaBreached}', Icons.error_outline),
     ('NPS', '${d.nps}', Icons.thumb_up_outlined),
     ('Satisfação', d.satisfaction.toStringAsFixed(1), Icons.star_outline),
     ('Crescimento', '${d.growthPercent}%', Icons.trending_up),
@@ -365,7 +366,7 @@ class _StrategyDashboardPageState extends State<StrategyDashboardPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard Executivo'),
+        title: const Text('Painel executivo'),
         actions: [
           IconButton(
             tooltip: 'Atualizar',
@@ -408,7 +409,7 @@ class _StrategyDashboardPageState extends State<StrategyDashboardPage>
                   age: d.cacheAgeLabel,
                 ),
                 Text(
-                  'Fonte LIVE: /v1/strategy/kpis (dashboard dedicado usa fallback se 500)',
+                  'Fonte ativa: indicadores estratégicos (painel dedicado usa reserva se indisponível)',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
@@ -562,7 +563,7 @@ class _StrategyHeatmapPageState extends State<StrategyHeatmapPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Heatmap'),
+        title: const Text('Mapa de calor'),
         actions: [
           TextButton(
             onPressed: () => context.push('/home/mandate/map'),
@@ -600,7 +601,7 @@ class _StrategyHeatmapPageState extends State<StrategyHeatmapPage>
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: const [
                   SizedBox(height: 120),
-                  AppEmptyState(message: 'Sem pontos de heatmap.'),
+                  AppEmptyState(message: 'Sem pontos no mapa de calor.'),
                 ],
               );
             }
@@ -840,7 +841,7 @@ class _StrategyAlertsPageState extends State<StrategyAlertsPage>
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     subtitle: Text(
-                      '${a.severity} · ${a.status}\n${a.body}',
+                      '${uiSeverityLabel(a.severity)} · ${uiStatusLabel(a.status)}\n${a.body}',
                       maxLines: 4,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -916,7 +917,7 @@ class _StrategyRegionsPageState extends State<StrategyRegionsPage>
                   age: d.cacheAgeLabel,
                 ),
                 Text(
-                  'Heatmap regional',
+                  'Mapa de calor regional',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 ...d.heatmap.map(
@@ -932,7 +933,7 @@ class _StrategyRegionsPageState extends State<StrategyRegionsPage>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Findings',
+                  'Achados',
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 ...d.findings.map(
@@ -1135,7 +1136,7 @@ class _StrategyForecastsPageState extends State<StrategyForecastsPage>
                     title: Text('Modelo ${d.model} · ${d.horizonDays}d'),
                     subtitle: Text(
                       'Abertos agora ${d.currentOpen} · Previstos ${d.predictedOpen.toStringAsFixed(0)}\n'
-                      'SLA: ${d.slaOutlook}',
+                      'Prazo (SLA): ${d.slaOutlook}',
                     ),
                   ),
                 ),
@@ -1231,7 +1232,7 @@ class _StrategyReportsPageState extends State<StrategyReportsPage> {
               return Card(
                 child: ListTile(
                   title: Text(r.title),
-                  subtitle: Text(r.status ?? ''),
+                  subtitle: Text(uiStatusLabel(r.status)),
                 ),
               );
             },
@@ -1376,7 +1377,7 @@ class _StrategyMapPageState extends State<StrategyMapPage> {
               FilledButton.icon(
                 onPressed: () => context.push('/home/mandate/map'),
                 icon: const Icon(Icons.map_outlined),
-                label: const Text('Abrir mapa do mandato (LIVE)'),
+                label: const Text('Abrir mapa do mandato (ativo)'),
               ),
               const SizedBox(height: 8),
               FilledButton.tonalIcon(

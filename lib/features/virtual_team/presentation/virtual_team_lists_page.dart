@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/api/api_exception.dart';
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/virtual_team_models.dart';
@@ -114,9 +115,9 @@ class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage>
                     subtitle: Text(
                       [
                         if (t.code != null) t.code!,
-                        t.status,
+                        uiStatusLabel(t.status),
                         if (t.agentSlug != null) t.agentSlug!,
-                        if (t.priority != null) t.priority!,
+                        if (t.priority != null) uiPriorityLabel(t.priority),
                       ].join(' · '),
                     ),
                     trailing: Text(
@@ -193,7 +194,7 @@ class _VirtualTeamExecutionsPageState extends State<VirtualTeamExecutionsPage>
               title: Text(e.agentSlug ?? e.id),
               subtitle: Text(
                 [
-                  e.status,
+                  uiStatusLabel(e.status),
                   if (e.durationMs != null) '${e.durationMs} ms',
                   if (e.error != null) e.error!,
                 ].join(' · '),
@@ -241,7 +242,7 @@ class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hand-offs'),
+        title: const Text('TransferÃªncias'),
         actions: [
           IconButton(
             onPressed: _refresh,
@@ -254,7 +255,7 @@ class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage>
         builder: (context, snap) => _buildList(
           snap,
           onRetry: _refresh,
-          empty: 'Nenhum hand-off registrado.',
+          empty: 'Nenhuma transferência registrada.',
           items: snap.data?.items ?? const [],
           itemBuilder: (h) => Card(
             child: ListTile(
@@ -264,7 +265,7 @@ class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage>
                 [
                   if (h.kind != null) h.kind!,
                   if (h.reason.isNotEmpty) h.reason,
-                  if (h.status.isNotEmpty) h.status,
+                  if (h.status.isNotEmpty) uiStatusLabel(h.status),
                 ].join(' · '),
               ),
               trailing: Text(
@@ -495,7 +496,7 @@ class _VirtualTeamQueuePageState extends State<VirtualTeamQueuePage>
             subtitle: Text(
               [
                 if (q.agentSlug != null) q.agentSlug!,
-                if (q.priority != null) 'prio ${q.priority}',
+                if (q.priority != null) 'prioridade ${uiPriorityLabel(q.priority)}',
               ].join(' · '),
             ),
           ),

@@ -1,5 +1,13 @@
 # Changelog — PoliGestor Flutter
 
+## [Idioma PT-BR na interface] — 2026-07-19
+
+### Changed
+
+- Regra permanente `.cursor/rules/pt-br-ui.mdc`: UI só em Português do Brasil
+- Helpers `lib/shared/i18n/ui_labels.dart` (severidade, status, prioridade, tendência, chips)
+- Textos de Estratégia, Automação, Assistente, Equipe Virtual, Inteligência, Comunicação, Mais e Conta traduzidos (ex.: Painel, Mapa de calor, Análises, Resumos, Registros, Linha do tempo, Transferências, Modelos, Ativo/Em preparação)
+
 ## [Sprint 10.7 — Painel Estratégico] — 2026-07-19
 
 ### Added

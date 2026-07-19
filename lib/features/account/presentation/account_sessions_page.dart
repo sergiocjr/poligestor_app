@@ -105,7 +105,7 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
         title: const Text('Sessões'),
         actions: [
           IconButton(
-            tooltip: 'Logout global',
+            tooltip: 'Sair de todos os dispositivos',
             onPressed: _revokeAll,
             icon: const Icon(Icons.logout),
           ),

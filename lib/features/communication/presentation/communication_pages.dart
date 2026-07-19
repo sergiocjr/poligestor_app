@@ -51,7 +51,7 @@ class _CommunicationHubPageState extends State<CommunicationHubPage>
           tabs: const [
             Tab(text: 'Conversas'),
             Tab(text: 'Canais'),
-            Tab(text: 'Templates'),
+            Tab(text: 'Modelos'),
             Tab(text: 'Campanhas'),
           ],
         ),
@@ -611,7 +611,7 @@ class _CommunicationTemplatesPageState extends State<CommunicationTemplatesPage>
 
     if (widget.embedded) return body;
     return Scaffold(
-      appBar: AppBar(title: const Text('Templates')),
+      appBar: AppBar(title: const Text('Modelos')),
       body: body,
     );
   }
@@ -640,7 +640,7 @@ class _CommunicationTemplateDetailPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Template')),
+      appBar: AppBar(title: const Text('Modelo')),
       body: FutureBuilder<CommTemplate>(
         future: _future,
         builder: (context, snap) {
@@ -725,7 +725,7 @@ class _CommunicationTemplateDetailPageState
               const SizedBox(height: 20),
               Text(
                 'Aplicação em conversas/campanhas fica disponível quando os '
-                'endpoints de conversa estiverem LIVE neste produto.',
+                'endpoints de conversa estiverem ativos neste produto.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],

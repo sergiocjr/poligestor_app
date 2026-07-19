@@ -31,8 +31,8 @@ Namespace LIVE `/v1/strategy/*`. Reuso de mapa/bairros/relatórios do Mandato e 
 
 | Recurso | Contrato | Rota |
 |---------|----------|------|
-| Dashboard / KPIs | `/v1/strategy/kpis` (+ fallback se dashboard 500) | `/home/strategy/dashboard`, `/kpis` |
-| Heatmap | `/v1/strategy/heatmap` | `/home/strategy/heatmap` |
+| Painel / Indicadores | `/v1/strategy/kpis` (+ fallback se painel 500) | `/home/strategy/dashboard`, `/kpis` |
+| Mapa de calor | `/v1/strategy/heatmap` | `/home/strategy/heatmap` |
 | Tendências | `/v1/strategy/trends` | `/home/strategy/trends` |
 | Alertas | `/v1/strategy/alerts` | `/home/strategy/alerts` |
 | Regiões | `/v1/strategy/regions` | `/home/strategy/regions` |
@@ -52,6 +52,10 @@ Namespace LIVE `/v1/strategy/*`. Reuso de mapa/bairros/relatórios do Mandato e 
 | Mapa dedicado | `/v1/strategy/map` |
 
 Cache tenant: `pg_strategy_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://strategy|estrategia|strategic|painel-estrategico/...`.
+
+## Idioma (regra permanente)
+
+Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`. Helpers: `lib/shared/i18n/ui_labels.dart`.
 
 ## Qualidade
 

@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_mode.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
@@ -20,8 +21,8 @@ class AutomationHubPage extends StatelessWidget {
 
   static const _entries = <_AutoEntry>[
     _AutoEntry(
-      'Dashboard',
-      'KPIs operacionais LIVE',
+      'Painel',
+      'Indicadores operacionais ativos',
       Icons.dashboard_outlined,
       '/home/automation/dashboard',
       true,
@@ -70,13 +71,13 @@ class AutomationHubPage extends StatelessWidget {
     ),
     _AutoEntry(
       'Histórico',
-      'Timeline operacional',
+      'Linha do tempo operacional',
       Icons.history,
       '/home/automation/history',
       true,
     ),
     _AutoEntry(
-      'Logs',
+      'Registros',
       'Auditoria e eventos',
       Icons.article_outlined,
       '/home/automation/logs',
@@ -97,7 +98,7 @@ class AutomationHubPage extends StatelessWidget {
       true,
     ),
     _AutoEntry(
-      'Editor',
+      'Edição',
       'Fluxo guiado',
       Icons.edit_note_outlined,
       '/home/automation/editor',
@@ -155,7 +156,7 @@ class AutomationHubPage extends StatelessWidget {
                           ),
                         ),
                         Chip(
-                          label: Text(e.live ? 'LIVE' : 'Prep.'),
+                          label: Text(uiContractChip(available: e.live)),
                           visualDensity: VisualDensity.compact,
                           backgroundColor: e.live ? Colors.green.shade50 : null,
                         ),
@@ -229,7 +230,7 @@ class _AutomationPendingPageState extends State<AutomationPendingPage> {
             return EndpointPendingState(
               path: err.path,
               message:
-                  '${widget.title} preparado. Aguardando contrato LIVE na VPS.',
+                  '${widget.title} preparado. Aguardando contrato ativo na VPS.',
             );
           }
           if (snap.hasError) {
@@ -276,7 +277,7 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard de Automação'),
+        title: const Text('Painel de automação'),
         actions: [
           IconButton(
             tooltip: 'Atualizar',
@@ -341,11 +342,11 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
               children: [
                 if (d.fromCache)
                   Text(
-                    'Cache offline ${d.cacheAgeLabel ?? ''}',
+                    'Dados salvos ${d.cacheAgeLabel ?? ''}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 Text(
-                  'Fonte LIVE: /v1/virtual-team/* até publicar /v1/automations/dashboard',
+                  'Fonte ativa: Equipe Virtual até publicar o painel de automações',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
@@ -435,7 +436,7 @@ class _AutomationAutomationsPageState extends State<AutomationAutomationsPage> {
         title: const Text('Automações'),
         actions: [
           IconButton(
-            tooltip: 'Nova (quando LIVE)',
+            tooltip: 'Nova (quando disponível)',
             onPressed: () => context.push('/home/automation/editor'),
             icon: const Icon(Icons.add),
           ),
@@ -574,7 +575,7 @@ class _AutomationExecutionsPageState extends State<AutomationExecutionsPage>
                     ),
                     subtitle: Text(
                       [
-                        e.status,
+                        uiStatusLabel(e.status),
                         if (e.startedAt != null)
                           fmt.format(e.startedAt!.toLocal()),
                       ].join(' · '),
@@ -669,7 +670,7 @@ class _AutomationAlertsPageState extends State<AutomationAlertsPage>
                       style: const TextStyle(fontWeight: FontWeight.w700),
                     ),
                     subtitle: Text(
-                      '${a.severity} · ${a.body}',
+                      '${uiSeverityLabel(a.severity)} · ${a.body}',
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -785,7 +786,7 @@ class _AutomationLogsPageState extends State<AutomationLogsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Logs')),
+      appBar: AppBar(title: const Text('Registros')),
       body: FutureBuilder<VtPagedList<VtLogEntry>>(
         future: _future,
         builder: (context, snap) {
@@ -802,7 +803,7 @@ class _AutomationLogsPageState extends State<AutomationLogsPage> {
           }
           final items = snap.data?.items ?? const [];
           if (items.isEmpty) {
-            return const AppEmptyState(message: 'Nenhum log.');
+            return const AppEmptyState(message: 'Nenhum registro.');
           }
           return ListView.separated(
             padding: const EdgeInsets.all(12),
@@ -852,7 +853,7 @@ class _AutomationHistoryPageState extends State<AutomationHistoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Histórico / Timeline')),
+      appBar: AppBar(title: const Text('Histórico / Linha do tempo')),
       body: FutureBuilder<VtPagedList<VtTimelineItem>>(
         future: _future,
         builder: (context, snap) {
@@ -869,7 +870,7 @@ class _AutomationHistoryPageState extends State<AutomationHistoryPage> {
           }
           final items = snap.data?.items ?? const [];
           if (items.isEmpty) {
-            return const AppEmptyState(message: 'Timeline vazia.');
+            return const AppEmptyState(message: 'Linha do tempo vazia.');
           }
           return ListView.separated(
             padding: const EdgeInsets.all(12),
@@ -939,7 +940,7 @@ class _AutomationMetricsPageState extends State<AutomationMetricsPage> {
               VtKpiGrid(dashboard: snap.data!),
               const SizedBox(height: 12),
               Text(
-                'Reutiliza métricas LIVE /v1/virtual-team/metrics',
+                'Reutiliza métricas ativas da Equipe Virtual',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             ],
@@ -976,7 +977,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
         title: const Text('Confirmar autonomia'),
         content: Text(
           'Alterar ${current.agentSlug} de "${current.level.label}" para "${next.label}"?\n\n'
-          'Ação crítica: exige confirmação e contrato LIVE de escrita.',
+          'Ação crítica: exige confirmação e contrato ativo de escrita.',
         ),
         actions: [
           TextButton(
@@ -1001,7 +1002,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
           title: const Text('Contrato pendente'),
           content: EndpointPendingState(
             path: e.path,
-            message: 'Leitura LIVE ok. Escrita de autonomia aguarda VPS.',
+            message: 'Leitura ativa ok. Escrita de autonomia aguarda publicação.',
           ),
           actions: [
             TextButton(
@@ -1047,7 +1048,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
             padding: const EdgeInsets.all(12),
             children: [
               Text(
-                'Níveis 0–5. Escrita exige confirmação + contrato LIVE.',
+                'Níveis 0–5. Escrita exige confirmação + contrato ativo.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 8),
@@ -1109,13 +1110,13 @@ class AutomationEditorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Editor de Automação')),
+      appBar: AppBar(title: const Text('Edição de automação')),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           EndpointPendingState(
             path: AuthMode.staff.automationsRootPath,
-            message: 'Editor preparado. Salvamento aguarda contrato LIVE.',
+            message: 'Edição preparada. O salvamento aguarda contrato ativo.',
           ),
           const SizedBox(height: 12),
           ..._steps.asMap().entries.map((e) {

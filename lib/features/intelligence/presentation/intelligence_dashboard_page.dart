@@ -258,7 +258,7 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                               ),
                             ),
                       IntelSectionTitle(
-                        title: 'Insights',
+                        title: 'Análises',
                         onSeeAll: () =>
                             context.push('/home/intelligence/insights'),
                       ),
@@ -327,8 +327,8 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
   }
 
   static const _links = <(String, String, IconData)>[
-    ('Briefing', '/home/intelligence/briefing', Icons.wb_sunny_outlined),
-    ('Insights', '/home/intelligence/insights', Icons.lightbulb_outline),
+    ('Resumo', '/home/intelligence/briefing', Icons.wb_sunny_outlined),
+    ('Análises', '/home/intelligence/insights', Icons.lightbulb_outline),
     ('Tendências', '/home/intelligence/trends', Icons.show_chart_rounded),
     (
       'Bairros',

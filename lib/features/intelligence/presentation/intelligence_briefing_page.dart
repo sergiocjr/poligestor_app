@@ -37,7 +37,7 @@ class _IntelligenceBriefingPageState extends State<IntelligenceBriefingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Briefing diário')),
+      appBar: AppBar(title: const Text('Resumo diário')),
       body: Column(
         children: [
           IntelPeriodFilterBar(

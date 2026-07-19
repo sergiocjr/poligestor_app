@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_mode.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -24,8 +25,8 @@ class SmartAssistantHubPage extends StatelessWidget {
       live: true,
     ),
     _HubEntry(
-      title: 'Briefings',
-      subtitle: 'Briefings gerados para o gabinete',
+      title: 'Resumos',
+      subtitle: 'Resumos gerados para o gabinete',
       icon: Icons.article_outlined,
       route: '/home/chat/briefings',
       live: true,
@@ -59,7 +60,7 @@ class SmartAssistantHubPage extends StatelessWidget {
       live: false,
     ),
     _HubEntry(
-      title: 'Insights',
+      title: 'Análises',
       subtitle: 'Alertas e oportunidades',
       icon: Icons.insights_outlined,
       route: '/home/chat/insights',
@@ -67,7 +68,7 @@ class SmartAssistantHubPage extends StatelessWidget {
     ),
     _HubEntry(
       title: 'Perguntas ao gabinete',
-      subtitle: 'Perguntas frequentes / Q&A',
+      subtitle: 'Perguntas frequentes',
       icon: Icons.help_outline,
       route: '/home/chat/questions',
       live: false,
@@ -88,7 +89,7 @@ class SmartAssistantHubPage extends StatelessWidget {
     ),
     _HubEntry(
       title: 'Compartilhar',
-      subtitle: 'Compartilhar resumos e insights',
+      subtitle: 'Compartilhar resumos e análises',
       icon: Icons.ios_share_outlined,
       route: '/home/chat/share',
       live: false,
@@ -146,7 +147,7 @@ class SmartAssistantHubPage extends StatelessWidget {
                           ),
                         ),
                         Chip(
-                          label: Text(e.live ? 'LIVE' : 'Prep.'),
+                          label: Text(uiContractChip(available: e.live)),
                           visualDensity: VisualDensity.compact,
                           backgroundColor: e.live
                               ? Colors.green.shade50
@@ -234,7 +235,7 @@ class _SmartAssistantPendingPageState extends State<SmartAssistantPendingPage> {
               return EndpointPendingState(
                 path: err.path,
                 message:
-                    '${widget.title} preparado. Aguardando contrato LIVE na VPS.',
+                    '${widget.title} preparado. Aguardando contrato ativo na VPS.',
               );
             }
             return AppErrorState(
@@ -279,7 +280,7 @@ class _SmartAssistantBriefingsPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Briefings')),
+      appBar: AppBar(title: const Text('Resumos')),
       body: _BriefingBody(
         future: _future,
         onRetry: () => setState(() {
@@ -345,7 +346,7 @@ class _BriefingBody extends StatelessWidget {
         }
         final view = snap.data!;
         if (view.bullets.isEmpty) {
-          return const AppEmptyState(message: 'Nenhum item no briefing.');
+          return const AppEmptyState(message: 'Nenhum item no resumo.');
         }
         final fmt = DateFormat('dd/MM/yyyy HH:mm');
         return ListView(
@@ -355,7 +356,7 @@ class _BriefingBody extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  'Exibindo cache offline',
+                  'Exibindo dados salvos',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),
@@ -415,7 +416,7 @@ class _SmartAssistantInsightsPageState extends State<SmartAssistantInsightsPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Insights')),
+      appBar: AppBar(title: const Text('Análises')),
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() => _future = _load());
@@ -449,7 +450,7 @@ class _SmartAssistantInsightsPageState extends State<SmartAssistantInsightsPage>
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: const [
                   SizedBox(height: 120),
-                  AppEmptyState(message: 'Nenhum insight no momento.'),
+                  AppEmptyState(message: 'Nenhuma análise no momento.'),
                 ],
               );
             }
@@ -630,7 +631,7 @@ class _SmartAssistantGabineteChatPageState
         appBar: AppBar(title: const Text('Chat do Gabinete')),
         body: EndpointPendingState(
           path: _pending!.path,
-          message: 'Chat do Gabinete preparado. Aguardando contrato LIVE.',
+          message: 'Chat do Gabinete preparado. Aguardando contrato ativo.',
         ),
       );
     }

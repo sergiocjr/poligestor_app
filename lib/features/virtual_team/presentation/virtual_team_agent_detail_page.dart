@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/api/api_exception.dart';
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/virtual_team_models.dart';
@@ -134,7 +135,7 @@ class _VirtualTeamAgentDetailPageState
                       ),
                     ),
                     VtStatusChip(
-                      label: a.isOnline ? 'Online' : 'Offline',
+                      label: uiOnlineLabel(a.isOnline),
                       online: a.isOnline,
                     ),
                   ],
@@ -196,14 +197,14 @@ class _VirtualTeamAgentDetailPageState
                       VtNavTile(
                         icon: Icons.play_circle_outline,
                         title: 'Execuções (${b.executions.length})',
-                        subtitle: 'Runs deste agente',
+                        subtitle: 'Execuções deste agente',
                         onTap: () => context.push(
                           '/home/virtual-team/agents/${widget.slug}/executions',
                         ),
                       ),
                       VtNavTile(
                         icon: Icons.article_outlined,
-                        title: 'Logs (${b.logs.length})',
+                        title: 'Registros (${b.logs.length})',
                         subtitle: 'Trilha do agente',
                         onTap: () => context.push(
                           '/home/virtual-team/agents/${widget.slug}/logs',
@@ -211,7 +212,7 @@ class _VirtualTeamAgentDetailPageState
                       ),
                       VtNavTile(
                         icon: Icons.timeline_outlined,
-                        title: 'Timeline (${b.timeline.length})',
+                        title: 'Linha do tempo (${b.timeline.length})',
                         subtitle: 'Linha do tempo do agente',
                         onTap: () => context.push(
                           '/home/virtual-team/agents/${widget.slug}/timeline',

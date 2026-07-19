@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
     } on EndpointUnavailableException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Provider indisponível: ${e.path}')),
+        SnackBar(content: Text('Provedor indisponível: ${e.path}')),
       );
     } catch (e) {
       if (!mounted) return;

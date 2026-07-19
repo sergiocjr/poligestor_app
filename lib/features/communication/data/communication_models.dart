@@ -325,8 +325,8 @@ class CommOperator {
   }
 
   String get statusLabel => switch ((status ?? '').toLowerCase()) {
-    'online' || 'disponivel' || 'disponível' => 'Online',
-    'offline' => 'Offline',
+    'online' || 'disponivel' || 'disponível' => 'Conectado',
+    'offline' => 'Desconectado',
     'busy' || 'ocupado' || 'away' => 'Ocupado',
     '' => '—',
     _ => status!,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/i18n/ui_labels.dart';
 import '../../data/virtual_team_models.dart';
 
 class VtKpiGrid extends StatelessWidget {
@@ -27,7 +28,7 @@ class VtKpiGrid extends StatelessWidget {
         '${dashboard.executions24h}',
         Icons.play_circle_outline,
       ),
-      ('Hand-offs 24h', '${dashboard.handoffs24h}', Icons.swap_horiz_outlined),
+      ('TransferÃªncias 24h', '${dashboard.handoffs24h}', Icons.swap_horiz_outlined),
       ('Auditorias 24h', '${dashboard.audits24h}', Icons.fact_check_outlined),
       ('Aprendizados', '${dashboard.learningsCurrent}', Icons.school_outlined),
     ];
@@ -148,7 +149,7 @@ class VtAgentCard extends StatelessWidget {
           ' · ${agent.stateLabel}',
         ),
         trailing: VtStatusChip(
-          label: agent.isOnline ? 'Online' : 'Offline',
+          label: uiOnlineLabel(agent.isOnline),
           online: agent.isOnline,
         ),
         isThreeLine: true,

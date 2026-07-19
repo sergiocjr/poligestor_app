@@ -1,0 +1,60 @@
+---
+description: Interface e textos ao usuário exclusivamente em Português do Brasil (PT-BR)
+alwaysApply: true
+---
+
+# Idioma — Português do Brasil (obrigatório)
+
+Todo o PoliGestor/MandatoOS deve exibir **exclusivamente Português do Brasil** ao usuário final.
+
+## Abrange
+
+- Telas, menus, abas, botões, títulos, filtros, tooltips
+- Dashboards, relatórios, estados vazios/erro/sucesso
+- Notificações e mensagens
+- Documentação destinada ao usuário final (README de uso, textos de ajuda na UI)
+- App, portal e painéis administrativos
+
+## Proibido na UI
+
+Palavras em inglês (ex.: Dashboard, Briefing, Insight, Pending, Open, High/Medium/Low, Tasks, Heatmap, Forecast, Automation, Smart Assistant, Logs, Timeline, Metrics, Queue, Campaigns, Channels, Feedback, Triggers, Actions, Executions, Schedules, Goals, History, Summary, Memory, Context, Prompt Library, Rules, Operators, Attachments, Messages, Conversation — salvo quando forem **nomes oficiais de tecnologia/marca**).
+
+## Equivalentes (exemplos)
+
+| Em inglês (não usar na UI) | PT-BR |
+|----------------------------|-------|
+| Dashboard | Painel |
+| Briefing | Resumo |
+| Insight | Percepção / Análise |
+| High / Medium / Low | Alta / Média / Baixa |
+| Pending | Pendente |
+| Open / Closed | Aberto / Fechado |
+| Resolved / Completed | Resolvido / Concluído |
+| Running / Paused / Failed / Success | Em execução / Pausado / Falhou / Sucesso |
+| History / Summary | Histórico / Resumo |
+| Tasks / Memory / Context | Tarefas / Memória / Contexto |
+| Prompt Library | Biblioteca de Prompts |
+| Feedback | Avaliação |
+| Rules / Triggers / Actions | Regras / Gatilhos / Ações |
+| Executions / Schedules | Execuções / Agendamentos |
+| Alerts / Metrics / Timeline / Logs | Alertas / Métricas / Linha do Tempo / Registros |
+| Goals / Forecast / Heatmap | Metas / Previsão / Mapa de Calor |
+| Operators / Queue | Operadores / Fila |
+| Campaigns / Channels | Campanhas / Canais |
+| Attachments / Messages / Conversation | Anexos / Mensagens / Conversa |
+| Automation | Automação |
+| Smart Assistant | Assistente Inteligente |
+
+## Exceções permitidas (não traduzir)
+
+Laravel, Flutter, Docker, PostgreSQL, Redis, Reverb, Firebase, Android, iOS, OpenAPI, OAuth, JWT, Sanctum, API, URL, HTTP, Webhook, Git, GitHub.
+
+## Não alterar (compatibilidade)
+
+Não renomear classes, métodos, tabelas, migrations, rotas HTTP, contratos de API, chaves JSON de payload, nem código-fonte público quando isso quebrar compatibilidade.
+
+**Traduzir apenas o que é exibido ao usuário.** Valores brutos da API devem ser mapeados para rótulos PT-BR na camada de apresentação (helpers/`label` getters), sem mudar o contrato.
+
+## Encerramento de Sprint
+
+Antes de concluir qualquer sprint: auditoria de idioma — nenhum texto em inglês deve permanecer visível na interface.
