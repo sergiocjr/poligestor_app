@@ -1,0 +1,50 @@
+---
+description: Sempre executar o app Flutter no Samsung Galaxy A10 físico (RX8M70CLXKP); nunca usar emulador
+alwaysApply: true
+---
+
+# Dispositivo de execução Flutter
+
+Dispositivo obrigatório:
+- Nome: SM A105M (Samsung Galaxy A10)
+- ID: `RX8M70CLXKP`
+
+## Antes de qualquer run/rebuild/teste
+
+1. Confirmar com `flutter devices`.
+2. O dispositivo selecionado deve ser sempre `RX8M70CLXKP`.
+3. Se o celular não estiver listado, **não** iniciar emulador. Informar que o dispositivo físico não foi encontrado.
+
+## Comando obrigatório
+
+Preferir o wrapper (garante cleanup ao parar):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_run_a10.ps1
+```
+
+Equivalente direto:
+
+```bash
+flutter run -d RX8M70CLXKP
+```
+
+Usar o mesmo `-d RX8M70CLXKP` para recompilar, testar, reiniciar ou validar alterações.
+
+## Cleanup ao parar (obrigatório)
+
+- Debug/Stop no Cursor: `postDebugTask` em `.vscode/launch.json` executa `flutter: cleanup processes`.
+- Após `flutter run` no terminal (ou se restarem órfãos):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_cleanup.ps1
+```
+
+O cleanup encerra: daemons Gradle deste projeto (`gradlew --stop`), `dart.exe`/`dartaotruntime.exe` órfãos do poligestor. Não mata o analysis server do IDE nem Java de outros projetos.
+
+## Proibido
+
+- Iniciar ou abrir emulador Android
+- Executar em `emulator-5554` ou qualquer outro emulador
+- Trocar o dispositivo de execução sem autorização explícita do usuário
+- Configurar Gradle acima de 1536 MB sem autorização (ver regra `gradle-memory-cleanup`)

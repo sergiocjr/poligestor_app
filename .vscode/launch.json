@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "poligestor_app (SM A105M)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}",
+      "deviceId": "RX8M70CLXKP",
+      "toolArgs": [
+        "-d",
+        "RX8M70CLXKP"
+      ],
+      "postDebugTask": "flutter: cleanup processes"
+    },
+    {
+      "name": "poligestor_app (profile A10)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "cwd": "${workspaceFolder}",
+      "flutterMode": "profile",
+      "deviceId": "RX8M70CLXKP",
+      "toolArgs": [
+        "-d",
+        "RX8M70CLXKP"
+      ],
+      "postDebugTask": "flutter: cleanup processes"
+    }
+  ]
+}

@@ -1,5 +1,18 @@
 # Changelog — PoliGestor Flutter
 
+## [Encerramento 2026-07-19] — dia fechado
+
+### Added / Completed hoje
+
+- Sprint 10.1 Final (Equipe Virtual LIVE)
+- Sprint 10.2 Flutter (identidade, auth, multi-tenant, branding dinâmico, sessões, perfil)
+- Docs atualizados; ícones/logo Android/iOS/Web
+- Repositório publicado em `https://github.com/sergiocjr/poligestor_app`
+
+### Pending (backend)
+
+- Resolve, branding, providers, register, forgot/reset, OAuth e espelhos portal — ver `docs/STATUS_PROJETO.md`
+
 ## [Sprint 10.2] — 2026-07-19 — CONCLUÍDA (Flutter)
 
 ### Added

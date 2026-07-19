@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "flutter: cleanup processes",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/scripts/flutter_cleanup.ps1\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false,
+        "close": true,
+        "focus": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "flutter: run A10",
+      "type": "shell",
+      "command": "powershell -NoProfile -ExecutionPolicy Bypass -File \"${workspaceFolder}/scripts/flutter_run_a10.ps1\"",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": true
+      },
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

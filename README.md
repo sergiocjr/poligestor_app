@@ -2,7 +2,8 @@
 
 Aplicativo mobile do **PoliGestor** — operação em campo (staff) e portal do cidadão.
 
-API de produção: `https://poligestor.onnexis.com.br/api`
+- **API:** `https://poligestor.onnexis.com.br/api`
+- **Repositório:** [github.com/sergiocjr/poligestor_app](https://github.com/sergiocjr/poligestor_app)
 
 > No emulador Android, **nunca** use `localhost`. Se a API estiver neste PC, use `10.0.2.2`.
 > Com a API na VPS, use o domínio HTTPS público (padrão do app).
@@ -15,17 +16,20 @@ $env:PATH = "C:\src\flutter\bin;$env:PATH"
 cd C:\src\poligestor_app
 flutter pub get
 flutter devices
+# Preferir o wrapper (cleanup ao parar):
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_run_a10.ps1
+# Ou direto:
 flutter run -d RX8M70CLXKP
 ```
 
-Contas demo (podem variar conforme o tenant ativo na VPS):
+Contas demo (após selecionar organização, ex.: `demo`):
 
-| Persona  | E-mail               | Senha    | Tenant |
-|----------|----------------------|----------|--------|
-| Operador | `admin@demo.local`   | password | —      |
-| Cidadão  | `cidadao@demo.local` | password | `demo` |
+| Persona  | E-mail               | Senha    | Modo    |
+|----------|----------------------|----------|---------|
+| Operador | `admin@demo.local`   | password | Staff   |
+| Cidadão  | `cidadao@demo.local` | password | Portal  |
 
-## Fases
+## Fases / Sprints
 
 | Fase | Tema | Status |
 |------|------|--------|
@@ -36,7 +40,27 @@ Contas demo (podem variar conforme o tenant ativo na VPS):
 | **9.5** | Hardening produção | **CONCLUÍDA** |
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
 | **10.2** | Identidade / Auth / Multi-tenant | **CONCLUÍDA (Flutter)** |
-| 10+ | — | Em evolução |
+| 10+ | Evolução + estabilização VPS 10.2 | Em andamento |
+
+## Sprint 10.2 — Identidade (CONCLUÍDA no Flutter)
+
+Fluxo **org-first** (`/org` → branding → `/login`):
+
+- Seleção de organização (slug / código / domínio / deep link)
+- Branding dinâmico (quando a API estabilizar; fallback honesto sem mocks)
+- Login staff/portal, cadastro e recuperação (UI pronta; APIs conectam ao ficarem 200)
+- Perfil, sessões LIVE, troca de organização
+- Deep links `poligestor://org/{slug}` · `poligestor://tenant/{slug}`
+
+Pendências restantes: **somente backend** (resolve, branding, providers, register, forgot, OAuth). Detalhes em [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
+
+Staff — **Mais → Equipe Virtual** (`/home/virtual-team/*`):
+
+- Dashboard, agentes + sub-rotas, tarefas, execuções, hand-offs, timeline, alertas, métricas, auditoria, logs, pesquisa, memória, aprendizado, fila, eventos
+- Integração completa dos contratos VPS; refresh via Reverb/MandateRefresh
+- Deep links `poligestor://virtual-team/...`
 
 ## Fase 7 — comunicação em tempo real (CONCLUÍDA)
 
@@ -49,50 +73,23 @@ Validado no **Samsung SM-A105M**:
 - Deep links `poligestor://protocols/{id}` e `poligestor://notifications`
 - WebSocket Reverb (`wss://…/app/{key}`) + auth `/broadcasting/auth`
 - Fallback REST + polling 20s na tela de detalhe
-- Preferências remotas, unread-count, marcar lidas / ler todas
 
 ### Limitações iOS
 
 - Push iOS / APNs **não** validados nesta fase
 - `GoogleService-Info.plist` e fluxo APNs ficam para configuração futura
-- O código Flutter usa `firebase_messaging` de forma multiplataforma, mas o build/teste oficial foi só Android
 
 ## Fase 8 — Mandato (CONCLUÍDA)
 
-Staff only — aba **Mandato** no bottom nav:
-
-- Visão geral (`/v1/mandate/executive` + `briefing`)
-- Agenda, bairros, assuntos, equipe, pesquisa, relatórios, mapa, painel TV
-- Cache offline carimbado; refresh no resume e em eventos realtime
-- Validado: endpoints HTTP 200 na VPS; APK debug no SM-A105M
-
-**FASE 8 — STATUS: CONCLUÍDA.** Não iniciar Fase 9 neste app até o contrato de inteligência ser integrado.
+Staff only — aba **Mandato**: visão geral, agenda, bairros, assuntos, equipe, pesquisa, relatórios, mapa, TV.
 
 ## Fase 9 — Inteligência (CONCLUÍDA)
 
-Staff only — aba **Inteligência**:
-
-- Dashboard + briefing + insights (`?generate=1`) + tendências + analytics + briefings (daily/weekly/monthly)
-- Cache local; refresh no resume/realtime
-- Validado: APIs HTTP 200; APK debug no SM-A105M
-
-**FASE 9 — STATUS: CONCLUÍDA.**
+Staff only — aba **Inteligência**: dashboard, briefing, insights, tendências, analytics, briefings.
 
 ## Sprint 9.5 — Hardening (CONCLUÍDA)
 
 Produção: sync coalescido, FCM seguro, CPF mascarado, UX Mais, a11y básica, dispose.
-
-**SPRINT 9.5 — STATUS: CONCLUÍDA.**
-
-## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
-
-Staff — **Mais → Equipe Virtual** (`/home/virtual-team/*`):
-
-- Dashboard (root), agentes + sub-rotas, tarefas, execuções, hand-offs, timeline, alertas, métricas, auditoria, logs, pesquisa, memória, aprendizado, fila, eventos
-- Integração completa dos contratos VPS; refresh via Reverb/MandateRefresh
-- Deep links `poligestor://virtual-team/...`
-
-**SPRINT 10.1 — STATUS: CONCLUÍDA (Final).**
 
 ## Estrutura
 
@@ -100,19 +97,22 @@ Staff — **Mais → Equipe Virtual** (`/home/virtual-team/*`):
 lib/
   core/           # config, api, auth, storage, theme, router, realtime
   features/
+    identity/       # Sprint 10.2 — org + branding
+    account/        # Sprint 10.2 — perfil / sessões
     auth/
     citizen/
     protocols/
     agenda/
-    notifications/  # FCM, prefs, Reverb sync
-    mandate/        # Fase 8 — gestão do mandato (staff)
-    intelligence/   # Fase 9 — inteligência do mandato (staff)
-    virtual_team/   # Sprint 10.1 — equipe virtual (staff)
-    home/           # shell staff
+    notifications/
+    mandate/        # Fase 8
+    intelligence/   # Fase 9
+    virtual_team/   # Sprint 10.1
+    home/
     more/
     assistant/
   shared/widgets/
 docs/             # STATUS, CHANGELOG, ROADMAP, arquitetura
+scripts/          # flutter_run_a10.ps1, flutter_cleanup.ps1
 ```
 
 ## Documentação
@@ -121,3 +121,9 @@ docs/             # STATUS, CHANGELOG, ROADMAP, arquitetura
 - [CHANGELOG](docs/CHANGELOG.md)
 - [ROADMAP](docs/ROADMAP.md)
 - [Arquitetura Flutter](docs/ARQUITETURA_FLUTTER.md)
+
+## Retomada amanhã
+
+1. Acompanhar estabilização VPS dos endpoints 10.2 (500/404 → 200)
+2. Validar branding real + resolve remoto no SM-A105M
+3. Validar cadastro / forgot / providers sociais quando publicados

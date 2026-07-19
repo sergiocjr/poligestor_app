@@ -1,0 +1,73 @@
+---
+description: Limite de memória Gradle/Java e finalização obrigatória após flutter/build/test
+alwaysApply: true
+---
+
+# Gradle / Java — memória e cleanup
+
+Aplicável somente a `C:\src\poligestor_app`. Não alterar backend.
+
+## Limites de memória (obrigatório)
+
+Arquivo: `android/gradle.properties`
+
+```
+org.gradle.jvmargs=-Xms256m -Xmx1024m -XX:MaxMetaspaceSize=256m -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8
+org.gradle.daemon=true
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.workers.max=2
+kotlin.daemon.jvmargs=-Xms128m -Xmx512m
+```
+
+- Trabalhar perto de **1 GB**.
+- **Nunca** configurar acima de **1536 MB** sem autorização explícita do usuário.
+- Se o build exigir mais memória, **informar antes** de alterar.
+- Se existir `C:\Users\sergi\.gradle\gradle.properties` e for usado, manter os mesmos limites (não criar o arquivo só por criar).
+
+## Finalização obrigatória
+
+Após qualquer `flutter run`, `flutter test`, `flutter build`, Gradle ou Android build:
+
+```powershell
+cd android
+.\gradlew.bat --stop
+cd ..
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\flutter_cleanup.ps1
+```
+
+Preferir o script de cleanup (já chama `gradlew --stop` e remove órfãos do projeto).
+
+Verificar:
+
+```powershell
+Get-Process java, javaw -ErrorAction SilentlyContinue |
+  Select-Object Id, ProcessName, WorkingSet64, Path
+```
+
+- Encerrar **somente** Java/Gradle/Kotlin/Dart ligados a este projeto que sobraram após a tarefa.
+- **Não** matar Java de outros programas nem o analysis server do IDE.
+
+## flutter run
+
+- Encerrar com `q` (não só fechar o terminal).
+- Aguardar o processo terminar.
+- Depois: `gradlew --stop` / `flutter_cleanup.ps1`.
+- Não deixar sessão de debug/build ativa em segundo plano.
+
+## Testes e builds
+
+- Preferir testes necessários durante o desenvolvimento; suíte completa só no final.
+- Não rodar vários `flutter test`/`build` em paralelo.
+- Com o A10 conectado: **não** usar emulador.
+
+## Validação final (obrigatória no relatório)
+
+Informar sempre:
+
+1. Se `flutter run` foi encerrado (ou N/A).
+2. Se `gradlew --stop` foi executado.
+3. Quantos processos Java **deste projeto** permaneceram.
+4. Consumo aproximado de RAM restante desses processos.
+
+A tarefa só está concluída quando **não** houver órfão Gradle/Flutter deste projeto consumindo memória.

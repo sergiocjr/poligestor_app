@@ -19,10 +19,11 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Cursor / VS Code locais (rules e launch úteis são versionados se presentes)
+# .vscode/ e .cursor/rules/ podem ir no repositório do time.
+
+# Artefatos temporários de probe/API
+.tmp_*/
 
 # Flutter/Dart/Pub related
 **/doc/api/

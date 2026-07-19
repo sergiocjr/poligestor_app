@@ -1,0 +1,8 @@
+{
+  "dart.flutterRunAdditionalArgs": [
+    "-d",
+    "RX8M70CLXKP"
+  ],
+  "dart.flutterSelectDeviceWhenConnected": false,
+  "dart.showDebuggerStackTrace": false
+}

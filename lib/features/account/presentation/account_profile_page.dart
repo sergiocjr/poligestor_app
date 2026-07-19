@@ -32,7 +32,7 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
     return context.read<AccountRepository>().linkedAccounts(mode: auth.mode);
   }
 
-  Future<void> _logout() async {
+  Future<void> _endSession({required String nextRoute}) async {
     final push = context.read<PushNotificationService>();
     final auth = context.read<AuthController>();
     final account = context.read<AccountRepository>();
@@ -43,14 +43,15 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
       await account.logoutRemote(mode: auth.mode);
     } catch (_) {}
     await auth.logout();
-    if (mounted) context.go('/login');
+    if (mounted) context.go(nextRoute);
   }
+
+  Future<void> _logout() => _endSession(nextRoute: '/login');
 
   Future<void> _switchOrg() async {
     final tenant = context.read<TenantController>();
     await tenant.clearOrganization();
-    await _logout();
-    if (mounted) context.go('/org');
+    await _endSession(nextRoute: '/org');
   }
 
   @override

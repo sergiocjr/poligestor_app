@@ -9,6 +9,8 @@ presentation (pages/widgets)
             → core/api (ApiClient / Dio)
 ```
 
+DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projeto.
+
 ## Core
 
 | Peça | Papel |
@@ -16,24 +18,40 @@ presentation (pages/widgets)
 | `ApiClient` | Dio, Bearer, refresh, `X-Tenant-Slug`, envelopes |
 | `AuthController` / `AuthMode` | Sessão staff vs portal + paths |
 | `TokenStorage` | Tokens seguros + meta de sessão |
+| `TenantController` | Organização selecionada + branding (Sprint 10.2) |
 | `AppConfig` | API base, Reverb, polling |
+| `AppTheme.lightFromBranding` | Tema dinâmico por tenant |
 | `pusher_reverb_client` | WSS Pusher-compatible |
-| `go_router` | Shells staff (`/home/*`) e cidadão (`/citizen/*`) |
+| `go_router` | Org → login → shells staff (`/home/*`) e cidadão (`/citizen/*`) + `/account/*` |
 
 ## Features relevantes
 
+- **identity** (Sprint 10.2) — resolve org, cache, branding, deep links
+- **account** (Sprint 10.2) — perfil, sessões, logout remoto, register/forgot/OAuth preparados
+- **auth** — splash, login, register, forgot
 - **notifications** — FCM, prefs, inbox, `RealtimeSyncService`, `AppSyncController`
 - **protocols** — modelos e repositório compartilhados staff/cidadão
 - **agenda** — compromissos (staff events / portal appointments)
 - **mandate** (Fase 8) — gestão do mandato, só staff
 - **intelligence** (Fase 9) — briefing, insights, trends, analytics, só staff
+- **virtual_team** (Sprint 10.1) — Equipe Virtual operational center
 - **citizen** — portal
 - **home** — `HomeShell` (bottom nav staff)
 
+## Navegação (GoRouter)
+
+1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
+2. Sem org → `/org`
+3. Com org, sem sessão → `/login` (+ register/forgot)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/account/*`)
+5. Portal autenticado → `/citizen/*` (+ `/account/*`)
+6. Deep links: `poligestor://protocols|notifications|virtual-team|org|tenant/...`
+
 ## Estado
 
-- `provider` + `ChangeNotifier` para sessão e controllers compartilhados
+- `provider` + `ChangeNotifier` para sessão, tenant e controllers compartilhados
 - Telas frequentemente usam `FutureBuilder` / estado local quando o escopo é a página
+- Endpoints ainda 404/500: `EndpointUnavailableException` → UI “indisponível” (sem mock)
 
 ## Tempo real (Fase 7)
 
@@ -52,7 +70,7 @@ presentation (pages/widgets)
 
 ### Encerramento Fase 8
 
-**STATUS: CONCLUÍDA.** O módulo Mandato (staff) está documentado e validado; inteligência avançada fica na Fase 9.
+**STATUS: CONCLUÍDA.**
 
 ## Inteligência (Fase 9)
 
@@ -74,8 +92,28 @@ presentation (pages/widgets)
 
 **STATUS: CONCLUÍDA.**
 
+## Sprint 10.1 — Equipe Virtual
+
+- `VirtualTeamRepository` + cache + páginas `/home/virtual-team/*`
+- Contratos REST `/v1/virtual-team/*` LIVE
+- Deep links `poligestor://virtual-team/...`
+
+### Encerramento Sprint 10.1
+
+**STATUS: CONCLUÍDA (Final).**
+
+## Sprint 10.2 — Identidade / multi-tenant
+
+- `IdentityRepository` / `IdentityCache` / `TenantController`
+- `AccountRepository` (sessions LIVE; demas preparados)
+- UI org-first; branding dinâmico; estados honestos para APIs pendentes
+
+### Encerramento Sprint 10.2 (Flutter)
+
+**STATUS: CONCLUÍDA no app.** Pendências restantes só na VPS (resolve/branding/OAuth/register/forgot).
+
 ## Segurança
 
 - Não versionar `google-services.json`
 - Não logar tokens/CPF completos
-- RBAC fino no servidor; app oculta superfícies por `AuthMode` (Mandato = staff)
+- RBAC fino no servidor; app oculta superfícies por `AuthMode` (Mandato / Inteligência / Equipe Virtual = staff)

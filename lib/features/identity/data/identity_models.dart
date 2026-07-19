@@ -133,8 +133,6 @@ class TenantBranding {
       };
 }
 
-typedef ColorHex = String;
-
 class AuthProviderInfo {
   const AuthProviderInfo({
     required this.id,
