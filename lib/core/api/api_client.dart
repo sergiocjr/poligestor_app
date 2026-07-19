@@ -236,17 +236,78 @@ class ApiClient {
     }
   }
 
+  Future<ApiEnvelope<T>> putEnvelope<T>(
+    String path, {
+    Object? data,
+    required T Function(dynamic raw) parse,
+    AuthMode? mode,
+    String? tenantSlug,
+  }) async {
+    try {
+      final response = await _dio.put<Map<String, dynamic>>(
+        path,
+        data: data,
+        options: Options(
+          extra: {
+            if (mode != null) 'authMode': mode,
+            if (tenantSlug != null) 'tenantSlug': tenantSlug,
+          },
+        ),
+      );
+      return ApiEnvelope.fromJson(response.data ?? {}, parse);
+    } on DioException catch (e) {
+      throw _mapError(e);
+    }
+  }
+
   Future<ApiEnvelope<T>> patchEnvelope<T>(
     String path, {
     Object? data,
     required T Function(dynamic raw) parse,
+    AuthMode? mode,
+    String? tenantSlug,
   }) async {
     try {
       final response = await _dio.patch<Map<String, dynamic>>(
         path,
         data: data,
+        options: Options(
+          extra: {
+            if (mode != null) 'authMode': mode,
+            if (tenantSlug != null) 'tenantSlug': tenantSlug,
+          },
+        ),
       );
       return ApiEnvelope.fromJson(response.data ?? {}, parse);
+    } on DioException catch (e) {
+      throw _mapError(e);
+    }
+  }
+
+  /// POST que aceita corpo bruto (ex.: broadcasting auth `{ "auth": "..." }`).
+  Future<Map<String, dynamic>> postRawMap(
+    String path, {
+    Object? data,
+    AuthMode? mode,
+    String? tenantSlug,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      final response = await _dio.post<dynamic>(
+        path,
+        data: data,
+        options: Options(
+          headers: headers,
+          extra: {
+            if (mode != null) 'authMode': mode,
+            if (tenantSlug != null) 'tenantSlug': tenantSlug,
+          },
+        ),
+      );
+      final body = response.data;
+      if (body is Map<String, dynamic>) return body;
+      if (body is Map) return Map<String, dynamic>.from(body);
+      return <String, dynamic>{};
     } on DioException catch (e) {
       throw _mapError(e);
     }

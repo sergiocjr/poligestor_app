@@ -148,30 +148,37 @@ class ProtocolsRepository {
     return envelope.data;
   }
 
-  /// Marca mensagens como lidas via POST em links.read (contrato atual).
+  /// Marca mensagens como lidas: `POST …/protocols/{id}/read` (contrato).
   Future<bool> markMessagesRead({
     required AuthMode mode,
     required ProtocolDetail detail,
   }) async {
-    final url = detail.markReadUrl;
-    if (url == null || url.trim().isEmpty) return false;
-    final path = _toApiPath(url);
-    if (path == null) return false;
-    try {
-      await _api.postEnvelope<Map<String, dynamic>>(
-        path,
-        data: const {'read': true},
-        mode: mode,
-        parse: (raw) {
-          if (raw is Map<String, dynamic>) return raw;
-          if (raw is Map) return Map<String, dynamic>.from(raw);
-          return <String, dynamic>{};
-        },
-      );
-      return true;
-    } catch (_) {
-      return false;
+    final candidates = <String>[];
+    final fromLink = detail.markReadUrl;
+    if (fromLink != null && fromLink.trim().isNotEmpty) {
+      final path = _toApiPath(fromLink);
+      if (path != null) candidates.add(path);
     }
+    candidates.add(mode.protocolReadPath(detail.id));
+
+    for (final path in candidates.toSet()) {
+      try {
+        await _api.postEnvelope<Map<String, dynamic>>(
+          path,
+          data: const {},
+          mode: mode,
+          parse: (raw) {
+            if (raw is Map<String, dynamic>) return raw;
+            if (raw is Map) return Map<String, dynamic>.from(raw);
+            return <String, dynamic>{};
+          },
+        );
+        return true;
+      } catch (_) {
+        continue;
+      }
+    }
+    return false;
   }
 
   /// Envia avaliação somente se a API indicar URL/`can_rate`.

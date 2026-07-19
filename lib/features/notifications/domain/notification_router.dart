@@ -1,7 +1,7 @@
 import '../../protocols/data/protocol_navigation.dart';
 import '../data/push_payload.dart';
 
-/// Destino interno após toque em push / aviso.
+/// Destino interno após toque em push / aviso / deep link.
 class NotificationRouteTarget {
   const NotificationRouteTarget({
     required this.location,
@@ -21,6 +21,18 @@ class NotificationRouter {
 
   /// Converte payload em rota interna. Retorna null se inválido.
   NotificationRouteTarget? resolve(PushPayload payload) {
+    final deep = payload.deepLink ?? payload.link;
+    if (deep != null && deep.startsWith('poligestor://')) {
+      final uri = Uri.tryParse(deep);
+      if (uri != null) {
+        if (uri.host == 'notifications' || uri.host == 'notification') {
+          return const NotificationRouteTarget(
+            location: '/citizen/notifications',
+          );
+        }
+      }
+    }
+
     switch (payload.type) {
       case PushEventType.systemNotice:
         return const NotificationRouteTarget(
@@ -39,6 +51,11 @@ class NotificationRouter {
         );
       case PushEventType.protocolStatusChanged:
       case PushEventType.protocolResolved:
+      case PushEventType.protocolReopened:
+      case PushEventType.protocolCreated:
+      case PushEventType.protocolInformationSubmitted:
+      case PushEventType.protocolAssigneeChanged:
+      case PushEventType.protocolRatingReceived:
         return _protocolRoute(payload);
       case PushEventType.protocolRatingAvailable:
         return _protocolRoute(payload, highlightRating: true);
@@ -61,7 +78,7 @@ class NotificationRouter {
     final target = ProtocolNavigationTarget.resolve(
       protocolId: payload.protocolId,
       protocolNumber: payload.protocolNumber,
-      link: payload.link,
+      link: payload.effectiveLink,
     );
     if (target == null) return null;
     return NotificationRouteTarget(

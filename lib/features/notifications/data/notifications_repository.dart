@@ -61,14 +61,13 @@ class AppNotification {
               data['protocolo_id'] ??
               data['request_id'])
           ?.toString();
-      // Não usar data['id'] genérico: pode ser id do aviso/evento.
       protocolNumber ??= (data['protocol_number'] ??
               data['number'] ??
               data['numero'] ??
               data['protocolo'])
           ?.toString();
     }
-    final link = json['link']?.toString();
+    final link = (json['deep_link'] ?? json['link'] ?? json['url'])?.toString();
 
     return AppNotification(
       id: json['id'],
@@ -77,7 +76,11 @@ class AppNotification {
       link: link,
       protocolId: protocolId ?? _protocolIdFromLink(link),
       protocolNumber: protocolNumber,
-      kind: _kindFrom(type, title: json['title']?.toString(), body: json['body']?.toString()),
+      kind: _kindFrom(
+        type,
+        title: json['title']?.toString(),
+        body: json['body']?.toString(),
+      ),
       readAt: readRaw != null ? DateTime.tryParse(readRaw.toString()) : null,
       createdAt:
           createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
@@ -88,6 +91,10 @@ class AppNotification {
     if (link == null || link.isEmpty) return null;
     final uri = Uri.tryParse(link);
     if (uri == null) return null;
+    if (uri.scheme == 'poligestor' &&
+        (uri.host == 'protocols' || uri.host == 'protocol')) {
+      if (uri.pathSegments.isNotEmpty) return uri.pathSegments.first;
+    }
     final segments = uri.pathSegments;
     for (var i = 0; i < segments.length - 1; i++) {
       if (segments[i] == 'requests' ||
@@ -107,36 +114,49 @@ class AppNotification {
     String? title,
     String? body,
   }) {
-    final blob = '$type ${title ?? ''} ${body ?? ''}'.toLowerCase();
-    if (blob.contains('avali') || blob.contains('rating')) {
-      return NotificationKind.ratingAvailable;
-    }
-    if (blob.contains('resolv') || blob.contains('encerr')) {
-      return NotificationKind.resolved;
-    }
-    if (blob.contains('informa') ||
-        blob.contains('aguardando') ||
-        blob.contains('pedido')) {
-      return NotificationKind.infoRequest;
-    }
-    if (blob.contains('status') ||
-        blob.contains('andamento') ||
-        blob.contains('atualiz')) {
-      return NotificationKind.statusChange;
-    }
-    if (blob.contains('resposta') ||
-        blob.contains('mensagem') ||
-        blob.contains('reply') ||
-        blob.contains('message')) {
-      return NotificationKind.newReply;
-    }
-    return switch (type) {
-      'new_reply' || 'message' || 'resposta' => NotificationKind.newReply,
-      'status' || 'status_change' => NotificationKind.statusChange,
-      'info_request' || 'awaiting_citizen' => NotificationKind.infoRequest,
-      'resolved' || 'closed' => NotificationKind.resolved,
-      'rating' || 'evaluation' => NotificationKind.ratingAvailable,
-      _ => NotificationKind.generic,
+    final t = type.toLowerCase();
+    return switch (t) {
+      'protocol_message' ||
+      'new_reply' ||
+      'message' ||
+      'resposta' =>
+        NotificationKind.newReply,
+      'protocol_information_requested' ||
+      'info_request' ||
+      'awaiting_citizen' =>
+        NotificationKind.infoRequest,
+      'protocol_status_changed' ||
+      'protocol_assignee_changed' ||
+      'status_change' ||
+      'status' =>
+        NotificationKind.statusChange,
+      'protocol_resolved' || 'resolved' || 'closed' =>
+        NotificationKind.resolved,
+      'protocol_rating_available' ||
+      'protocol_rating_received' ||
+      'rating' =>
+        NotificationKind.ratingAvailable,
+      'protocol_reopened' || 'protocol_created' =>
+        NotificationKind.statusChange,
+      _ => () {
+          final blob = '$t ${title ?? ''} ${body ?? ''}'.toLowerCase();
+          if (blob.contains('avali') || blob.contains('rating')) {
+            return NotificationKind.ratingAvailable;
+          }
+          if (blob.contains('resolv') || blob.contains('encerr')) {
+            return NotificationKind.resolved;
+          }
+          if (blob.contains('informa') || blob.contains('aguardando')) {
+            return NotificationKind.infoRequest;
+          }
+          if (blob.contains('status') || blob.contains('andamento')) {
+            return NotificationKind.statusChange;
+          }
+          if (blob.contains('mensagem') || blob.contains('message')) {
+            return NotificationKind.newReply;
+          }
+          return NotificationKind.generic;
+        }(),
     };
   }
 
@@ -161,15 +181,49 @@ class AppNotification {
 
 enum IconDataForNotification { chat, status, help, done, star, bell }
 
+class NotificationsPage {
+  const NotificationsPage({
+    required this.items,
+    this.currentPage = 1,
+    this.lastPage = 1,
+    this.perPage = 20,
+    this.total,
+  });
+
+  final List<AppNotification> items;
+  final int currentPage;
+  final int lastPage;
+  final int perPage;
+  final int? total;
+
+  bool get hasMore => currentPage < lastPage;
+}
+
 class NotificationsRepository {
   NotificationsRepository(this._api);
 
   final ApiClient _api;
 
-  Future<List<AppNotification>> list({required AuthMode mode}) async {
+  Future<NotificationsPage> list({
+    required AuthMode mode,
+    String filter = 'all',
+    bool? unreadOnly,
+    int page = 1,
+    int perPage = 20,
+  }) async {
+    final query = <String, dynamic>{
+      'filter': filter,
+      'per_page': perPage,
+      'page': page,
+    };
+    if (unreadOnly == true) {
+      query['unread'] = 1;
+    }
+
     final envelope = await _api.getEnvelope<List<AppNotification>>(
       mode.notificationsPath,
       mode: mode,
+      query: query,
       parse: (raw) {
         final list = raw is List
             ? raw
@@ -182,26 +236,68 @@ class NotificationsRepository {
             .toList();
       },
     );
-    return envelope.data;
+
+    final meta = envelope.meta ?? const <String, dynamic>{};
+    return NotificationsPage(
+      items: envelope.data,
+      currentPage: _int(meta['current_page'] ?? meta['page'], page),
+      lastPage: _int(meta['last_page'] ?? meta['lastPage'], 1),
+      perPage: _int(meta['per_page'] ?? meta['perPage'], perPage),
+      total: meta['total'] is num ? (meta['total'] as num).toInt() : null,
+    );
   }
 
   Future<void> markRead({
     required AuthMode mode,
     required dynamic id,
   }) async {
-    await _api.patchEnvelope<Map<String, dynamic>>(
-      '${mode.notificationsPath}/$id',
-      data: {'read': true},
-      parse: (raw) {
-        if (raw is Map<String, dynamic>) return raw;
-        if (raw is Map) return Map<String, dynamic>.from(raw);
-        return <String, dynamic>{};
-      },
+    await _api.postEnvelope<Map<String, dynamic>>(
+      mode.notificationReadPath(id),
+      data: const {},
+      mode: mode,
+      parse: _asMap,
+    );
+  }
+
+  Future<void> markAllRead({required AuthMode mode}) async {
+    await _api.postEnvelope<Map<String, dynamic>>(
+      mode.notificationsReadAllPath,
+      data: const {},
+      mode: mode,
+      parse: _asMap,
     );
   }
 
   Future<int> unreadCount({required AuthMode mode}) async {
-    final items = await list(mode: mode);
-    return items.where((e) => e.isUnread).length;
+    final envelope = await _api.getEnvelope<int>(
+      mode.notificationsUnreadCountPath,
+      mode: mode,
+      parse: (raw) {
+        if (raw is num) return raw.toInt();
+        if (raw is Map) {
+          final map = Map<String, dynamic>.from(raw);
+          final nested = map['unread_count'] ??
+              map['count'] ??
+              (map['data'] is Map
+                  ? (map['data'] as Map)['unread_count']
+                  : null);
+          if (nested is num) return nested.toInt();
+        }
+        return 0;
+      },
+    );
+    return envelope.data;
+  }
+
+  static Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    return <String, dynamic>{};
+  }
+
+  static int _int(dynamic value, int fallback) {
+    if (value is num) return value.toInt();
+    if (value is String) return int.tryParse(value) ?? fallback;
+    return fallback;
   }
 }

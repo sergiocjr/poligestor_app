@@ -68,6 +68,18 @@ class ProtocolNavigationTarget {
     if (link == null || link.trim().isEmpty) return null;
     final uri = Uri.tryParse(link.trim());
     if (uri == null) return null;
+
+    // Contrato: poligestor://protocols/{id}
+    if (uri.scheme == 'poligestor') {
+      if (uri.host == 'protocols' || uri.host == 'protocol') {
+        if (uri.pathSegments.isNotEmpty) {
+          final id = uri.pathSegments.first.trim();
+          if (id.isNotEmpty) return id;
+        }
+      }
+      return null;
+    }
+
     final segments = uri.pathSegments;
     for (var i = 0; i < segments.length - 1; i++) {
       final s = segments[i].toLowerCase();

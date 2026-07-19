@@ -1,44 +1,73 @@
+import 'dart:async';
+import 'dart:io' show Platform;
+import 'dart:ui' show Color;
+
+import 'package:app_links/app_links.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
 import '../data/devices_repository.dart';
 import '../data/push_payload.dart';
 import 'notification_router.dart';
 import 'notifications_controller.dart';
+import 'realtime_sync_service.dart';
 
-/// Camada de push. Sem `google-services.json` / contrato FCM, opera em modo stub:
-/// - não obtém token FCM;
-/// - registra apenas um install-id estável no endpoint `/devices` já existente;
-/// - enfileira deep link pendente para após autenticação.
+/// Dispositivo FCM + deep links + orquestra Reverb (arquitetura Fase 7 intacta).
 class PushNotificationService {
   PushNotificationService({
     required DevicesRepository devices,
     required AuthController auth,
     required NotificationsController notifications,
+    required RealtimeSyncService realtime,
     NotificationRouter router = const NotificationRouter(),
   })  : _devices = devices,
         _auth = auth,
         _notifications = notifications,
+        _realtime = realtime,
         _router = router;
 
-  static const _kInstallId = 'push_install_id';
   static const _kLastToken = 'push_last_device_token';
+  static const _androidChannelId = 'poligestor_default';
+  static const _androidChannelName = 'PoliGestor';
 
   final DevicesRepository _devices;
   final AuthController _auth;
   final NotificationsController _notifications;
+  final RealtimeSyncService _realtime;
   final NotificationRouter _router;
 
+  final _appLinks = AppLinks();
+  final _localNotifications = FlutterLocalNotificationsPlugin();
+
+  StreamSubscription<Uri>? _linkSub;
+  StreamSubscription<String>? _tokenSub;
+  StreamSubscription<RemoteMessage>? _onMessageSub;
+  StreamSubscription<RemoteMessage>? _onOpenedSub;
+
   bool _initialized = false;
+  bool _firebaseReady = false;
+  AuthMode? _lastMode;
   PushPayload? _pendingPayload;
   void Function(String location)? _navigate;
+  String? _lastFcmToken;
 
   bool get isInitialized => _initialized;
-  bool get firebaseReady => AppConfig.pushEnabled;
+  bool get firebaseReady => _firebaseReady;
+  bool get realtimeConnected => _realtime.isConnected;
 
-  /// Deep link aguardando login/bootstrap.
+  /// Token FCM mascarado (nunca expor completo em UI/logs de relatório).
+  String? get maskedFcmToken {
+    final t = _lastFcmToken;
+    if (t == null || t.isEmpty) return null;
+    return _maskToken(t);
+  }
+
   PushPayload? get pendingPayload => _pendingPayload;
 
   void attachNavigator(void Function(String location) navigate) {
@@ -49,30 +78,62 @@ class PushNotificationService {
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+    await _bindDeepLinks();
+    await _initFirebaseAndMessaging();
     if (kDebugMode) {
       debugPrint(
-        '[Push] init stub firebaseReady=$firebaseReady '
-        '(aguardando contrato FASE_7 + google-services.json)',
+        '[Push] init firebaseReady=$_firebaseReady '
+        'reverb=${AppConfig.reverbWsUrl}',
       );
     }
   }
 
   Future<void> onAuthenticated() async {
     await initialize();
-    await _registerDeviceToken();
+    _lastMode = _auth.mode;
+    await _registerDeviceToken(force: true);
     await _notifications.refresh();
+    await _realtime.start();
     _flushPendingNavigation();
   }
 
+  /// Chamar **antes** de `auth.logout()` — precisa do Bearer ainda válido.
   Future<void> onLogout() async {
-    _pendingPayload = null;
-    _notifications.clear();
+    final mode = _auth.isAuthenticated ? _auth.mode : _lastMode;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_kLastToken);
-    // Remoção remota do device depende do contrato — não inventar DELETE.
+    final token = prefs.getString(_kLastToken) ?? _lastFcmToken;
+
+    if (mode != null) {
+      try {
+        await _devices.unregisterCurrent(mode: mode, token: token);
+        if (kDebugMode) {
+          debugPrint('[Push] DELETE devices/current ok token=${_maskToken(token)}');
+        }
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('[Push] unregister current failed: $e');
+        }
+      }
+    }
+
+    await _tearDownLocal(clearToken: true);
   }
 
-  /// Entrada de payload (teste / futuro FCM onMessageOpenedApp).
+  Future<void> onSessionEnded() async {
+    await _tearDownLocal(clearToken: false);
+  }
+
+  Future<void> _tearDownLocal({required bool clearToken}) async {
+    _pendingPayload = null;
+    _notifications.clear();
+    await _realtime.stop();
+    if (clearToken) {
+      _lastFcmToken = null;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_kLastToken);
+    }
+  }
+
   void handleIncomingPayload(
     Map<String, dynamic> data, {
     bool fromUserTap = false,
@@ -90,6 +151,11 @@ class PushNotificationService {
     if (fromUserTap) {
       enqueueNavigation(payload);
     }
+  }
+
+  void handleDeepLinkUri(Uri uri) {
+    if (kDebugMode) debugPrint('[Push] deep link $uri');
+    enqueueNavigation(PushPayload.fromUri(uri));
   }
 
   void enqueueNavigation(PushPayload payload) {
@@ -123,24 +189,199 @@ class PushNotificationService {
     nav(target.location);
   }
 
-  Future<void> _registerDeviceToken() async {
+  Future<void> _initFirebaseAndMessaging() async {
+    if (kIsWeb) return;
+    try {
+      if (Firebase.apps.isEmpty) {
+        await Firebase.initializeApp();
+      }
+      await _initLocalNotifications();
+      await _requestNotificationPermission();
+
+      final messaging = FirebaseMessaging.instance;
+      await messaging.setForegroundNotificationPresentationOptions(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      await _onMessageSub?.cancel();
+      _onMessageSub = FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+
+      await _onOpenedSub?.cancel();
+      _onOpenedSub =
+          FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpened);
+
+      final initial = await messaging.getInitialMessage();
+      if (initial != null) {
+        _onMessageOpened(initial);
+      }
+
+      await _tokenSub?.cancel();
+      _tokenSub = messaging.onTokenRefresh.listen((token) async {
+        if (kDebugMode) {
+          debugPrint('[Push] FCM token refresh ${_maskToken(token)}');
+        }
+        _lastFcmToken = token;
+        if (_auth.isAuthenticated) {
+          await _registerDeviceToken(force: true, tokenOverride: token);
+        }
+      });
+
+      final token = await messaging.getToken();
+      if (token != null && token.isNotEmpty) {
+        _lastFcmToken = token;
+        if (kDebugMode) {
+          debugPrint('[Push] FCM token obtained ${_maskToken(token)}');
+        }
+      }
+
+      _firebaseReady = true;
+    } catch (e) {
+      _firebaseReady = false;
+      if (kDebugMode) {
+        debugPrint('[Push] Firebase init failed: $e');
+      }
+    }
+  }
+
+  Future<void> _initLocalNotifications() async {
+    const android = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const ios = DarwinInitializationSettings();
+    const init = InitializationSettings(android: android, iOS: ios);
+    await _localNotifications.initialize(
+      settings: init,
+      onDidReceiveNotificationResponse: (response) {
+        final payload = response.payload;
+        if (payload == null || payload.isEmpty) return;
+        try {
+          if (payload.startsWith('poligestor://') ||
+              payload.startsWith('http')) {
+            handleDeepLinkUri(Uri.parse(payload));
+            return;
+          }
+          handleIncomingPayload(
+            {'deep_link': payload, 'type': 'protocol_message'},
+            fromUserTap: true,
+          );
+        } catch (e) {
+          if (kDebugMode) debugPrint('[Push] local tap parse error: $e');
+        }
+      },
+    );
+
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.createNotificationChannel(
+      const AndroidNotificationChannel(
+        _androidChannelId,
+        _androidChannelName,
+        description: 'Avisos e atualizações de solicitações',
+        importance: Importance.high,
+      ),
+    );
+  }
+
+  Future<void> _requestNotificationPermission() async {
+    final messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    if (!kIsWeb && Platform.isAndroid) {
+      final android = _localNotifications
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+      await android?.requestNotificationsPermission();
+    }
+  }
+
+  Future<void> _onForegroundMessage(RemoteMessage message) async {
+    final data = Map<String, dynamic>.from(message.data);
+    handleIncomingPayload(data, fromUserTap: false);
+
+    final title = message.notification?.title ??
+        data['title']?.toString() ??
+        'PoliGestor';
+    final body = message.notification?.body ??
+        data['body']?.toString() ??
+        data['message']?.toString() ??
+        'Nova atualização';
+    final deepLink = (data['deep_link'] ?? data['link'] ?? '').toString();
+
+    await _localNotifications.show(
+      id: message.hashCode,
+      title: title,
+      body: body,
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _androidChannelId,
+          _androidChannelName,
+          channelDescription: 'Avisos e atualizações de solicitações',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: '@mipmap/ic_launcher',
+          color: Color(0xFF0D9488),
+        ),
+      ),
+      payload: deepLink.isNotEmpty ? deepLink : null,
+    );
+  }
+
+  void _onMessageOpened(RemoteMessage message) {
+    final data = Map<String, dynamic>.from(message.data);
+    handleIncomingPayload(data, fromUserTap: true);
+  }
+
+  Future<void> _bindDeepLinks() async {
+    try {
+      final initial = await _appLinks.getInitialLink();
+      if (initial != null) {
+        handleDeepLinkUri(initial);
+      }
+    } catch (e) {
+      if (kDebugMode) debugPrint('[Push] initial link error: $e');
+    }
+    await _linkSub?.cancel();
+    _linkSub = _appLinks.uriLinkStream.listen(
+      handleDeepLinkUri,
+      onError: (Object e) {
+        if (kDebugMode) debugPrint('[Push] link stream error: $e');
+      },
+    );
+  }
+
+  Future<void> _registerDeviceToken({
+    bool force = false,
+    String? tokenOverride,
+  }) async {
     if (!_auth.isAuthenticated) return;
     try {
-      final token = await _resolveRegistrationToken();
-      if (token == null || token.isEmpty) return;
+      final token = tokenOverride ?? await _resolveFcmToken();
+      if (token == null || token.isEmpty) {
+        if (kDebugMode) {
+          debugPrint('[Push] sem token FCM — registro omitido (sem install-id)');
+        }
+        return;
+      }
 
       final prefs = await SharedPreferences.getInstance();
       final last = prefs.getString(_kLastToken);
-      if (last == token) {
-        // Evita POST duplicado do mesmo token.
-        return;
-      }
+      if (!force && last == token) return;
 
       await _devices.register(
         mode: _auth.mode,
         token: token,
       );
+      _lastFcmToken = token;
       await prefs.setString(_kLastToken, token);
+      if (kDebugMode) {
+        debugPrint(
+          '[Push] device registered platform=android token=${_maskToken(token)}',
+        );
+      }
     } catch (e) {
       if (kDebugMode) {
         debugPrint('[Push] register device failed: $e');
@@ -148,20 +389,36 @@ class PushNotificationService {
     }
   }
 
-  Future<String?> _resolveRegistrationToken() async {
-    // Quando Firebase estiver habilitado, obter FCM aqui.
-    if (firebaseReady) {
-      if (kDebugMode) {
-        debugPrint('[Push] PUSH_ENABLED=true mas FCM ainda não ligado');
+  /// Somente token FCM real — sem substituto local.
+  Future<String?> _resolveFcmToken() async {
+    if (!_firebaseReady) {
+      try {
+        if (Firebase.apps.isEmpty) {
+          await Firebase.initializeApp();
+        }
+        _firebaseReady = true;
+      } catch (_) {
+        return null;
       }
     }
-    // Fallback: install-id estável (não é token FCM; evita placeholder a cada login).
-    final prefs = await SharedPreferences.getInstance();
-    var id = prefs.getString(_kInstallId);
-    if (id == null || id.isEmpty) {
-      id = 'poligestor-install-${DateTime.now().microsecondsSinceEpoch}';
-      await prefs.setString(_kInstallId, id);
+    final token = await FirebaseMessaging.instance.getToken();
+    if (token != null && token.isNotEmpty) {
+      _lastFcmToken = token;
     }
-    return id;
+    return token;
+  }
+
+  static String _maskToken(String? token) {
+    if (token == null || token.isEmpty) return '(vazio)';
+    if (token.length < 12) return '***';
+    return '${token.substring(0, 6)}…${token.substring(token.length - 4)}';
+  }
+
+  Future<void> dispose() async {
+    await _linkSub?.cancel();
+    await _tokenSub?.cancel();
+    await _onMessageSub?.cancel();
+    await _onOpenedSub?.cancel();
+    await _realtime.stop();
   }
 }

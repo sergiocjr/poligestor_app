@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/config.dart';
 import '../../../shared/widgets/ui_kit.dart';
+import '../../notifications/data/notification_preferences_repository.dart';
 import '../../notifications/domain/notification_prefs.dart';
 import '../../notifications/domain/push_notification_service.dart';
 
@@ -18,26 +19,63 @@ class CitizenProfilePage extends StatefulWidget {
 class _CitizenProfilePageState extends State<CitizenProfilePage> {
   final _prefs = NotificationPrefs();
   bool _prefsReady = false;
+  bool _saving = false;
+  String? _prefsError;
 
   @override
   void initState() {
     super.initState();
-    _prefs.load().then((_) {
-      if (mounted) setState(() => _prefsReady = true);
-    });
+    // ignore: discarded_futures
+    _loadPrefs();
+  }
+
+  Future<void> _loadPrefs() async {
+    await _prefs.loadLocal();
+    if (!mounted) return;
+    setState(() => _prefsReady = true);
+
+    try {
+      final auth = context.read<AuthController>();
+      final repo = context.read<NotificationPreferencesRepository>();
+      final remote = await repo.get(mode: auth.mode);
+      _prefs.copyFrom(remote);
+      await _prefs.saveLocal();
+      if (!mounted) return;
+      setState(() => _prefsError = null);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _prefsError = 'Usando preferências locais (sync pendente).');
+    }
   }
 
   Future<void> _savePrefs() async {
-    await _prefs.save();
+    if (_saving) return;
+    setState(() => _saving = true);
+    await _prefs.saveLocal();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          'Preferências salvas neste aparelho. '
-          'Sincronização com o servidor aguarda o contrato da Fase 7.',
+    try {
+      final auth = context.read<AuthController>();
+      final repo = context.read<NotificationPreferencesRepository>();
+      final saved = await repo.save(mode: auth.mode, prefs: _prefs);
+      _prefs.copyFrom(saved);
+      await _prefs.saveLocal();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preferências sincronizadas.')),
+      );
+      setState(() => _prefsError = null);
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Salvo neste aparelho. Não foi possível sincronizar agora.',
+          ),
         ),
-      ),
-    );
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -120,6 +158,17 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                   fontWeight: FontWeight.w800,
                 ),
           ),
+          if (_prefsError != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                _prefsError!,
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+              ),
+            ),
           const SizedBox(height: 8),
           if (_prefsReady)
             Card(
@@ -127,36 +176,42 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                 children: [
                   SwitchListTile(
                     title: const Text('Receber notificações'),
-                    value: _prefs.enabled,
-                    onChanged: (v) {
-                      setState(() => _prefs.enabled = v);
-                      _savePrefs();
-                    },
-                  ),
-                  SwitchListTile(
-                    title: const Text('Mensagens da solicitação'),
-                    value: _prefs.messages,
-                    onChanged: !_prefs.enabled
+                    value: _prefs.pushEnabled,
+                    onChanged: _saving
                         ? null
                         : (v) {
-                            setState(() => _prefs.messages = v);
+                            setState(() => _prefs.pushEnabled = v);
                             _savePrefs();
                           },
                   ),
                   SwitchListTile(
-                    title: const Text('Mudanças importantes'),
-                    value: _prefs.importantUpdates,
-                    onChanged: !_prefs.enabled
+                    title: const Text('Mensagens da solicitação'),
+                    value: _prefs.protocolMessagesEnabled,
+                    onChanged: !_prefs.pushEnabled || _saving
                         ? null
                         : (v) {
-                            setState(() => _prefs.importantUpdates = v);
+                            setState(
+                              () => _prefs.protocolMessagesEnabled = v,
+                            );
+                            _savePrefs();
+                          },
+                  ),
+                  SwitchListTile(
+                    title: const Text('Mudanças de status'),
+                    value: _prefs.protocolStatusEnabled,
+                    onChanged: !_prefs.pushEnabled || _saving
+                        ? null
+                        : (v) {
+                            setState(
+                              () => _prefs.protocolStatusEnabled = v,
+                            );
                             _savePrefs();
                           },
                   ),
                   SwitchListTile(
                     title: const Text('Somente avisos importantes'),
                     value: _prefs.importantOnly,
-                    onChanged: !_prefs.enabled
+                    onChanged: !_prefs.pushEnabled || _saving
                         ? null
                         : (v) {
                             setState(() => _prefs.importantOnly = v);
@@ -166,14 +221,27 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                   ListTile(
                     leading: Icon(
                       push.firebaseReady
-                          ? Icons.cloud_done_outlined
-                          : Icons.cloud_off_outlined,
+                          ? Icons.notifications_active_outlined
+                          : Icons.notifications_off_outlined,
                     ),
-                    title: const Text('Push neste aparelho'),
+                    title: const Text('Push (FCM)'),
                     subtitle: Text(
                       push.firebaseReady
-                          ? 'Firebase habilitado'
-                          : 'Aguardando contrato Fase 7 e Firebase',
+                          ? 'Firebase ativo${push.maskedFcmToken != null ? ' · ${push.maskedFcmToken}' : ''}'
+                          : 'Firebase indisponível neste build',
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(
+                      push.realtimeConnected
+                          ? Icons.cloud_done_outlined
+                          : Icons.cloud_queue_outlined,
+                    ),
+                    title: const Text('Tempo real'),
+                    subtitle: Text(
+                      push.realtimeConnected
+                          ? 'WebSocket conectado'
+                          : 'REST + polling (reconectando)',
                     ),
                   ),
                 ],

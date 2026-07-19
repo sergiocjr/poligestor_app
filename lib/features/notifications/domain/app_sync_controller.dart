@@ -7,7 +7,7 @@ import '../../../core/auth/auth_controller.dart';
 import 'notifications_controller.dart';
 import 'push_notification_service.dart';
 
-/// Sincronização ao retomar o app (fallback enquanto não há WebSocket/contrato).
+/// Sincronização ao retomar o app (REST + rearme do Reverb).
 class AppSyncController with WidgetsBindingObserver {
   AppSyncController({
     required AuthController auth,

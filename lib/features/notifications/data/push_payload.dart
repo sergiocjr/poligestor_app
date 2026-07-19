@@ -1,14 +1,18 @@
 import 'notification_kind_map.dart';
 import 'notifications_repository.dart';
 
-/// Tipos de push / deep link definidos na especificação da Fase 7 (cliente).
-/// Nomes de eventos WebSocket do backend NÃO são inventados aqui.
+/// Tipos de push / broadcast do contrato Fase 7.
 enum PushEventType {
+  protocolCreated,
   protocolMessage,
   protocolInformationRequested,
+  protocolInformationSubmitted,
   protocolStatusChanged,
   protocolResolved,
+  protocolReopened,
   protocolRatingAvailable,
+  protocolRatingReceived,
+  protocolAssigneeChanged,
   systemNotice,
   unknown,
 }
@@ -19,9 +23,11 @@ class PushPayload {
     this.protocolId,
     this.protocolNumber,
     this.link,
+    this.deepLink,
     this.title,
     this.body,
     this.notificationId,
+    this.tenantId,
     this.raw = const {},
   });
 
@@ -29,15 +35,22 @@ class PushPayload {
   final String? protocolId;
   final String? protocolNumber;
   final String? link;
+  final String? deepLink;
   final String? title;
   final String? body;
   final String? notificationId;
+  final String? tenantId;
   final Map<String, dynamic> raw;
+
+  String? get effectiveLink =>
+      (deepLink != null && deepLink!.trim().isNotEmpty)
+          ? deepLink
+          : link;
 
   bool get hasProtocolTarget =>
       (protocolId != null && protocolId!.trim().isNotEmpty) ||
       (protocolNumber != null && protocolNumber!.trim().isNotEmpty) ||
-      (link != null && link!.trim().isNotEmpty);
+      (effectiveLink != null && effectiveLink!.trim().isNotEmpty);
 
   factory PushPayload.fromMap(Map<String, dynamic> map) {
     final data = map['data'] is Map
@@ -62,18 +75,46 @@ class PushPayload {
             merged['numero'] ??
             merged['protocolo'])
         ?.toString();
-    final link = (merged['link'] ?? merged['url'] ?? merged['path'])?.toString();
+    final deepLink = merged['deep_link']?.toString();
+    final link =
+        (merged['link'] ?? merged['url'] ?? merged['path'] ?? deepLink)
+            ?.toString();
 
     return PushPayload(
       type: pushEventTypeFrom(typeRaw),
       protocolId: protocolId,
       protocolNumber: protocolNumber,
       link: link,
+      deepLink: deepLink,
       title: (merged['title'] ?? merged['titulo'])?.toString(),
       body: (merged['body'] ?? merged['message'] ?? merged['conteudo'])
           ?.toString(),
       notificationId: (merged['notification_id'] ?? merged['id'])?.toString(),
+      tenantId: merged['tenant_id']?.toString(),
       raw: merged,
+    );
+  }
+
+  factory PushPayload.fromUri(Uri uri) {
+    if (uri.scheme == 'poligestor') {
+      if (uri.host == 'notifications' || uri.host == 'notification') {
+        return const PushPayload(type: PushEventType.systemNotice);
+      }
+      if (uri.host == 'protocols' || uri.host == 'protocol') {
+        final id =
+            uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+        return PushPayload(
+          type: PushEventType.unknown,
+          protocolId: id,
+          deepLink: uri.toString(),
+          link: uri.toString(),
+        );
+      }
+    }
+    return PushPayload(
+      type: PushEventType.unknown,
+      link: uri.toString(),
+      deepLink: uri.toString(),
     );
   }
 
@@ -81,9 +122,16 @@ class PushPayload {
         PushEventType.protocolMessage => NotificationKind.newReply,
         PushEventType.protocolInformationRequested =>
           NotificationKind.infoRequest,
-        PushEventType.protocolStatusChanged => NotificationKind.statusChange,
+        PushEventType.protocolStatusChanged ||
+        PushEventType.protocolReopened ||
+        PushEventType.protocolCreated ||
+        PushEventType.protocolAssigneeChanged ||
+        PushEventType.protocolInformationSubmitted =>
+          NotificationKind.statusChange,
         PushEventType.protocolResolved => NotificationKind.resolved,
-        PushEventType.protocolRatingAvailable => NotificationKind.ratingAvailable,
+        PushEventType.protocolRatingAvailable ||
+        PushEventType.protocolRatingReceived =>
+          NotificationKind.ratingAvailable,
         PushEventType.systemNotice || PushEventType.unknown =>
           NotificationKind.generic,
       };

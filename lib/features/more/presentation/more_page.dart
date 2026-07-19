@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../notifications/domain/push_notification_service.dart';
 
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
@@ -56,6 +57,9 @@ class MorePage extends StatelessWidget {
               style: TextStyle(color: Theme.of(context).colorScheme.error),
             ),
             onTap: () async {
+              try {
+                await context.read<PushNotificationService>().onLogout();
+              } catch (_) {}
               await auth.logout();
               if (context.mounted) context.go('/login');
             },

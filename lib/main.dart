@@ -1,3 +1,6 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
@@ -13,14 +16,26 @@ import 'features/agenda/data/appointments_repository.dart';
 import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
 import 'features/notifications/data/devices_repository.dart';
+import 'features/notifications/data/notification_preferences_repository.dart';
 import 'features/notifications/data/notifications_repository.dart';
 import 'features/notifications/domain/app_sync_controller.dart';
+import 'features/notifications/domain/firebase_messaging_background.dart';
 import 'features/notifications/domain/notifications_controller.dart';
 import 'features/notifications/domain/push_notification_service.dart';
+import 'features/notifications/domain/realtime_sync_service.dart';
 import 'features/protocols/data/protocols_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  try {
+    await Firebase.initializeApp();
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('[main] Firebase.initializeApp failed: $e');
+    }
+  }
 
   final storage = TokenStorage();
   final api = ApiClient(tokenStorage: storage);
@@ -28,6 +43,7 @@ Future<void> main() async {
   final protocolsRepo = ProtocolsRepository(api);
   final notificationsRepo = NotificationsRepository(api);
   final devicesRepo = DevicesRepository(api);
+  final prefsRepo = NotificationPreferencesRepository(api);
   final appointmentsRepo = AppointmentsRepository(api);
   final portalHomeRepo = PortalHomeRepository(api);
   final assistantRepo = AssistantRepository(api);
@@ -35,10 +51,16 @@ Future<void> main() async {
     repository: notificationsRepo,
     auth: auth,
   );
+  final realtime = RealtimeSyncService(
+    api: api,
+    auth: auth,
+    notifications: notificationsController,
+  );
   final push = PushNotificationService(
     devices: devicesRepo,
     auth: auth,
     notifications: notificationsController,
+    realtime: realtime,
   );
   final appSync = AppSyncController(
     auth: auth,
@@ -57,9 +79,11 @@ Future<void> main() async {
         Provider.value(value: protocolsRepo),
         Provider.value(value: notificationsRepo),
         Provider.value(value: devicesRepo),
+        Provider.value(value: prefsRepo),
         Provider.value(value: appointmentsRepo),
         Provider.value(value: portalHomeRepo),
         Provider.value(value: assistantRepo),
+        Provider.value(value: realtime),
         Provider.value(value: push),
         Provider.value(value: appSync),
         ChangeNotifierProvider.value(value: auth),
@@ -120,8 +144,9 @@ class _PoliGestorAppState extends State<PoliGestorApp> {
       // ignore: discarded_futures
       push.onAuthenticated();
     } else {
+      // DELETE do device deve ter rodado antes do logout; aqui só limpa local.
       // ignore: discarded_futures
-      push.onLogout();
+      push.onSessionEnded();
     }
   }
 

@@ -44,3 +44,17 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase — config do app (não versionar)
+android/app/google-services.json
+**/GoogleService-Info.plist
+lib/firebase_options.dart
+
+# Artefatos locais / dumps / validação
+*.hprof
+/run_emulator*.log
+/emu_ui.xml
+/val*.png
+/validation_*.png
+/tmp_*.png
+/validation/

@@ -6,18 +6,16 @@ import '../../../core/api/api_client.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
 
-/// Registro de dispositivo no endpoint já existente (`AuthMode.devicesPath`).
-/// Não inventa rotas de remoção — logout apenas limpa token local até o contrato.
+/// Dispositivos FCM — contrato Fase 7.
 class DevicesRepository {
   DevicesRepository(this._api);
 
   final ApiClient _api;
 
+  /// Contrato: `android` | `ios`.
   static String platformName() {
-    if (kIsWeb) return 'web';
-    if (Platform.isIOS) return 'ios';
-    if (Platform.isAndroid) return 'android';
-    return 'unknown';
+    if (!kIsWeb && Platform.isIOS) return 'ios';
+    return 'android';
   }
 
   Future<void> register({
@@ -30,7 +28,7 @@ class DevicesRepository {
     if (trimmed.isEmpty) return;
 
     await _api.postEnvelope<Map<String, dynamic>>(
-      mode.devicesPath,
+      mode.devicesRegisterPath,
       data: {
         'token': trimmed,
         'platform': platformName(),
@@ -38,11 +36,32 @@ class DevicesRepository {
         'app_version': appVersion ?? AppConfig.appVersion,
       },
       mode: mode,
-      parse: (raw) {
-        if (raw is Map<String, dynamic>) return raw;
-        if (raw is Map) return Map<String, dynamic>.from(raw);
-        return <String, dynamic>{};
-      },
+      parse: _asMap,
     );
+  }
+
+  /// Logout do device: `DELETE …/devices/current` (body opcional com token).
+  Future<void> unregisterCurrent({
+    required AuthMode mode,
+    String? token,
+  }) async {
+    final body = <String, dynamic>{};
+    final trimmed = token?.trim();
+    if (trimmed != null && trimmed.isNotEmpty) {
+      body['token'] = trimmed;
+    }
+
+    await _api.deleteEnvelope<Map<String, dynamic>>(
+      mode.devicesCurrentPath,
+      data: body.isEmpty ? null : body,
+      mode: mode,
+      parse: _asMap,
+    );
+  }
+
+  static Map<String, dynamic> _asMap(dynamic raw) {
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    return <String, dynamic>{};
   }
 }

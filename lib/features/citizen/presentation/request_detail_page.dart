@@ -9,11 +9,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../../core/config.dart';
 import '../../../core/ux/user_messages.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/ui_kit.dart';
 import '../../notifications/data/notifications_repository.dart';
 import '../../notifications/domain/notifications_controller.dart';
+import '../../notifications/domain/realtime_sync_service.dart';
 import '../../protocols/data/protocol_models.dart';
 import '../../protocols/data/protocols_repository.dart';
 import '../../protocols/domain/protocol_message_merge.dart';
@@ -58,6 +60,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   ProtocolDetail? _cached;
   Timer? _pollTimer;
   bool _newMessagesBanner = false;
+  RealtimeSyncService? _realtime;
 
   /// Loading local do composer/envio — nunca cobre a tela inteira.
   bool get _composerBusy => _busy || _picking;
@@ -71,12 +74,15 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    _realtime = context.read<RealtimeSyncService>();
     _future ??= _load();
   }
 
   @override
   void dispose() {
     _pollTimer?.cancel();
+    // ignore: discarded_futures
+    _realtime?.unwatchProtocol(widget.id);
     _messageFocus.removeListener(_onComposerFocusChange);
     _scrollController.dispose();
     _messageCtrl.dispose();
@@ -86,8 +92,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   void _startPolling() {
     _pollTimer?.cancel();
-    // Fallback REST enquanto não há WebSocket/contrato Fase 7.
-    _pollTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+    // Fallback REST obrigatório (15–30s) se o WSS cair; mantém mesmo com Reverb.
+    _pollTimer = Timer.periodic(AppConfig.restPollingInterval, (_) {
       // ignore: discarded_futures
       _softRefresh();
     });
@@ -148,6 +154,15 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       _openedSuccessfully = true;
       _cached = detail;
       _startPolling();
+      try {
+        await _realtime?.watchProtocol(
+          widget.id,
+          onEvent: (_) {
+            // ignore: discarded_futures
+            _softRefresh();
+          },
+        );
+      } catch (_) {}
       _logConversation(detail);
       if (kDebugMode) {
         final keys = detail.raw?.keys.toList() ?? const [];
@@ -292,7 +307,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       if (!mounted) return;
       final idStr = '${detail.id}';
       final number = detail.number;
-      for (final n in notes.where((e) => e.isUnread)) {
+      for (final n in notes.items.where((e) => e.isUnread)) {
         final link = (n.link ?? '').toLowerCase();
         final blob = '${n.title} ${n.body ?? ''} ${n.link ?? ''}'.toLowerCase();
         final match = link.contains(idStr) ||

@@ -21,6 +21,30 @@ class CitizenNotificationsPage extends StatefulWidget {
 }
 
 class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    if (pos.pixels >= pos.maxScrollExtent - 200) {
+      // ignore: discarded_futures
+      context.read<NotificationsController>().loadMore();
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -55,6 +79,7 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
       protocolId: n.protocolId,
       protocolNumber: n.protocolNumber,
       link: n.link,
+      deepLink: n.link,
       title: n.title,
       body: n.body,
       notificationId: '${n.id}',
@@ -119,6 +144,21 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
     await ctrl.refresh();
   }
 
+  Future<void> _markAll() async {
+    final ctrl = context.read<NotificationsController>();
+    final ok = await ctrl.markAllRead();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          ok
+              ? 'Todas as notificações foram marcadas como lidas.'
+              : 'Não foi possível marcar todas como lidas.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final ctrl = context.watch<NotificationsController>();
@@ -128,8 +168,17 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Avisos'),
+        title: Text(
+          ctrl.unreadCount > 0
+              ? 'Avisos (${ctrl.unreadCount})'
+              : 'Avisos',
+        ),
         actions: [
+          if (ctrl.unreadCount > 0)
+            TextButton(
+              onPressed: ctrl.loading ? null : _markAll,
+              child: const Text('Ler todas'),
+            ),
           IconButton(
             onPressed: ctrl.loading ? null : () => ctrl.refresh(),
             icon: const Icon(Icons.refresh_rounded),
@@ -150,9 +199,10 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
                     child: FilterChip(
                       label: Text(switch (f) {
                         NotificationFilter.all => 'Todas',
+                        NotificationFilter.unread => 'Não lidas',
                         NotificationFilter.messages => 'Mensagens',
                         NotificationFilter.requests => 'Solicitações',
-                        NotificationFilter.notices => 'Avisos',
+                        NotificationFilter.notices => 'Sistema',
                       }),
                       selected: ctrl.filter == f,
                       onSelected: (_) => ctrl.setFilter(f),
@@ -199,11 +249,25 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
     return RefreshIndicator(
       onRefresh: ctrl.refresh,
       child: ListView.separated(
+        controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
         padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-        itemCount: items.length,
+        itemCount: items.length + (ctrl.hasMore ? 1 : 0),
         separatorBuilder: (_, _) => const SizedBox(height: 8),
         itemBuilder: (context, index) {
+          if (index >= items.length) {
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
+                child: ctrl.loadingMore
+                    ? const CircularProgressIndicator()
+                    : TextButton(
+                        onPressed: ctrl.loadMore,
+                        child: const Text('Carregar mais'),
+                      ),
+              ),
+            );
+          }
           final n = items[index];
           final canOpen = ProtocolNavigationTarget.resolve(
                 protocolId: n.protocolId,
