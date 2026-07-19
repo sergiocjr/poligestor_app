@@ -4,8 +4,10 @@ import 'package:flutter/foundation.dart';
 
 import '../../../core/api/api_client.dart';
 import '../../../core/auth/auth_controller.dart';
+import '../../../core/auth/auth_mode.dart';
 import '../../../core/config.dart';
 import '../../../core/realtime/pusher_reverb_client.dart';
+import '../../mandate/domain/mandate_refresh_controller.dart';
 import 'notifications_controller.dart';
 
 /// Conecta Reverb, autentica canais privados e propaga `protocol.realtime`.
@@ -14,13 +16,16 @@ class RealtimeSyncService {
     required ApiClient api,
     required AuthController auth,
     required NotificationsController notifications,
+    MandateRefreshController? mandateRefresh,
   })  : _api = api,
         _auth = auth,
-        _notifications = notifications;
+        _notifications = notifications,
+        _mandateRefresh = mandateRefresh;
 
   final ApiClient _api;
   final AuthController _auth;
   final NotificationsController _notifications;
+  final MandateRefreshController? _mandateRefresh;
 
   PusherReverbClient? _client;
   StreamSubscription<ProtocolRealtimeEvent>? _eventsSub;
@@ -120,6 +125,9 @@ class RealtimeSyncService {
     }
     // ignore: discarded_futures
     _notifications.refresh();
+    if (_auth.mode == AuthMode.staff) {
+      _mandateRefresh?.bump(reason: 'realtime');
+    }
     final watcher = _protocolWatchers[event.protocolId];
     watcher?.call(event);
   }

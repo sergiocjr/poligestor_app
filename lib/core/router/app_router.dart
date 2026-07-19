@@ -17,6 +17,15 @@ import '../../features/citizen/presentation/citizen_shell.dart';
 import '../../features/citizen/presentation/new_request_page.dart';
 import '../../features/citizen/presentation/request_detail_page.dart';
 import '../../features/home/presentation/home_shell.dart';
+import '../../features/mandate/presentation/mandate_agenda_page.dart';
+import '../../features/mandate/presentation/mandate_map_page.dart';
+import '../../features/mandate/presentation/mandate_neighborhoods_page.dart';
+import '../../features/mandate/presentation/mandate_overview_page.dart';
+import '../../features/mandate/presentation/mandate_reports_page.dart';
+import '../../features/mandate/presentation/mandate_search_page.dart';
+import '../../features/mandate/presentation/mandate_subjects_page.dart';
+import '../../features/mandate/presentation/mandate_team_page.dart';
+import '../../features/mandate/presentation/mandate_tv_page.dart';
 import '../../features/more/presentation/more_page.dart';
 import '../../features/protocols/presentation/protocol_detail_page.dart';
 import '../../features/protocols/presentation/protocols_page.dart';
@@ -42,6 +51,7 @@ GoRouter createAppRouter(AuthController auth) {
 
       final isCitizenPath = loc.startsWith('/citizen');
       final isStaffPath = loc.startsWith('/home');
+      final isMandatePath = loc.startsWith('/home/mandate');
 
       if (isSplash || isLogin) {
         return auth.mode == AuthMode.portal
@@ -54,6 +64,10 @@ GoRouter createAppRouter(AuthController auth) {
       }
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
+      }
+      // Mandato é exclusivo de staff (cidadão já redirecionado acima).
+      if (isMandatePath && auth.mode != AuthMode.staff) {
+        return '/citizen/home';
       }
 
       return null;
@@ -97,6 +111,48 @@ GoRouter createAppRouter(AuthController auth) {
               GoRoute(
                 path: '/home/chat',
                 builder: (_, _) => const ChatPage(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home/mandate',
+                builder: (_, _) => const MandateOverviewPage(),
+                routes: [
+                  GoRoute(
+                    path: 'agenda',
+                    builder: (_, _) => const MandateAgendaPage(),
+                  ),
+                  GoRoute(
+                    path: 'neighborhoods',
+                    builder: (_, _) => const MandateNeighborhoodsPage(),
+                  ),
+                  GoRoute(
+                    path: 'subjects',
+                    builder: (_, _) => const MandateSubjectsPage(),
+                  ),
+                  GoRoute(
+                    path: 'team',
+                    builder: (_, _) => const MandateTeamPage(),
+                  ),
+                  GoRoute(
+                    path: 'search',
+                    builder: (_, _) => const MandateSearchPage(),
+                  ),
+                  GoRoute(
+                    path: 'reports',
+                    builder: (_, _) => const MandateReportsPage(),
+                  ),
+                  GoRoute(
+                    path: 'map',
+                    builder: (_, _) => const MandateMapPage(),
+                  ),
+                  GoRoute(
+                    path: 'tv',
+                    builder: (_, _) => const MandateTvPage(),
+                  ),
+                ],
               ),
             ],
           ),

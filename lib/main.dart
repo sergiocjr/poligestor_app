@@ -15,6 +15,8 @@ import 'core/theme/app_theme.dart';
 import 'features/agenda/data/appointments_repository.dart';
 import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
+import 'features/mandate/data/mandate_repository.dart';
+import 'features/mandate/domain/mandate_refresh_controller.dart';
 import 'features/notifications/data/devices_repository.dart';
 import 'features/notifications/data/notification_preferences_repository.dart';
 import 'features/notifications/data/notifications_repository.dart';
@@ -47,6 +49,8 @@ Future<void> main() async {
   final appointmentsRepo = AppointmentsRepository(api);
   final portalHomeRepo = PortalHomeRepository(api);
   final assistantRepo = AssistantRepository(api);
+  final mandateRepo = MandateRepository(api);
+  final mandateRefresh = MandateRefreshController();
   final notificationsController = NotificationsController(
     repository: notificationsRepo,
     auth: auth,
@@ -55,6 +59,7 @@ Future<void> main() async {
     api: api,
     auth: auth,
     notifications: notificationsController,
+    mandateRefresh: mandateRefresh,
   );
   final push = PushNotificationService(
     devices: devicesRepo,
@@ -66,6 +71,7 @@ Future<void> main() async {
     auth: auth,
     notifications: notificationsController,
     push: push,
+    mandateRefresh: mandateRefresh,
   );
   final router = createAppRouter(auth);
 
@@ -83,11 +89,13 @@ Future<void> main() async {
         Provider.value(value: appointmentsRepo),
         Provider.value(value: portalHomeRepo),
         Provider.value(value: assistantRepo),
+        Provider.value(value: mandateRepo),
         Provider.value(value: realtime),
         Provider.value(value: push),
         Provider.value(value: appSync),
         ChangeNotifierProvider.value(value: auth),
         ChangeNotifierProvider.value(value: notificationsController),
+        ChangeNotifierProvider.value(value: mandateRefresh),
       ],
       child: PoliGestorApp(router: router),
     ),

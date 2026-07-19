@@ -37,6 +37,11 @@ class HomeShell extends StatelessWidget {
             label: 'Chat IA',
           ),
           NavigationDestination(
+            icon: Icon(Icons.account_balance_outlined),
+            selectedIcon: Icon(Icons.account_balance),
+            label: 'Mandato',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.more_horiz),
             selectedIcon: Icon(Icons.more_horiz),
             label: 'Mais',

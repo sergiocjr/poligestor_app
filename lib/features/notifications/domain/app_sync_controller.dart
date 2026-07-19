@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../../core/auth/auth_mode.dart';
+import '../../mandate/domain/mandate_refresh_controller.dart';
 import 'notifications_controller.dart';
 import 'push_notification_service.dart';
 
@@ -13,13 +15,16 @@ class AppSyncController with WidgetsBindingObserver {
     required AuthController auth,
     required NotificationsController notifications,
     required PushNotificationService push,
+    MandateRefreshController? mandateRefresh,
   })  : _auth = auth,
         _notifications = notifications,
-        _push = push;
+        _push = push,
+        _mandateRefresh = mandateRefresh;
 
   final AuthController _auth;
   final NotificationsController _notifications;
   final PushNotificationService _push;
+  final MandateRefreshController? _mandateRefresh;
 
   bool _listening = false;
   DateTime? _lastSyncAt;
@@ -57,5 +62,8 @@ class AppSyncController with WidgetsBindingObserver {
     }
     await _notifications.refresh();
     await _push.onAuthenticated();
+    if (_auth.mode == AuthMode.staff) {
+      _mandateRefresh?.bump(reason: reason);
+    }
   }
 }

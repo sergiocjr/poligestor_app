@@ -77,4 +77,16 @@ enum AuthMode {
         AuthMode.staff => '/v1/ai/chat',
         AuthMode.portal => '/v1/portal/assistant/message',
       };
+
+  // --- Fase 8: Mandato (staff) ---
+  String get mandateExecutivePath => '/v1/mandate/executive';
+  String get mandateMapPath => '/v1/mandate/map';
+  String get mandateTeamPath => '/v1/mandate/team';
+  String get mandateNeighborhoodsPath => '/v1/mandate/neighborhoods';
+  String get mandateSubjectsPath => '/v1/mandate/subjects';
+  String get mandateSearchPath => '/v1/mandate/search';
+  String get mandateReportsPath => '/v1/mandate/reports';
+  String get mandateTvPath => '/v1/mandate/tv';
+  String get mandateAgendaPath => '/v1/mandate/agenda';
+  String get mandateBriefingPath => '/v1/mandate/briefing';
 }
