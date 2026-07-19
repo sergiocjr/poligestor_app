@@ -4,7 +4,9 @@ import 'package:poligestor_app/shared/widgets/ui_kit.dart';
 
 void main() {
   group('FeatureActionCard alinhamento', () {
-    testWidgets('estrutura start + padding unico + slots fixos', (tester) async {
+    testWidgets('estrutura start + padding unico + slots fixos', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(360, 800));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -119,27 +121,35 @@ void main() {
                       builder: (context, constraints) {
                         final extent =
                             FeatureActionGridMetrics.mainAxisExtentFor(
-                          context: context,
-                          maxWidth: constraints.maxWidth,
-                          items: const [
-                            (title: 'Agendar atendimento', description: 'Horário'),
-                            (title: 'Acompanhar protocolo', description: 'Andamento'),
-                          ],
-                        );
+                              context: context,
+                              maxWidth: constraints.maxWidth,
+                              items: const [
+                                (
+                                  title: 'Agendar atendimento',
+                                  description: 'Horário',
+                                ),
+                                (
+                                  title: 'Acompanhar protocolo',
+                                  description: 'Andamento',
+                                ),
+                              ],
+                            );
                         final cross =
                             FeatureActionGridMetrics.crossAxisCountFor(
-                          constraints.maxWidth,
-                          textScale: scale,
-                        );
+                              constraints.maxWidth,
+                              textScale: scale,
+                            );
                         return GridView.builder(
                           itemCount: 2,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: cross,
-                            mainAxisSpacing: FeatureActionGridMetrics.spacing,
-                            crossAxisSpacing: FeatureActionGridMetrics.spacing,
-                            mainAxisExtent: extent,
-                          ),
+                                crossAxisCount: cross,
+                                mainAxisSpacing:
+                                    FeatureActionGridMetrics.spacing,
+                                crossAxisSpacing:
+                                    FeatureActionGridMetrics.spacing,
+                                mainAxisExtent: extent,
+                              ),
                           itemBuilder: (_, i) => FeatureActionCard(
                             icon: Icons.help,
                             title: i == 0

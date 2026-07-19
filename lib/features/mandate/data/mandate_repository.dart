@@ -20,6 +20,7 @@ class MandateFilter {
 
   final String? from;
   final String? to;
+
   /// today | 7d | month
   final String? period;
   final String? assigneeId;
@@ -56,7 +57,7 @@ class MandateFilter {
 
 class MandateRepository {
   MandateRepository(this._api, {MandateCache? cache})
-      : _cache = cache ?? MandateCache();
+    : _cache = cache ?? MandateCache();
 
   final ApiClient _api;
   final MandateCache _cache;

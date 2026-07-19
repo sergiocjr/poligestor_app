@@ -46,7 +46,7 @@ class VirtualTeamFilter {
 
 class VirtualTeamRepository {
   VirtualTeamRepository(this._api, {VirtualTeamCache? cache})
-      : _cache = cache ?? VirtualTeamCache();
+    : _cache = cache ?? VirtualTeamCache();
 
   final ApiClient _api;
   final VirtualTeamCache _cache;

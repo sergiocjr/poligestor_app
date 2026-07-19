@@ -124,7 +124,8 @@ Widget _buildHarness({
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (composerBusy) const LinearProgressIndicator(minHeight: 2),
+                    if (composerBusy)
+                      const LinearProgressIndicator(minHeight: 2),
                     TextField(
                       key: const Key('request_detail_composer'),
                       controller: messageCtrl,
@@ -156,16 +157,15 @@ void main() {
     testWidgets('comments vazio mostra estado amigavel', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: ProtocolConversationPanel(messages: []),
-          ),
+          home: Scaffold(body: ProtocolConversationPanel(messages: [])),
         ),
       );
       expect(find.text(UserMessages.emptyConversation), findsOneWidget);
     });
 
-    testWidgets('comments carregado renderiza bolhas sem ListView',
-        (tester) async {
+    testWidgets('comments carregado renderiza bolhas sem ListView', (
+      tester,
+    ) async {
       final detail = _sampleDetail(messageCount: 3);
       await tester.pumpWidget(
         MaterialApp(
@@ -177,7 +177,10 @@ void main() {
       expect(find.text('Mensagem 0'), findsOneWidget);
       expect(find.text('Mensagem 2'), findsOneWidget);
       expect(find.byType(ListView), findsNothing);
-      expect(find.byKey(const Key('protocol_conversation_column')), findsOneWidget);
+      expect(
+        find.byKey(const Key('protocol_conversation_column')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('erro da API fica no bloco com retry', (tester) async {
@@ -193,13 +196,17 @@ void main() {
           ),
         ),
       );
-      expect(find.text('Não foi possível carregar a conversa.'), findsOneWidget);
+      expect(
+        find.text('Não foi possível carregar a conversa.'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('conversation_retry')));
       expect(retries, 1);
     });
 
-    testWidgets('loading da conversa nao usa AbsorbPointer global',
-        (tester) async {
+    testWidgets('loading da conversa nao usa AbsorbPointer global', (
+      tester,
+    ) async {
       final scroll = ScrollController();
       final message = TextEditingController();
       addTearDown(() {
@@ -219,9 +226,7 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
       expect(
-        find.byWidgetPredicate(
-          (w) => w is AbsorbPointer && w.absorbing,
-        ),
+        find.byWidgetPredicate((w) => w is AbsorbPointer && w.absorbing),
         findsNothing,
       );
       expect(
@@ -249,7 +254,12 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(tester.widget<FilledButton>(find.byKey(const Key('btn_composer_send'))).onPressed, isNull);
+      expect(
+        tester
+            .widget<FilledButton>(find.byKey(const Key('btn_composer_send')))
+            .onPressed,
+        isNull,
+      );
 
       await tester.pumpWidget(
         _buildHarness(
@@ -262,13 +272,16 @@ void main() {
       );
       await tester.pump();
       expect(
-        tester.widget<FilledButton>(find.byKey(const Key('btn_composer_send'))).onPressed,
+        tester
+            .widget<FilledButton>(find.byKey(const Key('btn_composer_send')))
+            .onPressed,
         isNotNull,
       );
     });
 
-    testWidgets('lista interna sem scroll proprio + composer fora',
-        (tester) async {
+    testWidgets('lista interna sem scroll proprio + composer fora', (
+      tester,
+    ) async {
       final scroll = ScrollController();
       final message = TextEditingController();
       addTearDown(() {
@@ -292,7 +305,10 @@ void main() {
       expect(userScrollables, hasLength(1));
 
       // Composer está fora do CustomScrollView.
-      expect(find.byKey(const Key('request_detail_composer_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('request_detail_composer_bar')),
+        findsOneWidget,
+      );
 
       await tester.drag(
         find.byKey(const Key('request_detail_scroll')),

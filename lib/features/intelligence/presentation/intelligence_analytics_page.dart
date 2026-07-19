@@ -29,10 +29,9 @@ class _IntelligenceAnalyticsPageState extends State<IntelligenceAnalyticsPage> {
     _future ??= _load();
   }
 
-  Future<IntelligenceAnalyticsData> _load() =>
-      context.read<IntelligenceRepository>().analytics(
-            filter: IntelligenceFilter(period: _period),
-          );
+  Future<IntelligenceAnalyticsData> _load() => context
+      .read<IntelligenceRepository>()
+      .analytics(filter: IntelligenceFilter(period: _period));
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -40,11 +39,11 @@ class _IntelligenceAnalyticsPageState extends State<IntelligenceAnalyticsPage> {
   }
 
   String get _title => switch (widget.focus) {
-        AnalyticsFocus.neighborhoods => 'Análise de bairros',
-        AnalyticsFocus.subjects => 'Análise de assuntos',
-        AnalyticsFocus.team => 'Análise de equipe',
-        AnalyticsFocus.productivity => 'Produtividade',
-      };
+    AnalyticsFocus.neighborhoods => 'Análise de bairros',
+    AnalyticsFocus.subjects => 'Análise de assuntos',
+    AnalyticsFocus.team => 'Análise de equipe',
+    AnalyticsFocus.productivity => 'Produtividade',
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -87,15 +86,21 @@ class _IntelligenceAnalyticsPageState extends State<IntelligenceAnalyticsPage> {
                       if (data.fromCache && data.cacheAgeLabel != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: IntelStaleNotice(ageLabel: data.cacheAgeLabel!),
+                          child: IntelStaleNotice(
+                            ageLabel: data.cacheAgeLabel!,
+                          ),
                         ),
                       ...switch (widget.focus) {
-                        AnalyticsFocus.neighborhoods =>
-                          _neighborhoods(context, data),
+                        AnalyticsFocus.neighborhoods => _neighborhoods(
+                          context,
+                          data,
+                        ),
                         AnalyticsFocus.subjects => _subjects(context, data),
                         AnalyticsFocus.team => _team(context, data),
-                        AnalyticsFocus.productivity =>
-                          _productivity(context, data),
+                        AnalyticsFocus.productivity => _productivity(
+                          context,
+                          data,
+                        ),
                       },
                     ],
                   ),

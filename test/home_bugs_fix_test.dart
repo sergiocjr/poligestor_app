@@ -57,10 +57,7 @@ void main() {
 
     test('sanitizeDropdownValue com lista vazia retorna null', () {
       expect(
-        RequestCategory.sanitizeDropdownValue(
-          'atendimento',
-          source: const [],
-        ),
+        RequestCategory.sanitizeDropdownValue('atendimento', source: const []),
         isNull,
       );
     });
@@ -88,10 +85,12 @@ void main() {
       );
 
       final open = ProtocolSummary(id: 1, title: 'A', status: 'recebido');
-      final andamento =
-          ProtocolSummary(id: 2, title: 'B', status: 'encaminhado');
-      final resolvida =
-          ProtocolSummary(id: 3, title: 'C', status: 'encerrado');
+      final andamento = ProtocolSummary(
+        id: 2,
+        title: 'B',
+        status: 'encaminhado',
+      );
+      final resolvida = ProtocolSummary(id: 3, title: 'C', status: 'encerrado');
 
       expect(RequestStatusFilter.open.matches(open), isTrue);
       expect(RequestStatusFilter.inProgress.matches(andamento), isTrue);
@@ -101,11 +100,11 @@ void main() {
   });
 
   group('NewRequestPage dropdown', () {
-    testWidgets('agenda não crasha e normaliza para atendimento', (tester) async {
+    testWidgets('agenda não crasha e normaliza para atendimento', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: NewRequestPage(initialCategory: 'agenda'),
-        ),
+        const MaterialApp(home: NewRequestPage(initialCategory: 'agenda')),
       );
       await tester.pumpAndSettle();
       expect(find.text('Nova solicitação'), findsOneWidget);
@@ -115,9 +114,7 @@ void main() {
 
     testWidgets('visita não crasha o DropdownButton', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: NewRequestPage(initialCategory: 'visita'),
-        ),
+        const MaterialApp(home: NewRequestPage(initialCategory: 'visita')),
       );
       await tester.pumpAndSettle();
       expect(find.text('Nova solicitação'), findsOneWidget);
@@ -141,9 +138,7 @@ void main() {
     testWidgets('notícias abrem detalhe', (tester) async {
       final item = MockNewsCatalog.items.first;
       await tester.pumpWidget(
-        MaterialApp(
-          home: CitizenNewsDetailPage(newsId: item.id),
-        ),
+        MaterialApp(home: CitizenNewsDetailPage(newsId: item.id)),
       );
       await tester.pumpAndSettle();
       expect(find.text(item.title), findsOneWidget);
@@ -152,9 +147,7 @@ void main() {
     });
 
     testWidgets('lista de notícias mock renderiza', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: CitizenNewsListPage()),
-      );
+      await tester.pumpWidget(const MaterialApp(home: CitizenNewsListPage()));
       await tester.pumpAndSettle();
       expect(find.text('Notícias'), findsOneWidget);
       expect(find.text(MockNewsCatalog.items.first.title), findsOneWidget);
@@ -175,7 +168,9 @@ void main() {
       expect(find.textContaining('Nenhum aviso'), findsOneWidget);
     });
 
-    testWidgets('detalhe de compromisso renderiza sem overflow', (tester) async {
+    testWidgets('detalhe de compromisso renderiza sem overflow', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: CitizenAppointmentDetailPage(
@@ -212,7 +207,9 @@ void main() {
           child: MaterialApp(
             theme: ThemeData(
               useMaterial3: true,
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0F4C5C)),
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color(0xFF0F4C5C),
+              ),
             ),
             home: Scaffold(
               body: Padding(
@@ -250,8 +247,7 @@ void main() {
                     }
                     return GridView.builder(
                       itemCount: cards.length,
-                      gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: cross,
                         mainAxisSpacing: FeatureActionGridMetrics.spacing,
                         crossAxisSpacing: FeatureActionGridMetrics.spacing,
@@ -325,7 +321,9 @@ void main() {
       }
     }
 
-    testWidgets('FeatureActionCard no grid do telefone não estoura', (tester) async {
+    testWidgets('FeatureActionCard no grid do telefone não estoura', (
+      tester,
+    ) async {
       await pumpActionGrid(
         tester,
         size: const Size(360, 640),
@@ -349,7 +347,9 @@ void main() {
       expect(find.text('Agendar atendimento presencial'), findsOneWidget);
     });
 
-    testWidgets('FeatureActionCard resiste a aspect ratio legado 1.05', (tester) async {
+    testWidgets('FeatureActionCard resiste a aspect ratio legado 1.05', (
+      tester,
+    ) async {
       await pumpActionGrid(
         tester,
         size: const Size(360, 640),
@@ -359,15 +359,16 @@ void main() {
           (
             icon: Icons.help_outline,
             title: 'Título longo de ação rápida do cidadão',
-            description:
-                'Descrição longa que antes estourava o grid da Home',
+            description: 'Descrição longa que antes estourava o grid da Home',
           ),
         ],
       );
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('títulos críticos cabem em 360dp sem reticências forçadas', (tester) async {
+    testWidgets('títulos críticos cabem em 360dp sem reticências forçadas', (
+      tester,
+    ) async {
       await pumpActionGrid(
         tester,
         size: const Size(360, 900),
@@ -402,15 +403,18 @@ void main() {
                 scrollDirection: Axis.horizontal,
                 children: [
                   AgendaMiniCard(
-                    title: 'Compromisso com texto extremamente longo para overflow',
+                    title:
+                        'Compromisso com texto extremamente longo para overflow',
                     when: '18/07 · 10:00',
-                    location: 'Localização também bem longa para testar ellipsis',
+                    location:
+                        'Localização também bem longa para testar ellipsis',
                     onTap: () {},
                   ),
                   NewsCard(
                     item: NewsItem(
                       id: 't1',
-                      title: 'Título de notícia muito longo para forçar ellipsis no card',
+                      title:
+                          'Título de notícia muito longo para forçar ellipsis no card',
                       summary:
                           'Resumo igualmente longo para garantir que o layout não estoure a altura fixa do card horizontal.',
                       category: 'Bairro',

@@ -104,13 +104,14 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 
 ## Sprint 10.2 — Identidade / multi-tenant
 
-- `IdentityRepository` / `IdentityCache` / `TenantController`
-- `AccountRepository` (sessions LIVE; demas preparados)
-- UI org-first; branding dinâmico; estados honestos para APIs pendentes
+- `IdentityRepository` / `IdentityCache` (por tenant) / `TenantController`
+- `AccountRepository` (sessions LIVE; register/forgot/OAuth/profile)
+- Contratos LIVE: resolve, branding, providers, OAuth token session
+- UI org-first; branding dinâmico; providers só se `enabled`+`ready`
 
-### Encerramento Sprint 10.2 (Flutter)
+### Encerramento Sprint 10.2 (validação final Flutter)
 
-**STATUS: CONCLUÍDA no app.** Pendências restantes só na VPS (resolve/branding/OAuth/register/forgot).
+**STATUS: VALIDADA** com APIs VPS 200. Pendências: SDKs nativos OAuth/Apple iOS, QR camera, validação visual em device.
 
 ## Segurança
 

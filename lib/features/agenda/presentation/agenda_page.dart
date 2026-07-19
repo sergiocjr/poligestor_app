@@ -47,8 +47,9 @@ class _AgendaPageState extends State<AgendaPage> {
   }
 
   void _openDetail(AppointmentItem e, DateFormat dateFmt) {
-    final when =
-        e.startsAt == null ? null : dateFmt.format(e.startsAt!.toLocal());
+    final when = e.startsAt == null
+        ? null
+        : dateFmt.format(e.startsAt!.toLocal());
     final page = CitizenAppointmentDetailPage(
       title: e.title,
       when: when,
@@ -131,20 +132,21 @@ class _AgendaPageState extends State<AgendaPage> {
                 final highlighted = focusIndex == index;
                 return Material(
                   color: highlighted
-                      ? Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 0.08)
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.08)
                       : null,
                   child: ListTile(
                     leading: const Icon(Icons.event_outlined),
                     title: Text(e.title),
-                    subtitle: Text([
-                      if (e.startsAt != null)
-                        dateFmt.format(e.startsAt!.toLocal()),
-                      if (e.location != null) e.location!,
-                      if (e.status != null) e.status!,
-                    ].join(' · ')),
+                    subtitle: Text(
+                      [
+                        if (e.startsAt != null)
+                          dateFmt.format(e.startsAt!.toLocal()),
+                        if (e.location != null) e.location!,
+                        if (e.status != null) e.status!,
+                      ].join(' · '),
+                    ),
                     trailing: const Icon(Icons.chevron_right_rounded),
                     onTap: () => _openDetail(e, dateFmt),
                   ),

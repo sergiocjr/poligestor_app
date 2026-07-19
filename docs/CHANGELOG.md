@@ -1,17 +1,23 @@
 # Changelog — PoliGestor Flutter
 
-## [Encerramento 2026-07-19] — dia fechado
+## [Sprint 10.2 Validação Final] — 2026-07-19
 
-### Added / Completed hoje
+### Changed / Completed
 
-- Sprint 10.1 Final (Equipe Virtual LIVE)
-- Sprint 10.2 Flutter (identidade, auth, multi-tenant, branding dinâmico, sessões, perfil)
-- Docs atualizados; ícones/logo Android/iOS/Web
-- Repositório publicado em `https://github.com/sergiocjr/poligestor_app`
+- Revalidação VPS: resolve, branding e providers agora LIVE (HTTP 200)
+- Parsing do contrato real (`organization`, `logo_path`, `is_enabled`/`ready`)
+- Branding dinâmico (cores + logo de rede) na UX de login
+- Providers externos só quando `enabled` + `ready`; OAuth aplica tokens na sessão
+- Cache identity isolado por tenant; troca de org limpa tokens e caches
+- Cadastro exige organização; respeita `registration_enabled`
+- Testes de contrato LIVE em `test/sprint102_identity_test.dart`
+- STATUS atualizado com classificação integrado / aguardando / iOS
 
-### Pending (backend)
+### Pending
 
-- Resolve, branding, providers, register, forgot/reset, OAuth e espelhos portal — ver `docs/STATUS_PROJETO.md`
+- Validação visual no SM-A105M e Flutter Web builds
+- Apple/Google SDKs nativos + APNs (credenciais externas)
+- QR camera nativo (deep link já funciona)
 
 ## [Sprint 10.2] — 2026-07-19 — CONCLUÍDA (Flutter)
 

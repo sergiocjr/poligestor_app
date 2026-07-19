@@ -17,10 +17,10 @@ class RealtimeSyncService {
     required AuthController auth,
     required NotificationsController notifications,
     MandateRefreshController? mandateRefresh,
-  })  : _api = api,
-        _auth = auth,
-        _notifications = notifications,
-        _mandateRefresh = mandateRefresh;
+  }) : _api = api,
+       _auth = auth,
+       _notifications = notifications,
+       _mandateRefresh = mandateRefresh;
 
   final ApiClient _api;
   final AuthController _auth;
@@ -45,9 +45,7 @@ class RealtimeSyncService {
     }
     _started = true;
 
-    _client = PusherReverbClient(
-      authorize: _authorizeChannel,
-    );
+    _client = PusherReverbClient(authorize: _authorizeChannel);
     _eventsSub = _client!.events.listen(_onRealtimeEvent);
     _connSub = _client!.connectionStates.listen((connected) {
       if (kDebugMode) {
@@ -105,10 +103,7 @@ class RealtimeSyncService {
   Future<String> _authorizeChannel(String socketId, String channelName) async {
     final body = await _api.postRawMap(
       AppConfig.broadcastingAuthUrl,
-      data: {
-        'socket_id': socketId,
-        'channel_name': channelName,
-      },
+      data: {'socket_id': socketId, 'channel_name': channelName},
       mode: _auth.mode,
       tenantSlug: _auth.session?.tenantSlug,
     );

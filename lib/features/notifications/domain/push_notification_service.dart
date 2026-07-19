@@ -28,11 +28,11 @@ class PushNotificationService {
     required NotificationsController notifications,
     required RealtimeSyncService realtime,
     NotificationRouter router = const NotificationRouter(),
-  })  : _devices = devices,
-        _auth = auth,
-        _notifications = notifications,
-        _realtime = realtime,
-        _router = router;
+  }) : _devices = devices,
+       _auth = auth,
+       _notifications = notifications,
+       _realtime = realtime,
+       _router = router;
 
   static const _kLastToken = 'push_last_device_token';
   static const _androidChannelId = 'poligestor_default';
@@ -114,7 +114,9 @@ class PushNotificationService {
       try {
         await _devices.unregisterCurrent(mode: mode, token: token);
         if (kDebugMode) {
-          debugPrint('[Push] DELETE devices/current ok token=${_maskToken(token)}');
+          debugPrint(
+            '[Push] DELETE devices/current ok token=${_maskToken(token)}',
+          );
         }
       } catch (e) {
         if (kDebugMode) {
@@ -273,8 +275,9 @@ class PushNotificationService {
       _onMessageSub = FirebaseMessaging.onMessage.listen(_onForegroundMessage);
 
       await _onOpenedSub?.cancel();
-      _onOpenedSub =
-          FirebaseMessaging.onMessageOpenedApp.listen(_onMessageOpened);
+      _onOpenedSub = FirebaseMessaging.onMessageOpenedApp.listen(
+        _onMessageOpened,
+      );
 
       final initial = await messaging.getInitialMessage();
       if (initial != null) {
@@ -324,10 +327,10 @@ class PushNotificationService {
             handleDeepLinkUri(Uri.parse(payload));
             return;
           }
-          handleIncomingPayload(
-            {'deep_link': payload, 'type': 'protocol_message'},
-            fromUserTap: true,
-          );
+          handleIncomingPayload({
+            'deep_link': payload,
+            'type': 'protocol_message',
+          }, fromUserTap: true);
         } catch (e) {
           if (kDebugMode) debugPrint('[Push] local tap parse error: $e');
         }
@@ -336,7 +339,8 @@ class PushNotificationService {
 
     final androidPlugin = _localNotifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await androidPlugin?.createNotificationChannel(
       const AndroidNotificationChannel(
         _androidChannelId,
@@ -349,15 +353,12 @@ class PushNotificationService {
 
   Future<void> _requestNotificationPermission() async {
     final messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
     if (!kIsWeb && Platform.isAndroid) {
       final android = _localNotifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       await android?.requestNotificationsPermission();
     }
   }
@@ -366,10 +367,12 @@ class PushNotificationService {
     final data = Map<String, dynamic>.from(message.data);
     handleIncomingPayload(data, fromUserTap: false);
 
-    final title = message.notification?.title ??
+    final title =
+        message.notification?.title ??
         data['title']?.toString() ??
         'PoliGestor';
-    final body = message.notification?.body ??
+    final body =
+        message.notification?.body ??
         data['body']?.toString() ??
         data['message']?.toString() ??
         'Nova atualização';
@@ -426,7 +429,9 @@ class PushNotificationService {
       final token = tokenOverride ?? await _resolveFcmToken();
       if (token == null || token.isEmpty) {
         if (kDebugMode) {
-          debugPrint('[Push] sem token FCM — registro omitido (sem install-id)');
+          debugPrint(
+            '[Push] sem token FCM — registro omitido (sem install-id)',
+          );
         }
         return;
       }
@@ -434,10 +439,7 @@ class PushNotificationService {
       final last = await _readStoredToken();
       if (!force && last == token) return;
 
-      await _devices.register(
-        mode: _auth.mode,
-        token: token,
-      );
+      await _devices.register(mode: _auth.mode, token: token);
       _lastFcmToken = token;
       await _secure.write(key: _kLastToken, value: token);
       // Remove cópia legada em claro.

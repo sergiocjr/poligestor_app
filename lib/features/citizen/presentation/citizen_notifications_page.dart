@@ -56,13 +56,13 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
   }
 
   IconData _icon(IconDataForNotification kind) => switch (kind) {
-        IconDataForNotification.chat => Icons.mark_chat_unread_rounded,
-        IconDataForNotification.status => Icons.sync_alt_rounded,
-        IconDataForNotification.help => Icons.help_outline_rounded,
-        IconDataForNotification.done => Icons.check_circle_outline_rounded,
-        IconDataForNotification.star => Icons.star_outline_rounded,
-        IconDataForNotification.bell => Icons.notifications_none_rounded,
-      };
+    IconDataForNotification.chat => Icons.mark_chat_unread_rounded,
+    IconDataForNotification.status => Icons.sync_alt_rounded,
+    IconDataForNotification.help => Icons.help_outline_rounded,
+    IconDataForNotification.done => Icons.check_circle_outline_rounded,
+    IconDataForNotification.star => Icons.star_outline_rounded,
+    IconDataForNotification.bell => Icons.notifications_none_rounded,
+  };
 
   Future<void> _open(AppNotification n) async {
     final payload = PushPayload(
@@ -122,9 +122,9 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(UserMessages.forProtocolError(e))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(UserMessages.forProtocolError(e))));
       return;
     }
 
@@ -169,9 +169,7 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          ctrl.unreadCount > 0
-              ? 'Avisos (${ctrl.unreadCount})'
-              : 'Avisos',
+          ctrl.unreadCount > 0 ? 'Avisos (${ctrl.unreadCount})' : 'Avisos',
         ),
         actions: [
           if (ctrl.unreadCount > 0)
@@ -269,7 +267,8 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
             );
           }
           final n = items[index];
-          final canOpen = ProtocolNavigationTarget.resolve(
+          final canOpen =
+              ProtocolNavigationTarget.resolve(
                 protocolId: n.protocolId,
                 protocolNumber: n.protocolNumber,
                 link: n.link,
@@ -305,7 +304,9 @@ class _CitizenNotificationsPageState extends State<CitizenNotificationsPage> {
                 overflow: TextOverflow.ellipsis,
               ),
               isThreeLine: true,
-              trailing: canOpen ? const Icon(Icons.chevron_right_rounded) : null,
+              trailing: canOpen
+                  ? const Icon(Icons.chevron_right_rounded)
+                  : null,
               onTap: () => _open(n),
             ),
           );

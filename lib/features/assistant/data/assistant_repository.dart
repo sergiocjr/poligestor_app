@@ -93,7 +93,10 @@ class AssistantRepository {
     }
   }
 
-  Future<AssistantReply> sendMessage(String message, {String? tenantSlug}) async {
+  Future<AssistantReply> sendMessage(
+    String message, {
+    String? tenantSlug,
+  }) async {
     final text = message.trim();
     if (text.isEmpty) {
       throw ApiException(message: 'Mensagem vazia.', statusCode: 422);

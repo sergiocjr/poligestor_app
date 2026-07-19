@@ -23,9 +23,11 @@ class MorePage extends StatelessWidget {
           if (session != null)
             ListTile(
               leading: const CircleAvatar(child: Icon(Icons.person)),
-              title: Text(session.user.name.isEmpty
-                  ? session.user.email
-                  : session.user.name),
+              title: Text(
+                session.user.name.isEmpty
+                    ? session.user.email
+                    : session.user.name,
+              ),
               subtitle: Text(
                 '${session.mode.label} · ${tenant.displayName}\n${session.user.email}',
               ),
@@ -84,18 +86,12 @@ class MorePage extends StatelessWidget {
             icon: Icons.notifications_outlined,
             title: 'Notificações',
           ),
-          const _SoonTile(
-            icon: Icons.folder_outlined,
-            title: 'Documentos',
-          ),
+          const _SoonTile(icon: Icons.folder_outlined, title: 'Documentos'),
           const _SoonTile(
             icon: Icons.badge_outlined,
             title: 'Carteira Digital',
           ),
-          const _SoonTile(
-            icon: Icons.qr_code_scanner,
-            title: 'Scanner QR',
-          ),
+          const _SoonTile(icon: Icons.qr_code_scanner, title: 'Scanner QR'),
           ListTile(
             leading: const Icon(Icons.map_outlined),
             title: const Text('Mapa do mandato'),
@@ -103,7 +99,10 @@ class MorePage extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
-            leading: Icon(Icons.logout, color: Theme.of(context).colorScheme.error),
+            leading: Icon(
+              Icons.logout,
+              color: Theme.of(context).colorScheme.error,
+            ),
             title: Text(
               'Sair',
               style: TextStyle(color: Theme.of(context).colorScheme.error),

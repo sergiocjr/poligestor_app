@@ -17,9 +17,7 @@ class OrganizationSelectPage extends StatefulWidget {
 }
 
 class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
-  final _ctrl = TextEditingController(
-    text: AppConfig.defaultTenantSlug,
-  );
+  final _ctrl = TextEditingController(text: AppConfig.defaultTenantSlug);
   String _mode = 'slug'; // slug | code | domain
   String? _error;
   bool _busy = false;
@@ -103,16 +101,16 @@ class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
                 Text(
                   'Selecione sua organização',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   'Use o slug, código de acesso ou domínio. '
                   'A identidade visual será carregada automaticamente.',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Wrap(
@@ -148,7 +146,9 @@ class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: TextStyle(color: Theme.of(context).colorScheme.error),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
                 ],
                 if (tenant.resolveUnavailable) ...[
@@ -156,7 +156,7 @@ class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
                   const EndpointPendingState(
                     path: '/v1/identity/tenants/resolve',
                     message:
-                        'API de resolução ainda instável na VPS — você pode continuar informando o slug.',
+                        'Resolução remota indisponível — usando identificador local.',
                   ),
                 ],
                 const SizedBox(height: 20),
@@ -172,7 +172,7 @@ class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Também é possível abrir via QR Code ou deep link '
+                  'Também é possível abrir via deep link '
                   '(poligestor://org/{slug}).',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall,

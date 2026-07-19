@@ -16,8 +16,8 @@ class ApiClient {
     required TokenStorage tokenStorage,
     String? baseUrl,
     OnSessionExpired? onSessionExpired,
-  })  : _storage = tokenStorage,
-        _onSessionExpired = onSessionExpired {
+  }) : _storage = tokenStorage,
+       _onSessionExpired = onSessionExpired {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl ?? AppConfig.apiBaseUrl,
@@ -31,10 +31,7 @@ class ApiClient {
     );
 
     _dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: _onRequest,
-        onError: _onError,
-      ),
+      InterceptorsWrapper(onRequest: _onRequest, onError: _onError),
     );
   }
 
@@ -82,8 +79,13 @@ class ApiClient {
 
     final mode = options.extra['authMode'] as AuthMode? ?? _mode;
     final tenant = options.extra['tenantSlug'] as String? ?? _tenantSlug;
-    if (mode == AuthMode.portal && tenant != null && tenant.isNotEmpty) {
+    // Identity / portal públicos e rotas autenticadas com tenant.
+    if (tenant != null && tenant.isNotEmpty) {
       options.headers['X-Tenant-Slug'] = tenant;
+    } else if (mode == AuthMode.portal &&
+        _tenantSlug != null &&
+        _tenantSlug!.isNotEmpty) {
+      options.headers['X-Tenant-Slug'] = _tenantSlug;
     }
 
     options.headers['Accept'] = 'application/json';
@@ -140,15 +142,11 @@ class ApiClient {
           : body;
 
       final access = (data['access_token'] ?? data['token'])?.toString();
-      final newRefresh =
-          (data['refresh_token'] ?? refresh).toString();
+      final newRefresh = (data['refresh_token'] ?? refresh).toString();
 
       if (access == null || access.isEmpty) return false;
 
-      await _storage.saveTokens(
-        accessToken: access,
-        refreshToken: newRefresh,
-      );
+      await _storage.saveTokens(accessToken: access, refreshToken: newRefresh);
       return true;
     } catch (_) {
       await _storage.clearTokens();
@@ -343,21 +341,19 @@ class ApiClient {
 
     if (data is Map<String, dynamic>) {
       dynamic rawMessage =
-          data['message'] ?? data['error'] ?? data['msg'] ?? 'Erro na requisição';
+          data['message'] ??
+          data['error'] ??
+          data['msg'] ??
+          'Erro na requisição';
       if (rawMessage is Map) {
-        rawMessage = rawMessage['message'] ??
-            rawMessage['code'] ??
-            'Erro na requisição';
+        rawMessage =
+            rawMessage['message'] ?? rawMessage['code'] ?? 'Erro na requisição';
       }
       final message = rawMessage.toString();
       final errors = data['errors'] is Map<String, dynamic>
           ? data['errors'] as Map<String, dynamic>
           : null;
-      return ApiException(
-        message: message,
-        statusCode: status,
-        errors: errors,
-      );
+      return ApiException(message: message, statusCode: status, errors: errors);
     }
 
     if (e.type == DioExceptionType.connectionTimeout ||

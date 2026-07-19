@@ -46,9 +46,8 @@ class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage>
     _future ??= _load();
   }
 
-  Future<VtPagedList<VtTask>> _load() => context
-      .read<VirtualTeamRepository>()
-      .tasks(
+  Future<VtPagedList<VtTask>> _load() =>
+      context.read<VirtualTeamRepository>().tasks(
         filter: VirtualTeamFilter(status: _status),
         agentSlug: widget.agentSlug,
       );
@@ -329,10 +328,7 @@ class _VirtualTeamEventsPageState extends State<VirtualTeamEventsPage>
             child: ListTile(
               title: Text(e.title),
               subtitle: Text(
-                [
-                  e.type,
-                  if (e.agentSlug != null) e.agentSlug!,
-                ].join(' · '),
+                [e.type, if (e.agentSlug != null) e.agentSlug!].join(' · '),
               ),
               trailing: Text(
                 vtFormatWhen(e.createdAt),
@@ -562,11 +558,10 @@ Widget _buildPlainList<T>(
   required String empty,
   required List<T> items,
   required Widget Function(T item) itemBuilder,
-}) =>
-    _buildList(
-      snap,
-      onRetry: onRetry,
-      empty: empty,
-      items: items,
-      itemBuilder: itemBuilder,
-    );
+}) => _buildList(
+  snap,
+  onRetry: onRetry,
+  empty: empty,
+  items: items,
+  itemBuilder: itemBuilder,
+);

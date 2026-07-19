@@ -25,10 +25,9 @@ class _MandateReportsPageState extends State<MandateReportsPage> {
     _future ??= _load();
   }
 
-  Future<MandateReportsData> _load() =>
-      context.read<MandateRepository>().reports(
-            filter: MandateFilter(period: _period),
-          );
+  Future<MandateReportsData> _load() => context
+      .read<MandateRepository>()
+      .reports(filter: MandateFilter(period: _period));
 
   Future<void> _refresh() async {
     setState(() => _future = _load());

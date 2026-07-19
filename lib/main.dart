@@ -198,10 +198,7 @@ class _PoliGestorAppState extends State<PoliGestorApp> {
       theme: theme,
       routerConfig: widget.router,
       locale: const Locale('pt', 'BR'),
-      supportedLocales: const [
-        Locale('pt', 'BR'),
-        Locale('en', 'US'),
-      ],
+      supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

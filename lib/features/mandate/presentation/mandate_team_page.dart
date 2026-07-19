@@ -25,8 +25,8 @@ class _MandateTeamPageState extends State<MandateTeamPage> {
   }
 
   Future<MandateTeamData> _load() => context.read<MandateRepository>().team(
-        filter: MandateFilter(period: _period),
-      );
+    filter: MandateFilter(period: _period),
+  );
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -106,7 +106,9 @@ class _MandateTeamPageState extends State<MandateTeamPage> {
                                         ?.copyWith(fontWeight: FontWeight.w800),
                                   ),
                                   const SizedBox(height: 8),
-                                  Text('Carga de trabalho (pontuação): ${m.score.toStringAsFixed(1)}'),
+                                  Text(
+                                    'Carga de trabalho (pontuação): ${m.score.toStringAsFixed(1)}',
+                                  ),
                                   Text('Atendidos no período: ${m.attended}'),
                                   Text('Em andamento: ${m.inProgress}'),
                                   Text('Concluídos: ${m.completed}'),

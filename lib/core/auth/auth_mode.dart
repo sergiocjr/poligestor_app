@@ -3,80 +3,79 @@ enum AuthMode {
   portal;
 
   String get label => switch (this) {
-        AuthMode.staff => 'Operador',
-        AuthMode.portal => 'Cidadão',
-      };
+    AuthMode.staff => 'Operador',
+    AuthMode.portal => 'Cidadão',
+  };
 
   String get loginPath => switch (this) {
-        AuthMode.staff => '/v1/auth/login',
-        AuthMode.portal => '/v1/portal/auth/login',
-      };
+    AuthMode.staff => '/v1/auth/login',
+    AuthMode.portal => '/v1/portal/auth/login',
+  };
 
   String get refreshPath => switch (this) {
-        AuthMode.staff => '/v1/auth/refresh',
-        AuthMode.portal => '/v1/portal/auth/refresh',
-      };
+    AuthMode.staff => '/v1/auth/refresh',
+    AuthMode.portal => '/v1/portal/auth/refresh',
+  };
 
   String get mePath => switch (this) {
-        AuthMode.staff => '/v1/auth/me',
-        AuthMode.portal => '/v1/portal/auth/me',
-      };
+    AuthMode.staff => '/v1/auth/me',
+    AuthMode.portal => '/v1/portal/auth/me',
+  };
 
   /// Alias de registro: `POST …/devices` (contrato também aceita `/devices/register`).
   String get devicesPath => switch (this) {
-        AuthMode.staff => '/v1/devices',
-        AuthMode.portal => '/v1/portal/devices',
-      };
+    AuthMode.staff => '/v1/devices',
+    AuthMode.portal => '/v1/portal/devices',
+  };
 
   String get devicesRegisterPath => switch (this) {
-        AuthMode.staff => '/v1/devices/register',
-        AuthMode.portal => '/v1/portal/devices/register',
-      };
+    AuthMode.staff => '/v1/devices/register',
+    AuthMode.portal => '/v1/portal/devices/register',
+  };
 
   String get devicesCurrentPath => switch (this) {
-        AuthMode.staff => '/v1/devices/current',
-        AuthMode.portal => '/v1/portal/devices/current',
-      };
+    AuthMode.staff => '/v1/devices/current',
+    AuthMode.portal => '/v1/portal/devices/current',
+  };
 
   String get protocolsPath => switch (this) {
-        AuthMode.staff => '/v1/protocols',
-        AuthMode.portal => '/v1/portal/protocols',
-      };
+    AuthMode.staff => '/v1/protocols',
+    AuthMode.portal => '/v1/portal/protocols',
+  };
 
   String get eventsPath => switch (this) {
-        AuthMode.staff => '/v1/events',
-        AuthMode.portal => '/v1/portal/appointments',
-      };
+    AuthMode.staff => '/v1/events',
+    AuthMode.portal => '/v1/portal/appointments',
+  };
 
   String get notificationsPath => switch (this) {
-        AuthMode.staff => '/v1/notifications',
-        AuthMode.portal => '/v1/portal/notifications',
-      };
+    AuthMode.staff => '/v1/notifications',
+    AuthMode.portal => '/v1/portal/notifications',
+  };
 
-  String get notificationsUnreadCountPath =>
-      '$notificationsPath/unread-count';
+  String get notificationsUnreadCountPath => '$notificationsPath/unread-count';
 
   String get notificationsReadAllPath => '$notificationsPath/read-all';
 
   String notificationReadPath(dynamic id) => '$notificationsPath/$id/read';
 
   String get notificationPreferencesPath => switch (this) {
-        AuthMode.staff => '/v1/notification-preferences',
-        AuthMode.portal => '/v1/portal/notification-preferences',
-      };
+    AuthMode.staff => '/v1/notification-preferences',
+    AuthMode.portal => '/v1/portal/notification-preferences',
+  };
 
   String protocolReadPath(dynamic id) => '$protocolsPath/$id/read';
 
   /// Canal privado do usuário autenticado (contrato Reverb).
   String privateUserChannel(dynamic userId) => switch (this) {
-        AuthMode.staff => 'private-user.$userId',
-        AuthMode.portal => 'private-portal-user.$userId',
-      };
+    AuthMode.staff => 'private-user.$userId',
+    AuthMode.portal => 'private-portal-user.$userId',
+  };
 
   String get aiChatPath => switch (this) {
-        AuthMode.staff => '/v1/ai/chat',
-        AuthMode.portal => '/v1/portal/assistant/message',
-      };
+    AuthMode.staff => '/v1/ai/chat',
+    AuthMode.portal => '/v1/portal/assistant/message',
+  };
 
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
@@ -132,63 +131,63 @@ enum AuthMode {
 
   // --- Sprint 10.2: Identidade / sessão ---
   String get logoutPath => switch (this) {
-        AuthMode.staff => '/v1/auth/logout',
-        AuthMode.portal => '/v1/portal/auth/logout',
-      };
+    AuthMode.staff => '/v1/auth/logout',
+    AuthMode.portal => '/v1/portal/auth/logout',
+  };
 
   String get sessionsPath => switch (this) {
-        AuthMode.staff => '/v1/auth/sessions',
-        AuthMode.portal => '/v1/portal/auth/sessions',
-      };
+    AuthMode.staff => '/v1/auth/sessions',
+    AuthMode.portal => '/v1/portal/auth/sessions',
+  };
 
   String sessionPath(String sessionId) => '$sessionsPath/$sessionId';
 
   String get sessionsRevokeAllPath => '$sessionsPath/revoke-all';
 
   String get authProvidersPath => switch (this) {
-        AuthMode.staff => '/v1/auth/providers',
-        AuthMode.portal => '/v1/portal/auth/providers',
-      };
+    AuthMode.staff => '/v1/auth/providers',
+    AuthMode.portal => '/v1/portal/auth/providers',
+  };
 
   String get registerPath => switch (this) {
-        AuthMode.staff => '/v1/auth/register',
-        AuthMode.portal => '/v1/portal/auth/register',
-      };
+    AuthMode.staff => '/v1/auth/register',
+    AuthMode.portal => '/v1/portal/auth/register',
+  };
 
   String get forgotPasswordPath => switch (this) {
-        AuthMode.staff => '/v1/auth/forgot-password',
-        AuthMode.portal => '/v1/portal/auth/forgot-password',
-      };
+    AuthMode.staff => '/v1/auth/forgot-password',
+    AuthMode.portal => '/v1/portal/auth/forgot-password',
+  };
 
   String get resetPasswordPath => switch (this) {
-        AuthMode.staff => '/v1/auth/reset-password',
-        AuthMode.portal => '/v1/portal/auth/reset-password',
-      };
+    AuthMode.staff => '/v1/auth/reset-password',
+    AuthMode.portal => '/v1/portal/auth/reset-password',
+  };
 
   String get linkedAccountsPath => switch (this) {
-        AuthMode.staff => '/v1/auth/linked-accounts',
-        AuthMode.portal => '/v1/portal/auth/linked-accounts',
-      };
+    AuthMode.staff => '/v1/auth/linked-accounts',
+    AuthMode.portal => '/v1/portal/auth/linked-accounts',
+  };
 
   String get profilePath => switch (this) {
-        AuthMode.staff => '/v1/auth/profile',
-        AuthMode.portal => '/v1/portal/auth/profile',
-      };
+    AuthMode.staff => '/v1/auth/profile',
+    AuthMode.portal => '/v1/portal/auth/profile',
+  };
 
   String get oauthGooglePath => switch (this) {
-        AuthMode.staff => '/v1/auth/google',
-        AuthMode.portal => '/v1/portal/auth/google',
-      };
+    AuthMode.staff => '/v1/auth/google',
+    AuthMode.portal => '/v1/portal/auth/google',
+  };
 
   String get oauthApplePath => switch (this) {
-        AuthMode.staff => '/v1/auth/apple',
-        AuthMode.portal => '/v1/portal/auth/apple',
-      };
+    AuthMode.staff => '/v1/auth/apple',
+    AuthMode.portal => '/v1/portal/auth/apple',
+  };
 
   String get oauthGovBrPath => switch (this) {
-        AuthMode.staff => '/v1/auth/govbr',
-        AuthMode.portal => '/v1/portal/auth/govbr',
-      };
+    AuthMode.staff => '/v1/auth/govbr',
+    AuthMode.portal => '/v1/portal/auth/govbr',
+  };
 
   /// Branding do tenant (portal — rota detectada na VPS).
   String get brandingPath => '/v1/portal/branding';

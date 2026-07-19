@@ -57,11 +57,7 @@ void main() {
             'kind': 'aguardando_cidadao',
             'created_at': '2026-07-18T14:00:00Z',
           },
-          {
-            'id': 'h3',
-            'kind': 'internal_note',
-            'title': 'Nota interna',
-          },
+          {'id': 'h3', 'kind': 'internal_note', 'title': 'Nota interna'},
         ],
         'attachments': [
           {
@@ -187,8 +183,9 @@ void main() {
       expect(detail.history, hasLength(2));
       expect(detail.history.first.title, 'Solicitação recebida');
       expect(
-        detail.history.first.createdAt!
-            .isBefore(detail.history.last.createdAt!),
+        detail.history.first.createdAt!.isBefore(
+          detail.history.last.createdAt!,
+        ),
         isTrue,
       );
     });
@@ -261,7 +258,9 @@ void main() {
 
   group('UserMessages', () {
     test('não expõe códigos técnicos', () {
-      final msg = UserMessages.fromError(Exception('401 Unauthenticated stack'));
+      final msg = UserMessages.fromError(
+        Exception('401 Unauthenticated stack'),
+      );
       expect(msg.contains('401'), isFalse);
       expect(msg.toLowerCase().contains('exception'), isFalse);
       expect(
@@ -291,8 +290,9 @@ void main() {
       expect(find.text('Pode confirmar o endereço?'), findsOneWidget);
     });
 
-    testWidgets('histórico e conversa sem overflow em 360dp scale 1.5',
-        (tester) async {
+    testWidgets('histórico e conversa sem overflow em 360dp scale 1.5', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(360, 900));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -364,8 +364,9 @@ void main() {
       expect(find.text('Como foi o atendimento?'), findsOneWidget);
     });
 
-    testWidgets('avaliação não duplica envio sem autorização de edição',
-        (tester) async {
+    testWidgets('avaliação não duplica envio sem autorização de edição', (
+      tester,
+    ) async {
       var submits = 0;
       await tester.pumpWidget(
         MaterialApp(

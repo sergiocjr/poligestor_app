@@ -5,11 +5,7 @@ import 'app_states.dart';
 
 /// Compatibilidade com telas legadas — usa estados amigáveis.
 class ErrorView extends StatelessWidget {
-  const ErrorView({
-    super.key,
-    required this.message,
-    this.onRetry,
-  });
+  const ErrorView({super.key, required this.message, this.onRetry});
 
   final String message;
   final VoidCallback? onRetry;

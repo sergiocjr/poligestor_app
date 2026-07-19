@@ -11,10 +11,7 @@ import '../data/virtual_team_repository.dart';
 import 'widgets/virtual_team_widgets.dart';
 
 class _DashBundle {
-  const _DashBundle({
-    required this.root,
-    required this.alerts,
-  });
+  const _DashBundle({required this.root, required this.alerts});
 
   final VtTeamRoot root;
   final List<VtAlert> alerts;
@@ -49,10 +46,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
 
   Future<_DashBundle> _load() async {
     final repo = context.read<VirtualTeamRepository>();
-    final results = await Future.wait([
-      repo.root(),
-      repo.alerts(),
-    ]);
+    final results = await Future.wait([repo.root(), repo.alerts()]);
     return _DashBundle(
       root: results[0] as VtTeamRoot,
       alerts: (results[1] as VtPagedList<VtAlert>).items,
@@ -112,8 +106,9 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
           final data = snap.data!;
           final root = data.root;
           final dash = root.dashboard;
-          final openAlerts =
-              data.alerts.where((a) => a.status == 'open').toList();
+          final openAlerts = data.alerts
+              .where((a) => a.status == 'open')
+              .toList();
 
           return RefreshIndicator(
             onRefresh: _refresh,
@@ -141,21 +136,19 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                   Text(
                     'Alertas abertos',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   for (final a in openAlerts.take(3))
                     Card(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .errorContainer
-                          .withValues(alpha: 0.28),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.errorContainer.withValues(alpha: 0.28),
                       child: ListTile(
                         leading: const Icon(Icons.warning_amber_rounded),
                         title: Text(a.title),
                         subtitle: Text(a.body, maxLines: 2),
-                        onTap: () =>
-                            context.push('/home/virtual-team/alerts'),
+                        onTap: () => context.push('/home/virtual-team/alerts'),
                       ),
                     ),
                 ],
@@ -163,8 +156,8 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                 Text(
                   'Operação',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 Card(
                   child: Column(
@@ -173,15 +166,13 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                         icon: Icons.groups_outlined,
                         title: 'Agentes',
                         subtitle: '${root.agentsState.length} no plantão',
-                        onTap: () =>
-                            context.push('/home/virtual-team/agents'),
+                        onTap: () => context.push('/home/virtual-team/agents'),
                       ),
                       VtNavTile(
                         icon: Icons.task_alt_outlined,
                         title: 'Tarefas',
                         subtitle: 'Fila e status',
-                        onTap: () =>
-                            context.push('/home/virtual-team/tasks'),
+                        onTap: () => context.push('/home/virtual-team/tasks'),
                       ),
                       VtNavTile(
                         icon: Icons.play_circle_outline,
@@ -208,8 +199,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                         icon: Icons.queue_outlined,
                         title: 'Fila',
                         subtitle: 'Itens aguardando',
-                        onTap: () =>
-                            context.push('/home/virtual-team/queue'),
+                        onTap: () => context.push('/home/virtual-team/queue'),
                       ),
                     ],
                   ),
@@ -218,8 +208,8 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                 Text(
                   'Inteligência operacional',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 Card(
                   child: Column(
@@ -228,22 +218,19 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                         icon: Icons.insights_outlined,
                         title: 'Métricas',
                         subtitle: 'KPIs detalhados',
-                        onTap: () =>
-                            context.push('/home/virtual-team/metrics'),
+                        onTap: () => context.push('/home/virtual-team/metrics'),
                       ),
                       VtNavTile(
                         icon: Icons.warning_amber_rounded,
                         title: 'Alertas',
                         subtitle: '${openAlerts.length} abertos',
-                        onTap: () =>
-                            context.push('/home/virtual-team/alerts'),
+                        onTap: () => context.push('/home/virtual-team/alerts'),
                       ),
                       VtNavTile(
                         icon: Icons.memory_outlined,
                         title: 'Memória',
                         subtitle: 'Contexto persistido',
-                        onTap: () =>
-                            context.push('/home/virtual-team/memory'),
+                        onTap: () => context.push('/home/virtual-team/memory'),
                       ),
                       VtNavTile(
                         icon: Icons.school_outlined,
@@ -256,8 +243,7 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                         icon: Icons.event_note_outlined,
                         title: 'Eventos',
                         subtitle: 'Eventos brutos da operação',
-                        onTap: () =>
-                            context.push('/home/virtual-team/events'),
+                        onTap: () => context.push('/home/virtual-team/events'),
                       ),
                     ],
                   ),
@@ -266,8 +252,8 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                 Text(
                   'Governança',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 Card(
                   child: Column(
@@ -276,15 +262,13 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                         icon: Icons.fact_check_outlined,
                         title: 'Auditoria',
                         subtitle: 'Decisões e aprovações',
-                        onTap: () =>
-                            context.push('/home/virtual-team/audit'),
+                        onTap: () => context.push('/home/virtual-team/audit'),
                       ),
                       VtNavTile(
                         icon: Icons.article_outlined,
                         title: 'Logs',
                         subtitle: 'Trilha técnica',
-                        onTap: () =>
-                            context.push('/home/virtual-team/logs'),
+                        onTap: () => context.push('/home/virtual-team/logs'),
                       ),
                     ],
                   ),
@@ -294,8 +278,8 @@ class _VirtualTeamDashboardPageState extends State<VirtualTeamDashboardPage> {
                   Text(
                     'Hand-offs recentes',
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                   for (final h in root.recentHandoffs.take(5))
                     ListTile(

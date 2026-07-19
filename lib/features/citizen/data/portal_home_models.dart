@@ -128,10 +128,11 @@ class PortalHomeAssistant {
 
   factory PortalHomeAssistant.fromJson(Map<String, dynamic> json) {
     return PortalHomeAssistant(
-      message: (json['message'] ??
-              json['prompt'] ??
-              'Como podemos ajudar você hoje?')
-          .toString(),
+      message:
+          (json['message'] ??
+                  json['prompt'] ??
+                  'Como podemos ajudar você hoje?')
+              .toString(),
     );
   }
 }
@@ -179,18 +180,18 @@ class PortalHomeData {
             ? Map<String, dynamic>.from(summaryRaw)
             : <String, dynamic>{},
       ),
-      quickActions: asMapList(json['quick_actions'])
-          .map(PortalQuickAction.fromJson)
-          .toList(),
-      recentProtocols: asMapList(json['recent_protocols'])
-          .map(_protocolFromHomeJson)
-          .toList(),
-      appointments: asMapList(json['appointments'])
-          .map(AppointmentItem.fromJson)
-          .toList(),
-      notifications: asMapList(json['notifications'])
-          .map(AppNotification.fromJson)
-          .toList(),
+      quickActions: asMapList(
+        json['quick_actions'],
+      ).map(PortalQuickAction.fromJson).toList(),
+      recentProtocols: asMapList(
+        json['recent_protocols'],
+      ).map(_protocolFromHomeJson).toList(),
+      appointments: asMapList(
+        json['appointments'],
+      ).map(AppointmentItem.fromJson).toList(),
+      notifications: asMapList(
+        json['notifications'],
+      ).map(AppNotification.fromJson).toList(),
       assistant: PortalHomeAssistant.fromJson(
         assistantRaw is Map
             ? Map<String, dynamic>.from(assistantRaw)
@@ -200,12 +201,14 @@ class PortalHomeData {
   }
 
   static ProtocolSummary _protocolFromHomeJson(Map<String, dynamic> json) {
-    final updated = json['ultima_atualizacao'] ??
+    final updated =
+        json['ultima_atualizacao'] ??
         json['updated_at'] ??
         json['last_updated_at'] ??
         json['created_at'];
     final unread = () {
-      final v = json['unread_count'] ??
+      final v =
+          json['unread_count'] ??
           json['mensagens_nao_lidas'] ??
           json['unread_messages'];
       if (v is int) return v;
@@ -221,8 +224,9 @@ class PortalHomeData {
     }
     return ProtocolSummary(
       id: json['id'],
-      title: (json['titulo'] ?? json['title'] ?? json['subject'] ?? 'Solicitação')
-          .toString(),
+      title:
+          (json['titulo'] ?? json['title'] ?? json['subject'] ?? 'Solicitação')
+              .toString(),
       number: (json['protocolo'] ?? json['number'] ?? json['numero'])
           ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
@@ -232,12 +236,14 @@ class PortalHomeData {
       description: json['description']?.toString(),
       unreadCount: unread,
       hasUnread: unread > 0 || json['has_new_message'] == true,
-      lastMessagePreview: (json['last_message_preview'] ??
-              json['ultima_resposta'] ??
-              json['last_public_message'] ??
-              json['preview'])
-          ?.toString(),
-      awaitingCitizen: (json['awaiting_citizen'] == true) ||
+      lastMessagePreview:
+          (json['last_message_preview'] ??
+                  json['ultima_resposta'] ??
+                  json['last_public_message'] ??
+                  json['preview'])
+              ?.toString(),
+      awaitingCitizen:
+          (json['awaiting_citizen'] == true) ||
           (json['aguardando_cidadao'] == true) ||
           (json['status']?.toString() == 'aguardando_cidadao'),
     );

@@ -30,8 +30,9 @@ class ConfirmationShortcuts extends StatelessWidget {
               avatar: const Icon(Icons.check_rounded, size: 18),
               label: const Text('Confirmar'),
               onPressed: enabled ? onConfirm : null,
-              backgroundColor:
-                  const Color(AppConfig.primaryTeal).withValues(alpha: 0.12),
+              backgroundColor: const Color(
+                AppConfig.primaryTeal,
+              ).withValues(alpha: 0.12),
             ),
             ActionChip(
               key: const Key('shortcut-correct'),

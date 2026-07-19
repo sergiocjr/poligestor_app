@@ -52,11 +52,7 @@ class _SkeletonBoxState extends State<SkeletonBox>
             gradient: LinearGradient(
               begin: Alignment(-1 + _ctrl.value * 2, 0),
               end: Alignment((-1 + _ctrl.value * 2) + 1, 0),
-              colors: [
-                base,
-                Colors.white.withValues(alpha: 0.85),
-                base,
-              ],
+              colors: [base, Colors.white.withValues(alpha: 0.85), base],
             ),
           ),
         );
@@ -158,12 +154,7 @@ class AppEmptyState extends StatelessWidget {
 }
 
 class AppErrorState extends StatelessWidget {
-  const AppErrorState({
-    super.key,
-    this.error,
-    this.message,
-    this.onRetry,
-  });
+  const AppErrorState({super.key, this.error, this.message, this.onRetry});
 
   final Object? error;
   final String? message;
@@ -221,9 +212,7 @@ class SoftNotice extends StatelessWidget {
         decoration: BoxDecoration(
           color: scheme.secondary.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: scheme.secondary.withValues(alpha: 0.12),
-          ),
+          border: Border.all(color: scheme.secondary.withValues(alpha: 0.12)),
         ),
         child: Row(
           children: [
@@ -232,9 +221,9 @@ class SoftNotice extends StatelessWidget {
             Expanded(
               child: Text(
                 message,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      height: 1.35,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium?.copyWith(height: 1.35),
               ),
             ),
           ],
@@ -260,7 +249,9 @@ class FadeSlideIn extends StatelessWidget {
   Widget build(BuildContext context) {
     return TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: 1),
-      duration: Duration(milliseconds: 450 + delay.inMilliseconds.clamp(0, 400)),
+      duration: Duration(
+        milliseconds: 450 + delay.inMilliseconds.clamp(0, 400),
+      ),
       curve: Curves.easeOutCubic,
       builder: (context, value, child) {
         return Opacity(

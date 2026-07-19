@@ -111,7 +111,8 @@ class _BriefingsScopeViewState extends State<_BriefingsScopeView> {
                 ),
               if (data.bullets.isEmpty)
                 AppEmptyState(
-                  message: data.message ??
+                  message:
+                      data.message ??
                       'Nenhum resumo persistido ainda para este período.',
                   icon: Icons.menu_book_outlined,
                 )

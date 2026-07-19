@@ -58,8 +58,9 @@ class ChatComposer extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: 'Escreva sua mensagem...',
                         filled: true,
-                        fillColor: scheme.surfaceContainerHighest
-                            .withValues(alpha: 0.55),
+                        fillColor: scheme.surfaceContainerHighest.withValues(
+                          alpha: 0.55,
+                        ),
                         contentPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 12,
@@ -116,8 +117,7 @@ class ChatComposer extends StatelessWidget {
                   leading: const Icon(Icons.image_outlined),
                   title: const Text('Imagem'),
                   subtitle: const Text('Em breve'),
-                  onTap: () =>
-                      Navigator.pop(context, ChatAttachmentKind.image),
+                  onTap: () => Navigator.pop(context, ChatAttachmentKind.image),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
@@ -137,8 +137,7 @@ class ChatComposer extends StatelessWidget {
                   leading: const Icon(Icons.mic_none_rounded),
                   title: const Text('Áudio'),
                   subtitle: const Text('Em breve'),
-                  onTap: () =>
-                      Navigator.pop(context, ChatAttachmentKind.audio),
+                  onTap: () => Navigator.pop(context, ChatAttachmentKind.audio),
                 ),
               ],
             ),
@@ -163,10 +162,6 @@ class _AttachButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPressed,
-      tooltip: tooltip,
-      icon: Icon(icon),
-    );
+    return IconButton(onPressed: onPressed, tooltip: tooltip, icon: Icon(icon));
   }
 }

@@ -28,12 +28,12 @@ class _IntelligenceTrendsPageState extends State<IntelligenceTrendsPage> {
 
   Future<IntelligenceTrendsData> _load() =>
       context.read<IntelligenceRepository>().trends(
-            filter: IntelligenceFilter(
-              period: _period,
-              district: _district,
-              category: _category,
-            ),
-          );
+        filter: IntelligenceFilter(
+          period: _period,
+          district: _district,
+          category: _category,
+        ),
+      );
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -94,7 +94,9 @@ class _IntelligenceTrendsPageState extends State<IntelligenceTrendsPage> {
               spacing: 8,
               children: [
                 ActionChip(
-                  label: Text(_district == null ? 'Bairro' : 'Bairro: $_district'),
+                  label: Text(
+                    _district == null ? 'Bairro' : 'Bairro: $_district',
+                  ),
                   onPressed: () => _editTextFilter(
                     title: 'Filtrar por bairro',
                     current: _district,
@@ -149,7 +151,9 @@ class _IntelligenceTrendsPageState extends State<IntelligenceTrendsPage> {
                       if (data.fromCache && data.cacheAgeLabel != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: IntelStaleNotice(ageLabel: data.cacheAgeLabel!),
+                          child: IntelStaleNotice(
+                            ageLabel: data.cacheAgeLabel!,
+                          ),
                         ),
                       Card(
                         child: ListTile(
@@ -164,11 +168,20 @@ class _IntelligenceTrendsPageState extends State<IntelligenceTrendsPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      TrendSeriesCard(title: 'Histórico diário', points: data.daily),
+                      TrendSeriesCard(
+                        title: 'Histórico diário',
+                        points: data.daily,
+                      ),
                       const SizedBox(height: 8),
-                      TrendSeriesCard(title: 'Evolução semanal', points: data.weekly),
+                      TrendSeriesCard(
+                        title: 'Evolução semanal',
+                        points: data.weekly,
+                      ),
                       const SizedBox(height: 8),
-                      TrendSeriesCard(title: 'Evolução mensal', points: data.monthly),
+                      TrendSeriesCard(
+                        title: 'Evolução mensal',
+                        points: data.monthly,
+                      ),
                     ],
                   ),
                 );

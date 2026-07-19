@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../features/identity/data/identity_models.dart';
@@ -16,16 +16,17 @@ class AppTheme {
     final primary = _parseColor(branding?.primaryColor) ?? _teal;
     final secondary = _parseColor(branding?.secondaryColor) ?? _navy;
 
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: secondary,
-      primary: primary,
-      secondary: secondary,
-      surface: const Color(0xFFF7FAFB),
-      brightness: Brightness.light,
-    ).copyWith(
-      surfaceContainerHighest: const Color(0xFFEEF4F6),
-      outlineVariant: const Color(0xFFD7E2E6),
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: secondary,
+          primary: primary,
+          secondary: secondary,
+          surface: const Color(0xFFF7FAFB),
+          brightness: Brightness.light,
+        ).copyWith(
+          surfaceContainerHighest: const Color(0xFFEEF4F6),
+          outlineVariant: const Color(0xFFD7E2E6),
+        );
 
     final base = ThemeData(
       useMaterial3: true,
@@ -97,8 +98,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -121,10 +124,7 @@ class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          textStyle: const TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
-          ),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

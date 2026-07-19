@@ -38,34 +38,37 @@ class AppNotification {
   factory AppNotification.fromJson(Map<String, dynamic> json) {
     final readRaw = json['read_at'] ?? json['readAt'];
     final createdRaw = json['created_at'] ?? json['createdAt'];
-    final type = (json['type'] ??
-            json['kind'] ??
-            json['categoria'] ??
-            json['event'] ??
-            '')
-        .toString()
-        .toLowerCase();
+    final type =
+        (json['type'] ??
+                json['kind'] ??
+                json['categoria'] ??
+                json['event'] ??
+                '')
+            .toString()
+            .toLowerCase();
     final data = json['data'];
-    String? protocolId = (json['protocol_id'] ??
-            json['protocolo_id'] ??
-            json['request_id'] ??
-            json['solicitacao_id'])
-        ?.toString();
-    String? protocolNumber = (json['protocol_number'] ??
-            json['number'] ??
-            json['numero'] ??
-            json['protocolo'])
-        ?.toString();
+    String? protocolId =
+        (json['protocol_id'] ??
+                json['protocolo_id'] ??
+                json['request_id'] ??
+                json['solicitacao_id'])
+            ?.toString();
+    String? protocolNumber =
+        (json['protocol_number'] ??
+                json['number'] ??
+                json['numero'] ??
+                json['protocolo'])
+            ?.toString();
     if (data is Map) {
-      protocolId ??= (data['protocol_id'] ??
-              data['protocolo_id'] ??
-              data['request_id'])
-          ?.toString();
-      protocolNumber ??= (data['protocol_number'] ??
-              data['number'] ??
-              data['numero'] ??
-              data['protocolo'])
-          ?.toString();
+      protocolId ??=
+          (data['protocol_id'] ?? data['protocolo_id'] ?? data['request_id'])
+              ?.toString();
+      protocolNumber ??=
+          (data['protocol_number'] ??
+                  data['number'] ??
+                  data['numero'] ??
+                  data['protocolo'])
+              ?.toString();
     }
     final link = (json['deep_link'] ?? json['link'] ?? json['url'])?.toString();
 
@@ -82,8 +85,9 @@ class AppNotification {
         body: json['body']?.toString(),
       ),
       readAt: readRaw != null ? DateTime.tryParse(readRaw.toString()) : null,
-      createdAt:
-          createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      createdAt: createdRaw != null
+          ? DateTime.tryParse(createdRaw.toString())
+          : null,
     );
   }
 
@@ -119,64 +123,61 @@ class AppNotification {
       'protocol_message' ||
       'new_reply' ||
       'message' ||
-      'resposta' =>
-        NotificationKind.newReply,
+      'resposta' => NotificationKind.newReply,
       'protocol_information_requested' ||
       'info_request' ||
-      'awaiting_citizen' =>
-        NotificationKind.infoRequest,
+      'awaiting_citizen' => NotificationKind.infoRequest,
       'protocol_status_changed' ||
       'protocol_assignee_changed' ||
       'status_change' ||
-      'status' =>
-        NotificationKind.statusChange,
-      'protocol_resolved' || 'resolved' || 'closed' =>
-        NotificationKind.resolved,
+      'status' => NotificationKind.statusChange,
+      'protocol_resolved' ||
+      'resolved' ||
+      'closed' => NotificationKind.resolved,
       'protocol_rating_available' ||
       'protocol_rating_received' ||
-      'rating' =>
-        NotificationKind.ratingAvailable,
-      'protocol_reopened' || 'protocol_created' =>
-        NotificationKind.statusChange,
+      'rating' => NotificationKind.ratingAvailable,
+      'protocol_reopened' ||
+      'protocol_created' => NotificationKind.statusChange,
       _ => () {
-          final blob = '$t ${title ?? ''} ${body ?? ''}'.toLowerCase();
-          if (blob.contains('avali') || blob.contains('rating')) {
-            return NotificationKind.ratingAvailable;
-          }
-          if (blob.contains('resolv') || blob.contains('encerr')) {
-            return NotificationKind.resolved;
-          }
-          if (blob.contains('informa') || blob.contains('aguardando')) {
-            return NotificationKind.infoRequest;
-          }
-          if (blob.contains('status') || blob.contains('andamento')) {
-            return NotificationKind.statusChange;
-          }
-          if (blob.contains('mensagem') || blob.contains('message')) {
-            return NotificationKind.newReply;
-          }
-          return NotificationKind.generic;
-        }(),
+        final blob = '$t ${title ?? ''} ${body ?? ''}'.toLowerCase();
+        if (blob.contains('avali') || blob.contains('rating')) {
+          return NotificationKind.ratingAvailable;
+        }
+        if (blob.contains('resolv') || blob.contains('encerr')) {
+          return NotificationKind.resolved;
+        }
+        if (blob.contains('informa') || blob.contains('aguardando')) {
+          return NotificationKind.infoRequest;
+        }
+        if (blob.contains('status') || blob.contains('andamento')) {
+          return NotificationKind.statusChange;
+        }
+        if (blob.contains('mensagem') || blob.contains('message')) {
+          return NotificationKind.newReply;
+        }
+        return NotificationKind.generic;
+      }(),
     };
   }
 
   String get kindLabel => switch (kind) {
-        NotificationKind.newReply => 'Nova resposta',
-        NotificationKind.statusChange => 'Mudança de status',
-        NotificationKind.infoRequest => 'Pedido de informação',
-        NotificationKind.resolved => 'Solicitação resolvida',
-        NotificationKind.ratingAvailable => 'Avaliação disponível',
-        NotificationKind.generic => 'Aviso',
-      };
+    NotificationKind.newReply => 'Nova resposta',
+    NotificationKind.statusChange => 'Mudança de status',
+    NotificationKind.infoRequest => 'Pedido de informação',
+    NotificationKind.resolved => 'Solicitação resolvida',
+    NotificationKind.ratingAvailable => 'Avaliação disponível',
+    NotificationKind.generic => 'Aviso',
+  };
 
   IconDataForNotification get kindIcon => switch (kind) {
-        NotificationKind.newReply => IconDataForNotification.chat,
-        NotificationKind.statusChange => IconDataForNotification.status,
-        NotificationKind.infoRequest => IconDataForNotification.help,
-        NotificationKind.resolved => IconDataForNotification.done,
-        NotificationKind.ratingAvailable => IconDataForNotification.star,
-        NotificationKind.generic => IconDataForNotification.bell,
-      };
+    NotificationKind.newReply => IconDataForNotification.chat,
+    NotificationKind.statusChange => IconDataForNotification.status,
+    NotificationKind.infoRequest => IconDataForNotification.help,
+    NotificationKind.resolved => IconDataForNotification.done,
+    NotificationKind.ratingAvailable => IconDataForNotification.star,
+    NotificationKind.generic => IconDataForNotification.bell,
+  };
 }
 
 enum IconDataForNotification { chat, status, help, done, star, bell }
@@ -228,8 +229,8 @@ class NotificationsRepository {
         final list = raw is List
             ? raw
             : (raw is Map && raw['data'] is List)
-                ? raw['data'] as List
-                : const [];
+            ? raw['data'] as List
+            : const [];
         return list
             .whereType<Map>()
             .map((e) => AppNotification.fromJson(Map<String, dynamic>.from(e)))
@@ -247,10 +248,7 @@ class NotificationsRepository {
     );
   }
 
-  Future<void> markRead({
-    required AuthMode mode,
-    required dynamic id,
-  }) async {
+  Future<void> markRead({required AuthMode mode, required dynamic id}) async {
     await _api.postEnvelope<Map<String, dynamic>>(
       mode.notificationReadPath(id),
       data: const {},
@@ -276,7 +274,8 @@ class NotificationsRepository {
         if (raw is num) return raw.toInt();
         if (raw is Map) {
           final map = Map<String, dynamic>.from(raw);
-          final nested = map['unread_count'] ??
+          final nested =
+              map['unread_count'] ??
               map['count'] ??
               (map['data'] is Map
                   ? (map['data'] as Map)['unread_count']

@@ -20,7 +20,11 @@ void main() {
 
   group('IntelligenceFilter', () {
     test('serializes period and generate flag', () {
-      const f = IntelligenceFilter(period: '7d', generate: true, scope: 'daily');
+      const f = IntelligenceFilter(
+        period: '7d',
+        generate: true,
+        scope: 'daily',
+      );
       final q = f.toQuery();
       expect(q['period'], '7d');
       expect(q['generate'], 1);
@@ -167,8 +171,9 @@ void main() {
   });
 
   group('Intelligence widgets', () {
-    testWidgets('InsightCard shows title description priority action',
-        (tester) async {
+    testWidgets('InsightCard shows title description priority action', (
+      tester,
+    ) async {
       final insight = IntelligenceInsight.fromJson({
         'id': 'x',
         'type': 'subject_rising',

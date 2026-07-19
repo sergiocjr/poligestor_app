@@ -6,21 +6,18 @@ import '../../../../core/ux/user_messages.dart';
 import '../../../protocols/data/protocol_models.dart';
 
 IconData historyIcon(IconDataForHistory kind) => switch (kind) {
-      IconDataForHistory.inbox => Icons.inbox_rounded,
-      IconDataForHistory.search => Icons.search_rounded,
-      IconDataForHistory.forward => Icons.forward_to_inbox_rounded,
-      IconDataForHistory.progress => Icons.autorenew_rounded,
-      IconDataForHistory.help => Icons.help_outline_rounded,
-      IconDataForHistory.reply => Icons.mark_chat_read_rounded,
-      IconDataForHistory.done => Icons.check_circle_rounded,
-      IconDataForHistory.dot => Icons.circle,
-    };
+  IconDataForHistory.inbox => Icons.inbox_rounded,
+  IconDataForHistory.search => Icons.search_rounded,
+  IconDataForHistory.forward => Icons.forward_to_inbox_rounded,
+  IconDataForHistory.progress => Icons.autorenew_rounded,
+  IconDataForHistory.help => Icons.help_outline_rounded,
+  IconDataForHistory.reply => Icons.mark_chat_read_rounded,
+  IconDataForHistory.done => Icons.check_circle_rounded,
+  IconDataForHistory.dot => Icons.circle,
+};
 
 class ProtocolAwaitingBanner extends StatelessWidget {
-  const ProtocolAwaitingBanner({
-    super.key,
-    required this.question,
-  });
+  const ProtocolAwaitingBanner({super.key, required this.question});
 
   final String question;
 
@@ -49,8 +46,8 @@ class ProtocolAwaitingBanner extends StatelessWidget {
                   child: Text(
                     'O gabinete precisa de mais informações.',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ],
@@ -58,9 +55,9 @@ class ProtocolAwaitingBanner extends StatelessWidget {
             const SizedBox(height: 10),
             Text(
               question,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    height: 1.35,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(height: 1.35),
             ),
           ],
         ),
@@ -163,8 +160,8 @@ class _HistoryTile extends StatelessWidget {
                   Text(
                     '${dateFmt.format(when)} · ${timeFmt.format(when)}',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant,
-                        ),
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ],
@@ -214,10 +211,7 @@ class ProtocolConversationPanel extends StatelessWidget {
             ),
           )
         else if (errorMessage != null) ...[
-          Text(
-            errorMessage!,
-            style: TextStyle(color: scheme.error),
-          ),
+          Text(errorMessage!, style: TextStyle(color: scheme.error)),
           if (onRetry != null)
             Align(
               alignment: Alignment.centerLeft,
@@ -234,10 +228,7 @@ class ProtocolConversationPanel extends StatelessWidget {
           )
         else
           ...messages.map((m) => _MessageBubble(message: m, dateFmt: dateFmt)),
-        if (composer != null) ...[
-          const SizedBox(height: 8),
-          composer!,
-        ],
+        if (composer != null) ...[const SizedBox(height: 8), composer!],
       ],
     );
   }
@@ -291,8 +282,8 @@ class _MessageBubble extends StatelessWidget {
                           ? (message.authorName ?? 'Gabinete')
                           : (message.authorName ?? 'Você'),
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                   ),
                   if (message.isUnread && message.isFromCabinet)
@@ -331,8 +322,8 @@ class _MessageBubble extends StatelessWidget {
                 Text(
                   dateFmt.format(message.createdAt!.toLocal()),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
+                    color: scheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ],
@@ -439,10 +430,10 @@ class ProtocolAttachmentTile extends StatelessWidget {
                             ? 'Falha no envio'
                             : (attachment.isImage ? 'Imagem' : 'Documento'),
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: failed
-                                  ? scheme.error
-                                  : scheme.onSurfaceVariant,
-                            ),
+                          color: failed
+                              ? scheme.error
+                              : scheme.onSurfaceVariant,
+                        ),
                       ),
                   ],
                 ),
@@ -470,7 +461,9 @@ class ProtocolAttachmentTile extends StatelessWidget {
                 ),
               if (attachment.url != null)
                 IconButton(
-                  tooltip: attachment.isImage ? 'Ver imagem' : 'Abrir documento',
+                  tooltip: attachment.isImage
+                      ? 'Ver imagem'
+                      : 'Abrir documento',
                   visualDensity: VisualDensity.compact,
                   onPressed: () => _open(context),
                   icon: const Icon(Icons.open_in_new_rounded),
@@ -497,7 +490,7 @@ class ProtocolRatingCard extends StatefulWidget {
   final bool canEdit;
   final ProtocolRating? existing;
   final Future<void> Function(int stars, bool resolved, String? comment)
-      onSubmit;
+  onSubmit;
   final bool busy;
 
   @override
@@ -536,8 +529,7 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
     super.dispose();
   }
 
-  bool get _editable =>
-      (widget.canRate && !_sent) || (widget.canEdit && _sent);
+  bool get _editable => (widget.canRate && !_sent) || (widget.canEdit && _sent);
 
   @override
   Widget build(BuildContext context) {
@@ -558,9 +550,9 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
         children: [
           Text(
             'Como foi o atendimento?',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 12),
           Row(
@@ -571,7 +563,9 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
                       ? null
                       : () => setState(() => _stars = i),
                   icon: Icon(
-                    i <= _stars ? Icons.star_rounded : Icons.star_outline_rounded,
+                    i <= _stars
+                        ? Icons.star_rounded
+                        : Icons.star_outline_rounded,
                     color: scheme.primary,
                     size: 32,
                   ),
@@ -582,9 +576,9 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
           const SizedBox(height: 8),
           Text(
             'Seu problema foi resolvido?',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Wrap(
@@ -630,10 +624,8 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
             )
           else
             FilledButton(
-              onPressed: !_editable ||
-                      widget.busy ||
-                      _stars < 1 ||
-                      _resolved == null
+              onPressed:
+                  !_editable || widget.busy || _stars < 1 || _resolved == null
                   ? null
                   : () async {
                       await widget.onSubmit(

@@ -39,32 +39,32 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
     final auth = context.read<AuthController>();
     try {
       await context.read<AccountRepository>().revokeSession(
-            mode: auth.mode,
-            sessionId: s.sessionId,
-          );
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sessão revogada.')),
+        mode: auth.mode,
+        sessionId: s.sessionId,
       );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Sessão revogada.')));
       await _refresh();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(UserMessages.fromError(e))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
     }
   }
 
   Future<void> _revokeAll() async {
     final auth = context.read<AuthController>();
     try {
-      await context
-          .read<AccountRepository>()
-          .revokeAllSessions(mode: auth.mode);
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sessões revogadas.')),
+      await context.read<AccountRepository>().revokeAllSessions(
+        mode: auth.mode,
       );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Sessões revogadas.')));
       await auth.logout();
     } on EndpointUnavailableException catch (e) {
       if (!mounted) return;
@@ -83,9 +83,9 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(UserMessages.fromError(e))),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
     }
   }
 

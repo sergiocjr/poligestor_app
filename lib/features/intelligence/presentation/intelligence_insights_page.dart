@@ -30,9 +30,9 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
 
   Future<IntelligenceInsightsData> _load({bool generate = false}) =>
       context.read<IntelligenceRepository>().insights(
-            filter: IntelligenceFilter(period: _period),
-            generate: generate,
-          );
+        filter: IntelligenceFilter(period: _period),
+        generate: generate,
+      );
 
   Future<void> _refresh() async {
     setState(() => _future = _load(generate: true));
@@ -41,8 +41,7 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title =
-        widget.opportunitiesOnly ? 'Oportunidades' : 'Insights';
+    final title = widget.opportunitiesOnly ? 'Oportunidades' : 'Insights';
     return Scaffold(
       appBar: AppBar(title: Text(title)),
       body: Column(
@@ -100,7 +99,8 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
                       : ListView.separated(
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-                          itemCount: items.length +
+                          itemCount:
+                              items.length +
                               (data.fromCache && data.cacheAgeLabel != null
                                   ? 1
                                   : 0),
@@ -113,8 +113,8 @@ class _IntelligenceInsightsPageState extends State<IntelligenceInsightsPage> {
                                 ageLabel: data.cacheAgeLabel!,
                               );
                             }
-                            final idx = data.fromCache &&
-                                    data.cacheAgeLabel != null
+                            final idx =
+                                data.fromCache && data.cacheAgeLabel != null
                                 ? i - 1
                                 : i;
                             final insight = items[idx];

@@ -10,9 +10,9 @@ class AssistantChatController {
     AssistantRepository? repository,
     FetchConversation? fetchConversation,
     AssistantReplyPresenter? presenter,
-  })  : _repository = repository,
-        _fetchConversation = fetchConversation,
-        presenter = presenter ?? AssistantReplyPresenter() {
+  }) : _repository = repository,
+       _fetchConversation = fetchConversation,
+       presenter = presenter ?? AssistantReplyPresenter() {
     assert(
       repository != null || fetchConversation != null,
       'Informe repository ou fetchConversation',

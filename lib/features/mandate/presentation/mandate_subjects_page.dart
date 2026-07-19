@@ -24,10 +24,9 @@ class _MandateSubjectsPageState extends State<MandateSubjectsPage> {
     _future ??= _load();
   }
 
-  Future<MandateSubjectsData> _load() =>
-      context.read<MandateRepository>().subjects(
-            filter: MandateFilter(period: _period),
-          );
+  Future<MandateSubjectsData> _load() => context
+      .read<MandateRepository>()
+      .subjects(filter: MandateFilter(period: _period));
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -85,8 +84,8 @@ class _MandateSubjectsPageState extends State<MandateSubjectsPage> {
                       final trendLabel = trend == null
                           ? null
                           : trend >= 0
-                              ? 'Variação +${trend.toStringAsFixed(0)}%'
-                              : 'Variação ${trend.toStringAsFixed(0)}%';
+                          ? 'Variação +${trend.toStringAsFixed(0)}%'
+                          : 'Variação ${trend.toStringAsFixed(0)}%';
                       return MandateRankingTile(
                         rank: i + 1,
                         title: s.label,

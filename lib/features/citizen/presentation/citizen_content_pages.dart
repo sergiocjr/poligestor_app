@@ -74,9 +74,9 @@ class CitizenNewsDetailPage extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             item.title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
           Text(
@@ -126,9 +126,9 @@ class CitizenNeighborhoodPage extends StatelessWidget {
         children: [
           Text(
             bairro.isEmpty ? 'Seu bairro' : bairro,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           if (cidade != null && cidade.isNotEmpty) ...[
             const SizedBox(height: 4),
@@ -194,9 +194,7 @@ class SoftEmptyNotice extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Text(message, style: const TextStyle(height: 1.4)),
     );
@@ -229,9 +227,9 @@ class CitizenAppointmentDetailPage extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           if (when != null) ...[
             const SizedBox(height: 12),

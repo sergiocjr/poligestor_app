@@ -26,8 +26,8 @@ class _MandateAgendaPageState extends State<MandateAgendaPage> {
 
   Future<MandateAgendaData> _load() {
     return context.read<MandateRepository>().agenda(
-          filter: MandateFilter(type: _type),
-        );
+      filter: MandateFilter(type: _type),
+    );
   }
 
   Future<void> _refresh() async {
@@ -63,7 +63,10 @@ class _MandateAgendaPageState extends State<MandateAgendaPage> {
               if (types.isNotEmpty)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: Row(
                     children: [
                       FilterChip(

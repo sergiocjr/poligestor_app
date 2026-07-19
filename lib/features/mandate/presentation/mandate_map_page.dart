@@ -25,8 +25,8 @@ class _MandateMapPageState extends State<MandateMapPage> {
   }
 
   Future<MandateMapData> _load() => context.read<MandateRepository>().map(
-        filter: MandateFilter(period: _period),
-      );
+    filter: MandateFilter(period: _period),
+  );
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -94,10 +94,9 @@ class _MandateMapPageState extends State<MandateMapPage> {
                       return Card(
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withValues(alpha: intensity),
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.primary.withValues(alpha: intensity),
                             child: Text(
                               '${n.total}',
                               style: const TextStyle(

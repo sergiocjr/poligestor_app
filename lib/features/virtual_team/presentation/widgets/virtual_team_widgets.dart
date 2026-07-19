@@ -20,36 +20,16 @@ class VtKpiGrid extends StatelessWidget {
         '${dashboard.efficiencyPct.toStringAsFixed(0)}%',
         Icons.speed_outlined,
       ),
-      (
-        'Tarefas abertas',
-        '${dashboard.tasksOpen}',
-        Icons.task_alt_outlined,
-      ),
-      (
-        'Fila',
-        '${dashboard.queueDepth}',
-        Icons.queue_outlined,
-      ),
+      ('Tarefas abertas', '${dashboard.tasksOpen}', Icons.task_alt_outlined),
+      ('Fila', '${dashboard.queueDepth}', Icons.queue_outlined),
       (
         'Execuções 24h',
         '${dashboard.executions24h}',
         Icons.play_circle_outline,
       ),
-      (
-        'Hand-offs 24h',
-        '${dashboard.handoffs24h}',
-        Icons.swap_horiz_outlined,
-      ),
-      (
-        'Auditorias 24h',
-        '${dashboard.audits24h}',
-        Icons.fact_check_outlined,
-      ),
-      (
-        'Aprendizados',
-        '${dashboard.learningsCurrent}',
-        Icons.school_outlined,
-      ),
+      ('Hand-offs 24h', '${dashboard.handoffs24h}', Icons.swap_horiz_outlined),
+      ('Auditorias 24h', '${dashboard.audits24h}', Icons.fact_check_outlined),
+      ('Aprendizados', '${dashboard.learningsCurrent}', Icons.school_outlined),
     ];
 
     return LayoutBuilder(
@@ -76,21 +56,19 @@ class VtKpiGrid extends StatelessWidget {
                         const Spacer(),
                         Text(
                           value,
-                          style:
-                              Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                  ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w800),
                         ),
                         Text(
                           label,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -162,9 +140,7 @@ class VtAgentCard extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         leading: CircleAvatar(
-          child: Text(
-            agent.name.isEmpty ? '?' : agent.name[0].toUpperCase(),
-          ),
+          child: Text(agent.name.isEmpty ? '?' : agent.name[0].toUpperCase()),
         ),
         title: Text(agent.name),
         subtitle: Text(

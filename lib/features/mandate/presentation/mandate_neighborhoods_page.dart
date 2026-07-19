@@ -25,10 +25,9 @@ class _MandateNeighborhoodsPageState extends State<MandateNeighborhoodsPage> {
     _future ??= _load();
   }
 
-  Future<MandateNeighborhoodsData> _load() =>
-      context.read<MandateRepository>().neighborhoods(
-            filter: MandateFilter(period: _period),
-          );
+  Future<MandateNeighborhoodsData> _load() => context
+      .read<MandateRepository>()
+      .neighborhoods(filter: MandateFilter(period: _period));
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -144,9 +143,9 @@ class _DistrictDetailPage extends StatelessWidget {
           const SizedBox(height: 16),
           Text(
             'Principais assuntos',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 8),
           if (stat.topCategories.isEmpty)

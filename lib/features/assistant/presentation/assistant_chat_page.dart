@@ -267,7 +267,9 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
     _scrollToEnd();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$label — interface pronta, envio ainda não ativo.')),
+      SnackBar(
+        content: Text('$label — interface pronta, envio ainda não ativo.'),
+      ),
     );
   }
 
@@ -371,8 +373,10 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
               borderRadius: BorderRadius.circular(12),
               color: Colors.white,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: Row(
                   children: [
                     Expanded(
@@ -403,7 +407,9 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
   Widget build(BuildContext context) {
     final busy = _chat == null || chat.loading || _clearing;
     final composerEnabled =
-        !busy && !_typing && (chat.loadError == null || chat.messages.isNotEmpty);
+        !busy &&
+        !_typing &&
+        (chat.loadError == null || chat.messages.isNotEmpty);
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4F7F8),

@@ -4,13 +4,14 @@ enum AppEnvironment { development, production }
 class AppConfig {
   AppConfig._();
 
-  static const String _envName =
-      String.fromEnvironment('APP_ENV', defaultValue: 'production');
+  static const String _envName = String.fromEnvironment(
+    'APP_ENV',
+    defaultValue: 'production',
+  );
 
-  static AppEnvironment get environment =>
-      _envName == 'development'
-          ? AppEnvironment.development
-          : AppEnvironment.production;
+  static AppEnvironment get environment => _envName == 'development'
+      ? AppEnvironment.development
+      : AppEnvironment.production;
 
   /// Produção: domínio HTTPS público.
   /// Dev no emulador Android apontando para API neste PC: use `10.0.2.2`
@@ -61,8 +62,8 @@ class AppConfig {
     final scheme = reverbTls ? 'wss' : 'ws';
     final portSuffix =
         (reverbTls && reverbPort == 443) || (!reverbTls && reverbPort == 80)
-            ? ''
-            : ':$reverbPort';
+        ? ''
+        : ':$reverbPort';
     return '$scheme://$publicHost$portSuffix/app/$reverbAppKey';
   }
 

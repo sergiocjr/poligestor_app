@@ -6,10 +6,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../config.dart';
 
-typedef ChannelAuthorizer = Future<String> Function(
-  String socketId,
-  String channelName,
-);
+typedef ChannelAuthorizer =
+    Future<String> Function(String socketId, String channelName);
 
 class ProtocolRealtimeEvent {
   const ProtocolRealtimeEvent({
@@ -33,15 +31,14 @@ class ProtocolRealtimeEvent {
         ? Map<String, dynamic>.from(json['data'] as Map)
         : <String, dynamic>{};
     final type = (json['type'] ?? data['type'] ?? '').toString();
-    final protocolId =
-        (json['protocol_id'] ?? data['protocol_id'] ?? '').toString();
+    final protocolId = (json['protocol_id'] ?? data['protocol_id'] ?? '')
+        .toString();
     final occurredRaw = json['occurred_at']?.toString();
     return ProtocolRealtimeEvent(
       type: type,
       protocolId: protocolId,
       tenantId: json['tenant_id']?.toString(),
-      occurredAt:
-          occurredRaw != null ? DateTime.tryParse(occurredRaw) : null,
+      occurredAt: occurredRaw != null ? DateTime.tryParse(occurredRaw) : null,
       data: data,
       raw: json,
     );
@@ -210,7 +207,8 @@ class PusherReverbClient {
         return;
       }
 
-      final isRealtime = event == 'protocol.realtime' ||
+      final isRealtime =
+          event == 'protocol.realtime' ||
           event == '.protocol.realtime' ||
           event.endsWith('protocol.realtime');
       if (!isRealtime) return;
@@ -257,10 +255,7 @@ class PusherReverbClient {
       final auth = await authorize(socketId, channelName);
       _send({
         'event': 'pusher:subscribe',
-        'data': {
-          'channel': channelName,
-          'auth': auth,
-        },
+        'data': {'channel': channelName, 'auth': auth},
       });
       _subscribedChannels.add(channelName);
       if (kDebugMode) {
@@ -285,13 +280,10 @@ class PusherReverbClient {
 
   void _armActivityTimer() {
     _activityTimer?.cancel();
-    _activityTimer = Timer(
-      Duration(seconds: _activityTimeoutSec + 5),
-      () {
-        if (kDebugMode) debugPrint('[Reverb] activity timeout');
-        _handleDisconnect();
-      },
-    );
+    _activityTimer = Timer(Duration(seconds: _activityTimeoutSec + 5), () {
+      if (kDebugMode) debugPrint('[Reverb] activity timeout');
+      _handleDisconnect();
+    });
   }
 
   void _handleDisconnect() {

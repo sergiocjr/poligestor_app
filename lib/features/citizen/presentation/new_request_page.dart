@@ -208,9 +208,7 @@ class _NewRequestPageState extends State<NewRequestPage> {
                         )
                       : const Icon(Icons.my_location_rounded),
                   label: Text(
-                    _locLabel == null
-                        ? 'Enviar localização'
-                        : _locLabel!,
+                    _locLabel == null ? 'Enviar localização' : _locLabel!,
                   ),
                 ),
                 if (_error != null) ...[

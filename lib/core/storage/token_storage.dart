@@ -7,14 +7,13 @@ import '../auth/auth_mode.dart';
 
 /// Tokens sensíveis no secure storage; meta de sessão e perfil cacheado no SharedPreferences.
 class TokenStorage {
-  TokenStorage({
-    FlutterSecureStorage? secureStorage,
-    SharedPreferences? prefs,
-  })  : _secure = secureStorage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-            ),
-        _prefs = prefs;
+  TokenStorage({FlutterSecureStorage? secureStorage, SharedPreferences? prefs})
+    : _secure =
+          secureStorage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+          ),
+      _prefs = prefs;
 
   static const _kAccess = 'access_token';
   static const _kRefresh = 'refresh_token';
@@ -100,5 +99,13 @@ class TokenStorage {
     final prefs = await _preferences();
     await prefs.remove(_kMode);
     await prefs.remove(_kUser);
+  }
+
+  /// Troca de organização: remove tokens, modo, usuário, tenant e e-mail.
+  Future<void> clearSessionAndTenant() async {
+    await clearAll();
+    final prefs = await _preferences();
+    await prefs.remove(_kTenant);
+    await prefs.remove(_kEmail);
   }
 }

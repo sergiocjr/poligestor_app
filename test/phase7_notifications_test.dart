@@ -47,10 +47,7 @@ void main() {
       final p = PushPayload.fromMap({
         'type': 'protocol_message',
         'title': 'Nova mensagem',
-        'data': {
-          'protocol_id': 'abc-1',
-          'protocol_number': 'PG-2026-1',
-        },
+        'data': {'protocol_id': 'abc-1', 'protocol_number': 'PG-2026-1'},
       });
       expect(p.type, PushEventType.protocolMessage);
       expect(p.protocolId, 'abc-1');
@@ -76,8 +73,10 @@ void main() {
     });
 
     test('protocol_resolved', () {
-      final p =
-          PushPayload.fromMap({'type': 'protocol_resolved', 'protocol_id': '1'});
+      final p = PushPayload.fromMap({
+        'type': 'protocol_resolved',
+        'protocol_id': '1',
+      });
       expect(p.type, PushEventType.protocolResolved);
     });
 
@@ -172,9 +171,7 @@ void main() {
 
     test('payload sem protocolo válido retorna null no detalhe', () {
       final t = router.resolve(
-        PushPayload.fromMap({
-          'type': 'protocol_message',
-        }),
+        PushPayload.fromMap({'type': 'protocol_message'}),
       );
       expect(t, isNull);
     });

@@ -24,7 +24,8 @@ class IdentityDeepLink {
     if (uri.pathSegments.isNotEmpty) {
       return uri.pathSegments.first.trim().toLowerCase();
     }
-    final q = uri.queryParameters['slug'] ??
+    final q =
+        uri.queryParameters['slug'] ??
         uri.queryParameters['code'] ??
         uri.queryParameters['tenant'];
     return q?.trim().toLowerCase();

@@ -81,10 +81,11 @@ void main() {
         'finished': false,
       });
 
-      expect(
-        conversation.messages.map((m) => m.text).toList(),
-        ['primeira', 'segunda', 'terceira'],
-      );
+      expect(conversation.messages.map((m) => m.text).toList(), [
+        'primeira',
+        'segunda',
+        'terceira',
+      ]);
       expect(conversation.firstSeq, 1);
       expect(conversation.lastSeq, 3);
     });

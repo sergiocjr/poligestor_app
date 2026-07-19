@@ -44,10 +44,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final tenant = context.read<TenantController>();
     try {
       await context.read<AccountRepository>().forgotPassword(
-            mode: AuthMode.portal,
-            tenantSlug: tenant.organization?.slug ?? '',
-            email: _email.text,
-          );
+        mode: AuthMode.portal,
+        tenantSlug: tenant.organization?.slug ?? '',
+        email: _email.text,
+      );
       if (!mounted) return;
       setState(() {
         _step = 1;
@@ -73,12 +73,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     final tenant = context.read<TenantController>();
     try {
       await context.read<AccountRepository>().resetPassword(
-            mode: AuthMode.portal,
-            tenantSlug: tenant.organization?.slug ?? '',
-            email: _email.text,
-            code: _code.text,
-            password: _password.text,
-          );
+        mode: AuthMode.portal,
+        tenantSlug: tenant.organization?.slug ?? '',
+        email: _email.text,
+        code: _code.text,
+        password: _password.text,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Senha atualizada. Faça login.')),

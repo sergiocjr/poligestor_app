@@ -59,15 +59,21 @@ void main() {
   group('UserMessages.forProtocolError', () {
     test('nunca usa mensagem genérica de sincronização', () {
       expect(
-        UserMessages.forProtocolError(ApiException(message: 'x', statusCode: 404)),
+        UserMessages.forProtocolError(
+          ApiException(message: 'x', statusCode: 404),
+        ),
         UserMessages.protocolNotFound,
       );
       expect(
-        UserMessages.forProtocolError(ApiException(message: 'x', statusCode: 403)),
+        UserMessages.forProtocolError(
+          ApiException(message: 'x', statusCode: 403),
+        ),
         UserMessages.protocolNoAccess,
       );
       expect(
-        UserMessages.forProtocolError(ApiException(message: 'x', statusCode: 500)),
+        UserMessages.forProtocolError(
+          ApiException(message: 'x', statusCode: 500),
+        ),
         UserMessages.protocolOpenFailed,
       );
       expect(
@@ -81,7 +87,9 @@ void main() {
         isNot(UserMessages.syncFailed),
       );
       expect(
-        UserMessages.forProtocolError(ApiException(message: 'x', statusCode: 401)),
+        UserMessages.forProtocolError(
+          ApiException(message: 'x', statusCode: 401),
+        ),
         isNot(UserMessages.syncFailed),
       );
     });
@@ -191,7 +199,11 @@ void main() {
         ],
         'timeline': [
           123,
-          {'id': 'h1', 'kind': 'received', 'created_at': '2026-07-18T10:00:00Z'},
+          {
+            'id': 'h1',
+            'kind': 'received',
+            'created_at': '2026-07-18T10:00:00Z',
+          },
         ],
         'attachments': [
           'x',

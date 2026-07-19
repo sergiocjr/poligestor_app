@@ -12,10 +12,7 @@ class IntelligenceCache {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(
       '$_prefix$key',
-      jsonEncode({
-        'saved_at': DateTime.now().toIso8601String(),
-        'data': data,
-      }),
+      jsonEncode({'saved_at': DateTime.now().toIso8601String(), 'data': data}),
     );
   }
 

@@ -99,7 +99,9 @@ Widget _keyboardHarness({
 }
 
 void main() {
-  testWidgets('composer visível com viewInsets (teclado aberto)', (tester) async {
+  testWidgets('composer visível com viewInsets (teclado aberto)', (
+    tester,
+  ) async {
     final ctrl = TextEditingController();
     final focus = FocusNode();
     final scroll = ScrollController();
@@ -216,7 +218,10 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('request_detail_composer_bar')), findsOneWidget);
+    expect(
+      find.byKey(const Key('request_detail_composer_bar')),
+      findsOneWidget,
+    );
     expect(find.byKey(const Key('request_detail_scroll')), findsOneWidget);
     expect(tester.takeException(), isNull);
 

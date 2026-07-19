@@ -25,10 +25,9 @@ class _IntelligenceBriefingPageState extends State<IntelligenceBriefingPage> {
     _future ??= _load();
   }
 
-  Future<IntelligenceBriefingView> _load() =>
-      context.read<IntelligenceRepository>().briefing(
-            filter: IntelligenceFilter(period: _period),
-          );
+  Future<IntelligenceBriefingView> _load() => context
+      .read<IntelligenceRepository>()
+      .briefing(filter: IntelligenceFilter(period: _period));
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -77,7 +76,9 @@ class _IntelligenceBriefingPageState extends State<IntelligenceBriefingPage> {
                       if (view.fromCache && view.cacheAgeLabel != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
-                          child: IntelStaleNotice(ageLabel: view.cacheAgeLabel!),
+                          child: IntelStaleNotice(
+                            ageLabel: view.cacheAgeLabel!,
+                          ),
                         ),
                       if (b.bullets.isEmpty)
                         const AppEmptyState(
@@ -93,9 +94,7 @@ class _IntelligenceBriefingPageState extends State<IntelligenceBriefingPage> {
                               children: [
                                 Text(
                                   'Resumo do dia',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleMedium
+                                  style: Theme.of(context).textTheme.titleMedium
                                       ?.copyWith(fontWeight: FontWeight.w800),
                                 ),
                                 const SizedBox(height: 12),
@@ -118,9 +117,9 @@ class _IntelligenceBriefingPageState extends State<IntelligenceBriefingPage> {
                                         .textTheme
                                         .labelSmall
                                         ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                               ],

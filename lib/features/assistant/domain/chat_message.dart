@@ -1,19 +1,9 @@
 enum ChatSender { user, assistant }
 
-enum ChatAttachmentKind {
-  none,
-  image,
-  document,
-  location,
-  audio,
-}
+enum ChatAttachmentKind { none, image, document, location, audio }
 
 class ChatProtocolInfo {
-  const ChatProtocolInfo({
-    required this.id,
-    required this.number,
-    this.status,
-  });
+  const ChatProtocolInfo({required this.id, required this.number, this.status});
 
   final String id;
   final String number;
@@ -32,13 +22,14 @@ class ChatProtocolInfo {
     final id = (json['id'] ?? json['protocol_id'] ?? json['uuid'] ?? '')
         .toString()
         .trim();
-    final number = (json['number'] ??
-            json['protocolo'] ??
-            json['protocol_number'] ??
-            json['codigo'] ??
-            '')
-        .toString()
-        .trim();
+    final number =
+        (json['number'] ??
+                json['protocolo'] ??
+                json['protocol_number'] ??
+                json['codigo'] ??
+                '')
+            .toString()
+            .trim();
     final status = (json['status'] ?? json['state'])?.toString().trim();
     return ChatProtocolInfo(
       id: id,
@@ -85,8 +76,7 @@ List<ChatMessage> assistantWelcomeMessages() {
       id: 'welcome',
       sender: ChatSender.assistant,
       createdAt: DateTime.now(),
-      text:
-          'Olá! Sou o assistente do PoliGestor. Como posso ajudar você hoje?',
+      text: 'Olá! Sou o assistente do PoliGestor. Como posso ajudar você hoje?',
     ),
   ];
 }

@@ -21,9 +21,9 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final titleStyle = Theme.of(context).textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w800,
-        );
+    final titleStyle = Theme.of(
+      context,
+    ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800);
     final titleWidget = onTitleTap == null
         ? Text(title, style: titleStyle)
         : Semantics(
@@ -65,18 +65,15 @@ class SectionHeader extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ],
             ),
           ),
           if (actionLabel != null && onAction != null)
-            TextButton(
-              onPressed: onAction,
-              child: Text(actionLabel!),
-            ),
+            TextButton(onPressed: onAction, child: Text(actionLabel!)),
         ],
       ),
     );
@@ -134,16 +131,12 @@ class FeatureActionGridMetrics {
   /// (`atendimento` ≈ 153px em titleSmall w800) sem quebrar no meio.
   static const double minTitleContentWidth = 156;
 
-  static int crossAxisCountFor(
-    double maxWidth, {
-    double textScale = 1.0,
-  }) {
+  static int crossAxisCountFor(double maxWidth, {double textScale = 1.0}) {
     if (maxWidth >= 900) return 4;
     if (maxWidth >= 680) return 3;
 
     final minContent = minTitleContentWidth * textScale;
-    final minCell =
-        minContent + FeatureActionCard.horizontalPadding * 2;
+    final minCell = minContent + FeatureActionCard.horizontalPadding * 2;
     // 2 colunas só quando cada célula comporta títulos longos sem corte.
     if (maxWidth >= minCell * 2 + spacing) return 2;
     return 1;
@@ -163,10 +156,7 @@ class FeatureActionGridMetrics {
     required double maxWidth,
     required Iterable<({String title, String description})> items,
   }) {
-    final cross = crossAxisCountFor(
-      maxWidth,
-      textScale: _textScaleOf(context),
-    );
+    final cross = crossAxisCountFor(maxWidth, textScale: _textScaleOf(context));
     final cellWidth = cellWidthFor(maxWidth, cross);
     var maxHeight = FeatureActionCard.minHeightForEmpty(context);
     for (final item in items) {
@@ -187,10 +177,7 @@ class FeatureActionGridMetrics {
     required double maxWidth,
     required Iterable<({String title, String description})> items,
   }) {
-    final cross = crossAxisCountFor(
-      maxWidth,
-      textScale: _textScaleOf(context),
-    );
+    final cross = crossAxisCountFor(maxWidth, textScale: _textScaleOf(context));
     final cellWidth = cellWidthFor(maxWidth, cross);
     final height = mainAxisExtentFor(
       context: context,
@@ -228,18 +215,17 @@ class FeatureActionCard extends StatelessWidget {
   final Color? color;
 
   static TextStyle? titleStyleOf(BuildContext context) {
-    return Theme.of(context).textTheme.titleSmall?.copyWith(
-          fontWeight: FontWeight.w800,
-          height: 1.25,
-        );
+    return Theme.of(
+      context,
+    ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800, height: 1.25);
   }
 
   static TextStyle? descriptionStyleOf(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: scheme.onSurfaceVariant,
-          height: 1.35,
-        );
+      color: scheme.onSurfaceVariant,
+      height: 1.35,
+    );
   }
 
   /// Altura reservada para N linhas (alinha todos os cards no mesmo eixo).
@@ -284,8 +270,11 @@ class FeatureActionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final accent = color ?? scheme.primary;
-    final titleH =
-        lineSlotHeight(context, titleStyleOf(context), titleMaxLines);
+    final titleH = lineSlotHeight(
+      context,
+      titleStyleOf(context),
+      titleMaxLines,
+    );
     final descH = lineSlotHeight(
       context,
       descriptionStyleOf(context),
@@ -300,9 +289,7 @@ class FeatureActionCard extends StatelessWidget {
         shadowColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(
-            color: scheme.outlineVariant.withValues(alpha: 0.7),
-          ),
+          side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
         ),
         clipBehavior: Clip.antiAlias,
         child: SizedBox.expand(
@@ -431,18 +418,18 @@ class _AssistantHeroState extends State<AssistantHero> {
           Text(
             widget.greeting,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w800,
-                  height: 1.15,
-                ),
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              height: 1.15,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
             widget.prompt,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: Colors.white.withValues(alpha: 0.88),
-                  fontWeight: FontWeight.w500,
-                ),
+              color: Colors.white.withValues(alpha: 0.88),
+              fontWeight: FontWeight.w500,
+            ),
           ),
           const SizedBox(height: 18),
           Material(
@@ -513,69 +500,73 @@ class NeighborhoodCard extends StatelessWidget {
       button: onTap != null,
       label: 'Meu Bairro: $neighborhoodLabel',
       child: PressableScale(
-      onTap: onTap ?? () {},
-      enabled: onTap != null,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(24),
-          gradient: LinearGradient(
-            colors: [
-              const Color(AppConfig.seedNavy),
-              const Color(AppConfig.primaryTeal).withValues(alpha: 0.9),
+        onTap: onTap ?? () {},
+        enabled: onTap != null,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            gradient: LinearGradient(
+              colors: [
+                const Color(AppConfig.seedNavy),
+                const Color(AppConfig.primaryTeal).withValues(alpha: 0.9),
+              ],
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: const Icon(
+                      Icons.location_city_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      'Meu Bairro',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Colors.white.withValues(alpha: 0.8),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                neighborhoodLabel,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Avisos, serviços e oportunidades da sua região em breve.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  height: 1.35,
+                ),
+              ),
             ],
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: const Icon(Icons.location_city_rounded,
-                      color: Colors.white),
-                ),
-                const SizedBox(width: 12),
-                const Expanded(
-                  child: Text(
-                    'Meu Bairro',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 20,
-                    ),
-                  ),
-                ),
-                Icon(Icons.chevron_right,
-                    color: Colors.white.withValues(alpha: 0.8)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              neighborhoodLabel,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.95),
-                fontWeight: FontWeight.w600,
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Avisos, serviços e oportunidades da sua região em breve.',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.75),
-                height: 1.35,
-              ),
-            ),
-          ],
-        ),
-      ),
       ),
     );
   }
@@ -664,9 +655,9 @@ class NewsCard extends StatelessWidget {
                 item.title,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 6),
               Expanded(
@@ -675,9 +666,9 @@ class NewsCard extends StatelessWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                        height: 1.35,
-                      ),
+                    color: scheme.onSurfaceVariant,
+                    height: 1.35,
+                  ),
                 ),
               ),
             ],
@@ -858,10 +849,7 @@ class RequestTimelineTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    [
-                      if (number != null) '#$number',
-                      statusLabel,
-                    ].join(' · '),
+                    [if (number != null) '#$number', statusLabel].join(' · '),
                     style: TextStyle(
                       color: scheme.onSurfaceVariant,
                       fontSize: 13,

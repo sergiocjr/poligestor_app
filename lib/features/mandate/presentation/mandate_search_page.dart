@@ -72,9 +72,9 @@ class _MandateSearchPageState extends State<MandateSearchPage> {
         return;
       }
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Abrindo: ${hit.title}')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Abrindo: ${hit.title}')));
   }
 
   @override
@@ -126,8 +126,9 @@ class _MandateSearchPageState extends State<MandateSearchPage> {
             message: UserMessages.fromError(snap.error),
             error: snap.error,
             onRetry: () => setState(() {
-              _future =
-                  context.read<MandateRepository>().search(query: _lastQuery);
+              _future = context.read<MandateRepository>().search(
+                query: _lastQuery,
+              );
             }),
           );
         }
@@ -149,9 +150,9 @@ class _MandateSearchPageState extends State<MandateSearchPage> {
                 padding: const EdgeInsets.fromLTRB(4, 12, 4, 6),
                 child: Text(
                   _groupLabels[g.key] ?? g.key,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
                 ),
               ),
               ...g.value.map(

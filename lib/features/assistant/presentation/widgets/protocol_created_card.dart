@@ -61,8 +61,9 @@ class ProtocolCreatedCard extends StatelessWidget {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: const Color(AppConfig.primaryTeal)
-                          .withValues(alpha: 0.12),
+                      color: const Color(
+                        AppConfig.primaryTeal,
+                      ).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -111,8 +112,10 @@ class ProtocolCreatedCard extends StatelessWidget {
                     key: const Key('copy-protocol'),
                     tooltip: 'Copiar protocolo',
                     onPressed: () async {
-                      final copier = copyText ??
-                          (value) => Clipboard.setData(ClipboardData(text: value));
+                      final copier =
+                          copyText ??
+                          (value) =>
+                              Clipboard.setData(ClipboardData(text: value));
                       await copier(number);
                       onCopied?.call();
                       if (context.mounted) {

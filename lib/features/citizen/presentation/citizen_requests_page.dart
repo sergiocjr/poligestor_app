@@ -64,7 +64,8 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
     if (dt == null) return '';
     final local = dt.toLocal();
     final now = DateTime.now();
-    final sameDay = local.year == now.year &&
+    final sameDay =
+        local.year == now.year &&
         local.month == now.month &&
         local.day == now.day;
     if (sameDay) return timeFmt.format(local);
@@ -139,10 +140,7 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                   );
                 }
                 if (snapshot.hasError) {
-                  return AppErrorState(
-                    error: snapshot.error,
-                    onRetry: _reload,
-                  );
+                  return AppErrorState(error: snapshot.error, onRetry: _reload);
                 }
                 final items = _applyFilter(snapshot.data ?? const []);
                 if (items.isEmpty) {
@@ -204,8 +202,9 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
-                                fontWeight:
-                                    unread ? FontWeight.w900 : FontWeight.w700,
+                                fontWeight: unread
+                                    ? FontWeight.w900
+                                    : FontWeight.w700,
                               ),
                             ),
                             subtitle: Column(
@@ -254,8 +253,7 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                             isThreeLine: true,
                             trailing: const Icon(Icons.chevron_right_rounded),
                             onTap: () async {
-                              await context
-                                  .push('/citizen/requests/${p.id}');
+                              await context.push('/citizen/requests/${p.id}');
                               if (mounted) await _reload();
                             },
                           ),

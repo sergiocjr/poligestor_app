@@ -85,23 +85,23 @@ class AuthUser {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'email': email,
-        if (role != null) 'role': role,
-        if (tenantName != null) 'tenant': {'name': tenantName},
-        if (document != null || district != null || city != null)
-          'person': {
-            // Cache sem documento em claro.
-            if (maskedDocument != null) 'document': maskedDocument,
-            'addresses': [
-              {
-                if (district != null) 'district': district,
-                if (city != null) 'city': city,
-              }
-            ],
+    'id': id,
+    'name': name,
+    'email': email,
+    if (role != null) 'role': role,
+    if (tenantName != null) 'tenant': {'name': tenantName},
+    if (document != null || district != null || city != null)
+      'person': {
+        // Cache sem documento em claro.
+        if (maskedDocument != null) 'document': maskedDocument,
+        'addresses': [
+          {
+            if (district != null) 'district': district,
+            if (city != null) 'city': city,
           },
-      };
+        ],
+      },
+  };
 }
 
 class AuthSession {

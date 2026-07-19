@@ -40,9 +40,7 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
 
   Future<MandateExecutive> _load() async {
     final repo = context.read<MandateRepository>();
-    final exec = await repo.executive(
-      filter: MandateFilter(period: _period),
-    );
+    final exec = await repo.executive(filter: MandateFilter(period: _period));
     // Briefing pode vir embutido; se não, busca endpoint dedicado.
     if (exec.briefing == null || exec.briefing!.bullets.isEmpty) {
       try {
@@ -243,9 +241,9 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
                                         .textTheme
                                         .labelSmall
                                         ?.copyWith(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
                                         ),
                                   ),
                               ],
@@ -255,8 +253,7 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
                       ],
                       MandateSectionSeeAll(
                         title: 'Assuntos com mais abertas',
-                        onSeeAll: () =>
-                            context.push('/home/mandate/subjects'),
+                        onSeeAll: () => context.push('/home/mandate/subjects'),
                       ),
                       ...data.situationByTheme
                           .where((t) => t.open > 0)

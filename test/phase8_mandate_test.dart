@@ -27,12 +27,7 @@ void main() {
 
   group('MandateFilter', () {
     test('serializes only non-empty query params', () {
-      const f = MandateFilter(
-        period: '7d',
-        district: 'Centro',
-        page: 2,
-        q: '',
-      );
+      const f = MandateFilter(period: '7d', district: 'Centro', page: 2, q: '');
       final q = f.toQuery();
       expect(q['period'], '7d');
       expect(q['district'], 'Centro');
@@ -91,10 +86,7 @@ void main() {
       expect(exec.daySummary.overdue, 1);
       expect(exec.briefing?.bullets, ['Resumo A']);
       expect(exec.attention.length, greaterThanOrEqualTo(2));
-      expect(
-        exec.attention.any((a) => a.title.contains('atraso')),
-        isTrue,
-      );
+      expect(exec.attention.any((a) => a.title.contains('atraso')), isTrue);
     });
 
     test('tolerates empty / unexpected payload', () {
@@ -203,9 +195,7 @@ void main() {
     testWidgets('empty attention section shows friendly copy', (tester) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: Text('Nenhum ponto crítico no momento.'),
-          ),
+          home: Scaffold(body: Text('Nenhum ponto crítico no momento.')),
         ),
       );
       expect(find.text('Nenhum ponto crítico no momento.'), findsOneWidget);

@@ -10,8 +10,8 @@ class NotificationsController extends ChangeNotifier {
   NotificationsController({
     required NotificationsRepository repository,
     required AuthController auth,
-  })  : _repository = repository,
-        _auth = auth;
+  }) : _repository = repository,
+       _auth = auth;
 
   final NotificationsRepository _repository;
   final AuthController _auth;
@@ -41,12 +41,12 @@ class NotificationsController extends ChangeNotifier {
   List<AppNotification> get visibleItems => _items;
 
   String get _apiFilter => switch (_filter) {
-        NotificationFilter.all => 'all',
-        NotificationFilter.unread => 'unread',
-        NotificationFilter.messages => 'messages',
-        NotificationFilter.requests => 'requests',
-        NotificationFilter.notices => 'system',
-      };
+    NotificationFilter.all => 'all',
+    NotificationFilter.unread => 'unread',
+    NotificationFilter.messages => 'messages',
+    NotificationFilter.requests => 'requests',
+    NotificationFilter.notices => 'system',
+  };
 
   Future<void> setFilter(NotificationFilter value) async {
     if (_filter == value) return;

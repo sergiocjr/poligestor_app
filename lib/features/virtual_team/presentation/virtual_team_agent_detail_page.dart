@@ -129,9 +129,7 @@ class _VirtualTeamAgentDetailPageState
                     Expanded(
                       child: Text(
                         a.name,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
+                        style: Theme.of(context).textTheme.headlineSmall
                             ?.copyWith(fontWeight: FontWeight.w800),
                       ),
                     ),
@@ -164,25 +162,25 @@ class _VirtualTeamAgentDetailPageState
                   Text(
                     'Objetivo',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   Text(a.objective),
                 ],
                 const SizedBox(height: 16),
                 Text(
                   'Métricas do agente',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 VtKpiGrid(dashboard: b.metrics),
                 const SizedBox(height: 12),
                 Text(
                   'Sub-rotas',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 Card(
                   child: Column(
@@ -235,8 +233,8 @@ class _VirtualTeamAgentDetailPageState
                   Text(
                     'Últimos eventos',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   for (final t in b.timeline.take(5))
                     ListTile(

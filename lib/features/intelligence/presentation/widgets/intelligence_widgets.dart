@@ -50,11 +50,7 @@ class IntelPeriodFilterBar extends StatelessWidget {
 }
 
 class InsightCard extends StatelessWidget {
-  const InsightCard({
-    super.key,
-    required this.insight,
-    this.onAction,
-  });
+  const InsightCard({super.key, required this.insight, this.onAction});
 
   final IntelligenceInsight insight;
   final VoidCallback? onAction;
@@ -68,66 +64,59 @@ class InsightCard extends StatelessWidget {
           '${insight.categoryLabel}. ${insight.title}. ${insight.body}. '
           'Sugestão: ${insight.recommendedAction}',
       child: Card(
-      color: attention
-          ? scheme.errorContainer.withValues(alpha: 0.28)
-          : null,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Chip(
-                  label: Text(insight.categoryLabel),
-                  visualDensity: VisualDensity.compact,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  insight.priority == 'attention' ? 'Prioritário' : 'Informativo',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              insight.title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
+        color: attention ? scheme.errorContainer.withValues(alpha: 0.28) : null,
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Chip(
+                    label: Text(insight.categoryLabel),
+                    visualDensity: VisualDensity.compact,
                   ),
-            ),
-            const SizedBox(height: 4),
-            Text(insight.body),
-            const SizedBox(height: 8),
-            Text(
-              'Sugestão: ${insight.recommendedAction}',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: scheme.onSurfaceVariant,
+                  const SizedBox(width: 8),
+                  Text(
+                    insight.priority == 'attention'
+                        ? 'Prioritário'
+                        : 'Informativo',
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: scheme.onSurfaceVariant,
+                    ),
                   ),
-            ),
-            if (onAction != null) ...[
-              const SizedBox(height: 4),
-              TextButton(
-                onPressed: onAction,
-                child: const Text('Abrir'),
+                ],
               ),
+              const SizedBox(height: 6),
+              Text(
+                insight.title,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              const SizedBox(height: 4),
+              Text(insight.body),
+              const SizedBox(height: 8),
+              Text(
+                'Sugestão: ${insight.recommendedAction}',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              ),
+              if (onAction != null) ...[
+                const SizedBox(height: 4),
+                TextButton(onPressed: onAction, child: const Text('Abrir')),
+              ],
             ],
-          ],
+          ),
         ),
       ),
-    ),
     );
   }
 }
 
 class TrendSeriesCard extends StatelessWidget {
-  const TrendSeriesCard({
-    super.key,
-    required this.title,
-    required this.points,
-  });
+  const TrendSeriesCard({super.key, required this.title, required this.points});
 
   final String title;
   final List<TrendPoint> points;
@@ -142,7 +131,9 @@ class TrendSeriesCard extends StatelessWidget {
         ),
       );
     }
-    final recent = points.length > 8 ? points.sublist(points.length - 8) : points;
+    final recent = points.length > 8
+        ? points.sublist(points.length - 8)
+        : points;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -151,9 +142,9 @@ class TrendSeriesCard extends StatelessWidget {
           children: [
             Text(
               title,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             for (final p in recent.reversed)
@@ -215,9 +206,9 @@ class IntelSectionTitle extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
             ),
           ),
           if (onSeeAll != null)

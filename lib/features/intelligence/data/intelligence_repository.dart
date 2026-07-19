@@ -5,7 +5,7 @@ import 'intelligence_models.dart';
 
 class IntelligenceRepository {
   IntelligenceRepository(this._api, {IntelligenceCache? cache})
-      : _cache = cache ?? IntelligenceCache();
+    : _cache = cache ?? IntelligenceCache();
 
   final ApiClient _api;
   final IntelligenceCache _cache;

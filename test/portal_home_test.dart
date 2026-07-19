@@ -110,7 +110,10 @@ void main() {
 
       expect(home.quickActions, hasLength(1));
       expect(home.quickActions.first.key, 'ajuda');
-      expect(home.quickActions.first.toRequestCategory().label, 'Solicitar ajuda');
+      expect(
+        home.quickActions.first.toRequestCategory().label,
+        'Solicitar ajuda',
+      );
 
       expect(home.recentProtocols, hasLength(1));
       expect(home.recentProtocols.first.number, 'PG-2026-000001');
@@ -168,7 +171,10 @@ void main() {
       );
       expect(msg.toLowerCase().contains('401'), isFalse);
       expect(msg.toLowerCase().contains('unauthenticated'), isFalse);
-      expect(UserMessages.homeUpdateFailed, 'Não foi possível atualizar seus dados.');
+      expect(
+        UserMessages.homeUpdateFailed,
+        'Não foi possível atualizar seus dados.',
+      );
     });
 
     test('erro de rede', () {

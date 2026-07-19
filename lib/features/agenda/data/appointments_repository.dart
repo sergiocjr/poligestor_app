@@ -29,7 +29,9 @@ class AppointmentItem {
       description: (json['description'] ?? json['descricao'])?.toString(),
       location: (json['location'] ?? json['local'])?.toString(),
       status: json['status']?.toString(),
-      startsAt: startRaw != null ? DateTime.tryParse(startRaw.toString()) : null,
+      startsAt: startRaw != null
+          ? DateTime.tryParse(startRaw.toString())
+          : null,
       endsAt: endRaw != null ? DateTime.tryParse(endRaw.toString()) : null,
     );
   }
@@ -48,8 +50,8 @@ class AppointmentsRepository {
         final list = raw is List
             ? raw
             : (raw is Map && raw['data'] is List)
-                ? raw['data'] as List
-                : const [];
+            ? raw['data'] as List
+            : const [];
         return list
             .whereType<Map>()
             .map((e) => AppointmentItem.fromJson(Map<String, dynamic>.from(e)))

@@ -37,9 +37,8 @@ class _VirtualTeamLogsPageState extends State<VirtualTeamLogsPage> {
     _future ??= _load();
   }
 
-  Future<VtPagedList<VtLogEntry>> _load() => context
-      .read<VirtualTeamRepository>()
-      .logs(agentSlug: widget.agentSlug);
+  Future<VtPagedList<VtLogEntry>> _load() =>
+      context.read<VirtualTeamRepository>().logs(agentSlug: widget.agentSlug);
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -101,7 +100,11 @@ class _VirtualTeamLogsPageState extends State<VirtualTeamLogsPage> {
                           ? Icons.error_outline
                           : Icons.article_outlined,
                     ),
-                    title: Text(e.message, maxLines: 3, overflow: TextOverflow.ellipsis),
+                    title: Text(
+                      e.message,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     subtitle: Text(
                       [
                         e.source,
@@ -185,7 +188,9 @@ class _VirtualTeamAuditPageState extends State<VirtualTeamAuditPage> {
           }
           final items = snap.data!.items;
           if (items.isEmpty) {
-            return const AppEmptyState(message: 'Nenhum registro de auditoria.');
+            return const AppEmptyState(
+              message: 'Nenhum registro de auditoria.',
+            );
           }
           return RefreshIndicator(
             onRefresh: _refresh,
@@ -319,9 +324,7 @@ class _VirtualTeamTimelinePageState extends State<VirtualTeamTimelinePage> {
                           Container(
                             width: 2,
                             height: 48,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .outlineVariant,
+                            color: Theme.of(context).colorScheme.outlineVariant,
                           ),
                       ],
                     ),
@@ -431,17 +434,14 @@ class _VirtualTeamAlertsPageState extends State<VirtualTeamAlertsPage> {
                 final high = a.severity == 'high' || a.severity == 'critical';
                 return Card(
                   color: high
-                      ? Theme.of(context)
-                          .colorScheme
-                          .errorContainer
-                          .withValues(alpha: 0.35)
+                      ? Theme.of(
+                          context,
+                        ).colorScheme.errorContainer.withValues(alpha: 0.35)
                       : null,
                   child: ListTile(
                     leading: Icon(
                       Icons.warning_amber_rounded,
-                      color: high
-                          ? Theme.of(context).colorScheme.error
-                          : null,
+                      color: high ? Theme.of(context).colorScheme.error : null,
                     ),
                     title: Text(a.title),
                     subtitle: Text(
@@ -497,9 +497,9 @@ class _VirtualTeamMetricsPageState extends State<VirtualTeamMetricsPage> {
     _future ??= _load();
   }
 
-  Future<VtDashboard> _load() => context
-      .read<VirtualTeamRepository>()
-      .metrics(agentSlug: widget.agentSlug);
+  Future<VtDashboard> _load() => context.read<VirtualTeamRepository>().metrics(
+    agentSlug: widget.agentSlug,
+  );
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -540,9 +540,7 @@ class _VirtualTeamMetricsPageState extends State<VirtualTeamMetricsPage> {
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.all(16),
-              children: [
-                VtKpiGrid(dashboard: snap.data!),
-              ],
+              children: [VtKpiGrid(dashboard: snap.data!)],
             ),
           );
         },
@@ -605,7 +603,8 @@ class _VirtualTeamSearchPageState extends State<VirtualTeamSearchPage> {
           Expanded(
             child: _future == null
                 ? const AppEmptyState(
-                    message: 'Digite um termo para pesquisar na Equipe Virtual.',
+                    message:
+                        'Digite um termo para pesquisar na Equipe Virtual.',
                     icon: Icons.search,
                   )
                 : FutureBuilder<VtSearchResults>(
@@ -632,8 +631,7 @@ class _VirtualTeamSearchPageState extends State<VirtualTeamSearchPage> {
                       final data = snap.data!;
                       if (data.isEmpty) {
                         return AppEmptyState(
-                          message:
-                              'Nenhum resultado para “${data.query}”.',
+                          message: 'Nenhum resultado para “${data.query}”.',
                         );
                       }
                       return ListView(

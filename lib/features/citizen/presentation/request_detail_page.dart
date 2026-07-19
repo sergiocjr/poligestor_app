@@ -139,9 +139,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
 
   Future<ProtocolDetail> _load() async {
     if (kDebugMode) {
-      debugPrint(
-        '[RequestDetail] load start id=${widget.id} mounted=$mounted',
-      );
+      debugPrint('[RequestDetail] load start id=${widget.id} mounted=$mounted');
     }
     try {
       final auth = context.read<AuthController>();
@@ -224,13 +222,15 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       final fresh = await repo.getById(mode: auth.mode, id: widget.id);
       if (!mounted) return;
       final prev = _cached;
-      final msgChanged = prev == null ||
+      final msgChanged =
+          prev == null ||
           prev.messages.length != fresh.messages.length ||
           prev.status != fresh.status ||
           prev.updatedAt != fresh.updatedAt;
       if (!msgChanged) return;
 
-      final nearEnd = !_scrollController.hasClients ||
+      final nearEnd =
+          !_scrollController.hasClients ||
           isNearScrollEnd(
             _scrollController.offset,
             _scrollController.position.maxScrollExtent,
@@ -274,8 +274,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       setState(() {
         _cached = merged;
         _future = Future.value(merged);
-        _newMessagesBanner = !nearEnd &&
-            (prev?.messages.length ?? 0) < merged.messages.length;
+        _newMessagesBanner =
+            !nearEnd && (prev?.messages.length ?? 0) < merged.messages.length;
       });
       if (nearEnd) {
         _scrollToEnd();
@@ -296,10 +296,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
     final protocolsRepo = context.read<ProtocolsRepository>();
     final notificationsRepo = context.read<NotificationsRepository>();
     try {
-      await protocolsRepo.markMessagesRead(
-        mode: auth.mode,
-        detail: detail,
-      );
+      await protocolsRepo.markMessagesRead(mode: auth.mode, detail: detail);
     } catch (_) {}
 
     try {
@@ -310,7 +307,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       for (final n in notes.items.where((e) => e.isUnread)) {
         final link = (n.link ?? '').toLowerCase();
         final blob = '${n.title} ${n.body ?? ''} ${n.link ?? ''}'.toLowerCase();
-        final match = link.contains(idStr) ||
+        final match =
+            link.contains(idStr) ||
             link.contains('/requests/$idStr') ||
             link.contains('/protocols/$idStr') ||
             (number != null && blob.contains(number.toLowerCase()));
@@ -343,17 +341,17 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       }
       _messageCtrl.clear();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(UserMessages.messageSent)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text(UserMessages.messageSent)));
       }
       await _reload();
       _scrollToEnd();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(UserMessages.fromError(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
       }
     } finally {
       if (mounted) {
@@ -388,9 +386,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(UserMessages.fromError(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
       }
     } finally {
       if (mounted) {
@@ -424,9 +422,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(UserMessages.fromError(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
       }
     } finally {
       if (mounted) {
@@ -445,19 +443,19 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
     try {
       final auth = context.read<AuthController>();
       await context.read<ProtocolsRepository>().uploadAttachment(
-            mode: auth.mode,
-            protocolId: widget.id,
-            filePath: item.path,
-            fileName: item.name,
-            mimeType: item.mimeType,
-            uploadId: item.id,
-            onProgress: (p) {
-              if (!mounted) return;
-              setState(() {
-                item.progress = p;
-              });
-            },
-          );
+        mode: auth.mode,
+        protocolId: widget.id,
+        filePath: item.path,
+        fileName: item.name,
+        mimeType: item.mimeType,
+        uploadId: item.id,
+        onProgress: (p) {
+          if (!mounted) return;
+          setState(() {
+            item.progress = p;
+          });
+        },
+      );
       if (mounted) {
         setState(() {
           _pending.removeWhere((e) => e.id == item.id);
@@ -506,25 +504,25 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
     try {
       final auth = context.read<AuthController>();
       await context.read<ProtocolsRepository>().submitRating(
-            mode: auth.mode,
-            detail: detail,
-            input: ProtocolRatingInput(
-              stars: stars,
-              resolved: resolved,
-              comment: comment,
-            ),
-          );
+        mode: auth.mode,
+        detail: detail,
+        input: ProtocolRatingInput(
+          stars: stars,
+          resolved: resolved,
+          comment: comment,
+        ),
+      );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(UserMessages.ratingSent)),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text(UserMessages.ratingSent)));
       }
       await _reload();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(UserMessages.fromError(e))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(UserMessages.fromError(e))));
       }
     } finally {
       if (mounted) {
@@ -542,7 +540,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
       return p.deadlineLabel!;
     }
     if (p.deadlineAt != null) {
-      return DateFormat("dd/MM/yyyy 'às' HH:mm").format(p.deadlineAt!.toLocal());
+      return DateFormat(
+        "dd/MM/yyyy 'às' HH:mm",
+      ).format(p.deadlineAt!.toLocal());
     }
     return 'Sem prazo informado';
   }
@@ -570,8 +570,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
               IconButton(
                 key: const Key('btn_composer_gallery'),
                 tooltip: 'Anexar foto',
-                onPressed:
-                    _composerBusy ? null : () => _pick(ImageSource.gallery),
+                onPressed: _composerBusy
+                    ? null
+                    : () => _pick(ImageSource.gallery),
                 icon: const Icon(Icons.image_outlined),
               ),
               IconButton(
@@ -647,9 +648,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           Text(
             detail.title,
             key: const Key('request_detail_title'),
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 10),
           Wrap(
@@ -695,9 +696,9 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           const SizedBox(height: 16),
           Text(
             'Descrição',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 6),
           Text(
@@ -709,7 +710,8 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
           if (detail.isAwaitingCitizen) ...[
             const SizedBox(height: 16),
             ProtocolAwaitingBanner(
-              question: detail.pendingQuestion ??
+              question:
+                  detail.pendingQuestion ??
                   'Responda na conversa abaixo para continuar o atendimento.',
             ),
           ],
@@ -720,15 +722,17 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
             children: [
               OutlinedButton.icon(
                 key: const Key('btn_anexo_foto'),
-                onPressed:
-                    _composerBusy ? null : () => _pick(ImageSource.camera),
+                onPressed: _composerBusy
+                    ? null
+                    : () => _pick(ImageSource.camera),
                 icon: const Icon(Icons.photo_camera_outlined),
                 label: const Text('Foto'),
               ),
               OutlinedButton.icon(
                 key: const Key('btn_anexo_galeria'),
-                onPressed:
-                    _composerBusy ? null : () => _pick(ImageSource.gallery),
+                onPressed: _composerBusy
+                    ? null
+                    : () => _pick(ImageSource.gallery),
                 icon: const Icon(Icons.image_outlined),
                 label: const Text('Galeria'),
               ),

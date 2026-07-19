@@ -214,7 +214,7 @@ class AccountRepository {
     }
   }
 
-  Future<void> oauthSignIn({
+  Future<Map<String, dynamic>> oauthSignIn({
     required AuthMode mode,
     required String provider,
     required String tenantSlug,
@@ -227,7 +227,7 @@ class AccountRepository {
       _ => mode.oauthGooglePath,
     };
     try {
-      await _api.postEnvelope<Map<String, dynamic>>(
+      final envelope = await _api.postEnvelope<Map<String, dynamic>>(
         path,
         mode: mode,
         tenantSlug: tenantSlug,
@@ -236,8 +236,9 @@ class AccountRepository {
         data: payload,
         parse: idAsMap,
       );
+      return envelope.data;
     } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 500) {
+      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 501) {
         throw EndpointUnavailableException(path, statusCode: e.statusCode);
       }
       rethrow;

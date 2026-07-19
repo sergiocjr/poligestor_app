@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/config.dart';
 import '../../domain/chat_message.dart';
 
-
 class ChatBubble extends StatelessWidget {
   const ChatBubble({super.key, required this.message});
 
@@ -37,7 +36,9 @@ class ChatBubble extends StatelessWidget {
             borderRadius: radius,
             border: isUser
                 ? null
-                : Border.all(color: scheme.outlineVariant.withValues(alpha: 0.9)),
+                : Border.all(
+                    color: scheme.outlineVariant.withValues(alpha: 0.9),
+                  ),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: isUser ? 0.08 : 0.04),
@@ -47,8 +48,9 @@ class ChatBubble extends StatelessWidget {
             ],
           ),
           child: Column(
-            crossAxisAlignment:
-                isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: isUser
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               if (message.hasAttachment) ...[
                 _AttachmentChip(
@@ -62,11 +64,7 @@ class ChatBubble extends StatelessWidget {
               if (message.text != null && message.text!.isNotEmpty)
                 Text(
                   message.text!,
-                  style: TextStyle(
-                    color: fg,
-                    height: 1.4,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: fg, height: 1.4, fontSize: 15),
                 ),
               const SizedBox(height: 6),
               Text(
@@ -103,12 +101,12 @@ class _AttachmentChip extends StatelessWidget {
   final bool onUser;
 
   IconData get _icon => switch (kind) {
-        ChatAttachmentKind.image => Icons.image_outlined,
-        ChatAttachmentKind.document => Icons.description_outlined,
-        ChatAttachmentKind.location => Icons.location_on_outlined,
-        ChatAttachmentKind.audio => Icons.mic_none_rounded,
-        ChatAttachmentKind.none => Icons.attach_file,
-      };
+    ChatAttachmentKind.image => Icons.image_outlined,
+    ChatAttachmentKind.document => Icons.description_outlined,
+    ChatAttachmentKind.location => Icons.location_on_outlined,
+    ChatAttachmentKind.audio => Icons.mic_none_rounded,
+    ChatAttachmentKind.none => Icons.attach_file,
+  };
 
   @override
   Widget build(BuildContext context) {

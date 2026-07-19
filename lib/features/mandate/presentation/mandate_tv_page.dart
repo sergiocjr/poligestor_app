@@ -84,10 +84,7 @@ class _MandateTvPageState extends State<MandateTvPage> {
           final k = data.kpis;
           final indicators = [
             MandateIndicatorCard(label: 'Abertas', value: '${k.open}'),
-            MandateIndicatorCard(
-              label: 'Novas hoje',
-              value: '${k.newToday}',
-            ),
+            MandateIndicatorCard(label: 'Novas hoje', value: '${k.newToday}'),
             MandateIndicatorCard(
               label: 'Resolvidas hoje',
               value: '${k.resolvedToday}',

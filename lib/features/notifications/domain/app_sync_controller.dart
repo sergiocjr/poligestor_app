@@ -16,10 +16,10 @@ class AppSyncController with WidgetsBindingObserver {
     required NotificationsController notifications,
     required PushNotificationService push,
     MandateRefreshController? mandateRefresh,
-  })  : _auth = auth,
-        _notifications = notifications,
-        _push = push,
-        _mandateRefresh = mandateRefresh;
+  }) : _auth = auth,
+       _notifications = notifications,
+       _push = push,
+       _mandateRefresh = mandateRefresh;
 
   final AuthController _auth;
   final NotificationsController _notifications;

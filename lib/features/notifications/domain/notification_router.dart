@@ -62,10 +62,7 @@ class NotificationRouter {
           location: '/citizen/notifications',
         );
       case PushEventType.protocolMessage:
-        return _protocolRoute(
-          payload,
-          highlightConversation: true,
-        );
+        return _protocolRoute(payload, highlightConversation: true);
       case PushEventType.protocolInformationRequested:
         return _protocolRoute(
           payload,

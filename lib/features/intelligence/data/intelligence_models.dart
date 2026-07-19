@@ -1,7 +1,14 @@
 import '../../mandate/data/mandate_models.dart';
 
 export '../../mandate/data/mandate_models.dart'
-    show asMap, asMapList, asInt, asDouble, asString, MandatePeriod, MandateBriefing;
+    show
+        asMap,
+        asMapList,
+        asInt,
+        asDouble,
+        asString,
+        MandatePeriod,
+        MandateBriefing;
 
 /// Filtros enviados às rotas `/v1/mandate/{analytics,trends,insights,briefing,briefings}`.
 class IntelligenceFilter {
@@ -23,6 +30,7 @@ class IntelligenceFilter {
   final String? district;
   final String? category;
   final String? assigneeId;
+
   /// daily | weekly | monthly (briefings)
   final String? scope;
   final bool? generate;
@@ -90,8 +98,10 @@ class IntelligenceInsight {
   String get recommendedAction {
     return switch (type) {
       'overdue_pressure' => 'Priorize a fila de atendimentos atrasados.',
-      'subject_rising' => 'Acompanhe o assunto em crescimento e planeje resposta.',
-      'subject_concentration' => 'Revise a concentração deste assunto no período.',
+      'subject_rising' =>
+        'Acompanhe o assunto em crescimento e planeje resposta.',
+      'subject_concentration' =>
+        'Revise a concentração deste assunto no período.',
       'neighborhood_hotspot' => 'Olhe de perto o bairro em destaque.',
       'team_overload' => 'Redistribua a carga da equipe sobrecarregada.',
       'low_ratings' => 'Analise os casos com avaliações baixas.',
@@ -154,7 +164,9 @@ class IntelligenceInsightsData {
     String? cacheAgeLabel,
   }) {
     return IntelligenceInsightsData(
-      items: asMapList(json['items']).map(IntelligenceInsight.fromJson).toList(),
+      items: asMapList(
+        json['items'],
+      ).map(IntelligenceInsight.fromJson).toList(),
       generated: asInt(json['generated'], asMapList(json['items']).length),
       audience: asString(json['audience']),
       fromCache: fromCache,
@@ -175,10 +187,10 @@ class TrendPoint {
   final int resolved;
 
   factory TrendPoint.fromJson(Map<String, dynamic> json) => TrendPoint(
-        label: asString(json['date'] ?? json['week'] ?? json['month']) ?? '',
-        created: asInt(json['created']),
-        resolved: asInt(json['resolved']),
-      );
+    label: asString(json['date'] ?? json['week'] ?? json['month']) ?? '',
+    created: asInt(json['created']),
+    resolved: asInt(json['resolved']),
+  );
 }
 
 class TrendSignals {
@@ -204,11 +216,11 @@ class TrendSignals {
   }
 
   factory TrendSignals.fromJson(Map<String, dynamic> json) => TrendSignals(
-        createdSlope: asDouble(json['created_slope']),
-        resolvedSlope: asDouble(json['resolved_slope']),
-        createdVsResolved: asInt(json['created_vs_resolved']),
-        momentum: asString(json['momentum']) ?? 'stable',
-      );
+    createdSlope: asDouble(json['created_slope']),
+    resolvedSlope: asDouble(json['resolved_slope']),
+    createdVsResolved: asInt(json['created_vs_resolved']),
+    momentum: asString(json['momentum']) ?? 'stable',
+  );
 }
 
 class IntelligenceTrendsData {
@@ -272,12 +284,7 @@ class AnalyticsNeighborhoodItem {
 
   factory AnalyticsNeighborhoodItem.fromJson(Map<String, dynamic> json) {
     final tops = asMapList(json['top_subjects'])
-        .map(
-          (e) => (
-            name: asString(e['name']) ?? '',
-            count: asInt(e['count']),
-          ),
-        )
+        .map((e) => (name: asString(e['name']) ?? '', count: asInt(e['count'])))
         .where((e) => e.name.isNotEmpty)
         .toList();
     return AnalyticsNeighborhoodItem(
@@ -292,8 +299,9 @@ class AnalyticsNeighborhoodItem {
       previousTotal: json.containsKey('previous_total')
           ? asInt(json['previous_total'])
           : null,
-      growthPct:
-          json['growth_pct'] != null ? asDouble(json['growth_pct']) : null,
+      growthPct: json['growth_pct'] != null
+          ? asDouble(json['growth_pct'])
+          : null,
       topSubjects: tops,
     );
   }
@@ -329,12 +337,7 @@ class AnalyticsSubjectItem {
 
   factory AnalyticsSubjectItem.fromJson(Map<String, dynamic> json) {
     final weekly = asMapList(json['weekly'])
-        .map(
-          (e) => (
-            date: asString(e['date']) ?? '',
-            total: asInt(e['total']),
-          ),
-        )
+        .map((e) => (date: asString(e['date']) ?? '', total: asInt(e['total'])))
         .toList();
     return AnalyticsSubjectItem(
       theme: asString(json['theme']) ?? '',
@@ -344,8 +347,9 @@ class AnalyticsSubjectItem {
       previousTotal: json.containsKey('previous_total')
           ? asInt(json['previous_total'])
           : null,
-      growthPct:
-          json['growth_pct'] != null ? asDouble(json['growth_pct']) : null,
+      growthPct: json['growth_pct'] != null
+          ? asDouble(json['growth_pct'])
+          : null,
       weekly: weekly,
     );
   }
@@ -409,15 +413,15 @@ class DaySnapshot {
   final double? avgResolutionHours;
 
   factory DaySnapshot.fromJson(Map<String, dynamic> json) => DaySnapshot(
-        open: asInt(json['protocols_open']),
-        resolvedToday: asInt(json['protocols_resolved_today']),
-        waitingCitizen: asInt(json['waiting_citizen']),
-        overdue: asInt(json['overdue']),
-        newToday: asInt(json['new_today']),
-        avgResolutionHours: json['avg_resolution_hours'] != null
-            ? asDouble(json['avg_resolution_hours'])
-            : null,
-      );
+    open: asInt(json['protocols_open']),
+    resolvedToday: asInt(json['protocols_resolved_today']),
+    waitingCitizen: asInt(json['waiting_citizen']),
+    overdue: asInt(json['overdue']),
+    newToday: asInt(json['new_today']),
+    avgResolutionHours: json['avg_resolution_hours'] != null
+        ? asDouble(json['avg_resolution_hours'])
+        : null,
+  );
 }
 
 class IntelligenceAnalyticsData {
@@ -463,18 +467,22 @@ class IntelligenceAnalyticsData {
     final gen = asString(json['generated_at']);
     return IntelligenceAnalyticsData(
       snapshot: DaySnapshot.fromJson(asMap(json['executive_snapshot'])),
-      neighborhoods: asMapList(neighborhoods['items'])
-          .map(AnalyticsNeighborhoodItem.fromJson)
-          .toList(),
+      neighborhoods: asMapList(
+        neighborhoods['items'],
+      ).map(AnalyticsNeighborhoodItem.fromJson).toList(),
       neighborhoodSummary: asMap(neighborhoods['summary']),
-      subjects: asMapList(subjects['items'])
-          .map(AnalyticsSubjectItem.fromJson)
-          .toList(),
+      subjects: asMapList(
+        subjects['items'],
+      ).map(AnalyticsSubjectItem.fromJson).toList(),
       subjectSummary: asMap(subjects['summary']),
-      team: asMapList(team['members']).map(AnalyticsTeamMember.fromJson).toList(),
+      team: asMapList(
+        team['members'],
+      ).map(AnalyticsTeamMember.fromJson).toList(),
       teamSummary: asMap(team['summary']),
       embeddedTrends: trendsRaw is Map
-          ? IntelligenceTrendsData.fromJson(Map<String, dynamic>.from(trendsRaw))
+          ? IntelligenceTrendsData.fromJson(
+              Map<String, dynamic>.from(trendsRaw),
+            )
           : null,
       period: MandatePeriod.fromJson(asMap(json['period'])),
       generatedAt: gen != null ? DateTime.tryParse(gen) : null,
@@ -511,7 +519,10 @@ class IntelligenceBriefingsHistory {
   }) {
     final bulletsRaw = json['bullets'];
     final bullets = bulletsRaw is List
-        ? bulletsRaw.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
+        ? bulletsRaw
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .toList()
         : <String>[];
     return IntelligenceBriefingsHistory(
       scope: asString(json['scope']) ?? 'daily',

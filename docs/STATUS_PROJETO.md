@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (encerramento do dia)
+Atualizado: 2026-07-19 (validação final Sprint 10.2)
 
 ## Resumo
 
@@ -15,71 +15,69 @@ Atualizado: 2026-07-19 (encerramento do dia)
 | Fase 9 — Inteligência do mandato | CONCLUÍDA |
 | Sprint 9.5 — Hardening produção | CONCLUÍDA |
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
-| **Sprint 10.2 — Identidade / Auth / Multi-tenant** | **CONCLUÍDA (Flutter)** |
-| Branding / resolve / OAuth / cadastro (backend) | Pendente na VPS |
+| **Sprint 10.2 — Identidade / Auth / Multi-tenant** | **VALIDAÇÃO FINAL (Flutter + contratos LIVE)** |
 | Fase 10+ (restante) | Em evolução |
 
-## Encerramento do dia (2026-07-19)
+## Sprint 10.2 — validação final
 
-### Implementado hoje
+Fluxo org-first com contratos reais da VPS. Sem mocks. UI não conhece aliases — compatibilidade no repository.
 
-1. **Sprint 10.1 Final** — Equipe Virtual 100% integrada aos contratos LIVE `/v1/virtual-team/*`
-2. **Sprint 10.2** — Identidade, autenticação e multi-tenant no Flutter:
-   - Fluxo org-first (`/org` → login)
-   - Branding dinâmico (`TenantController` + tema)
-   - Cadastro / recuperação / OAuth (estrutura + estados honestos)
-   - Perfil, sessões LIVE, troca de organização
-   - Deep links `poligestor://org|tenant/{slug}`
-3. Documentação alinhada (README, STATUS, CHANGELOG, ROADMAP, arquitetura)
-4. Ícones / logo do app atualizados (Android, iOS, Web)
-5. Remote GitHub: `https://github.com/sergiocjr/poligestor_app`
+### Integrado e validado (HTTP 200 / contrato LIVE)
 
-### Ponto de retomada amanhã
+| Endpoint | Status HTTP | Uso no app |
+|----------|-------------|------------|
+| `GET /v1/identity/tenants/resolve` | 200 | Seleção por slug/código/domínio |
+| `GET /v1/portal/branding` | 200 | Nome, cores, logo, tagline |
+| `GET /v1/portal/auth/providers` | 200 | Botões sociais conforme `is_enabled`+`ready` |
+| `GET /v1/auth/providers` | 200 | Alias staff |
+| `POST /v1/portal/auth/google\|apple\|govbr` | 200 | Tokens → `AuthController.applyTokenSession` |
+| `POST /v1/auth/google` | 200 | Alias staff |
+| `POST /v1/auth/login` · refresh · `GET /v1/auth/me` | 200 | Login staff |
+| `GET/DELETE /v1/auth/sessions` | 200 com Bearer | Sessões staff |
+| `POST /v1/auth/logout` · `DELETE …/revoke-all` | 401 sem Bearer (rota existe) | Logout |
 
-Continuar pela **estabilização backend da Sprint 10.2** (lista abaixo). No app Flutter, assim que um endpoint passar a HTTP 200, a integração já está plugada — basta validar UX no SM-A105M.
+### Implementado, aguardando dados de usuário autenticado (401 sem token = rota LIVE)
 
-## Sprint 10.2 — CONCLUÍDA (Flutter)
+- `GET /v1/portal/auth/sessions|me|linked-accounts|profile`
+- `PUT /v1/portal/auth/profile`
+- Espelhos staff `linked-accounts` / `profile`
 
-Fluxo org-first, branding dinâmico, autenticação, perfil, sessões e recuperação de senha. Integra apenas contratos HTTP 200; demais rotas com estrutura pronta e estados honestos (carregando / indisponível / erro / vazio) — **sem mocks**.
+### Implementado com validação de formulário (422 = contrato ativo)
 
-### Entregue
-
-- Features `lib/features/identity/` e `lib/features/account/`
-- Rotas `/org`, `/login`, `/login/register`, `/login/forgot`, `/account/profile`, `/account/sessions`
-- Branding via `TenantController` + `AppTheme.lightFromBranding`
-- Deep links `poligestor://org|tenant/{slug}` + resolução de host Web
-- Sessões LIVE (`GET/DELETE /v1/auth/sessions`)
-- Entradas: Mais → Perfil / Sessões / Trocar organização
-
-### APIs HTTP 200 (integradas)
-
-- `POST /v1/auth/login` · `POST /v1/auth/refresh` · `GET /v1/auth/me`
-- `GET /v1/auth/sessions` · `DELETE /v1/auth/sessions/{id}`
-- Login portal existente (quando estável)
-
-### Pendências reais (somente backend / VPS)
-
-**500 (rota existe; migrations / branding):**
-
-- `GET|POST /v1/identity/tenants/resolve`
-- `GET /v1/portal/branding`
-- `GET /v1/portal/auth/providers`
 - `POST /v1/portal/auth/register`
 - `POST /v1/portal/auth/forgot-password`
 - `POST /v1/portal/auth/reset-password`
-- `GET /v1/portal/auth/sessions` · `GET /v1/portal/auth/me`
-- `GET /v1/portal/auth/linked-accounts`
+- Aliases staff equivalentes
 
-**404 (ainda não implementados):**
+### Aguardando credenciais externas / não validado em device SDK
 
-- Staff: providers, register, forgot/reset-password, linked-accounts, profile, google/apple/govbr
-- Portal: `POST …/auth/google|apple|govbr`, `PUT …/auth/profile`
+- Google / Apple / Gov.br via **SDK nativo** (Sign in with Apple, Google Sign-In, Gov.br oficial) — VPS aceita POST e devolve token; integração Flutter consome o token. **Apple no iOS** permanece **preparado, não validado** sem certificados APNs/assinatura.
+- QR scanner nativo: deep link suportado; câmera QR ainda “Em breve” na Mais.
 
-**OK quando autenticado (app já chama):**
+### Preparado para iOS
 
-- `POST /v1/auth/logout`
-- `DELETE /v1/auth/sessions/revoke-all`
+- URL scheme `poligestor`
+- Fluxos idênticos Android/Web
+- Push APNs **não** validado
 
-### Validação
+### Estados de indisponibilidade
 
-- `flutter test` · `flutter analyze` (0 errors / 0 warnings)
+- **Removidos** para resolve, branding e providers (agora LIVE).
+- **Mantidos** apenas se a API voltar a 404/501/503 (`EndpointUnavailableException`).
+- Fallback `selectSlugLocally` só quando resolve estiver indisponível.
+
+### Isolamento multi-tenant
+
+- Cache identity por slug (`identity_*_$slug`)
+- Troca de org: `purgeAllTenantData` + `clearSessionAndTenant` (tokens, perfil, e-mail, tenant)
+
+### Validação qualidade
+
+- `flutter analyze` — 0 errors / 0 warnings
+- `flutter test` — ver relatório final
+- Builds: APK debug / web — ver relatório final
+
+### Repositório
+
+- GitHub: https://github.com/sergiocjr/poligestor_app
+- Commit base Sprint 10.2: `0acb2ba`

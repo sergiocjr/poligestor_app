@@ -7,9 +7,11 @@ class IdentityRepository {
   IdentityRepository(this._api);
 
   final ApiClient _api;
-  static const _mode = AuthMode.portal;
 
-  /// GET/POST `/v1/identity/tenants/resolve` — rota existe; VPS ainda 500 (migrations).
+  /// Preferência portal (contrato org-first). Staff aliases ficam no auth mode.
+  static const _publicMode = AuthMode.portal;
+
+  /// LIVE: `GET /v1/identity/tenants/resolve`
   Future<TenantOrganization> resolve({
     String? slug,
     String? code,
@@ -25,7 +27,7 @@ class IdentityRepository {
     try {
       final envelope = await _api.getEnvelope<Map<String, dynamic>>(
         AuthMode.staff.tenantsResolvePath,
-        mode: _mode,
+        mode: _publicMode,
         tenantSlug: slug?.trim().isNotEmpty == true ? slug!.trim() : null,
         query: q.isEmpty ? null : q,
         parse: idAsMap,
@@ -36,36 +38,22 @@ class IdentityRepository {
     }
   }
 
-  /// GET `/v1/portal/branding` — rota existe; VPS ainda 500 (tenant_branding).
+  /// LIVE: `GET /v1/portal/branding`
   Future<TenantBranding> branding({required String tenantSlug}) async {
     try {
       final envelope = await _api.getEnvelope<Map<String, dynamic>>(
         AuthMode.portal.brandingPath,
-        mode: _mode,
+        mode: _publicMode,
         tenantSlug: tenantSlug,
         parse: idAsMap,
       );
-      final branding = TenantBranding.fromJson(envelope.data);
-      if (branding.tenantName == 'Organização' && tenantSlug.isNotEmpty) {
-        return TenantBranding(
-          tenantName: tenantSlug,
-          logoUrl: branding.logoUrl,
-          bannerUrl: branding.bannerUrl,
-          primaryColor: branding.primaryColor,
-          secondaryColor: branding.secondaryColor,
-          iconUrl: branding.iconUrl,
-          tagline: branding.tagline,
-          institutionalInfo: branding.institutionalInfo,
-          raw: branding.raw,
-        );
-      }
-      return branding;
+      return TenantBranding.fromJson(envelope.data);
     } on ApiException catch (e) {
       _rethrowUnavailable(AuthMode.portal.brandingPath, e);
     }
   }
 
-  /// GET providers — rota portal existe (500). Staff ainda 404.
+  /// LIVE: `GET …/auth/providers` (portal ou staff conforme [mode]).
   Future<List<AuthProviderInfo>> providers({
     required AuthMode mode,
     required String tenantSlug,
@@ -87,7 +75,10 @@ class IdentityRepository {
   }
 
   Never _rethrowUnavailable(String path, ApiException e) {
-    if (e.statusCode == 404 || e.statusCode == 500 || e.statusCode == 501) {
+    if (e.statusCode == 404 ||
+        e.statusCode == 500 ||
+        e.statusCode == 501 ||
+        e.statusCode == 503) {
       throw EndpointUnavailableException(path, statusCode: e.statusCode);
     }
     throw e;

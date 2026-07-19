@@ -12,7 +12,8 @@ class UserMessages {
   static const emptyNotifications = 'Nenhuma notificação por enquanto.';
   static const emptyAgenda = 'Nenhum compromisso agendado.';
   static const generic = 'Algo deu errado. Tente novamente em instantes.';
-  static const uploadFailed = 'Não foi possível enviar o arquivo. Tente novamente.';
+  static const uploadFailed =
+      'Não foi possível enviar o arquivo. Tente novamente.';
   static const uploadCanceled = 'Envio cancelado.';
   static const messageSent = 'Mensagem enviada.';
   static const ratingSent = 'Obrigado! Sua avaliação foi registrada.';
@@ -20,8 +21,7 @@ class UserMessages {
       'A avaliação ainda não está disponível para esta solicitação.';
   static const openAttachmentFailed =
       'Não foi possível abrir o anexo. Tente novamente.';
-  static const emptyConversation =
-      'Ainda não há mensagens nesta solicitação.';
+  static const emptyConversation = 'Ainda não há mensagens nesta solicitação.';
   static const emptyHistory = 'Ainda não há atualizações no histórico.';
   static const assistantFailed =
       'Não foi possível obter resposta do assistente. Tente novamente.';
@@ -37,6 +37,36 @@ class UserMessages {
       'Este aviso não possui uma solicitação válida.';
   static const notificationMarkReadFailed =
       'O aviso foi aberto, mas não foi possível marcá-lo como lido.';
+
+  /// Erros de autenticação (login / OAuth / cadastro).
+  static String fromAuthError(Object? error) {
+    if (error is ApiException) {
+      if (error.isUnauthorized) {
+        return 'Credenciais inválidas ou sessão expirada.';
+      }
+      if (error.isForbidden) {
+        return 'Você não tem permissão para acessar esta organização.';
+      }
+      if (error.statusCode == 429) {
+        return 'Muitas tentativas. Aguarde um momento e tente novamente.';
+      }
+      if (error.statusCode == 503 || error.statusCode == 501) {
+        return 'Serviço de autenticação indisponível no momento.';
+      }
+      if (error.isValidation) {
+        return error.message.isNotEmpty
+            ? error.message
+            : 'Revise os dados informados e tente novamente.';
+      }
+      if (error.statusCode == null &&
+          (error.message.toLowerCase().contains('conexão') ||
+              error.message.toLowerCase().contains('connection'))) {
+        return offline;
+      }
+      if (error.message.isNotEmpty) return error.message;
+    }
+    return fromError(error);
+  }
 
   /// Erros da Home/sessão — mantém mensagem genérica de sincronização.
   static String fromError(Object? error) {

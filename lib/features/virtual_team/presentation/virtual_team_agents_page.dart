@@ -97,13 +97,13 @@ class _VirtualTeamAgentsPageState extends State<VirtualTeamAgentsPage> {
                 final agents = _query.isEmpty
                     ? all
                     : all
-                        .where(
-                          (a) =>
-                              a.name.toLowerCase().contains(_query) ||
-                              a.specialty.toLowerCase().contains(_query) ||
-                              a.slug.toLowerCase().contains(_query),
-                        )
-                        .toList();
+                          .where(
+                            (a) =>
+                                a.name.toLowerCase().contains(_query) ||
+                                a.specialty.toLowerCase().contains(_query) ||
+                                a.slug.toLowerCase().contains(_query),
+                          )
+                          .toList();
                 if (agents.isEmpty) {
                   return const AppEmptyState(
                     message: 'Nenhum agente encontrado.',

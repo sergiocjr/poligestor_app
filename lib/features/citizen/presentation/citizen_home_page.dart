@@ -120,27 +120,27 @@ class _CitizenHomePageState extends State<CitizenHomePage>
   }
 
   IconData _iconFor(RequestCategory c) => switch (c.iconName) {
-        'help' => Icons.handshake_rounded,
-        'alert' || 'report' => Icons.report_rounded,
-        'idea' || 'lightbulb' => Icons.lightbulb_rounded,
-        'home' => Icons.home_work_rounded,
-        'calendar' || 'event' => Icons.event_available_rounded,
-        'search' => Icons.travel_explore_rounded,
-        'file' || 'attach' => Icons.upload_file_rounded,
-        'chat' => Icons.forum_rounded,
-        _ => Icons.apps_rounded,
-      };
+    'help' => Icons.handshake_rounded,
+    'alert' || 'report' => Icons.report_rounded,
+    'idea' || 'lightbulb' => Icons.lightbulb_rounded,
+    'home' => Icons.home_work_rounded,
+    'calendar' || 'event' => Icons.event_available_rounded,
+    'search' => Icons.travel_explore_rounded,
+    'file' || 'attach' => Icons.upload_file_rounded,
+    'chat' => Icons.forum_rounded,
+    _ => Icons.apps_rounded,
+  };
 
   Color _colorFor(RequestCategory c, ColorScheme scheme) => switch (c.id) {
-        'ajuda' => scheme.primary,
-        'denuncia' => const Color(0xFFC2410C),
-        'sugestao' => const Color(0xFFCA8A04),
-        'agenda' || 'atendimento' || 'visita' => const Color(0xFF0369A1),
-        'protocolo' || 'acompanhar' => const Color(0xFF0F766E),
-        'documento' => const Color(0xFF4338CA),
-        'assistente' => const Color(0xFF0F766E),
-        _ => scheme.primary,
-      };
+    'ajuda' => scheme.primary,
+    'denuncia' => const Color(0xFFC2410C),
+    'sugestao' => const Color(0xFFCA8A04),
+    'agenda' || 'atendimento' || 'visita' => const Color(0xFF0369A1),
+    'protocolo' || 'acompanhar' => const Color(0xFF0F766E),
+    'documento' => const Color(0xFF4338CA),
+    'assistente' => const Color(0xFF0F766E),
+    _ => scheme.primary,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -158,13 +158,15 @@ class _CitizenHomePageState extends State<CitizenHomePage>
           child: FutureBuilder<_HomeData>(
             future: _future,
             builder: (context, snapshot) {
-              final loading = snapshot.connectionState != ConnectionState.done &&
+              final loading =
+                  snapshot.connectionState != ConnectionState.done &&
                   !snapshot.hasData;
               if (loading) {
                 return const HomeSkeleton();
               }
 
-              final data = snapshot.data ??
+              final data =
+                  snapshot.data ??
                   _HomeData.error(UserMessages.homeUpdateFailed);
 
               return CustomScrollView(
@@ -173,20 +175,22 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                 ),
                 slivers: [
                   SliverPadding(
-                    padding:
-                        EdgeInsets.fromLTRB(horizontal, 12, horizontal, 120),
+                    padding: EdgeInsets.fromLTRB(
+                      horizontal,
+                      12,
+                      horizontal,
+                      120,
+                    ),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
                         FadeSlideIn(
                           child: Text(
                             dateFmt.format(DateTime.now()),
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
+                            style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                           ),
                         ),
@@ -195,9 +199,7 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                           delay: const Duration(milliseconds: 40),
                           child: Text(
                             'Olá, ${data.displayName}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineMedium
+                            style: Theme.of(context).textTheme.headlineMedium
                                 ?.copyWith(fontWeight: FontWeight.w800),
                           ),
                         ),
@@ -209,7 +211,8 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 SoftNotice(
-                                  message: data.syncMessage ??
+                                  message:
+                                      data.syncMessage ??
                                       UserMessages.homeUpdateFailed,
                                   icon: Icons.sync_problem_rounded,
                                 ),
@@ -266,23 +269,26 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                   .toList();
                               final cross =
                                   FeatureActionGridMetrics.crossAxisCountFor(
-                                constraints.maxWidth,
-                                textScale: MediaQuery.textScalerOf(context)
-                                    .scale(1),
-                              );
+                                    constraints.maxWidth,
+                                    textScale: MediaQuery.textScalerOf(
+                                      context,
+                                    ).scale(1),
+                                  );
                               final mainExtent =
                                   FeatureActionGridMetrics.mainAxisExtentFor(
-                                context: context,
-                                maxWidth: constraints.maxWidth,
-                                items: items,
-                              );
+                                    context: context,
+                                    maxWidth: constraints.maxWidth,
+                                    items: items,
+                                  );
                               if (cross == 1) {
                                 // Lista intrínseca: evita células altas demais em telas estreitas.
                                 return Column(
                                   children: [
-                                    for (var i = 0;
-                                        i < data.quickActions.length;
-                                        i++) ...[
+                                    for (
+                                      var i = 0;
+                                      i < data.quickActions.length;
+                                      i++
+                                    ) ...[
                                       if (i > 0)
                                         const SizedBox(
                                           height:
@@ -315,13 +321,13 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 physics: const NeverScrollableScrollPhysics(),
                                 gridDelegate:
                                     SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: cross,
-                                  mainAxisSpacing:
-                                      FeatureActionGridMetrics.spacing,
-                                  crossAxisSpacing:
-                                      FeatureActionGridMetrics.spacing,
-                                  mainAxisExtent: mainExtent,
-                                ),
+                                      crossAxisCount: cross,
+                                      mainAxisSpacing:
+                                          FeatureActionGridMetrics.spacing,
+                                      crossAxisSpacing:
+                                          FeatureActionGridMetrics.spacing,
+                                      mainAxisExtent: mainExtent,
+                                    ),
                                 itemBuilder: (context, index) {
                                   final c = data.quickActions[index];
                                   return FeatureActionCard(
@@ -408,9 +414,9 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                         children: [
                                           Icon(
                                             Icons.mark_chat_unread_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -448,9 +454,9 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                         children: [
                                           Icon(
                                             Icons.help_outline_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .tertiary,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.tertiary,
                                           ),
                                           const SizedBox(width: 10),
                                           Expanded(
@@ -482,17 +488,18 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .outlineVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.outlineVariant,
                                 ),
                               ),
                               child: Row(
                                 children: [
                                   Icon(
                                     Icons.notifications_active_rounded,
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary,
                                   ),
                                   const SizedBox(width: 12),
                                   Expanded(
@@ -529,9 +536,9 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .outlineVariant,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.outlineVariant,
                                     ),
                                   ),
                                   child: Text(
@@ -542,9 +549,11 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                 )
                               : Column(
                                   children: [
-                                    for (var i = 0;
-                                        i < data.protocols.take(4).length;
-                                        i++)
+                                    for (
+                                      var i = 0;
+                                      i < data.protocols.take(4).length;
+                                      i++
+                                    )
                                       RequestTimelineTile(
                                         title: data.protocols[i].title,
                                         number: data.protocols[i].number,
@@ -561,7 +570,8 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                                   .toLocal(),
                                             ),
                                         ].join(' · '),
-                                        isLast: i ==
+                                        isLast:
+                                            i ==
                                             data.protocols.take(4).length - 1,
                                         onTap: () => context.push(
                                           '/citizen/requests/${data.protocols[i].id}',
@@ -604,8 +614,9 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                         title: a.title,
                                         when: a.startsAt == null
                                             ? null
-                                            : timeFmt
-                                                .format(a.startsAt!.toLocal()),
+                                            : timeFmt.format(
+                                                a.startsAt!.toLocal(),
+                                              ),
                                         location: a.location,
                                         onTap: () =>
                                             _openAppointmentDetail(a, timeFmt),
@@ -714,11 +725,11 @@ class _SummaryCard extends StatelessWidget {
                         '$value',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  fontWeight: FontWeight.w800,
-                                  color: color,
-                                ),
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: color,
+                            ),
                       ),
                     ),
                     Icon(
@@ -734,8 +745,8 @@ class _SummaryCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

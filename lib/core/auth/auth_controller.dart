@@ -8,11 +8,9 @@ import 'auth_mode.dart';
 import 'auth_state.dart';
 
 class AuthController extends ChangeNotifier {
-  AuthController({
-    required ApiClient api,
-    required TokenStorage storage,
-  })  : _api = api,
-        _storage = storage {
+  AuthController({required ApiClient api, required TokenStorage storage})
+    : _api = api,
+      _storage = storage {
     _api.setOnSessionExpired(_handleSessionExpired);
   }
 
@@ -120,56 +118,12 @@ class AuthController extends ChangeNotifier {
       );
 
       final data = envelope.data;
-      final access =
-          (data['access_token'] ?? data['token'] ?? data['accessToken'])
-              ?.toString();
-      final refresh =
-          (data['refresh_token'] ?? data['refreshToken'])?.toString();
-
-      if (access == null || access.isEmpty) {
-        throw ApiException(message: 'Resposta de login sem token.');
-      }
-
-      await _storage.saveTokens(
-        accessToken: access,
-        refreshToken: refresh ?? '',
-      );
-      await _storage.saveSessionMeta(
+      await _completeSession(
         mode: mode,
-        tenantSlug: tenant,
-        email: email.trim(),
+        tenant: tenant,
+        data: data,
+        emailHint: email.trim(),
       );
-
-      AuthUser user;
-      final nestedUser = data['user'] ?? data['usuario'];
-      if (nestedUser is Map<String, dynamic>) {
-        user = AuthUser.fromJson(nestedUser);
-      } else if (nestedUser is Map) {
-        user = AuthUser.fromJson(Map<String, dynamic>.from(nestedUser));
-      } else {
-        user = await _fetchMe(mode);
-      }
-
-      await _storage.saveUserJson(
-        nestedUser is Map
-            ? Map<String, dynamic>.from(nestedUser)
-            : user.toJson(),
-      );
-
-      _session = AuthSession(mode: mode, user: user, tenantSlug: tenant);
-      // Registro de dispositivo: PushNotificationService.onAuthenticated.
-
-      // Detecta API portal degradada (token inválido nas rotas protegidas).
-      if (mode == AuthMode.portal) {
-        try {
-          await _fetchMe(mode);
-          _apiDegraded = false;
-        } on ApiException catch (e) {
-          if (e.isUnauthorized) {
-            _apiDegraded = true;
-          }
-        }
-      }
     } on ApiException catch (e) {
       _error = e.message;
       rethrow;
@@ -182,11 +136,90 @@ class AuthController extends ChangeNotifier {
     }
   }
 
+  /// Sessão a partir de token emitido por OAuth / providers externos.
+  Future<void> applyTokenSession({
+    required AuthMode mode,
+    required String tenantSlug,
+    required Map<String, dynamic> data,
+  }) async {
+    _busy = true;
+    _error = null;
+    _apiDegraded = false;
+    notifyListeners();
+    try {
+      final tenant = tenantSlug.trim().isNotEmpty
+          ? tenantSlug.trim()
+          : AppConfig.defaultTenantSlug;
+      _api.setSessionContext(mode: mode, tenantSlug: tenant);
+      await _completeSession(mode: mode, tenant: tenant, data: data);
+    } on ApiException catch (e) {
+      _error = e.message;
+      rethrow;
+    } catch (e) {
+      _error = e.toString();
+      rethrow;
+    } finally {
+      _busy = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> _completeSession({
+    required AuthMode mode,
+    required String tenant,
+    required Map<String, dynamic> data,
+    String? emailHint,
+  }) async {
+    final access =
+        (data['access_token'] ?? data['token'] ?? data['accessToken'])
+            ?.toString();
+    final refresh = (data['refresh_token'] ?? data['refreshToken'])?.toString();
+
+    if (access == null || access.isEmpty) {
+      throw ApiException(message: 'Resposta de autenticação sem token.');
+    }
+
+    await _storage.saveTokens(accessToken: access, refreshToken: refresh ?? '');
+    await _storage.saveSessionMeta(
+      mode: mode,
+      tenantSlug: tenant,
+      email: emailHint,
+    );
+
+    AuthUser user;
+    final nestedUser = data['user'] ?? data['usuario'];
+    if (nestedUser is Map<String, dynamic>) {
+      user = AuthUser.fromJson(nestedUser);
+    } else if (nestedUser is Map) {
+      user = AuthUser.fromJson(Map<String, dynamic>.from(nestedUser));
+    } else {
+      user = await _fetchMe(mode);
+    }
+
+    await _storage.saveUserJson(
+      nestedUser is Map ? Map<String, dynamic>.from(nestedUser) : user.toJson(),
+    );
+
+    _session = AuthSession(mode: mode, user: user, tenantSlug: tenant);
+
+    if (mode == AuthMode.portal) {
+      try {
+        await _fetchMe(mode);
+        _apiDegraded = false;
+      } on ApiException catch (e) {
+        if (e.isUnauthorized) {
+          _apiDegraded = true;
+        }
+      }
+    }
+  }
+
   Future<void> logout() async {
     await _storage.clearAll();
     _session = null;
     _apiDegraded = false;
-    _api.setSessionContext(mode: null, tenantSlug: null);
+    final tenant = await _storage.getTenantSlug();
+    _api.setSessionContext(mode: null, tenantSlug: tenant);
     notifyListeners();
   }
 

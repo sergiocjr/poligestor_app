@@ -44,7 +44,9 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
       setState(() => _prefsError = null);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _prefsError = 'Usando preferências locais (sync pendente).');
+      setState(
+        () => _prefsError = 'Usando preferências locais (sync pendente).',
+      );
     }
   }
 
@@ -104,16 +106,20 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                   ],
                 ),
               ),
-              child: Icon(Icons.person_rounded, size: 44, color: scheme.primary),
+              child: Icon(
+                Icons.person_rounded,
+                size: 44,
+                color: scheme.primary,
+              ),
             ),
           ),
           const SizedBox(height: 14),
           Text(
             user?.name ?? 'Cidadão',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
           ),
           Text(
             user?.email ?? '',
@@ -127,8 +133,9 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                 ListTile(
                   leading: const Icon(Icons.domain_rounded),
                   title: const Text('Organização'),
-                  subtitle:
-                      Text(user?.tenantName ?? session?.tenantSlug ?? '—'),
+                  subtitle: Text(
+                    user?.tenantName ?? session?.tenantSlug ?? '—',
+                  ),
                 ),
                 const Divider(height: 1),
                 ListTile(
@@ -174,19 +181,16 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
           const SizedBox(height: 16),
           Text(
             'Notificações',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           if (_prefsError != null)
             Padding(
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 _prefsError!,
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
               ),
             ),
           const SizedBox(height: 8),
@@ -210,9 +214,7 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                     onChanged: !_prefs.pushEnabled || _saving
                         ? null
                         : (v) {
-                            setState(
-                              () => _prefs.protocolMessagesEnabled = v,
-                            );
+                            setState(() => _prefs.protocolMessagesEnabled = v);
                             _savePrefs();
                           },
                   ),
@@ -222,9 +224,7 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                     onChanged: !_prefs.pushEnabled || _saving
                         ? null
                         : (v) {
-                            setState(
-                              () => _prefs.protocolStatusEnabled = v,
-                            );
+                            setState(() => _prefs.protocolStatusEnabled = v);
                             _savePrefs();
                           },
                   ),
@@ -286,9 +286,9 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
           Text(
             AppConfig.appName,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
           ),
         ],
       ),

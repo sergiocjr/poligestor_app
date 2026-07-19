@@ -93,7 +93,8 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
       context: context,
       firstDate: DateTime(now.year - 2),
       lastDate: now,
-      initialDateRange: _customRange ??
+      initialDateRange:
+          _customRange ??
           DateTimeRange(start: now.subtract(const Duration(days: 7)), end: now),
     );
     if (picked == null || !mounted) return;
@@ -172,8 +173,9 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                       data.trends.cacheAgeLabel != null)
                     data.trends.cacheAgeLabel!,
                 ];
-                final opportunities =
-                    data.insights.items.where((e) => e.isOpportunity).toList();
+                final opportunities = data.insights.items
+                    .where((e) => e.isOpportunity)
+                    .toList();
                 final alerts = data.insights.items
                     .where((e) => e.priority == 'attention')
                     .toList();
@@ -194,10 +196,7 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                         spacing: 8,
                         runSpacing: 8,
                         children: [
-                          _KpiChip(
-                            label: 'Abertas',
-                            value: '${snapShot.open}',
-                          ),
+                          _KpiChip(label: 'Abertas', value: '${snapShot.open}'),
                           _KpiChip(
                             label: 'Em atraso',
                             value: '${snapShot.overdue}',
@@ -245,7 +244,9 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                       if (alerts.isEmpty)
                         const SoftNotice(message: 'Nenhum alerta prioritário.')
                       else
-                        ...alerts.take(3).map(
+                        ...alerts
+                            .take(3)
+                            .map(
                               (i) => Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: InsightCard(
@@ -261,7 +262,9 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                         onSeeAll: () =>
                             context.push('/home/intelligence/insights'),
                       ),
-                      ...data.insights.items.take(3).map(
+                      ...data.insights.items
+                          .take(3)
+                          .map(
                             (i) => Padding(
                               padding: const EdgeInsets.only(bottom: 8),
                               child: InsightCard(
@@ -291,7 +294,9 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
                           message: 'Nenhuma oportunidade destacada agora.',
                         )
                       else
-                        ...opportunities.take(3).map(
+                        ...opportunities
+                            .take(3)
+                            .map(
                               (i) => Padding(
                                 padding: const EdgeInsets.only(bottom: 8),
                                 child: InsightCard(insight: i),
@@ -325,10 +330,22 @@ class _IntelligenceDashboardPageState extends State<IntelligenceDashboardPage> {
     ('Briefing', '/home/intelligence/briefing', Icons.wb_sunny_outlined),
     ('Insights', '/home/intelligence/insights', Icons.lightbulb_outline),
     ('Tendências', '/home/intelligence/trends', Icons.show_chart_rounded),
-    ('Bairros', '/home/intelligence/analytics/neighborhoods', Icons.location_city_outlined),
-    ('Assuntos', '/home/intelligence/analytics/subjects', Icons.category_outlined),
+    (
+      'Bairros',
+      '/home/intelligence/analytics/neighborhoods',
+      Icons.location_city_outlined,
+    ),
+    (
+      'Assuntos',
+      '/home/intelligence/analytics/subjects',
+      Icons.category_outlined,
+    ),
     ('Equipe', '/home/intelligence/analytics/team', Icons.groups_outlined),
-    ('Produtividade', '/home/intelligence/analytics/productivity', Icons.speed_outlined),
+    (
+      'Produtividade',
+      '/home/intelligence/analytics/productivity',
+      Icons.speed_outlined,
+    ),
     ('Oportunidades', '/home/intelligence/opportunities', Icons.flag_outlined),
     ('Resumos', '/home/intelligence/summaries', Icons.menu_book_outlined),
   ];
@@ -362,9 +379,9 @@ class _KpiChip extends StatelessWidget {
           Text(label, style: Theme.of(context).textTheme.labelMedium),
           Text(
             value,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
         ],
       ),

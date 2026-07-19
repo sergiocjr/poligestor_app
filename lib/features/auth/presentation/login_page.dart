@@ -70,9 +70,9 @@ class _LoginPageState extends State<LoginPage> {
     if (slug == null || slug.isEmpty) return;
     try {
       final list = await context.read<IdentityRepository>().providers(
-            mode: _mode,
-            tenantSlug: slug,
-          );
+        mode: _mode,
+        tenantSlug: slug,
+      );
       if (!mounted) return;
       setState(() {
         _providers = list;
@@ -118,20 +118,31 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = UserMessages.fromError(e));
+      setState(() => _error = UserMessages.fromAuthError(e));
     }
   }
 
   Future<void> _social(String provider) async {
     final tenant = context.read<TenantController>();
+    final auth = context.read<AuthController>();
     final slug = tenant.organization?.slug ?? '';
+    if (slug.isEmpty) {
+      setState(() => _error = 'Selecione a organização antes de continuar.');
+      return;
+    }
+    setState(() => _error = null);
     try {
-      await context.read<AccountRepository>().oauthSignIn(
-            mode: _mode,
-            provider: provider,
-            tenantSlug: slug,
-            payload: {'provider': provider},
-          );
+      final tokens = await context.read<AccountRepository>().oauthSignIn(
+        mode: _mode,
+        provider: provider,
+        tenantSlug: slug,
+        payload: {'provider': provider, 'device_name': 'flutter'},
+      );
+      await auth.applyTokenSession(mode: _mode, tenantSlug: slug, data: tokens);
+      if (!mounted) return;
+      context.go(
+        _mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
+      );
     } on EndpointUnavailableException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -139,9 +150,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(UserMessages.fromError(e))),
-      );
+      setState(() => _error = UserMessages.fromAuthError(e));
     }
   }
 
@@ -161,7 +170,11 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 Row(
                   children: [
-                    const AppLogo(height: 44),
+                    AppLogo(
+                      height: 44,
+                      networkUrl: tenant.branding?.logoUrl,
+                      semanticLabel: tenant.displayName,
+                    ),
                     const Spacer(),
                     TextButton.icon(
                       onPressed: () async {
@@ -177,8 +190,8 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   orgName,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                      ),
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
                 if (tenant.branding?.tagline != null) ...[
                   const SizedBox(height: 4),
@@ -227,8 +240,9 @@ class _LoginPageState extends State<LoginPage> {
                           labelText: 'E-mail ou CPF',
                           prefixIcon: Icon(Icons.mail_outline),
                         ),
-                        validator: (v) =>
-                            (v == null || v.trim().isEmpty) ? 'Obrigatório' : null,
+                        validator: (v) => (v == null || v.trim().isEmpty)
+                            ? 'Obrigatório'
+                            : null,
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
@@ -280,60 +294,64 @@ class _LoginPageState extends State<LoginPage> {
                         )
                       : const Text('Entrar'),
                 ),
-                const SizedBox(height: 12),
-                OutlinedButton(
-                  onPressed: () => context.push('/login/register'),
-                  child: const Text('Criar conta'),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Outras formas de entrada',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-                const SizedBox(height: 8),
-                if (_providersPath != null)
-                  EndpointPendingState(
-                    path: _providersPath!,
-                    message: 'Provedores sociais ainda indisponíveis',
-                  )
-                else if (_providers != null && _providers!.isNotEmpty) ...[
-                  for (final p in _providers!)
-                    _SocialButton(
-                      icon: switch (p.id) {
-                        'apple' => Icons.apple,
-                        'govbr' || 'gov.br' => Icons.account_balance_outlined,
-                        _ => Icons.g_mobiledata,
-                      },
-                      label: p.label.isEmpty ? 'Entrar com ${p.id}' : p.label,
-                      onTap: p.enabled
-                          ? () => _social(p.id)
-                          : () {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('${p.label} desabilitado'),
-                                ),
-                              );
-                            },
-                    ),
-                ] else ...[
-                  _SocialButton(
-                    icon: Icons.g_mobiledata,
-                    label: 'Entrar com Google',
-                    onTap: () => _social('google'),
-                  ),
-                  _SocialButton(
-                    icon: Icons.apple,
-                    label: 'Entrar com Apple',
-                    onTap: () => _social('apple'),
-                  ),
-                  _SocialButton(
-                    icon: Icons.account_balance_outlined,
-                    label: 'Entrar com Gov.br',
-                    onTap: () => _social('govbr'),
+                if (tenant.registrationEnabled) ...[
+                  const SizedBox(height: 12),
+                  OutlinedButton(
+                    onPressed: () => context.push('/login/register'),
+                    child: const Text('Criar conta'),
                   ),
                 ],
+                const SizedBox(height: 20),
+                Builder(
+                  builder: (context) {
+                    final socials = (_providers ?? const <AuthProviderInfo>[])
+                        .where((p) => p.canUse)
+                        .toList();
+                    if (_providersPath != null) {
+                      return EndpointPendingState(
+                        path: _providersPath!,
+                        message: 'Provedores sociais ainda indisponíveis',
+                      );
+                    }
+                    if (_providers == null) {
+                      return const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Center(
+                          child: SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      );
+                    }
+                    if (socials.isEmpty) {
+                      return const SizedBox.shrink();
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          'Outras formas de entrada',
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.w700),
+                        ),
+                        const SizedBox(height: 8),
+                        for (final p in socials)
+                          _SocialButton(
+                            icon: switch (p.id) {
+                              'apple' => Icons.apple,
+                              'govbr' ||
+                              'gov.br' => Icons.account_balance_outlined,
+                              _ => Icons.g_mobiledata,
+                            },
+                            label: 'Entrar com ${p.label}',
+                            onTap: () => _social(p.id),
+                          ),
+                      ],
+                    );
+                  },
+                ),
               ],
             ),
           ),

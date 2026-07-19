@@ -43,9 +43,7 @@ class PushPayload {
   final Map<String, dynamic> raw;
 
   String? get effectiveLink =>
-      (deepLink != null && deepLink!.trim().isNotEmpty)
-          ? deepLink
-          : link;
+      (deepLink != null && deepLink!.trim().isNotEmpty) ? deepLink : link;
 
   bool get hasProtocolTarget =>
       (protocolId != null && protocolId!.trim().isNotEmpty) ||
@@ -58,27 +56,29 @@ class PushPayload {
         : <String, dynamic>{};
     final merged = <String, dynamic>{...map, ...data};
 
-    final typeRaw = (merged['type'] ??
-            merged['event'] ??
-            merged['kind'] ??
-            merged['categoria'] ??
-            '')
-        .toString();
+    final typeRaw =
+        (merged['type'] ??
+                merged['event'] ??
+                merged['kind'] ??
+                merged['categoria'] ??
+                '')
+            .toString();
 
-    final protocolId = (merged['protocol_id'] ??
-            merged['protocolo_id'] ??
-            merged['request_id'] ??
-            data['protocol_id'])
-        ?.toString();
-    final protocolNumber = (merged['protocol_number'] ??
-            merged['number'] ??
-            merged['numero'] ??
-            merged['protocolo'])
-        ?.toString();
-    final deepLink = merged['deep_link']?.toString();
-    final link =
-        (merged['link'] ?? merged['url'] ?? merged['path'] ?? deepLink)
+    final protocolId =
+        (merged['protocol_id'] ??
+                merged['protocolo_id'] ??
+                merged['request_id'] ??
+                data['protocol_id'])
             ?.toString();
+    final protocolNumber =
+        (merged['protocol_number'] ??
+                merged['number'] ??
+                merged['numero'] ??
+                merged['protocolo'])
+            ?.toString();
+    final deepLink = merged['deep_link']?.toString();
+    final link = (merged['link'] ?? merged['url'] ?? merged['path'] ?? deepLink)
+        ?.toString();
 
     return PushPayload(
       type: pushEventTypeFrom(typeRaw),
@@ -101,8 +101,7 @@ class PushPayload {
         return const PushPayload(type: PushEventType.systemNotice);
       }
       if (uri.host == 'protocols' || uri.host == 'protocol') {
-        final id =
-            uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
+        final id = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : null;
         return PushPayload(
           type: PushEventType.unknown,
           protocolId: id,
@@ -119,20 +118,17 @@ class PushPayload {
   }
 
   NotificationKind get asNotificationKind => switch (type) {
-        PushEventType.protocolMessage => NotificationKind.newReply,
-        PushEventType.protocolInformationRequested =>
-          NotificationKind.infoRequest,
-        PushEventType.protocolStatusChanged ||
-        PushEventType.protocolReopened ||
-        PushEventType.protocolCreated ||
-        PushEventType.protocolAssigneeChanged ||
-        PushEventType.protocolInformationSubmitted =>
-          NotificationKind.statusChange,
-        PushEventType.protocolResolved => NotificationKind.resolved,
-        PushEventType.protocolRatingAvailable ||
-        PushEventType.protocolRatingReceived =>
-          NotificationKind.ratingAvailable,
-        PushEventType.systemNotice || PushEventType.unknown =>
-          NotificationKind.generic,
-      };
+    PushEventType.protocolMessage => NotificationKind.newReply,
+    PushEventType.protocolInformationRequested => NotificationKind.infoRequest,
+    PushEventType.protocolStatusChanged ||
+    PushEventType.protocolReopened ||
+    PushEventType.protocolCreated ||
+    PushEventType.protocolAssigneeChanged ||
+    PushEventType.protocolInformationSubmitted => NotificationKind.statusChange,
+    PushEventType.protocolResolved => NotificationKind.resolved,
+    PushEventType.protocolRatingAvailable ||
+    PushEventType.protocolRatingReceived => NotificationKind.ratingAvailable,
+    PushEventType.systemNotice ||
+    PushEventType.unknown => NotificationKind.generic,
+  };
 }

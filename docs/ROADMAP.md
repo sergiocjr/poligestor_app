@@ -9,8 +9,8 @@
 | 9 | Inteligência do mandato (briefing/insights/trends) | CONCLUÍDA |
 | 9.5 | Hardening completo (produção) | CONCLUÍDA |
 | 10.1 | Equipe Virtual (agentes / operação) | CONCLUÍDA (Final) |
-| **10.2** | Identidade, autenticação e multi-tenant | **CONCLUÍDA (Flutter)** |
-| Próximo | Estabilizar APIs 10.2 na VPS + validação device | **Retomada** |
+| **10.2** | Identidade, autenticação e multi-tenant | **VALIDAÇÃO FINAL (Flutter)** |
+| Próximo | SDKs OAuth nativos + validação visual device | Em aberto |
 | 10+ | Evoluções restantes | Em aberto |
 
 ## Retomada (amanhã)

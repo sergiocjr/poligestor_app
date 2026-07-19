@@ -21,7 +21,11 @@ List<ProtocolMessage> mergeProtocolMessages(
   return out;
 }
 
-bool isNearScrollEnd(double offset, double maxExtent, {double threshold = 120}) {
+bool isNearScrollEnd(
+  double offset,
+  double maxExtent, {
+  double threshold = 120,
+}) {
   if (maxExtent <= 0) return true;
   return (maxExtent - offset) <= threshold;
 }

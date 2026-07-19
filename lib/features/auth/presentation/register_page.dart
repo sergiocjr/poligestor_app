@@ -39,22 +39,32 @@ class _RegisterPageState extends State<RegisterPage> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
+    final tenant = context.read<TenantController>();
+    if (!tenant.hasOrganization) {
+      setState(
+        () => _error = 'Selecione a organização antes de criar a conta.',
+      );
+      return;
+    }
+    if (!tenant.registrationEnabled) {
+      setState(() => _error = 'Cadastro desabilitado para esta organização.');
+      return;
+    }
     setState(() {
       _busy = true;
       _error = null;
       _pendingPath = null;
     });
-    final tenant = context.read<TenantController>();
     try {
       await context.read<AccountRepository>().register(
-            mode: AuthMode.portal,
-            tenantSlug: tenant.organization?.slug ?? '',
-            name: _name.text,
-            email: _email.text,
-            password: _password.text,
-            passwordConfirmation: _confirm.text,
-            document: _document.text,
-          );
+        mode: AuthMode.portal,
+        tenantSlug: tenant.organization!.slug,
+        name: _name.text,
+        email: _email.text,
+        password: _password.text,
+        passwordConfirmation: _confirm.text,
+        document: _document.text,
+      );
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Conta criada. Faça login.')),
@@ -65,7 +75,7 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() => _pendingPath = e.path);
     } catch (e) {
       if (!mounted) return;
-      setState(() => _error = UserMessages.fromError(e));
+      setState(() => _error = UserMessages.fromAuthError(e));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -108,15 +118,17 @@ class _RegisterPageState extends State<RegisterPage> {
                     controller: _password,
                     obscureText: true,
                     decoration: const InputDecoration(labelText: 'Senha'),
-                    validator: (v) =>
-                        (v == null || v.length < 6) ? 'Mínimo 6 caracteres' : null,
+                    validator: (v) => (v == null || v.length < 6)
+                        ? 'Mínimo 6 caracteres'
+                        : null,
                   ),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _confirm,
                     obscureText: true,
-                    decoration:
-                        const InputDecoration(labelText: 'Confirmar senha'),
+                    decoration: const InputDecoration(
+                      labelText: 'Confirmar senha',
+                    ),
                     validator: (v) =>
                         v != _password.text ? 'Senhas não conferem' : null,
                   ),

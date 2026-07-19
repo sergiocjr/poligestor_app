@@ -91,8 +91,8 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
                     Text(
                       user.name,
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+                        fontWeight: FontWeight.w800,
+                      ),
                     ),
                     Text(user.email),
                     Text(
@@ -131,9 +131,9 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
           const SizedBox(height: 12),
           Text(
             'Contas vinculadas',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
           ),
           FutureBuilder<List<LinkedAccount>>(
             future: _linkedFuture,
@@ -195,10 +195,7 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
             onTap: _switchOrg,
           ),
           const SizedBox(height: 8),
-          FilledButton.tonal(
-            onPressed: _logout,
-            child: const Text('Sair'),
-          ),
+          FilledButton.tonal(onPressed: _logout, child: const Text('Sair')),
         ],
       ),
     );

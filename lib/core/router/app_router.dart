@@ -113,10 +113,7 @@ GoRouter createAppRouter({
         path: '/login',
         builder: (_, _) => const LoginPage(),
         routes: [
-          GoRoute(
-            path: 'register',
-            builder: (_, _) => const RegisterPage(),
-          ),
+          GoRoute(path: 'register', builder: (_, _) => const RegisterPage()),
           GoRoute(
             path: 'forgot',
             builder: (_, _) => const ForgotPasswordPage(),
@@ -148,9 +145,8 @@ GoRouter createAppRouter({
                 routes: [
                   GoRoute(
                     path: ':id',
-                    builder: (context, state) => ProtocolDetailPage(
-                      id: state.pathParameters['id']!,
-                    ),
+                    builder: (context, state) =>
+                        ProtocolDetailPage(id: state.pathParameters['id']!),
                   ),
                 ],
               ),
@@ -198,10 +194,7 @@ GoRouter createAppRouter({
                     path: 'map',
                     builder: (_, _) => const MandateMapPage(),
                   ),
-                  GoRoute(
-                    path: 'tv',
-                    builder: (_, _) => const MandateTvPage(),
-                  ),
+                  GoRoute(path: 'tv', builder: (_, _) => const MandateTvPage()),
                 ],
               ),
             ],
@@ -222,9 +215,8 @@ GoRouter createAppRouter({
                   ),
                   GoRoute(
                     path: 'opportunities',
-                    builder: (_, _) => const IntelligenceInsightsPage(
-                      opportunitiesOnly: true,
-                    ),
+                    builder: (_, _) =>
+                        const IntelligenceInsightsPage(opportunitiesOnly: true),
                   ),
                   GoRoute(
                     path: 'trends',
@@ -264,10 +256,7 @@ GoRouter createAppRouter({
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: '/home/more',
-                builder: (_, _) => const MorePage(),
-              ),
+              GoRoute(path: '/home/more', builder: (_, _) => const MorePage()),
             ],
           ),
         ],
@@ -374,10 +363,7 @@ GoRouter createAppRouter({
             path: 'audit',
             builder: (_, _) => const VirtualTeamAuditPage(),
           ),
-          GoRoute(
-            path: 'logs',
-            builder: (_, _) => const VirtualTeamLogsPage(),
-          ),
+          GoRoute(path: 'logs', builder: (_, _) => const VirtualTeamLogsPage()),
           GoRoute(
             path: 'search',
             builder: (_, _) => const VirtualTeamSearchPage(),
@@ -422,9 +408,8 @@ GoRouter createAppRouter({
                     path: ':id',
                     // Fora do IndexedStack do shell — evita body vazio.
                     parentNavigatorKey: rootNavigatorKey,
-                    builder: (context, state) => RequestDetailPage(
-                      id: state.pathParameters['id']!,
-                    ),
+                    builder: (context, state) =>
+                        RequestDetailPage(id: state.pathParameters['id']!),
                   ),
                 ],
               ),
@@ -457,16 +442,16 @@ GoRouter createAppRouter({
       ),
       GoRoute(
         path: '/citizen/agenda',
-        builder: (context, state) => AgendaPage(
-          focusId: state.uri.queryParameters['focus'],
-        ),
+        builder: (context, state) =>
+            AgendaPage(focusId: state.uri.queryParameters['focus']),
       ),
       GoRoute(
         path: '/citizen/appointments/detail',
         builder: (context, state) {
           final extra = state.extra;
-          final map =
-              extra is Map ? Map<String, dynamic>.from(extra) : const {};
+          final map = extra is Map
+              ? Map<String, dynamic>.from(extra)
+              : const {};
           return CitizenAppointmentDetailPage(
             title: (map['title'] ?? 'Compromisso').toString(),
             when: map['when']?.toString(),
@@ -482,9 +467,8 @@ GoRouter createAppRouter({
         routes: [
           GoRoute(
             path: ':id',
-            builder: (context, state) => CitizenNewsDetailPage(
-              newsId: state.pathParameters['id']!,
-            ),
+            builder: (context, state) =>
+                CitizenNewsDetailPage(newsId: state.pathParameters['id']!),
           ),
         ],
       ),
@@ -492,11 +476,12 @@ GoRouter createAppRouter({
         path: '/citizen/neighborhood',
         builder: (context, state) {
           final extra = state.extra;
-          final map =
-              extra is Map ? Map<String, dynamic>.from(extra) : const {};
+          final map = extra is Map
+              ? Map<String, dynamic>.from(extra)
+              : const {};
           return CitizenNeighborhoodPage(
-            neighborhoodLabel:
-                (map['neighborhoodLabel'] ?? 'Sua região').toString(),
+            neighborhoodLabel: (map['neighborhoodLabel'] ?? 'Sua região')
+                .toString(),
             unreadNotifications: (map['unread'] is int)
                 ? map['unread'] as int
                 : int.tryParse('${map['unread'] ?? 0}') ?? 0,

@@ -26,19 +26,19 @@ class CreateProtocolInput {
   final bool dataConsent;
 
   Map<String, dynamic> toJson() => {
-        'subject': subject,
-        'title': subject,
-        'description': description,
-        if (category != null) 'category': category,
-        'priority': priority,
-        'data_consent': dataConsent,
-        if (latitude != null || longitude != null || locationLabel != null)
-          'metadata': {
-            if (latitude != null) 'latitude': latitude,
-            if (longitude != null) 'longitude': longitude,
-            if (locationLabel != null) 'location_label': locationLabel,
-          },
-      };
+    'subject': subject,
+    'title': subject,
+    'description': description,
+    if (category != null) 'category': category,
+    'priority': priority,
+    'data_consent': dataConsent,
+    if (latitude != null || longitude != null || locationLabel != null)
+      'metadata': {
+        if (latitude != null) 'latitude': latitude,
+        if (longitude != null) 'longitude': longitude,
+        if (locationLabel != null) 'location_label': locationLabel,
+      },
+  };
 }
 
 class ProtocolRatingInput {
@@ -53,16 +53,16 @@ class ProtocolRatingInput {
   final String? comment;
 
   Map<String, dynamic> toJson() => {
-        'stars': stars,
-        'rating': stars,
-        'score': stars,
-        'resolved': resolved,
-        'problema_resolvido': resolved,
-        if (comment != null && comment!.trim().isNotEmpty)
-          'comment': comment!.trim(),
-        if (comment != null && comment!.trim().isNotEmpty)
-          'comentario': comment!.trim(),
-      };
+    'stars': stars,
+    'rating': stars,
+    'score': stars,
+    'resolved': resolved,
+    'problema_resolvido': resolved,
+    if (comment != null && comment!.trim().isNotEmpty)
+      'comment': comment!.trim(),
+    if (comment != null && comment!.trim().isNotEmpty)
+      'comentario': comment!.trim(),
+  };
 }
 
 class ProtocolsRepository {

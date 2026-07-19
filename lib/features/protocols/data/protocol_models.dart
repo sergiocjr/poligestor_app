@@ -34,32 +34,36 @@ class ProtocolSummary {
   final bool awaitingCitizen;
 
   factory ProtocolSummary.fromJson(Map<String, dynamic> json) {
-    final title = (json['subject'] ??
-            json['title'] ??
-            json['titulo'] ??
-            json['assunto'] ??
-            json['descricao'] ??
-            'Solicitação')
-        .toString();
+    final title =
+        (json['subject'] ??
+                json['title'] ??
+                json['titulo'] ??
+                json['assunto'] ??
+                json['descricao'] ??
+                'Solicitação')
+            .toString();
     final unread = _asInt(
       json['unread_count'] ??
           json['mensagens_nao_lidas'] ??
           json['unread_messages'] ??
           json['new_messages'],
     );
-    final awaiting = _asBool(
+    final awaiting =
+        _asBool(
           json['awaiting_citizen'] ??
               json['aguardando_cidadao'] ??
               json['needs_citizen_reply'] ??
               json['aguardando_informacao'],
         ) ||
         _statusIsAwaitingCitizen(json['status']?.toString());
-    final preview = (json['last_message_preview'] ??
-            json['ultima_resposta'] ??
-            json['last_public_message'] ??
-            json['preview'])
-        ?.toString();
-    final updatedRaw = json['updated_at'] ??
+    final preview =
+        (json['last_message_preview'] ??
+                json['ultima_resposta'] ??
+                json['last_public_message'] ??
+                json['preview'])
+            ?.toString();
+    final updatedRaw =
+        json['updated_at'] ??
         json['updatedAt'] ??
         json['last_updated_at'] ??
         json['ultima_atualizacao'] ??
@@ -69,25 +73,33 @@ class ProtocolSummary {
     return ProtocolSummary(
       id: json['id'] ?? json['uuid'] ?? json['protocol_id'] ?? '',
       title: title,
-      number: (json['number'] ?? json['numero'] ?? json['code'] ?? json['protocolo'])
-          ?.toString(),
+      number:
+          (json['number'] ??
+                  json['numero'] ??
+                  json['code'] ??
+                  json['protocolo'])
+              ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
       priority: (json['priority'] ?? json['prioridade'])?.toString(),
       category: _categoryLabel(json['category'] ?? json['categoria']),
       description: (json['description'] ?? json['descricao'])?.toString(),
-      createdAt:
-          createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
-      updatedAt:
-          updatedRaw != null ? DateTime.tryParse(updatedRaw.toString()) : null,
+      createdAt: createdRaw != null
+          ? DateTime.tryParse(createdRaw.toString())
+          : null,
+      updatedAt: updatedRaw != null
+          ? DateTime.tryParse(updatedRaw.toString())
+          : null,
       unreadCount: unread,
-      hasUnread: unread > 0 ||
+      hasUnread:
+          unread > 0 ||
           _asBool(
             json['has_unread'] ??
                 json['tem_nao_lidas'] ??
                 json['has_new_message'],
           ),
-      lastMessagePreview:
-          preview != null && preview.trim().isNotEmpty ? preview.trim() : null,
+      lastMessagePreview: preview != null && preview.trim().isNotEmpty
+          ? preview.trim()
+          : null,
       awaitingCitizen: awaiting,
     );
   }
@@ -154,54 +166,61 @@ class ProtocolMessage {
         name = 'Você';
       }
     }
-    name ??= (json['author_name'] ??
-            json['remetente'] ??
-            json['sender_name'] ??
-            json['from'])
-        ?.toString();
+    name ??=
+        (json['author_name'] ??
+                json['remetente'] ??
+                json['sender_name'] ??
+                json['from'])
+            ?.toString();
     role ??= (json['author_role'] ?? json['role'] ?? json['sender_role'])
         ?.toString();
 
-    final visibility =
-        (json['visibility'] ?? json['visibilidade'] ?? 'public').toString();
-    final isInternal = _asBool(json['is_internal'] ?? json['internal']) ||
+    final visibility = (json['visibility'] ?? json['visibilidade'] ?? 'public')
+        .toString();
+    final isInternal =
+        _asBool(json['is_internal'] ?? json['internal']) ||
         visibility.toLowerCase() == 'internal' ||
         visibility.toLowerCase() == 'interna';
 
-    final fromCabinet = _asBool(
+    final fromCabinet =
+        _asBool(
           json['is_from_cabinet'] ??
               json['from_cabinet'] ??
               json['is_staff'] ??
               json['from_gabinete'],
         ) ||
         _roleIsCabinet(role) ||
-        (name != null &&
-            name.toLowerCase().contains('gabinete'));
+        (name != null && name.toLowerCase().contains('gabinete'));
 
-    final createdRaw = json['created_at'] ?? json['createdAt'] ?? json['sent_at'];
+    final createdRaw =
+        json['created_at'] ?? json['createdAt'] ?? json['sent_at'];
     final attachmentsRaw = json['attachments'] ?? json['anexos'] ?? const [];
-    final bodyText = (json['body'] ??
-            json['content'] ??
-            json['message'] ??
-            json['texto'] ??
-            '')
-        .toString();
+    final bodyText =
+        (json['body'] ??
+                json['content'] ??
+                json['message'] ??
+                json['texto'] ??
+                '')
+            .toString();
 
     return ProtocolMessage(
       id: json['id'] ?? json['uuid'] ?? createdRaw ?? bodyText.hashCode,
       body: bodyText,
       authorName: name,
-      createdAt:
-          createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      createdAt: createdRaw != null
+          ? DateTime.tryParse(createdRaw.toString())
+          : null,
       isFromCabinet: fromCabinet,
       isUnread: _asBool(json['is_unread'] ?? json['unread'] ?? json['nova']),
       isInternal: isInternal,
       attachments: (attachmentsRaw is List)
           ? attachmentsRaw
-              .whereType<Map>()
-              .map((e) =>
-                  ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
+                .whereType<Map>()
+                .map(
+                  (e) =>
+                      ProtocolAttachment.fromJson(Map<String, dynamic>.from(e)),
+                )
+                .toList()
           : const [],
     );
   }
@@ -211,12 +230,7 @@ class ProtocolMessage {
 typedef ProtocolComment = ProtocolMessage;
 
 class ProtocolAttachment {
-  ProtocolAttachment({
-    required this.id,
-    this.name,
-    this.url,
-    this.mimeType,
-  });
+  ProtocolAttachment({required this.id, this.name, this.url, this.mimeType});
 
   final dynamic id;
   final String? name;
@@ -239,11 +253,12 @@ class ProtocolAttachment {
       id: json['id'] ?? json['uuid'] ?? json['name'],
       name: (json['name'] ?? json['filename'] ?? json['original_name'])
           ?.toString(),
-      url: (json['url'] ??
-              json['path'] ??
-              json['download_url'] ??
-              json['signed_url'])
-          ?.toString(),
+      url:
+          (json['url'] ??
+                  json['path'] ??
+                  json['download_url'] ??
+                  json['signed_url'])
+              ?.toString(),
       mimeType: (json['mime_type'] ?? json['content_type'])?.toString(),
     );
   }
@@ -267,44 +282,46 @@ class ProtocolHistoryEvent {
   factory ProtocolHistoryEvent.fromJson(Map<String, dynamic> json) {
     final createdRaw =
         json['created_at'] ?? json['createdAt'] ?? json['occurred_at'];
-    final kind = (json['kind'] ??
-            json['type'] ??
-            json['event'] ??
-            json['status'] ??
-            json['codigo'])
-        ?.toString();
-    final title = (json['title'] ??
-            json['titulo'] ??
-            json['label'] ??
-            ProtocolHistoryLabels.titleFor(kind) ??
-            'Atualização')
-        .toString();
+    final kind =
+        (json['kind'] ??
+                json['type'] ??
+                json['event'] ??
+                json['status'] ??
+                json['codigo'])
+            ?.toString();
+    final title =
+        (json['title'] ??
+                json['titulo'] ??
+                json['label'] ??
+                ProtocolHistoryLabels.titleFor(kind) ??
+                'Atualização')
+            .toString();
     return ProtocolHistoryEvent(
       id: json['id'] ?? json['uuid'] ?? createdRaw ?? title.hashCode,
       title: title,
-      description: (json['description'] ??
-              json['descricao'] ??
-              json['body'] ??
-              json['message'])
-          ?.toString(),
-      createdAt:
-          createdRaw != null ? DateTime.tryParse(createdRaw.toString()) : null,
+      description:
+          (json['description'] ??
+                  json['descricao'] ??
+                  json['body'] ??
+                  json['message'])
+              ?.toString(),
+      createdAt: createdRaw != null
+          ? DateTime.tryParse(createdRaw.toString())
+          : null,
       kind: kind,
     );
   }
 
   bool get isInternal {
     final k = (kind ?? '').toLowerCase();
-    return k.contains('internal') || k.contains('interna') || k.contains('nota');
+    return k.contains('internal') ||
+        k.contains('interna') ||
+        k.contains('nota');
   }
 }
 
 class ProtocolRating {
-  ProtocolRating({
-    required this.stars,
-    this.resolved,
-    this.comment,
-  });
+  ProtocolRating({required this.stars, this.resolved, this.comment});
 
   final int stars;
   final bool? resolved;
@@ -379,12 +396,14 @@ class ProtocolDetail extends ProtocolSummary {
   factory ProtocolDetail.fromJson(Map<String, dynamic> json) {
     final base = ProtocolSummary.fromJson(json);
 
-    final messagesRaw = json['messages'] ??
+    final messagesRaw =
+        json['messages'] ??
         json['conversation'] ??
         json['public_messages'] ??
         json['comments'] ??
         const [];
-    final historyRaw = json['history'] ??
+    final historyRaw =
+        json['history'] ??
         json['historico'] ??
         json['events'] ??
         json['status_history'] ??
@@ -393,14 +412,13 @@ class ProtocolDetail extends ProtocolSummary {
 
     final attachmentsRaw = json['attachments'] ?? json['anexos'] ?? const [];
 
-    final messages = _parseMessages(messagesRaw)
-        .where((m) => !m.isInternal)
-        .toList()
-      ..sort((a, b) {
-        final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-        return aAt.compareTo(bAt);
-      });
+    final messages =
+        _parseMessages(messagesRaw).where((m) => !m.isInternal).toList()
+          ..sort((a, b) {
+            final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+            final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+            return aAt.compareTo(bAt);
+          });
 
     var history = _parseHistory(historyRaw).where((e) => !e.isInternal).toList()
       ..sort((a, b) {
@@ -418,32 +436,36 @@ class ProtocolDetail extends ProtocolSummary {
       history = const [];
     }
     if (json['timeline'] != null && history.isEmpty) {
-      history = _parseHistory(json['timeline']).where((e) => !e.isInternal).toList()
-        ..sort((a, b) {
-          final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
-          return aAt.compareTo(bAt);
-        });
+      history =
+          _parseHistory(json['timeline']).where((e) => !e.isInternal).toList()
+            ..sort((a, b) {
+              final aAt = a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+              final bAt = b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+              return aAt.compareTo(bAt);
+            });
     }
 
     final links = json['links'] ?? json['_links'] ?? json['actions'];
     String? markReadUrl;
     String? rateUrl;
     if (links is Map) {
-      markReadUrl = (links['mark_read'] ??
-              links['read'] ??
-              links['messages_read'] ??
-              links['marcar_lida'])
-          ?.toString();
-      rateUrl = (links['rate'] ??
-              links['rating'] ??
-              links['avaliacao'] ??
-              links['evaluate'])
-          ?.toString();
+      markReadUrl =
+          (links['mark_read'] ??
+                  links['read'] ??
+                  links['messages_read'] ??
+                  links['marcar_lida'])
+              ?.toString();
+      rateUrl =
+          (links['rate'] ??
+                  links['rating'] ??
+                  links['avaliacao'] ??
+                  links['evaluate'])
+              ?.toString();
     }
     markReadUrl ??= (json['mark_read_url'] ?? json['read_url'])?.toString();
-    rateUrl ??= (json['rate_url'] ?? json['rating_url'] ?? json['avaliacao_url'])
-        ?.toString();
+    rateUrl ??=
+        (json['rate_url'] ?? json['rating_url'] ?? json['avaliacao_url'])
+            ?.toString();
 
     final ratingRaw = json['rating'] ?? json['avaliacao'] ?? json['evaluation'];
     ProtocolRating? rating;
@@ -465,7 +487,8 @@ class ProtocolDetail extends ProtocolSummary {
     if (rateUrl == 'null' || rateUrl == 'NULL') rateUrl = null;
     if (markReadUrl == 'null' || markReadUrl == 'NULL') markReadUrl = null;
 
-    final canRate = _asBool(
+    final canRate =
+        _asBool(
           json['can_rate'] ??
               json['can_evaluate'] ??
               json['avaliacao_disponivel'] ??
@@ -479,16 +502,19 @@ class ProtocolDetail extends ProtocolSummary {
           json['rating_editable'],
     );
 
-    final deadlineRaw = json['deadline_at'] ??
+    final deadlineRaw =
+        json['deadline_at'] ??
         json['due_at'] ??
         json['prazo_em'] ??
         json['sla_due_at'];
-    final deadlineLabel = (json['deadline_label'] ??
-            json['prazo'] ??
-            json['prazo_texto'] ??
-            json['sla_label'])
-        ?.toString();
-    final overdue = _asBool(
+    final deadlineLabel =
+        (json['deadline_label'] ??
+                json['prazo'] ??
+                json['prazo_texto'] ??
+                json['sla_label'])
+            ?.toString();
+    final overdue =
+        _asBool(
           json['is_overdue'] ??
               json['atrasado'] ??
               json['breached'] ??
@@ -496,39 +522,44 @@ class ProtocolDetail extends ProtocolSummary {
         ) ||
         (deadlineLabel?.toLowerCase().contains('atras') ?? false);
 
-    final pending = (json['pending_question'] ??
-            json['pergunta_pendente'] ??
-            json['info_request'] ??
-            json['pedido_informacao'])
-        ?.toString();
+    final pending =
+        (json['pending_question'] ??
+                json['pergunta_pendente'] ??
+                json['info_request'] ??
+                json['pedido_informacao'])
+            ?.toString();
 
-    final address = (json['address'] ??
-            json['endereco'] ??
-            json['location_label'] ??
-            (json['metadata'] is Map
-                ? (json['metadata']['location_label'] ??
-                    json['metadata']['address'] ??
-                    json['metadata']['endereco'])
-                : null))
-        ?.toString();
+    final address =
+        (json['address'] ??
+                json['endereco'] ??
+                json['location_label'] ??
+                (json['metadata'] is Map
+                    ? (json['metadata']['location_label'] ??
+                          json['metadata']['address'] ??
+                          json['metadata']['endereco'])
+                    : null))
+            ?.toString();
 
-    final assigneeRaw = json['assignee_public'] ??
+    final assigneeRaw =
+        json['assignee_public'] ??
         json['responsavel_publico'] ??
         json['setor_publico'] ??
         json['public_assignee'] ??
         json['assigned_to_public'];
     String? assignee;
     if (assigneeRaw is Map) {
-      assignee = (assigneeRaw['name'] ??
-              assigneeRaw['nome'] ??
-              assigneeRaw['setor'] ??
-              assigneeRaw['department'])
-          ?.toString();
+      assignee =
+          (assigneeRaw['name'] ??
+                  assigneeRaw['nome'] ??
+                  assigneeRaw['setor'] ??
+                  assigneeRaw['department'])
+              ?.toString();
     } else if (assigneeRaw != null) {
       assignee = assigneeRaw.toString();
     }
     // Só exibe se marcado como público.
-    final assigneeIsPublic = json.containsKey('assignee_public') ||
+    final assigneeIsPublic =
+        json.containsKey('assignee_public') ||
         json.containsKey('responsavel_publico') ||
         json.containsKey('setor_publico') ||
         json.containsKey('public_assignee') ||
@@ -548,19 +579,22 @@ class ProtocolDetail extends ProtocolSummary {
       unreadCount: base.unreadCount,
       hasUnread: base.hasUnread || messages.any((m) => m.isUnread),
       lastMessagePreview: base.lastMessagePreview,
-      awaitingCitizen: base.awaitingCitizen ||
+      awaitingCitizen:
+          base.awaitingCitizen ||
           (pending != null && pending.trim().isNotEmpty),
       address: address != null && address.trim().isNotEmpty ? address : null,
       publicAssignee: assignee,
-      deadlineAt:
-          deadlineRaw != null ? DateTime.tryParse(deadlineRaw.toString()) : null,
+      deadlineAt: deadlineRaw != null
+          ? DateTime.tryParse(deadlineRaw.toString())
+          : null,
       deadlineLabel: deadlineLabel,
       isOverdue: overdue,
       messages: messages,
       history: history,
       attachments: _parseAttachments(attachmentsRaw),
-      pendingQuestion:
-          pending != null && pending.trim().isNotEmpty ? pending.trim() : null,
+      pendingQuestion: pending != null && pending.trim().isNotEmpty
+          ? pending.trim()
+          : null,
       canRate: canRate,
       canEditRating: canEdit,
       rating: rating,
@@ -593,9 +627,7 @@ class ProtocolDetail extends ProtocolSummary {
     for (final e in raw) {
       if (e is! Map) continue;
       try {
-        out.add(
-          ProtocolHistoryEvent.fromJson(Map<String, dynamic>.from(e)),
-        );
+        out.add(ProtocolHistoryEvent.fromJson(Map<String, dynamic>.from(e)));
       } catch (_) {
         // Item opcional inválido não derruba o detalhe.
       }
@@ -620,16 +652,20 @@ class ProtocolStatusLabel {
   static String pt(String? status) {
     return switch ((status ?? '').toLowerCase().trim()) {
       'open' || 'aberto' || 'recebido' || 'received' => 'Recebida',
-      'em_analise' || 'em análise' || 'under_review' || 'analise' => 'Em análise',
-      'encaminhado' || 'encaminhada' || 'forwarded' || 'assigned' =>
-        'Encaminhada',
+      'em_analise' ||
+      'em análise' ||
+      'under_review' ||
+      'analise' => 'Em análise',
+      'encaminhado' ||
+      'encaminhada' ||
+      'forwarded' ||
+      'assigned' => 'Encaminhada',
       'in_progress' || 'andamento' || 'em_andamento' => 'Em andamento',
       'aguardando_cidadao' ||
       'aguardando cidadão' ||
       'aguardando_informacao' ||
       'waiting_citizen' ||
-      'info_requested' =>
-        'Aguardando informação',
+      'info_requested' => 'Aguardando informação',
       'respondida' || 'answered' || 'replied' => 'Respondida',
       'waiting' || 'aguardando' => 'Aguardando',
       'resolved' || 'resolvido' || 'encerrado' => 'Resolvida',
@@ -656,17 +692,21 @@ class ProtocolPriorityLabel {
 class ProtocolHistoryLabels {
   static String? titleFor(String? kind) {
     return switch ((kind ?? '').toLowerCase().trim()) {
-      'received' || 'recebido' || 'recebida' || 'created' || 'aberta' =>
-        'Solicitação recebida',
+      'received' ||
+      'recebido' ||
+      'recebida' ||
+      'created' ||
+      'aberta' => 'Solicitação recebida',
       'under_review' || 'em_analise' || 'analise' => 'Em análise',
-      'forwarded' || 'encaminhada' || 'encaminhado' || 'assigned' =>
-        'Encaminhada',
+      'forwarded' ||
+      'encaminhada' ||
+      'encaminhado' ||
+      'assigned' => 'Encaminhada',
       'in_progress' || 'em_andamento' || 'andamento' => 'Em andamento',
       'awaiting_citizen' ||
       'aguardando_cidadao' ||
       'aguardando_informacao' ||
-      'info_requested' =>
-        'Aguardando informação',
+      'info_requested' => 'Aguardando informação',
       'answered' || 'respondida' || 'replied' => 'Respondida',
       'resolved' || 'resolvida' || 'resolvido' || 'closed' => 'Resolvida',
       _ => null,
@@ -675,21 +715,28 @@ class ProtocolHistoryLabels {
 
   static IconDataForHistory iconFor(String? kind) {
     return switch ((kind ?? '').toLowerCase().trim()) {
-      'received' || 'recebido' || 'recebida' || 'created' || 'aberta' =>
-        IconDataForHistory.inbox,
+      'received' ||
+      'recebido' ||
+      'recebida' ||
+      'created' ||
+      'aberta' => IconDataForHistory.inbox,
       'under_review' || 'em_analise' || 'analise' => IconDataForHistory.search,
-      'forwarded' || 'encaminhada' || 'encaminhado' || 'assigned' =>
-        IconDataForHistory.forward,
-      'in_progress' || 'em_andamento' || 'andamento' =>
-        IconDataForHistory.progress,
+      'forwarded' ||
+      'encaminhada' ||
+      'encaminhado' ||
+      'assigned' => IconDataForHistory.forward,
+      'in_progress' ||
+      'em_andamento' ||
+      'andamento' => IconDataForHistory.progress,
       'awaiting_citizen' ||
       'aguardando_cidadao' ||
       'aguardando_informacao' ||
-      'info_requested' =>
-        IconDataForHistory.help,
+      'info_requested' => IconDataForHistory.help,
       'answered' || 'respondida' || 'replied' => IconDataForHistory.reply,
-      'resolved' || 'resolvida' || 'resolvido' || 'closed' =>
-        IconDataForHistory.done,
+      'resolved' ||
+      'resolvida' ||
+      'resolvido' ||
+      'closed' => IconDataForHistory.done,
       _ => IconDataForHistory.dot,
     };
   }
@@ -713,22 +760,23 @@ enum RequestStatusFilter {
   resolved;
 
   String get queryValue => switch (this) {
-        RequestStatusFilter.open => 'open',
-        RequestStatusFilter.inProgress => 'in_progress',
-        RequestStatusFilter.resolved => 'resolved',
-      };
+    RequestStatusFilter.open => 'open',
+    RequestStatusFilter.inProgress => 'in_progress',
+    RequestStatusFilter.resolved => 'resolved',
+  };
 
   String get label => switch (this) {
-        RequestStatusFilter.open => 'Abertas',
-        RequestStatusFilter.inProgress => 'Andamento',
-        RequestStatusFilter.resolved => 'Resolvidas',
-      };
+    RequestStatusFilter.open => 'Abertas',
+    RequestStatusFilter.inProgress => 'Andamento',
+    RequestStatusFilter.resolved => 'Resolvidas',
+  };
 
   static RequestStatusFilter? tryParse(String? raw) {
     return switch ((raw ?? '').toLowerCase().trim()) {
       'open' || 'aberto' || 'abertas' => RequestStatusFilter.open,
-      'in_progress' || 'andamento' || 'em_andamento' =>
-        RequestStatusFilter.inProgress,
+      'in_progress' ||
+      'andamento' ||
+      'em_andamento' => RequestStatusFilter.inProgress,
       'resolved' || 'resolvidas' || 'resolvido' => RequestStatusFilter.resolved,
       _ => null,
     };
@@ -878,9 +926,9 @@ class RequestCategory {
   static List<RequestCategory> dropdownCategories({
     Iterable<RequestCategory>? source,
   }) {
-    final list = uniqueById(source ?? formOptions)
-        .where((c) => c.id != 'acompanhar' && c.id != 'assistente')
-        .toList();
+    final list = uniqueById(
+      source ?? formOptions,
+    ).where((c) => c.id != 'acompanhar' && c.id != 'assistente').toList();
     return list;
   }
 

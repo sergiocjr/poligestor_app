@@ -36,15 +36,18 @@ void main() {
       expect(reply.protocol!.status, 'aberto');
     });
 
-    test('resposta sem protocolo não exibe card mesmo com PROTOCOL_CREATED', () {
-      final reply = AssistantReply.fromJson({
-        'reply': 'Quase lá.',
-        'next_action': 'PROTOCOL_CREATED',
-      });
-      expect(reply.isProtocolCreated, isTrue);
-      expect(reply.protocol, isNull);
-      expect(reply.shouldShowProtocolCard, isFalse);
-    });
+    test(
+      'resposta sem protocolo não exibe card mesmo com PROTOCOL_CREATED',
+      () {
+        final reply = AssistantReply.fromJson({
+          'reply': 'Quase lá.',
+          'next_action': 'PROTOCOL_CREATED',
+        });
+        expect(reply.isProtocolCreated, isTrue);
+        expect(reply.protocol, isNull);
+        expect(reply.shouldShowProtocolCard, isFalse);
+      },
+    );
 
     test('protocolo inválido/vazio é ignorado', () {
       final reply = AssistantReply.fromJson({
@@ -66,11 +69,7 @@ void main() {
       final reply = AssistantReply.fromJson({
         'reply': 'Pronto!',
         'next_action': 'PROTOCOL_CREATED',
-        'protocol': {
-          'id': 'p1',
-          'number': 'PG-1',
-          'status': 'aberto',
-        },
+        'protocol': {'id': 'p1', 'number': 'PG-1', 'status': 'aberto'},
       });
 
       final first = presenter.present(reply, nextId: nextId);
@@ -142,7 +141,9 @@ void main() {
       expect(tracked?.number, 'PG-2026-000042');
     });
 
-    testWidgets('card de confirmação e atalhos não estouram em tela pequena', (tester) async {
+    testWidgets('card de confirmação e atalhos não estouram em tela pequena', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(360, 640));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -165,10 +166,7 @@ void main() {
                     ),
                     onTrack: (_) {},
                   ),
-                  ConfirmationShortcuts(
-                    onConfirm: () {},
-                    onCorrect: () {},
-                  ),
+                  ConfirmationShortcuts(onConfirm: () {}, onCorrect: () {}),
                 ],
               ),
             ),
@@ -181,7 +179,9 @@ void main() {
       expect(find.byKey(const Key('shortcut-confirm')), findsOneWidget);
     });
 
-    testWidgets('não assume sucesso sem dados válidos no presenter', (tester) async {
+    testWidgets('não assume sucesso sem dados válidos no presenter', (
+      tester,
+    ) async {
       final presenter = AssistantReplyPresenter();
       final reply = AssistantReply.fromJson({
         'reply': 'Sem protocolo anexado.',
@@ -191,9 +191,7 @@ void main() {
       expect(messages.where((m) => m.isProtocolCard), isEmpty);
 
       await tester.pumpWidget(
-        const MaterialApp(
-          home: Scaffold(body: SizedBox.shrink()),
-        ),
+        const MaterialApp(home: Scaffold(body: SizedBox.shrink())),
       );
       expect(find.byKey(const Key('protocol-created-card')), findsNothing);
     });

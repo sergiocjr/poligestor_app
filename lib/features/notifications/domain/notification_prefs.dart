@@ -45,21 +45,20 @@ class NotificationPrefs {
       protocolStatusEnabled: _bool(json['protocol_status_enabled'], true),
       importantOnly: _bool(json['important_only'], false),
       quietHoursEnabled: _bool(json['quiet_hours_enabled'], false),
-      quietHoursStart:
-          (json['quiet_hours_start'] ?? '22:00').toString(),
+      quietHoursStart: (json['quiet_hours_start'] ?? '22:00').toString(),
       quietHoursEnd: (json['quiet_hours_end'] ?? '07:00').toString(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'push_enabled': pushEnabled,
-        'protocol_messages_enabled': protocolMessagesEnabled,
-        'protocol_status_enabled': protocolStatusEnabled,
-        'important_only': importantOnly,
-        'quiet_hours_enabled': quietHoursEnabled,
-        'quiet_hours_start': quietHoursStart,
-        'quiet_hours_end': quietHoursEnd,
-      };
+    'push_enabled': pushEnabled,
+    'protocol_messages_enabled': protocolMessagesEnabled,
+    'protocol_status_enabled': protocolStatusEnabled,
+    'important_only': importantOnly,
+    'quiet_hours_enabled': quietHoursEnabled,
+    'quiet_hours_start': quietHoursStart,
+    'quiet_hours_end': quietHoursEnd,
+  };
 
   Future<void> loadLocal() async {
     final p = await SharedPreferences.getInstance();

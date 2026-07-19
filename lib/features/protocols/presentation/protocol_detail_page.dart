@@ -57,8 +57,8 @@ class _ProtocolDetailPageState extends State<ProtocolDetailPage> {
               Text(
                 p.title,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 12),
               Wrap(
@@ -73,14 +73,13 @@ class _ProtocolDetailPageState extends State<ProtocolDetailPage> {
                 ],
               ),
               const SizedBox(height: 20),
-              Text(
-                'Descrição',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
+              Text('Descrição', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 8),
-              Text(p.description?.isNotEmpty == true
-                  ? p.description!
-                  : 'Sem descrição.'),
+              Text(
+                p.description?.isNotEmpty == true
+                    ? p.description!
+                    : 'Sem descrição.',
+              ),
             ],
           );
         },

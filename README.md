@@ -42,17 +42,18 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.2** | Identidade / Auth / Multi-tenant | **CONCLUÍDA (Flutter)** |
 | 10+ | Evolução + estabilização VPS 10.2 | Em andamento |
 
-## Sprint 10.2 — Identidade (CONCLUÍDA no Flutter)
+## Sprint 10.2 — Identidade (VALIDAÇÃO FINAL)
 
-Fluxo **org-first** (`/org` → branding → `/login`):
+Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS:
 
-- Seleção de organização (slug / código / domínio / deep link)
-- Branding dinâmico (quando a API estabilizar; fallback honesto sem mocks)
-- Login staff/portal, cadastro e recuperação (UI pronta; APIs conectam ao ficarem 200)
-- Perfil, sessões LIVE, troca de organização
-- Deep links `poligestor://org/{slug}` · `poligestor://tenant/{slug}`
+- Resolve por slug / código / domínio (`GET /v1/identity/tenants/resolve`)
+- Branding dinâmico (`GET /v1/portal/branding`)
+- Providers (`GET …/auth/providers`) — botões só se habilitados e ready
+- OAuth Google/Apple/Gov.br — tokens aplicados na sessão
+- Cadastro / forgot / reset / perfil / sessões / linked accounts (contratos ativos)
+- Cache por tenant; deep links `poligestor://org/{slug}`
 
-Pendências restantes: **somente backend** (resolve, branding, providers, register, forgot, OAuth). Detalhes em [STATUS](docs/STATUS_PROJETO.md).
+Detalhes e classificação de status: [STATUS](docs/STATUS_PROJETO.md).
 
 ## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
 

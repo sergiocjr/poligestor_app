@@ -187,8 +187,9 @@ void main() {
       expect(scroll.offset, lessThan(80));
     });
 
-    testWidgets('composer fora do scroll nao captura gesto vertical',
-        (tester) async {
+    testWidgets('composer fora do scroll nao captura gesto vertical', (
+      tester,
+    ) async {
       final scroll = ScrollController();
       final message = TextEditingController();
       addTearDown(() {
@@ -205,7 +206,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byKey(const Key('request_detail_composer_bar')), findsOneWidget);
+      expect(
+        find.byKey(const Key('request_detail_composer_bar')),
+        findsOneWidget,
+      );
 
       final before = scroll.offset;
       await tester.drag(
@@ -271,9 +275,7 @@ void main() {
       await tester.pump();
 
       expect(
-        find.byWidgetPredicate(
-          (w) => w is AbsorbPointer && w.absorbing,
-        ),
+        find.byWidgetPredicate((w) => w is AbsorbPointer && w.absorbing),
         findsNothing,
       );
       expect(
@@ -281,7 +283,9 @@ void main() {
         findsNothing,
       );
       expect(
-        tester.widget<FilledButton>(find.byKey(const Key('btn_enviar'))).onPressed,
+        tester
+            .widget<FilledButton>(find.byKey(const Key('btn_enviar')))
+            .onPressed,
         isNull,
       );
 
@@ -296,7 +300,9 @@ void main() {
       );
       await tester.pump();
       expect(
-        tester.widget<FilledButton>(find.byKey(const Key('btn_enviar'))).onPressed,
+        tester
+            .widget<FilledButton>(find.byKey(const Key('btn_enviar')))
+            .onPressed,
         isNotNull,
       );
     });
@@ -339,10 +345,10 @@ void main() {
       });
 
       Widget buildOnce() => _buildDetailScrollHarness(
-            scrollController: scroll,
-            detail: _sampleDetail(),
-            messageCtrl: message,
-          );
+        scrollController: scroll,
+        detail: _sampleDetail(),
+        messageCtrl: message,
+      );
 
       await tester.pumpWidget(buildOnce());
       await tester.pumpAndSettle();

@@ -7,10 +7,7 @@ Map<String, dynamic> asMap(dynamic raw) {
 
 List<Map<String, dynamic>> asMapList(dynamic raw) {
   if (raw is! List) return const [];
-  return raw
-      .whereType<Map>()
-      .map((e) => Map<String, dynamic>.from(e))
-      .toList();
+  return raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
 }
 
 int asInt(dynamic v, [int fallback = 0]) {
@@ -42,11 +39,11 @@ class MandatePeriod {
   final String? category;
 
   factory MandatePeriod.fromJson(Map<String, dynamic> json) => MandatePeriod(
-        from: asString(json['from']),
-        to: asString(json['to']),
-        assigneeId: asString(json['assignee_id']),
-        category: asString(json['category']),
-      );
+    from: asString(json['from']),
+    to: asString(json['to']),
+    assigneeId: asString(json['assignee_id']),
+    category: asString(json['category']),
+  );
 }
 
 class MandateDaySummary {
@@ -131,7 +128,10 @@ class MandateBriefing {
   factory MandateBriefing.fromJson(Map<String, dynamic> json) {
     final bulletsRaw = json['bullets'];
     final bullets = bulletsRaw is List
-        ? bulletsRaw.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
+        ? bulletsRaw
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .toList()
         : <String>[];
     final gen = asString(json['generated_at']);
     return MandateBriefing(
@@ -193,9 +193,9 @@ class MandateExecutive {
   }) {
     final exec = asMap(root['executive'] ?? root);
     final day = MandateDaySummary.fromJson(asMap(exec['day_summary']));
-    final themes = asMapList(exec['situation_by_theme'])
-        .map(MandateThemeCount.fromJson)
-        .toList();
+    final themes = asMapList(
+      exec['situation_by_theme'],
+    ).map(MandateThemeCount.fromJson).toList();
     final briefingRaw = root['briefing'] ?? exec['briefing'];
     final briefing = briefingRaw is Map
         ? MandateBriefing.fromJson(Map<String, dynamic>.from(briefingRaw))
@@ -243,12 +243,12 @@ class MandateExecutive {
     return MandateExecutive(
       daySummary: day,
       monthTotals: asMap(exec['month_totals']),
-      weeklySeries: asMapList(exec['weekly_series'])
-          .map(MandateSeriesPoint.fromJson)
-          .toList(),
-      monthlySeries: asMapList(exec['monthly_series'])
-          .map(MandateSeriesPoint.fromJson)
-          .toList(),
+      weeklySeries: asMapList(
+        exec['weekly_series'],
+      ).map(MandateSeriesPoint.fromJson).toList(),
+      monthlySeries: asMapList(
+        exec['monthly_series'],
+      ).map(MandateSeriesPoint.fromJson).toList(),
       situationByTheme: themes,
       attention: attention,
       period: MandatePeriod.fromJson(asMap(exec['period'])),
@@ -279,12 +279,7 @@ class MandateDistrictStat {
 
   factory MandateDistrictStat.fromJson(Map<String, dynamic> json) {
     final cats = asMapList(json['top_categories'])
-        .map(
-          (c) => (
-            name: asString(c['name']) ?? '',
-            count: asInt(c['count']),
-          ),
-        )
+        .map((c) => (name: asString(c['name']) ?? '', count: asInt(c['count'])))
         .where((c) => c.name.isNotEmpty)
         .toList();
     return MandateDistrictStat(
@@ -320,8 +315,7 @@ class MandateNeighborhoodsData {
     return MandateNeighborhoodsData(
       districts: list.map(MandateDistrictStat.fromJson).toList(),
       topProblems: asMapList(json['top_problems']),
-      avgHoursByDistrict:
-          asMapList(json['avg_resolution_hours_by_district']),
+      avgHoursByDistrict: asMapList(json['avg_resolution_hours_by_district']),
       period: MandatePeriod.fromJson(asMap(json['period'])),
     );
   }
@@ -371,9 +365,9 @@ class MandateSubjectsData {
 
   factory MandateSubjectsData.fromJson(Map<String, dynamic> json) =>
       MandateSubjectsData(
-        byTheme: asMapList(json['by_theme'])
-            .map(MandateSubjectStat.fromJson)
-            .toList(),
+        byTheme: asMapList(
+          json['by_theme'],
+        ).map(MandateSubjectStat.fromJson).toList(),
         byCategory: asMapList(json['by_category']),
         weeklyEvolution: asMapList(json['weekly_evolution']),
         period: MandatePeriod.fromJson(asMap(json['period'])),
@@ -440,8 +434,9 @@ class MandateTeamData {
       for (final e in labelsRaw.entries) e.key: e.value.toString(),
     };
     return MandateTeamData(
-      ranking:
-          asMapList(json['ranking']).map(MandateTeamMember.fromJson).toList(),
+      ranking: asMapList(
+        json['ranking'],
+      ).map(MandateTeamMember.fromJson).toList(),
       summary: asMap(json['summary']),
       labels: labels,
       period: MandatePeriod.fromJson(asMap(json['period'])),
@@ -513,11 +508,11 @@ class MandateAgendaData {
   factory MandateAgendaData.fromJson(Map<String, dynamic> json) {
     final typesRaw = asMap(json['event_types']);
     return MandateAgendaData(
-      events: asMapList(json['events']).map(MandateAgendaEvent.fromJson).toList(),
+      events: asMapList(
+        json['events'],
+      ).map(MandateAgendaEvent.fromJson).toList(),
       total: asInt(json['total'], asMapList(json['events']).length),
-      eventTypes: {
-        for (final e in typesRaw.entries) e.key: e.value.toString(),
-      },
+      eventTypes: {for (final e in typesRaw.entries) e.key: e.value.toString()},
       filters: asMap(json['filters']),
     );
   }
@@ -563,7 +558,9 @@ class MandateSearchData {
     final groupsRaw = asMap(json['groups']);
     final groups = <String, List<MandateSearchHit>>{};
     for (final e in groupsRaw.entries) {
-      groups[e.key] = asMapList(e.value).map(MandateSearchHit.fromJson).toList();
+      groups[e.key] = asMapList(
+        e.value,
+      ).map(MandateSearchHit.fromJson).toList();
     }
     return MandateSearchData(
       query: asString(json['query']) ?? '',
@@ -603,8 +600,7 @@ class MandateReportRow {
         id: asString(json['id']) ?? '',
         number: asString(json['number']) ?? '',
         subject: asString(json['subject']) ?? '',
-        statusLabel:
-            asString(json['status_label'] ?? json['status']) ?? '',
+        statusLabel: asString(json['status_label'] ?? json['status']) ?? '',
         district: asString(json['district']),
         themeLabel: asString(json['theme_label'] ?? json['theme']),
         assigneeName: asString(json['assignee_name']),
@@ -654,7 +650,9 @@ class MandateTvData {
     final gen = asString(json['generated_at']);
     final briefingRaw = json['briefing'];
     return MandateTvData(
-      kpis: MandateDaySummary.fromJson(asMap(json['kpis'] ?? json['day_summary'])),
+      kpis: MandateDaySummary.fromJson(
+        asMap(json['kpis'] ?? json['day_summary']),
+      ),
       monthTotals: asMap(json['month_totals']),
       queueTop: asMapList(json['queue_top']),
       agendaToday: asMapList(json['agenda_today']),
@@ -670,10 +668,7 @@ class MandateTvData {
 }
 
 class MandateMapData {
-  const MandateMapData({
-    required this.neighborhoods,
-    this.period,
-  });
+  const MandateMapData({required this.neighborhoods, this.period});
 
   final List<MandateDistrictStat> neighborhoods;
   final MandatePeriod? period;
@@ -685,9 +680,7 @@ class MandateMapData {
     );
     return MandateMapData(
       neighborhoods: list.map(MandateDistrictStat.fromJson).toList(),
-      period: MandatePeriod.fromJson(
-        asMap(nested['period'] ?? json['period']),
-      ),
+      period: MandatePeriod.fromJson(asMap(nested['period'] ?? json['period'])),
     );
   }
 }

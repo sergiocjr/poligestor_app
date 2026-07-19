@@ -7,10 +7,7 @@ Map<String, dynamic> asMap(dynamic raw) {
 
 List<Map<String, dynamic>> asMapList(dynamic raw) {
   if (raw is! List) return const [];
-  return raw
-      .whereType<Map>()
-      .map((e) => Map<String, dynamic>.from(e))
-      .toList();
+  return raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
 }
 
 int asInt(dynamic v, [int fallback = 0]) {
@@ -46,10 +43,10 @@ class VtPageMeta {
   final int total;
 
   factory VtPageMeta.fromJson(Map<String, dynamic> json) => VtPageMeta(
-        page: asInt(json['page'], 1),
-        perPage: asInt(json['per_page'], 20),
-        total: asInt(json['total']),
-      );
+    page: asInt(json['page'], 1),
+    perPage: asInt(json['per_page'], 20),
+    total: asInt(json['total']),
+  );
 }
 
 class VtAgentStats {
@@ -66,13 +63,13 @@ class VtAgentStats {
   final int? avgDurationMs;
 
   factory VtAgentStats.fromJson(Map<String, dynamic> json) => VtAgentStats(
-        tasksCompleted: asInt(json['tasks_completed']),
-        tasksFailed: asInt(json['tasks_failed']),
-        delegations: asInt(json['delegations']),
-        avgDurationMs: json['avg_duration_ms'] == null
-            ? null
-            : asInt(json['avg_duration_ms']),
-      );
+    tasksCompleted: asInt(json['tasks_completed']),
+    tasksFailed: asInt(json['tasks_failed']),
+    delegations: asInt(json['delegations']),
+    avgDurationMs: json['avg_duration_ms'] == null
+        ? null
+        : asInt(json['avg_duration_ms']),
+  );
 }
 
 class VtAgent {
@@ -257,7 +254,8 @@ class VtTask {
     return VtTask(
       id: asString(json['id']) ?? '',
       code: asString(json['code']),
-      title: asString(json['title'] ?? json['name'] ?? json['subject']) ??
+      title:
+          asString(json['title'] ?? json['name'] ?? json['subject']) ??
           'Tarefa',
       description: asString(json['description']),
       type: asString(json['type']),
@@ -322,8 +320,9 @@ class VtExecution {
       agentName: asString(json['agent_name']),
       startedAt: start != null ? DateTime.tryParse(start) : null,
       endedAt: end != null ? DateTime.tryParse(end) : null,
-      durationMs:
-          json['duration_ms'] == null ? null : asInt(json['duration_ms']),
+      durationMs: json['duration_ms'] == null
+          ? null
+          : asInt(json['duration_ms']),
       result: asString(json['result'] ?? json['outcome']),
       error: asString(json['error']),
       origin: asString(json['origin']),
@@ -354,7 +353,7 @@ class VtEvent {
     final created = asString(json['created_at'] ?? json['occurred_at']);
     final type =
         asString(json['event_type'] ?? json['type'] ?? json['event']) ??
-            'event';
+        'event';
     return VtEvent(
       id: asString(json['id']) ?? '',
       type: type,
@@ -428,8 +427,8 @@ class VtMemoryItem {
     final created = asString(json['created_at']);
     return VtMemoryItem(
       id: asString(json['id']) ?? '',
-      label: asString(json['title'] ?? json['label'] ?? json['key']) ??
-          'Memória',
+      label:
+          asString(json['title'] ?? json['label'] ?? json['key']) ?? 'Memória',
       detail: asString(json['body'] ?? json['detail'] ?? json['content']),
       kind: asString(json['kind']),
       agentSlug: asString(json['agent_slug']),
@@ -462,10 +461,14 @@ class VtLearningItem {
     final created = asString(json['created_at']);
     return VtLearningItem(
       id: asString(json['id']) ?? '',
-      title: asString(json['topic'] ?? json['title'] ?? json['summary']) ??
+      title:
+          asString(json['topic'] ?? json['title'] ?? json['summary']) ??
           'Aprendizado',
       body: asString(
-        json['summary'] ?? json['body'] ?? json['content'] ?? json['description'],
+        json['summary'] ??
+            json['body'] ??
+            json['content'] ??
+            json['description'],
       ),
       outcome: asString(json['outcome']),
       agentSlug: asString(json['agent_slug']),
@@ -491,13 +494,14 @@ class VtQueueItem {
   final Map<String, dynamic> raw;
 
   factory VtQueueItem.fromJson(Map<String, dynamic> json) => VtQueueItem(
-        id: asString(json['id']) ?? '',
-        label: asString(json['label'] ?? json['title'] ?? json['name']) ??
-            'Item na fila',
-        agentSlug: asString(json['agent_slug']),
-        priority: asString(json['priority']),
-        raw: json,
-      );
+    id: asString(json['id']) ?? '',
+    label:
+        asString(json['label'] ?? json['title'] ?? json['name']) ??
+        'Item na fila',
+    agentSlug: asString(json['agent_slug']),
+    priority: asString(json['priority']),
+    raw: json,
+  );
 }
 
 class VtPagedList<T> {
@@ -583,8 +587,9 @@ class VtAuditEntry {
       status: asString(json['status']) ?? '',
       agentSlug: asString(json['agent_slug']),
       taskId: asString(json['task_id']),
-      durationMs:
-          json['duration_ms'] == null ? null : asInt(json['duration_ms']),
+      durationMs: json['duration_ms'] == null
+          ? null
+          : asInt(json['duration_ms']),
       createdAt: created != null ? DateTime.tryParse(created) : null,
     );
   }
@@ -729,9 +734,12 @@ class VtTeamRoot {
       sprint: asString(json['sprint']),
       generatedAt: gen != null ? DateTime.tryParse(gen) : null,
       dashboard: VtDashboard.fromJson(dash.isEmpty ? json : dash),
-      agentsState: asMapList(json['agents_state']).map(VtAgent.fromJson).toList(),
-      recentHandoffs:
-          asMapList(json['recent_handoffs']).map(VtHandoff.fromJson).toList(),
+      agentsState: asMapList(
+        json['agents_state'],
+      ).map(VtAgent.fromJson).toList(),
+      recentHandoffs: asMapList(
+        json['recent_handoffs'],
+      ).map(VtHandoff.fromJson).toList(),
       stats: asMap(json['stats']),
       fromCache: fromCache,
       cacheAgeLabel: cacheAgeLabel,

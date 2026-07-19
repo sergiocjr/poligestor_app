@@ -101,7 +101,7 @@ class AssistantReply {
 /// Monta mensagens de UI a partir da reply HTTP, sem duplicar cards.
 class AssistantReplyPresenter {
   AssistantReplyPresenter({Set<String>? shownProtocolKeys})
-      : _shownProtocolKeys = shownProtocolKeys ?? <String>{};
+    : _shownProtocolKeys = shownProtocolKeys ?? <String>{};
 
   final Set<String> _shownProtocolKeys;
 
@@ -205,15 +205,14 @@ class AssistantConversation {
     final state = _asMap(json['state']) ?? const <String, dynamic>{};
     final slotsFilled =
         _asMap(json['slots_filled'] ?? json['slotsFilled']) ??
-            const <String, dynamic>{};
-    final slotsPending = _asList(
-      json['slots_pending'] ?? json['slotsPending'],
-    );
+        const <String, dynamic>{};
+    final slotsPending = _asList(json['slots_pending'] ?? json['slotsPending']);
     final pendingRequests = _asList(
       json['pending_requests'] ?? json['pendingRequests'],
     );
 
-    final finished = AssistantReply.boolOrNull(json['finished']) ??
+    final finished =
+        AssistantReply.boolOrNull(json['finished']) ??
         AssistantReply.boolOrNull(state['finished']) ??
         false;
 
@@ -339,34 +338,38 @@ class AssistantHistoryMessage {
     Map<String, dynamic> json, {
     required int index,
   }) {
-    final text = (json['text'] ??
-            json['content'] ??
-            json['message'] ??
-            json['body'] ??
-            json['reply'] ??
-            '')
-        .toString()
-        .trim();
+    final text =
+        (json['text'] ??
+                json['content'] ??
+                json['message'] ??
+                json['body'] ??
+                json['reply'] ??
+                '')
+            .toString()
+            .trim();
     if (text.isEmpty) return null;
 
-    final role = (json['role'] ??
-            json['sender'] ??
-            json['from'] ??
-            json['author'] ??
-            json['type'] ??
-            '')
-        .toString()
-        .toLowerCase()
-        .trim();
+    final role =
+        (json['role'] ??
+                json['sender'] ??
+                json['from'] ??
+                json['author'] ??
+                json['type'] ??
+                '')
+            .toString()
+            .toLowerCase()
+            .trim();
 
     final sender = _parseSender(role);
     final seq = AssistantReply.intOrNull(json['seq']);
-    final id = (json['id'] ??
-            json['message_id'] ??
-            json['uuid'] ??
-            (seq != null ? 'seq-$seq' : 'hist-$index'))
-        .toString();
-    final createdAt = parseDate(
+    final id =
+        (json['id'] ??
+                json['message_id'] ??
+                json['uuid'] ??
+                (seq != null ? 'seq-$seq' : 'hist-$index'))
+            .toString();
+    final createdAt =
+        parseDate(
           json['created_at'] ??
               json['createdAt'] ??
               json['timestamp'] ??
@@ -396,12 +399,8 @@ class AssistantHistoryMessage {
     );
   }
 
-  ChatMessage toChatMessage() => ChatMessage(
-        id: id,
-        sender: sender,
-        createdAt: createdAt,
-        text: text,
-      );
+  ChatMessage toChatMessage() =>
+      ChatMessage(id: id, sender: sender, createdAt: createdAt, text: text);
 
   static ChatSender _parseSender(String role) {
     if (role.contains('user') ||
