@@ -26,6 +26,7 @@ presentation (pages/widgets)
 - **protocols** — modelos e repositório compartilhados staff/cidadão
 - **agenda** — compromissos (staff events / portal appointments)
 - **mandate** (Fase 8) — gestão do mandato, só staff
+- **intelligence** (Fase 9) — briefing, insights, trends, analytics, só staff
 - **citizen** — portal
 - **home** — `HomeShell` (bottom nav staff)
 
@@ -52,6 +53,16 @@ presentation (pages/widgets)
 ### Encerramento Fase 8
 
 **STATUS: CONCLUÍDA.** O módulo Mandato (staff) está documentado e validado; inteligência avançada fica na Fase 9.
+
+## Inteligência (Fase 9)
+
+- Paths: `/v1/mandate/{briefing,analytics,trends,insights,briefings}`
+- `IntelligenceRepository` + `IntelligenceCache` + páginas em `features/intelligence/`
+- Rotas `/home/intelligence/*` (staff); refresh compartilhado com `MandateRefreshController`
+
+### Encerramento Fase 9
+
+**STATUS: CONCLUÍDA.**
 
 ## Segurança
 

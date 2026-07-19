@@ -32,7 +32,8 @@ Contas demo (podem variar conforme o tenant ativo na VPS):
 | 1–6 | Auth, cidadão, protocolos, assistente | Concluídas |
 | **7** | Push FCM, notificações, Reverb, deep links | **CONCLUÍDA** |
 | **8** | Módulo Mandato (gestão staff) | **CONCLUÍDA** |
-| 9+ | — | Não iniciada |
+| **9** | Inteligência do mandato | **CONCLUÍDA** |
+| 10+ | — | Não iniciada |
 
 ## Fase 7 — comunicação em tempo real (CONCLUÍDA)
 
@@ -64,6 +65,16 @@ Staff only — aba **Mandato** no bottom nav:
 
 **FASE 8 — STATUS: CONCLUÍDA.** Não iniciar Fase 9 neste app até o contrato de inteligência ser integrado.
 
+## Fase 9 — Inteligência (CONCLUÍDA)
+
+Staff only — aba **Inteligência**:
+
+- Dashboard + briefing + insights (`?generate=1`) + tendências + analytics + briefings (daily/weekly/monthly)
+- Cache local; refresh no resume/realtime
+- Validado: APIs HTTP 200; APK debug no SM-A105M
+
+**FASE 9 — STATUS: CONCLUÍDA.**
+
 ## Estrutura
 
 ```
@@ -76,6 +87,7 @@ lib/
     agenda/
     notifications/  # FCM, prefs, Reverb sync
     mandate/        # Fase 8 — gestão do mandato (staff)
+    intelligence/   # Fase 9 — inteligência do mandato (staff)
     home/           # shell staff
     more/
     assistant/

@@ -1,10 +1,28 @@
 # Changelog — PoliGestor Flutter
 
-## [Unreleased]
+## [Fase 9] — 2026-07-19 — CONCLUÍDA
 
-### Docs
+### Added
 
-- Encerramento oficial da Fase 8 (STATUS: CONCLUÍDA) antes do início da Fase 9
+- Feature `lib/features/intelligence/` (models, cache, repository, pages, widgets)
+- Aba Inteligência no `HomeShell` + rotas `/home/intelligence/*` (staff only)
+- Dashboard inteligente, briefing, insights, tendências, oportunidades, resumos e análises
+- Paths `analytics` / `trends` / `insights` / `briefings` em `AuthMode`
+- Testes `test/phase9_intelligence_test.dart`
+
+### Changed
+
+- Chat IA movido para a tela Mais (bottom bar: Protocolos, Agenda, Mandato, Inteligência, Mais)
+- Documentação STATUS / ROADMAP / README / arquitetura
+
+### Validated
+
+- APIs Fase 9 HTTP 200; build debug no SM-A105M
+
+### Known limitations
+
+- Briefings históricos dependem dos jobs do backend
+- Oportunidades = recorte de insights (sem rota própria na API)
 
 ## [Fase 8] — 2026-07-18 — CONCLUÍDA
 
@@ -44,16 +62,6 @@
 - Inbox: unread-count, filtros, paginação, POST read / read-all
 - Polling REST 20s no detalhe do protocolo (fallback)
 - Documentação de arquitetura / status / roadmap
-
-### Changed
-
-- Paths de dispositivos e notificações alinhados ao contrato VPS
-- Shell e sync de ciclo de vida com Reverb + REST
-
-### Security
-
-- `android/app/google-services.json` no `.gitignore`
-- Tokens FCM mascarados em logs de debug
 
 ### Validated
 

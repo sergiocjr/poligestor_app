@@ -5,19 +5,20 @@
 | 1–5 | Base, auth, protocolos, cidadão | Concluída |
 | 6 | Atendimento / avaliação / conversa | Concluída |
 | 7 | FCM, notificações, Reverb, deep links | CONCLUÍDA |
-| **8** | Gestão do mandato (dashboard staff) | **CONCLUÍDA** |
-| 9+ | Evoluções futuras | Não iniciada |
-
-## Fase 7 (fechada)
-
-Comunicação em tempo real e push no Android físico.
+| 8 | Gestão do mandato (dashboard staff) | CONCLUÍDA |
+| **9** | Inteligência do mandato (briefing/insights/trends) | **CONCLUÍDA** |
+| 10+ | Evoluções futuras | Não iniciada |
 
 ## Fase 8 (fechada)
 
+**STATUS: CONCLUÍDA.** Mandato operacional staff.
+
+## Fase 9 (fechada)
+
 **STATUS: CONCLUÍDA.**
 
-Módulo Mandato staff consumindo `/api/v1/mandate/{executive,map,team,neighborhoods,subjects,search,reports,tv,agenda,briefing}`.
+Módulo Inteligência consumindo `/api/v1/mandate/{briefing,analytics,trends,insights,briefings}`.
 
-## Fase 9+
+## Fase 10+
 
-Não iniciada neste app até escopo/contrato da inteligência do mandato ser integrado no Flutter.
+Não iniciar até haver escopo aprovado.
