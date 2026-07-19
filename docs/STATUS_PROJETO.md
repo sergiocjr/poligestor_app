@@ -62,3 +62,11 @@ Atualizado: 2026-07-18
 - Mapa cartográfico depende de coordenadas; hoje concentra por bairro via API
 - Exportação PDF/Excel/CSV aguarda URLs/jobs no payload de `reports`
 - iOS não validado nesta fase
+
+### Encerramento oficial
+
+**FASE 8 — STATUS: CONCLUÍDA** (2026-07-18). Escopo Flutter de gestão do mandato fechado; próxima etapa é a Fase 9 (inteligência do mandato), ainda não iniciada neste documento.
+
+## Fase 9+
+
+Não iniciada.

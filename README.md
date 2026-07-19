@@ -62,6 +62,8 @@ Staff only — aba **Mandato** no bottom nav:
 - Cache offline carimbado; refresh no resume e em eventos realtime
 - Validado: endpoints HTTP 200 na VPS; APK debug no SM-A105M
 
+**FASE 8 — STATUS: CONCLUÍDA.** Não iniciar Fase 9 neste app até o contrato de inteligência ser integrado.
+
 ## Estrutura
 
 ```

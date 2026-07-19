@@ -1,5 +1,11 @@
 # Changelog — PoliGestor Flutter
 
+## [Unreleased]
+
+### Docs
+
+- Encerramento oficial da Fase 8 (STATUS: CONCLUÍDA) antes do início da Fase 9
+
 ## [Fase 8] — 2026-07-18 — CONCLUÍDA
 
 ### Added

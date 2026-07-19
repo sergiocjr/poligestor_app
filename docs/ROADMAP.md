@@ -14,8 +14,10 @@ Comunicação em tempo real e push no Android físico.
 
 ## Fase 8 (fechada)
 
+**STATUS: CONCLUÍDA.**
+
 Módulo Mandato staff consumindo `/api/v1/mandate/{executive,map,team,neighborhoods,subjects,search,reports,tv,agenda,briefing}`.
 
 ## Fase 9+
 
-Não iniciar até haver escopo aprovado. Possíveis temas: iOS push, mapa cartográfico, exportação de relatórios quando a API expor jobs/URLs.
+Não iniciada neste app até escopo/contrato da inteligência do mandato ser integrado no Flutter.

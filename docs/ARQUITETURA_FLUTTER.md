@@ -49,6 +49,10 @@ presentation (pages/widgets)
 - Cache SharedPreferences com `saved_at` (`MandateCache`)
 - Rotas só sob `/home/mandate/*` (redirect se não for staff)
 
+### Encerramento Fase 8
+
+**STATUS: CONCLUÍDA.** O módulo Mandato (staff) está documentado e validado; inteligência avançada fica na Fase 9.
+
 ## Segurança
 
 - Não versionar `google-services.json`
