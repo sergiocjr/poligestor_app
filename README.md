@@ -82,15 +82,15 @@ Produção: sync coalescido, FCM seguro, CPF mascarado, UX Mais, a11y básica, d
 
 **SPRINT 9.5 — STATUS: CONCLUÍDA.**
 
-## Sprint 10.1 — Equipe Virtual (CONCLUÍDA)
+## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
 
 Staff — **Mais → Equipe Virtual** (`/home/virtual-team/*`):
 
-- Dashboard, agentes (slug), tarefas, execuções, hand-offs, eventos, memória, aprendizado, fila
-- APIs descobertas na VPS; endpoints 404 com UI honesta (sem mocks)
+- Dashboard (root), agentes + sub-rotas, tarefas, execuções, hand-offs, timeline, alertas, métricas, auditoria, logs, pesquisa, memória, aprendizado, fila, eventos
+- Integração completa dos contratos VPS; refresh via Reverb/MandateRefresh
 - Deep links `poligestor://virtual-team/...`
 
-**SPRINT 10.1 — STATUS: CONCLUÍDA.**
+**SPRINT 10.1 — STATUS: CONCLUÍDA (Final).**
 
 ## Estrutura
 

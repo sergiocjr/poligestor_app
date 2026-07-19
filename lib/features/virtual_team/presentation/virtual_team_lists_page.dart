@@ -9,37 +9,49 @@ import '../data/virtual_team_models.dart';
 import '../data/virtual_team_repository.dart';
 import 'widgets/virtual_team_widgets.dart';
 
-/// Lista genérica com filtro de status opcional.
-class VirtualTeamTasksPage extends StatefulWidget {
-  const VirtualTeamTasksPage({super.key});
-
-  @override
-  State<VirtualTeamTasksPage> createState() => _VirtualTeamTasksPageState();
-}
-
-class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage> {
-  Future<VtPagedList<VtTask>>? _future;
+mixin _VtRefreshMixin<T extends StatefulWidget> on State<T> {
   MandateRefreshController? _refreshCtrl;
   int _lastGen = -1;
-  String? _status;
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void bindRefresh(VoidCallback reload) {
     final refresh = context.watch<MandateRefreshController>();
     if (!identical(_refreshCtrl, refresh)) {
       _refreshCtrl = refresh;
       _lastGen = refresh.generation;
     } else if (refresh.generation != _lastGen) {
       _lastGen = refresh.generation;
-      _future = _load();
+      reload();
     }
+  }
+}
+
+class VirtualTeamTasksPage extends StatefulWidget {
+  const VirtualTeamTasksPage({super.key, this.agentSlug});
+
+  final String? agentSlug;
+
+  @override
+  State<VirtualTeamTasksPage> createState() => _VirtualTeamTasksPageState();
+}
+
+class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage>
+    with _VtRefreshMixin {
+  Future<VtPagedList<VtTask>>? _future;
+  String? _status;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bindRefresh(() => setState(() => _future = _load()));
     _future ??= _load();
   }
 
   Future<VtPagedList<VtTask>> _load() => context
       .read<VirtualTeamRepository>()
-      .tasks(filter: VirtualTeamFilter(status: _status));
+      .tasks(
+        filter: VirtualTeamFilter(status: _status),
+        agentSlug: widget.agentSlug,
+      );
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -50,7 +62,11 @@ class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tarefas'),
+        title: Text(
+          widget.agentSlug == null
+              ? 'Tarefas'
+              : 'Tarefas · ${widget.agentSlug}',
+        ),
         actions: [
           IconButton(
             onPressed: _refresh,
@@ -89,64 +105,29 @@ class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage> {
           Expanded(
             child: FutureBuilder<VtPagedList<VtTask>>(
               future: _future,
-              builder: (context, snap) {
-                if (snap.connectionState != ConnectionState.done &&
-                    !snap.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-                if (snap.hasError && !snap.hasData) {
-                  return AppErrorState(
-                    error: snap.error,
-                    message: UserMessages.fromError(snap.error),
-                    onRetry: _refresh,
-                  );
-                }
-                final page = snap.data!;
-                if (page.items.isEmpty) {
-                  return RefreshIndicator(
-                    onRefresh: _refresh,
-                    child: ListView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      children: const [
-                        SizedBox(height: 120),
-                        AppEmptyState(
-                          message: 'Nenhuma tarefa registrada ainda.',
-                        ),
-                      ],
+              builder: (context, snap) => _buildList(
+                snap,
+                onRetry: _refresh,
+                empty: 'Nenhuma tarefa registrada.',
+                itemBuilder: (t) => Card(
+                  child: ListTile(
+                    title: Text(t.title),
+                    subtitle: Text(
+                      [
+                        if (t.code != null) t.code!,
+                        t.status,
+                        if (t.agentSlug != null) t.agentSlug!,
+                        if (t.priority != null) t.priority!,
+                      ].join(' · '),
                     ),
-                  );
-                }
-                return RefreshIndicator(
-                  onRefresh: _refresh,
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
-                    itemCount: page.items.length,
-                    itemBuilder: (context, i) {
-                      final t = page.items[i];
-                      return Card(
-                        child: ListTile(
-                          title: Text(t.title),
-                          subtitle: Text(
-                            [
-                              t.status,
-                              if (t.agentName != null || t.agentSlug != null)
-                                t.agentName ?? t.agentSlug!,
-                              if (t.priority != null) 'prio ${t.priority}',
-                            ].join(' · '),
-                          ),
-                          trailing: t.createdAt == null
-                              ? null
-                              : Text(
-                                  '${t.createdAt!.day}/${t.createdAt!.month}',
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                        ),
-                      );
-                    },
+                    trailing: Text(
+                      vtFormatWhen(t.createdAt),
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
                   ),
-                );
-              },
+                ),
+                items: snap.data?.items ?? const [],
+              ),
             ),
           ),
         ],
@@ -156,34 +137,29 @@ class _VirtualTeamTasksPageState extends State<VirtualTeamTasksPage> {
 }
 
 class VirtualTeamExecutionsPage extends StatefulWidget {
-  const VirtualTeamExecutionsPage({super.key});
+  const VirtualTeamExecutionsPage({super.key, this.agentSlug});
+
+  final String? agentSlug;
 
   @override
   State<VirtualTeamExecutionsPage> createState() =>
       _VirtualTeamExecutionsPageState();
 }
 
-class _VirtualTeamExecutionsPageState extends State<VirtualTeamExecutionsPage> {
+class _VirtualTeamExecutionsPageState extends State<VirtualTeamExecutionsPage>
+    with _VtRefreshMixin {
   Future<VtPagedList<VtExecution>>? _future;
-  MandateRefreshController? _refreshCtrl;
-  int _lastGen = -1;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final refresh = context.watch<MandateRefreshController>();
-    if (!identical(_refreshCtrl, refresh)) {
-      _refreshCtrl = refresh;
-      _lastGen = refresh.generation;
-    } else if (refresh.generation != _lastGen) {
-      _lastGen = refresh.generation;
-      _future = _load();
-    }
+    bindRefresh(() => setState(() => _future = _load()));
     _future ??= _load();
   }
 
-  Future<VtPagedList<VtExecution>> _load() =>
-      context.read<VirtualTeamRepository>().executions();
+  Future<VtPagedList<VtExecution>> _load() => context
+      .read<VirtualTeamRepository>()
+      .executions(agentSlug: widget.agentSlug);
 
   Future<void> _refresh() async {
     setState(() => _future = _load());
@@ -194,7 +170,11 @@ class _VirtualTeamExecutionsPageState extends State<VirtualTeamExecutionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Execuções'),
+        title: Text(
+          widget.agentSlug == null
+              ? 'Execuções'
+              : 'Execuções · ${widget.agentSlug}',
+        ),
         actions: [
           IconButton(
             onPressed: _refresh,
@@ -204,54 +184,28 @@ class _VirtualTeamExecutionsPageState extends State<VirtualTeamExecutionsPage> {
       ),
       body: FutureBuilder<VtPagedList<VtExecution>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError && !snap.hasData) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data!.items;
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Nenhuma execução registrada ainda.'),
-                ],
+        builder: (context, snap) => _buildList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Nenhuma execução registrada.',
+          items: snap.data?.items ?? const [],
+          itemBuilder: (e) => Card(
+            child: ListTile(
+              title: Text(e.agentSlug ?? e.id),
+              subtitle: Text(
+                [
+                  e.status,
+                  if (e.durationMs != null) '${e.durationMs} ms',
+                  if (e.error != null) e.error!,
+                ].join(' · '),
               ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(12),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final e = items[i];
-                return Card(
-                  child: ListTile(
-                    title: Text(e.agentName ?? e.agentSlug ?? e.id),
-                    subtitle: Text(
-                      [
-                        e.status,
-                        if (e.result != null) e.result!,
-                        if (e.durationMs != null) '${e.durationMs} ms',
-                      ].join(' · '),
-                    ),
-                  ),
-                );
-              },
+              trailing: Text(
+                vtFormatWhen(e.startedAt),
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -265,22 +219,14 @@ class VirtualTeamHandoffsPage extends StatefulWidget {
       _VirtualTeamHandoffsPageState();
 }
 
-class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage> {
+class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage>
+    with _VtRefreshMixin {
   Future<VtPagedList<VtHandoff>>? _future;
-  MandateRefreshController? _refreshCtrl;
-  int _lastGen = -1;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final refresh = context.watch<MandateRefreshController>();
-    if (!identical(_refreshCtrl, refresh)) {
-      _refreshCtrl = refresh;
-      _lastGen = refresh.generation;
-    } else if (refresh.generation != _lastGen) {
-      _lastGen = refresh.generation;
-      _future = _load();
-    }
+    bindRefresh(() => setState(() => _future = _load()));
     _future ??= _load();
   }
 
@@ -306,54 +252,29 @@ class _VirtualTeamHandoffsPageState extends State<VirtualTeamHandoffsPage> {
       ),
       body: FutureBuilder<VtPagedList<VtHandoff>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError && !snap.hasData) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data!.items;
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Nenhum hand-off registrado.'),
-                ],
+        builder: (context, snap) => _buildList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Nenhum hand-off registrado.',
+          items: snap.data?.items ?? const [],
+          itemBuilder: (h) => Card(
+            child: ListTile(
+              leading: const Icon(Icons.swap_horiz),
+              title: Text('${h.fromAgent} → ${h.toAgent}'),
+              subtitle: Text(
+                [
+                  if (h.kind != null) h.kind!,
+                  if (h.reason.isNotEmpty) h.reason,
+                  if (h.status.isNotEmpty) h.status,
+                ].join(' · '),
               ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(12),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final h = items[i];
-                return Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.swap_horiz),
-                    title: Text('${h.fromAgent} → ${h.toAgent}'),
-                    subtitle: Text(
-                      [
-                        if (h.reason.isNotEmpty) h.reason,
-                        if (h.status.isNotEmpty) h.status,
-                      ].join(' · '),
-                    ),
-                  ),
-                );
-              },
+              trailing: Text(
+                vtFormatWhen(h.createdAt),
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -366,22 +287,14 @@ class VirtualTeamEventsPage extends StatefulWidget {
   State<VirtualTeamEventsPage> createState() => _VirtualTeamEventsPageState();
 }
 
-class _VirtualTeamEventsPageState extends State<VirtualTeamEventsPage> {
+class _VirtualTeamEventsPageState extends State<VirtualTeamEventsPage>
+    with _VtRefreshMixin {
   Future<VtPagedList<VtEvent>>? _future;
-  MandateRefreshController? _refreshCtrl;
-  int _lastGen = -1;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final refresh = context.watch<MandateRefreshController>();
-    if (!identical(_refreshCtrl, refresh)) {
-      _refreshCtrl = refresh;
-      _lastGen = refresh.generation;
-    } else if (refresh.generation != _lastGen) {
-      _lastGen = refresh.generation;
-      _future = _load();
-    }
+    bindRefresh(() => setState(() => _future = _load()));
     _future ??= _load();
   }
 
@@ -407,59 +320,27 @@ class _VirtualTeamEventsPageState extends State<VirtualTeamEventsPage> {
       ),
       body: FutureBuilder<VtPagedList<VtEvent>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError && !snap.hasData) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data!.items;
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Nenhum evento registrado ainda.'),
-                ],
+        builder: (context, snap) => _buildList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Nenhum evento registrado.',
+          items: snap.data?.items ?? const [],
+          itemBuilder: (e) => Card(
+            child: ListTile(
+              title: Text(e.title),
+              subtitle: Text(
+                [
+                  e.type,
+                  if (e.agentSlug != null) e.agentSlug!,
+                ].join(' · '),
               ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(12),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final e = items[i];
-                return Card(
-                  child: ListTile(
-                    title: Text(e.title),
-                    subtitle: Text(
-                      [
-                        e.type,
-                        if (e.agentSlug != null) e.agentSlug!,
-                      ].join(' · '),
-                    ),
-                    trailing: e.createdAt == null
-                        ? null
-                        : Text(
-                            '${e.createdAt!.day}/${e.createdAt!.month}',
-                            style: Theme.of(context).textTheme.labelSmall,
-                          ),
-                  ),
-                );
-              },
+              trailing: Text(
+                vtFormatWhen(e.createdAt),
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -472,19 +353,22 @@ class VirtualTeamMemoryPage extends StatefulWidget {
   State<VirtualTeamMemoryPage> createState() => _VirtualTeamMemoryPageState();
 }
 
-class _VirtualTeamMemoryPageState extends State<VirtualTeamMemoryPage> {
+class _VirtualTeamMemoryPageState extends State<VirtualTeamMemoryPage>
+    with _VtRefreshMixin {
   Future<List<VtMemoryItem>>? _future;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= context.read<VirtualTeamRepository>().memory();
+    bindRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
   }
 
+  Future<List<VtMemoryItem>> _load() =>
+      context.read<VirtualTeamRepository>().memory();
+
   Future<void> _refresh() async {
-    setState(() {
-      _future = context.read<VirtualTeamRepository>().memory();
-    });
+    setState(() => _future = _load());
     await _future;
   }
 
@@ -494,45 +378,24 @@ class _VirtualTeamMemoryPageState extends State<VirtualTeamMemoryPage> {
       appBar: AppBar(title: const Text('Memória')),
       body: FutureBuilder<List<VtMemoryItem>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data ?? const [];
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Memória vazia no momento.'),
-                ],
-              ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final m = items[i];
-                return ListTile(
-                  title: Text(m.label),
-                  subtitle: m.detail == null ? null : Text(m.detail!),
-                );
-              },
+        builder: (context, snap) => _buildPlainList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Memória vazia no momento.',
+          items: snap.data ?? const [],
+          itemBuilder: (m) => ListTile(
+            title: Text(m.label),
+            subtitle: Text(
+              [
+                if (m.kind != null) m.kind!,
+                if (m.agentSlug != null) m.agentSlug!,
+                if (m.detail != null) m.detail!,
+              ].join(' · '),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -546,19 +409,22 @@ class VirtualTeamLearningPage extends StatefulWidget {
       _VirtualTeamLearningPageState();
 }
 
-class _VirtualTeamLearningPageState extends State<VirtualTeamLearningPage> {
+class _VirtualTeamLearningPageState extends State<VirtualTeamLearningPage>
+    with _VtRefreshMixin {
   Future<List<VtLearningItem>>? _future;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= context.read<VirtualTeamRepository>().learning();
+    bindRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
   }
 
+  Future<List<VtLearningItem>> _load() =>
+      context.read<VirtualTeamRepository>().learning();
+
   Future<void> _refresh() async {
-    setState(() {
-      _future = context.read<VirtualTeamRepository>().learning();
-    });
+    setState(() => _future = _load());
     await _future;
   }
 
@@ -568,45 +434,24 @@ class _VirtualTeamLearningPageState extends State<VirtualTeamLearningPage> {
       appBar: AppBar(title: const Text('Aprendizado')),
       body: FutureBuilder<List<VtLearningItem>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data ?? const [];
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Nenhum aprendizado registrado.'),
-                ],
-              ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final m = items[i];
-                return ListTile(
-                  title: Text(m.title),
-                  subtitle: m.body == null ? null : Text(m.body!),
-                );
-              },
+        builder: (context, snap) => _buildPlainList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Nenhum aprendizado registrado.',
+          items: snap.data ?? const [],
+          itemBuilder: (m) => ListTile(
+            title: Text(m.title),
+            subtitle: Text(
+              [
+                if (m.outcome != null) m.outcome!,
+                if (m.agentSlug != null) m.agentSlug!,
+                if (m.body != null) m.body!,
+              ].join(' · '),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -619,19 +464,22 @@ class VirtualTeamQueuePage extends StatefulWidget {
   State<VirtualTeamQueuePage> createState() => _VirtualTeamQueuePageState();
 }
 
-class _VirtualTeamQueuePageState extends State<VirtualTeamQueuePage> {
+class _VirtualTeamQueuePageState extends State<VirtualTeamQueuePage>
+    with _VtRefreshMixin {
   Future<List<VtQueueItem>>? _future;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= context.read<VirtualTeamRepository>().queue();
+    bindRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
   }
 
+  Future<List<VtQueueItem>> _load() =>
+      context.read<VirtualTeamRepository>().queue();
+
   Future<void> _refresh() async {
-    setState(() {
-      _future = context.read<VirtualTeamRepository>().queue();
-    });
+    setState(() => _future = _load());
     await _future;
   }
 
@@ -641,167 +489,84 @@ class _VirtualTeamQueuePageState extends State<VirtualTeamQueuePage> {
       appBar: AppBar(title: const Text('Fila')),
       body: FutureBuilder<List<VtQueueItem>>(
         future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            return AppErrorState(
-              error: snap.error,
-              message: UserMessages.fromError(snap.error),
-              onRetry: _refresh,
-            );
-          }
-          final items = snap.data ?? const [];
-          if (items.isEmpty) {
-            return RefreshIndicator(
-              onRefresh: _refresh,
-              child: ListView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                children: const [
-                  SizedBox(height: 120),
-                  AppEmptyState(message: 'Fila vazia no momento.'),
-                ],
-              ),
-            );
-          }
-          return RefreshIndicator(
-            onRefresh: _refresh,
-            child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              itemCount: items.length,
-              itemBuilder: (context, i) {
-                final q = items[i];
-                return ListTile(
-                  title: Text(q.label),
-                  subtitle: Text(
-                    [
-                      if (q.agentSlug != null) q.agentSlug!,
-                      if (q.priority != null) 'prio ${q.priority}',
-                    ].join(' · '),
-                  ),
-                );
-              },
+        builder: (context, snap) => _buildPlainList(
+          snap,
+          onRetry: _refresh,
+          empty: 'Fila vazia no momento.',
+          items: snap.data ?? const [],
+          itemBuilder: (q) => ListTile(
+            title: Text(q.label),
+            subtitle: Text(
+              [
+                if (q.agentSlug != null) q.agentSlug!,
+                if (q.priority != null) 'prio ${q.priority}',
+              ].join(' · '),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
 }
 
-/// Telas preparadas para endpoints ainda 404.
-class VirtualTeamPendingEndpointPage extends StatefulWidget {
-  const VirtualTeamPendingEndpointPage({
-    super.key,
-    required this.title,
-    required this.loader,
-  });
-
-  final String title;
-  final Future<Object> Function(VirtualTeamRepository repo) loader;
-
-  @override
-  State<VirtualTeamPendingEndpointPage> createState() =>
-      _VirtualTeamPendingEndpointPageState();
-}
-
-class _VirtualTeamPendingEndpointPageState
-    extends State<VirtualTeamPendingEndpointPage> {
-  Future<Object>? _future;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _future ??= widget.loader(context.read<VirtualTeamRepository>());
+Widget _buildList<T>(
+  AsyncSnapshot snap, {
+  required VoidCallback onRetry,
+  required String empty,
+  required List<T> items,
+  required Widget Function(T item) itemBuilder,
+}) {
+  if (snap.connectionState != ConnectionState.done && !snap.hasData) {
+    return const Center(child: CircularProgressIndicator());
   }
-
-  Future<void> _refresh() async {
-    setState(() {
-      _future = widget.loader(context.read<VirtualTeamRepository>());
-    });
-    await _future;
+  if (snap.hasError && !snap.hasData) {
+    final err = snap.error;
+    if (err is ApiException && err.isForbidden) {
+      return const AppEmptyState(
+        message: 'Sem permissão.',
+        icon: Icons.lock_outline,
+      );
+    }
+    return AppErrorState(
+      error: err,
+      message: UserMessages.fromError(err),
+      onRetry: onRetry,
+    );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        actions: [
-          IconButton(
-            onPressed: _refresh,
-            icon: const Icon(Icons.refresh_rounded),
-          ),
+  if (items.isEmpty) {
+    return RefreshIndicator(
+      onRefresh: () async => onRetry(),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          const SizedBox(height: 120),
+          AppEmptyState(message: empty),
         ],
       ),
-      body: FutureBuilder<Object>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done && !snap.hasData) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.hasError) {
-            final err = snap.error;
-            if (err is EndpointUnavailableException) {
-              return AppEndpointPending(path: err.path);
-            }
-            if (err is ApiException && err.statusCode == 404) {
-              return const AppEndpointPending(
-                path: '(404 — endpoint ausente)',
-              );
-            }
-            return AppErrorState(
-              error: err,
-              message: UserMessages.fromError(err),
-              onRetry: _refresh,
-            );
-          }
-          final data = snap.data;
-          if (data is VtPagedList && data.items.isEmpty) {
-            return const AppEmptyState(message: 'Nenhum registro.');
-          }
-          if (data is Map && data.isEmpty) {
-            return const AppEmptyState(message: 'Sem resultados.');
-          }
-          // Quando o backend subir: renderização básica de mapas.
-          if (data is VtPagedList<Map<String, dynamic>>) {
-            return ListView.builder(
-              itemCount: data.items.length,
-              itemBuilder: (context, i) {
-                final row = data.items[i];
-                return ListTile(
-                  title: Text(
-                    '${row['title'] ?? row['id'] ?? row['message'] ?? row}',
-                  ),
-                );
-              },
-            );
-          }
-          if (data is Map<String, List<Map<String, dynamic>>>) {
-            return ListView(
-              children: [
-                for (final e in data.entries) ...[
-                  ListTile(
-                    title: Text(
-                      e.key,
-                      style: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  for (final row in e.value)
-                    ListTile(
-                      dense: true,
-                      title: Text(
-                        '${row['title'] ?? row['name'] ?? row['id'] ?? row}',
-                      ),
-                    ),
-                ],
-              ],
-            );
-          }
-          return const AppEmptyState(message: 'Dados recebidos.');
-        },
-      ),
     );
   }
+  return RefreshIndicator(
+    onRefresh: () async => onRetry(),
+    child: ListView.builder(
+      physics: const AlwaysScrollableScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
+      itemCount: items.length,
+      itemBuilder: (context, i) => itemBuilder(items[i]),
+    ),
+  );
 }
+
+Widget _buildPlainList<T>(
+  AsyncSnapshot snap, {
+  required VoidCallback onRetry,
+  required String empty,
+  required List<T> items,
+  required Widget Function(T item) itemBuilder,
+}) =>
+    _buildList(
+      snap,
+      onRetry: onRetry,
+      empty: empty,
+      items: items,
+      itemBuilder: itemBuilder,
+    );

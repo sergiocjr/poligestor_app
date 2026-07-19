@@ -1,46 +1,22 @@
 # Changelog — PoliGestor Flutter
 
-## [Sprint 10.1] — 2026-07-19 — CONCLUÍDA
+## [Sprint 10.1 Final] — 2026-07-19 — CONCLUÍDA
 
-### Added
+### Added / Completed
 
-- Feature `lib/features/virtual_team/` (models, cache, repository, dashboard, agentes, tarefas, execuções, hand-offs, eventos, memória, aprendizado, fila, audit/logs/search preparados)
-- Rotas `/home/virtual-team/*` (staff) + entrada em Mais
-- Deep links `poligestor://virtual-team/...`
-- Paths live + reservados em `AuthMode`
-- Testes `test/sprint101_virtual_team_test.dart`
+- Integração completa dos contratos REST da Equipe Virtual disponibilizados na VPS
+- Telas: root/dashboard, agentes (+ sub-rotas), tarefas, execuções, hand-offs, timeline, alertas, métricas, auditoria, logs, pesquisa, memória, aprendizado, fila, eventos
+- Remoção de estados “Endpoint indisponível” e de stubs 404
+- Hand-offs via `GET /v1/virtual-team/handoffs`
+- Refresh em tempo real via Reverb → `MandateRefreshController`
+- Testes atualizados em `test/sprint101_virtual_team_test.dart`
 
-### Integrated (descoberta VPS — HTTP 200)
+### APIs (todas HTTP 200 na VPS)
 
-- `GET /v1/virtual-team/dashboard`
-- `GET /v1/virtual-team/agents`
-- `GET /v1/virtual-team/agents/{slug}`
-- `GET /v1/virtual-team/tasks`
-- `GET /v1/virtual-team/executions`
-- `GET /v1/virtual-team/events`
-- `GET /v1/virtual-team/memory`
-- `GET /v1/virtual-team/learning`
-- `GET /v1/virtual-team/queue`
-- `GET /v1/ai/handoffs` (hand-offs até existir path no namespace virtual-team)
-- `GET /v1/ai/agents` path reservado no AuthMode (catálogo legado)
-
-### Missing for backend (sem mock no app)
-
-- `GET /v1/virtual-team` (raiz)
-- `GET /v1/virtual-team/logs`
-- `GET /v1/virtual-team/audit`
-- `GET /v1/virtual-team/search`
-- `GET /v1/virtual-team/metrics`
-- `GET /v1/virtual-team/timeline`
-- `GET /v1/virtual-team/alerts`
-- `GET /v1/virtual-team/handoffs` (hoje usa `/v1/ai/handoffs`)
-- `GET /v1/virtual-team/agents/{slug}/tasks|executions|…` (sub-rotas por agente)
-- `GET /v1/ai/team` (500 na VPS — relation `vt_agents`)
-
-### Notes
-
-- Provider (não Riverpod), padrão Mandate/Intelligence
-- Sem dados fictícios; listagens vazias = empty state real da API
+- `/v1/virtual-team` e `/dashboard|/agents|/agents/{slug}`
+- `/v1/virtual-team/agents/{slug}/tasks|executions|logs|metrics|timeline`
+- `/v1/virtual-team/tasks|executions|events|memory|learning|queue`
+- `/v1/virtual-team/logs|audit|search|metrics|timeline|alerts|handoffs`
 
 ## [Sprint 9.5] — 2026-07-19 — CONCLUÍDA
 

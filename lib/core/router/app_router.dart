@@ -39,6 +39,7 @@ import '../../features/virtual_team/presentation/virtual_team_agent_detail_page.
 import '../../features/virtual_team/presentation/virtual_team_agents_page.dart';
 import '../../features/virtual_team/presentation/virtual_team_dashboard_page.dart';
 import '../../features/virtual_team/presentation/virtual_team_lists_page.dart';
+import '../../features/virtual_team/presentation/virtual_team_ops_pages.dart';
 
 /// Navigator raiz — detalhes de solicitação sobem acima do CitizenShell
 /// para não cair no IndexedStack da aba (tela branca com AppBar/nav).
@@ -250,6 +251,38 @@ GoRouter createAppRouter(AuthController auth) {
                 builder: (context, state) => VirtualTeamAgentDetailPage(
                   slug: state.pathParameters['slug']!,
                 ),
+                routes: [
+                  GoRoute(
+                    path: 'tasks',
+                    builder: (context, state) => VirtualTeamTasksPage(
+                      agentSlug: state.pathParameters['slug'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'executions',
+                    builder: (context, state) => VirtualTeamExecutionsPage(
+                      agentSlug: state.pathParameters['slug'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'logs',
+                    builder: (context, state) => VirtualTeamLogsPage(
+                      agentSlug: state.pathParameters['slug'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'timeline',
+                    builder: (context, state) => VirtualTeamTimelinePage(
+                      agentSlug: state.pathParameters['slug'],
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'metrics',
+                    builder: (context, state) => VirtualTeamMetricsPage(
+                      agentSlug: state.pathParameters['slug'],
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -282,25 +315,28 @@ GoRouter createAppRouter(AuthController auth) {
             builder: (_, _) => const VirtualTeamQueuePage(),
           ),
           GoRoute(
+            path: 'timeline',
+            builder: (_, _) => const VirtualTeamTimelinePage(),
+          ),
+          GoRoute(
+            path: 'alerts',
+            builder: (_, _) => const VirtualTeamAlertsPage(),
+          ),
+          GoRoute(
+            path: 'metrics',
+            builder: (_, _) => const VirtualTeamMetricsPage(),
+          ),
+          GoRoute(
             path: 'audit',
-            builder: (_, _) => VirtualTeamPendingEndpointPage(
-              title: 'Auditoria',
-              loader: (repo) => repo.audit(),
-            ),
+            builder: (_, _) => const VirtualTeamAuditPage(),
           ),
           GoRoute(
             path: 'logs',
-            builder: (_, _) => VirtualTeamPendingEndpointPage(
-              title: 'Logs',
-              loader: (repo) => repo.logs(),
-            ),
+            builder: (_, _) => const VirtualTeamLogsPage(),
           ),
           GoRoute(
             path: 'search',
-            builder: (_, _) => VirtualTeamPendingEndpointPage(
-              title: 'Busca',
-              loader: (repo) => repo.search(query: ''),
-            ),
+            builder: (_, _) => const VirtualTeamSearchPage(),
           ),
         ],
       ),

@@ -40,45 +40,66 @@ class VtKpiGrid extends StatelessWidget {
         '${dashboard.handoffs24h}',
         Icons.swap_horiz_outlined,
       ),
+      (
+        'Auditorias 24h',
+        '${dashboard.audits24h}',
+        Icons.fact_check_outlined,
+      ),
+      (
+        'Aprendizados',
+        '${dashboard.learningsCurrent}',
+        Icons.school_outlined,
+      ),
     ];
 
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-      childAspectRatio: 1.55,
-      children: [
-        for (final (label, value, icon) in items)
-          Semantics(
-            label: '$label: $value',
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(icon, size: 20),
-                    const Spacer(),
-                    Text(
-                      value,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                          ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final wide = constraints.maxWidth >= 600;
+        return GridView.count(
+          crossAxisCount: wide ? 4 : 2,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+          childAspectRatio: wide ? 1.7 : 1.45,
+          children: [
+            for (final (label, value, icon) in items)
+              Semantics(
+                label: '$label: $value',
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(icon, size: 20),
+                        const Spacer(),
+                        Text(
+                          value,
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                        Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                        ),
+                      ],
                     ),
-                    Text(
-                      label,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }
@@ -150,14 +171,9 @@ class VtAgentCard extends StatelessWidget {
           '${agent.specialty.isEmpty ? agent.slug : agent.specialty}'
           ' · ${agent.stateLabel}',
         ),
-        trailing: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            VtStatusChip(
-              label: agent.isOnline ? 'Online' : 'Offline',
-              online: agent.isOnline,
-            ),
-          ],
+        trailing: VtStatusChip(
+          label: agent.isOnline ? 'Online' : 'Offline',
+          online: agent.isOnline,
         ),
         isThreeLine: true,
       ),
@@ -165,55 +181,12 @@ class VtAgentCard extends StatelessWidget {
   }
 }
 
-class VtEndpointPendingState extends StatelessWidget {
-  const VtEndpointPendingState({super.key, required this.path});
-
-  final String path;
-
-  @override
-  Widget build(BuildContext context) {
-    return AppEndpointPending(
-      path: path,
-    );
-  }
-}
-
-/// Estado honesto quando o backend ainda não expõe a rota.
-class AppEndpointPending extends StatelessWidget {
-  const AppEndpointPending({super.key, required this.path});
-
-  final String path;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.construction_outlined,
-              size: 48,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 14),
-            Text(
-              'Endpoint ainda indisponível no backend',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 8),
-            SelectableText(
-              path,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                  ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+String vtFormatWhen(DateTime? dt) {
+  if (dt == null) return '';
+  final local = dt.toLocal();
+  final dd = local.day.toString().padLeft(2, '0');
+  final mm = local.month.toString().padLeft(2, '0');
+  final hh = local.hour.toString().padLeft(2, '0');
+  final min = local.minute.toString().padLeft(2, '0');
+  return '$dd/$mm $hh:$min';
 }

@@ -1,5 +1,4 @@
 import '../../../core/api/api_client.dart';
-import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'virtual_team_cache.dart';
 import 'virtual_team_models.dart';
@@ -53,6 +52,29 @@ class VirtualTeamRepository {
   final VirtualTeamCache _cache;
   static const _staff = AuthMode.staff;
 
+  Future<VtTeamRoot> root({bool allowCache = true}) async {
+    try {
+      final envelope = await _api.getEnvelope<Map<String, dynamic>>(
+        _staff.virtualTeamRootPath,
+        mode: _staff,
+        parse: asMap,
+      );
+      await _cache.put('root', envelope.data);
+      return VtTeamRoot.fromJson(envelope.data);
+    } catch (e) {
+      if (!allowCache) rethrow;
+      final cached = await _cache.get('root');
+      if (cached != null) {
+        return VtTeamRoot.fromJson(
+          cached.data,
+          fromCache: true,
+          cacheAgeLabel: cached.ageLabel,
+        );
+      }
+      rethrow;
+    }
+  }
+
   Future<VtDashboard> dashboard({bool allowCache = true}) async {
     try {
       final envelope = await _api.getEnvelope<Map<String, dynamic>>(
@@ -76,6 +98,22 @@ class VirtualTeamRepository {
     }
   }
 
+  Future<VtDashboard> metrics({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+    String? agentSlug,
+  }) async {
+    final path = agentSlug == null || agentSlug.isEmpty
+        ? _staff.virtualTeamMetricsPath
+        : _staff.virtualTeamAgentMetricsPath(agentSlug);
+    final envelope = await _api.getEnvelope<Map<String, dynamic>>(
+      path,
+      mode: _staff,
+      query: filter.toQuery(),
+      parse: asMap,
+    );
+    return VtDashboard.fromJson(envelope.data);
+  }
+
   Future<List<VtAgent>> agents({bool allowCache = true}) async {
     try {
       final envelope = await _api.getEnvelope<dynamic>(
@@ -84,8 +122,7 @@ class VirtualTeamRepository {
         parse: (raw) => raw,
       );
       final list = asMapList(envelope.data);
-      final root = <String, dynamic>{'items': list};
-      await _cache.put('agents', root);
+      await _cache.put('agents', {'items': list});
       return list.map(VtAgent.fromJson).toList();
     } catch (e) {
       if (!allowCache) rethrow;
@@ -108,9 +145,14 @@ class VirtualTeamRepository {
 
   Future<VtPagedList<VtTask>> tasks({
     VirtualTeamFilter filter = const VirtualTeamFilter(),
+    String? agentSlug,
   }) async {
+    final slug = agentSlug ?? filter.agentSlug;
+    final path = slug == null || slug.isEmpty
+        ? _staff.virtualTeamTasksPath
+        : _staff.virtualTeamAgentTasksPath(slug);
     final envelope = await _api.getEnvelope<dynamic>(
-      _staff.virtualTeamTasksPath,
+      path,
       mode: _staff,
       query: filter.toQuery(),
       parse: (raw) => raw,
@@ -123,9 +165,14 @@ class VirtualTeamRepository {
 
   Future<VtPagedList<VtExecution>> executions({
     VirtualTeamFilter filter = const VirtualTeamFilter(),
+    String? agentSlug,
   }) async {
+    final slug = agentSlug ?? filter.agentSlug;
+    final path = slug == null || slug.isEmpty
+        ? _staff.virtualTeamExecutionsPath
+        : _staff.virtualTeamAgentExecutionsPath(slug);
     final envelope = await _api.getEnvelope<dynamic>(
-      _staff.virtualTeamExecutionsPath,
+      path,
       mode: _staff,
       query: filter.toQuery(),
       parse: (raw) => raw,
@@ -151,19 +198,25 @@ class VirtualTeamRepository {
     );
   }
 
-  Future<List<VtMemoryItem>> memory() async {
+  Future<List<VtMemoryItem>> memory({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+  }) async {
     final envelope = await _api.getEnvelope<dynamic>(
       _staff.virtualTeamMemoryPath,
       mode: _staff,
+      query: filter.toQuery(),
       parse: (raw) => raw,
     );
     return asMapList(envelope.data).map(VtMemoryItem.fromJson).toList();
   }
 
-  Future<List<VtLearningItem>> learning() async {
+  Future<List<VtLearningItem>> learning({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+  }) async {
     final envelope = await _api.getEnvelope<dynamic>(
       _staff.virtualTeamLearningPath,
       mode: _staff,
+      query: filter.toQuery(),
       parse: (raw) => raw,
     );
     return asMapList(envelope.data).map(VtLearningItem.fromJson).toList();
@@ -182,7 +235,7 @@ class VirtualTeamRepository {
     VirtualTeamFilter filter = const VirtualTeamFilter(),
   }) async {
     final envelope = await _api.getEnvelope<dynamic>(
-      _staff.aiHandoffsPath,
+      _staff.virtualTeamHandoffsPath,
       mode: _staff,
       query: filter.toQuery(),
       parse: (raw) => raw,
@@ -193,84 +246,88 @@ class VirtualTeamRepository {
     );
   }
 
-  /// Endpoints ainda ausentes (404) — estrutura pronta, sem mock.
-  Future<VtPagedList<Map<String, dynamic>>> logs({
+  Future<VtPagedList<VtLogEntry>> logs({
     VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamLogsPath, filter);
-
-  Future<VtPagedList<Map<String, dynamic>>> audit({
-    VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamAuditPath, filter);
-
-  Future<VtPagedList<Map<String, dynamic>>> metrics({
-    VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamMetricsPath, filter);
-
-  Future<VtPagedList<Map<String, dynamic>>> timeline({
-    VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamTimelinePath, filter);
-
-  Future<VtPagedList<Map<String, dynamic>>> alerts({
-    VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamAlertsPath, filter);
-
-  /// Preferência futura: quando `/v1/virtual-team/handoffs` existir.
-  Future<VtPagedList<Map<String, dynamic>>> virtualTeamHandoffs({
-    VirtualTeamFilter filter = const VirtualTeamFilter(),
-  }) =>
-      _unavailableList(_staff.virtualTeamHandoffsPath, filter);
-
-  Future<Map<String, List<Map<String, dynamic>>>> search({
-    required String query,
+    String? agentSlug,
   }) async {
-    try {
-      final envelope = await _api.getEnvelope<Map<String, dynamic>>(
-        _staff.virtualTeamSearchPath,
-        mode: _staff,
-        query: {'q': query},
-        parse: asMap,
-      );
-      final groups = <String, List<Map<String, dynamic>>>{};
-      for (final e in envelope.data.entries) {
-        if (e.value is List) {
-          groups[e.key] = asMapList(e.value);
-        }
-      }
-      return groups;
-    } on ApiException catch (e) {
-      if (e.statusCode == 404) {
-        throw EndpointUnavailableException(_staff.virtualTeamSearchPath);
-      }
-      rethrow;
-    }
+    final slug = agentSlug ?? filter.agentSlug;
+    final path = slug == null || slug.isEmpty
+        ? _staff.virtualTeamLogsPath
+        : _staff.virtualTeamAgentLogsPath(slug);
+    final envelope = await _api.getEnvelope<dynamic>(
+      path,
+      mode: _staff,
+      query: filter.toQuery(),
+      parse: (raw) => raw,
+    );
+    return VtPagedList(
+      items: asMapList(envelope.data).map(VtLogEntry.fromJson).toList(),
+      meta: _metaOf(envelope.meta),
+    );
   }
 
-  Future<VtPagedList<Map<String, dynamic>>> _unavailableList(
-    String path,
-    VirtualTeamFilter filter,
-  ) async {
-    try {
-      final envelope = await _api.getEnvelope<dynamic>(
-        path,
-        mode: _staff,
-        query: filter.toQuery(),
-        parse: (raw) => raw,
-      );
-      return VtPagedList(
-        items: asMapList(envelope.data),
-        meta: _metaOf(envelope.meta),
-      );
-    } on ApiException catch (e) {
-      if (e.statusCode == 404) {
-        throw EndpointUnavailableException(path);
-      }
-      rethrow;
-    }
+  Future<VtPagedList<VtAuditEntry>> audit({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+  }) async {
+    final envelope = await _api.getEnvelope<dynamic>(
+      _staff.virtualTeamAuditPath,
+      mode: _staff,
+      query: filter.toQuery(),
+      parse: (raw) => raw,
+    );
+    return VtPagedList(
+      items: asMapList(envelope.data).map(VtAuditEntry.fromJson).toList(),
+      meta: _metaOf(envelope.meta),
+    );
+  }
+
+  Future<VtPagedList<VtTimelineItem>> timeline({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+    String? agentSlug,
+  }) async {
+    final slug = agentSlug ?? filter.agentSlug;
+    final path = slug == null || slug.isEmpty
+        ? _staff.virtualTeamTimelinePath
+        : _staff.virtualTeamAgentTimelinePath(slug);
+    final envelope = await _api.getEnvelope<dynamic>(
+      path,
+      mode: _staff,
+      query: filter.toQuery(),
+      parse: (raw) => raw,
+    );
+    return VtPagedList(
+      items: asMapList(envelope.data).map(VtTimelineItem.fromJson).toList(),
+      meta: _metaOf(envelope.meta),
+    );
+  }
+
+  Future<VtPagedList<VtAlert>> alerts({
+    VirtualTeamFilter filter = const VirtualTeamFilter(),
+  }) async {
+    final envelope = await _api.getEnvelope<dynamic>(
+      _staff.virtualTeamAlertsPath,
+      mode: _staff,
+      query: filter.toQuery(),
+      parse: (raw) => raw,
+    );
+    return VtPagedList(
+      items: asMapList(envelope.data).map(VtAlert.fromJson).toList(),
+      meta: _metaOf(envelope.meta),
+    );
+  }
+
+  Future<VtSearchResults> search({required String query}) async {
+    final envelope = await _api.getEnvelope<Map<String, dynamic>>(
+      _staff.virtualTeamSearchPath,
+      mode: _staff,
+      query: {'q': query},
+      parse: asMap,
+    );
+    return VtSearchResults.fromJson(
+      envelope.data,
+      meta: envelope.meta,
+      query: query,
+    );
   }
 
   VtPageMeta? _metaOf(Map<String, dynamic>? meta) =>

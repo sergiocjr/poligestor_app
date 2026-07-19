@@ -223,6 +223,9 @@ class VtTask {
     required this.id,
     required this.title,
     required this.status,
+    this.code,
+    this.description,
+    this.type,
     this.priority,
     this.agentSlug,
     this.agentName,
@@ -236,6 +239,9 @@ class VtTask {
   final String id;
   final String title;
   final String status;
+  final String? code;
+  final String? description;
+  final String? type;
   final String? priority;
   final String? agentSlug;
   final String? agentName;
@@ -250,13 +256,22 @@ class VtTask {
     final updated = asString(json['updated_at']);
     return VtTask(
       id: asString(json['id']) ?? '',
+      code: asString(json['code']),
       title: asString(json['title'] ?? json['name'] ?? json['subject']) ??
           'Tarefa',
+      description: asString(json['description']),
+      type: asString(json['type']),
       status: asString(json['status']) ?? 'unknown',
-      priority: asString(json['priority']),
-      agentSlug: asString(json['agent_slug'] ?? json['assignee_slug']),
+      priority: asString(
+        json['priority_label'] ?? json['priority'] ?? json['priority_score'],
+      ),
+      agentSlug: asString(
+        json['assigned_agent'] ?? json['agent_slug'] ?? json['assignee_slug'],
+      ),
       agentName: asString(json['agent_name'] ?? json['assignee_name']),
-      origin: asString(json['origin'] ?? json['from_agent']),
+      origin: asString(
+        json['origin'] ?? json['from_agent'] ?? json['created_by_agent'],
+      ),
       destination: asString(json['destination'] ?? json['to_agent']),
       createdAt: created != null ? DateTime.tryParse(created) : null,
       updatedAt: updated != null ? DateTime.tryParse(updated) : null,
@@ -269,12 +284,14 @@ class VtExecution {
   const VtExecution({
     required this.id,
     required this.status,
+    this.taskId,
     this.agentSlug,
     this.agentName,
     this.startedAt,
     this.endedAt,
     this.durationMs,
     this.result,
+    this.error,
     this.origin,
     this.destination,
     this.raw = const {},
@@ -282,12 +299,14 @@ class VtExecution {
 
   final String id;
   final String status;
+  final String? taskId;
   final String? agentSlug;
   final String? agentName;
   final DateTime? startedAt;
   final DateTime? endedAt;
   final int? durationMs;
   final String? result;
+  final String? error;
   final String? origin;
   final String? destination;
   final Map<String, dynamic> raw;
@@ -298,6 +317,7 @@ class VtExecution {
     return VtExecution(
       id: asString(json['id']) ?? '',
       status: asString(json['status']) ?? 'unknown',
+      taskId: asString(json['task_id']),
       agentSlug: asString(json['agent_slug']),
       agentName: asString(json['agent_name']),
       startedAt: start != null ? DateTime.tryParse(start) : null,
@@ -305,6 +325,7 @@ class VtExecution {
       durationMs:
           json['duration_ms'] == null ? null : asInt(json['duration_ms']),
       result: asString(json['result'] ?? json['outcome']),
+      error: asString(json['error']),
       origin: asString(json['origin']),
       destination: asString(json['destination']),
       raw: json,
@@ -331,12 +352,14 @@ class VtEvent {
 
   factory VtEvent.fromJson(Map<String, dynamic> json) {
     final created = asString(json['created_at'] ?? json['occurred_at']);
+    final type =
+        asString(json['event_type'] ?? json['type'] ?? json['event']) ??
+            'event';
     return VtEvent(
       id: asString(json['id']) ?? '',
-      type: asString(json['type'] ?? json['event']) ?? 'event',
-      title: asString(json['title'] ?? json['message'] ?? json['type']) ??
-          'Evento',
-      agentSlug: asString(json['agent_slug']),
+      type: type,
+      title: asString(json['title'] ?? json['message'] ?? type) ?? 'Evento',
+      agentSlug: asString(json['agent_slug'] ?? json['actor_agent']),
       createdAt: created != null ? DateTime.tryParse(created) : null,
       raw: json,
     );
@@ -350,6 +373,8 @@ class VtHandoff {
     required this.toAgent,
     required this.reason,
     required this.status,
+    this.taskId,
+    this.kind,
     this.createdAt,
     this.payload = const {},
   });
@@ -359,6 +384,8 @@ class VtHandoff {
   final String toAgent;
   final String reason;
   final String status;
+  final String? taskId;
+  final String? kind;
   final DateTime? createdAt;
   final Map<String, dynamic> payload;
 
@@ -370,6 +397,8 @@ class VtHandoff {
       toAgent: asString(json['to_agent']) ?? '—',
       reason: asString(json['reason']) ?? '',
       status: asString(json['status']) ?? '',
+      taskId: asString(json['task_id']),
+      kind: asString(json['handoff_kind']),
       createdAt: created != null ? DateTime.tryParse(created) : null,
       payload: asMap(json['payload']),
     );
@@ -381,21 +410,33 @@ class VtMemoryItem {
     required this.id,
     required this.label,
     this.detail,
+    this.kind,
+    this.agentSlug,
+    this.createdAt,
     this.raw = const {},
   });
 
   final String id;
   final String label;
   final String? detail;
+  final String? kind;
+  final String? agentSlug;
+  final DateTime? createdAt;
   final Map<String, dynamic> raw;
 
-  factory VtMemoryItem.fromJson(Map<String, dynamic> json) => VtMemoryItem(
-        id: asString(json['id']) ?? '',
-        label: asString(json['label'] ?? json['title'] ?? json['key']) ??
-            'Memória',
-        detail: asString(json['detail'] ?? json['value'] ?? json['content']),
-        raw: json,
-      );
+  factory VtMemoryItem.fromJson(Map<String, dynamic> json) {
+    final created = asString(json['created_at']);
+    return VtMemoryItem(
+      id: asString(json['id']) ?? '',
+      label: asString(json['title'] ?? json['label'] ?? json['key']) ??
+          'Memória',
+      detail: asString(json['body'] ?? json['detail'] ?? json['content']),
+      kind: asString(json['kind']),
+      agentSlug: asString(json['agent_slug']),
+      createdAt: created != null ? DateTime.tryParse(created) : null,
+      raw: json,
+    );
+  }
 }
 
 class VtLearningItem {
@@ -403,6 +444,8 @@ class VtLearningItem {
     required this.id,
     required this.title,
     this.body,
+    this.outcome,
+    this.agentSlug,
     this.createdAt,
     this.raw = const {},
   });
@@ -410,6 +453,8 @@ class VtLearningItem {
   final String id;
   final String title;
   final String? body;
+  final String? outcome;
+  final String? agentSlug;
   final DateTime? createdAt;
   final Map<String, dynamic> raw;
 
@@ -417,8 +462,13 @@ class VtLearningItem {
     final created = asString(json['created_at']);
     return VtLearningItem(
       id: asString(json['id']) ?? '',
-      title: asString(json['title'] ?? json['summary']) ?? 'Aprendizado',
-      body: asString(json['body'] ?? json['content'] ?? json['description']),
+      title: asString(json['topic'] ?? json['title'] ?? json['summary']) ??
+          'Aprendizado',
+      body: asString(
+        json['summary'] ?? json['body'] ?? json['content'] ?? json['description'],
+      ),
+      outcome: asString(json['outcome']),
+      agentSlug: asString(json['agent_slug']),
       createdAt: created != null ? DateTime.tryParse(created) : null,
       raw: json,
     );
@@ -464,10 +514,227 @@ class VtPagedList<T> {
   final String? cacheAgeLabel;
 }
 
-/// Sinaliza endpoint ainda não disponível no backend (HTTP 404).
-class EndpointUnavailableException implements Exception {
-  EndpointUnavailableException(this.path);
-  final String path;
-  @override
-  String toString() => 'EndpointUnavailableException($path)';
+class VtLogEntry {
+  const VtLogEntry({
+    required this.id,
+    required this.source,
+    required this.level,
+    required this.type,
+    required this.message,
+    this.agentSlug,
+    this.taskId,
+    this.createdAt,
+  });
+
+  final String id;
+  final String source;
+  final String level;
+  final String type;
+  final String message;
+  final String? agentSlug;
+  final String? taskId;
+  final DateTime? createdAt;
+
+  factory VtLogEntry.fromJson(Map<String, dynamic> json) {
+    final created = asString(json['created_at']);
+    return VtLogEntry(
+      id: asString(json['id']) ?? '',
+      source: asString(json['source']) ?? '',
+      level: asString(json['level']) ?? 'info',
+      type: asString(json['type']) ?? '',
+      message: asString(json['message']) ?? '',
+      agentSlug: asString(json['agent_slug']),
+      taskId: asString(json['task_id']),
+      createdAt: created != null ? DateTime.tryParse(created) : null,
+    );
+  }
+}
+
+class VtAuditEntry {
+  const VtAuditEntry({
+    required this.id,
+    required this.decisionType,
+    required this.decidedBy,
+    required this.rationale,
+    required this.status,
+    this.agentSlug,
+    this.taskId,
+    this.durationMs,
+    this.createdAt,
+  });
+
+  final String id;
+  final String decisionType;
+  final String decidedBy;
+  final String rationale;
+  final String status;
+  final String? agentSlug;
+  final String? taskId;
+  final int? durationMs;
+  final DateTime? createdAt;
+
+  factory VtAuditEntry.fromJson(Map<String, dynamic> json) {
+    final created = asString(json['created_at']);
+    return VtAuditEntry(
+      id: asString(json['id']) ?? '',
+      decisionType: asString(json['decision_type']) ?? '',
+      decidedBy: asString(json['decided_by']) ?? '',
+      rationale: asString(json['rationale']) ?? '',
+      status: asString(json['status']) ?? '',
+      agentSlug: asString(json['agent_slug']),
+      taskId: asString(json['task_id']),
+      durationMs:
+          json['duration_ms'] == null ? null : asInt(json['duration_ms']),
+      createdAt: created != null ? DateTime.tryParse(created) : null,
+    );
+  }
+}
+
+class VtTimelineItem {
+  const VtTimelineItem({
+    required this.id,
+    required this.kind,
+    required this.title,
+    this.body,
+    this.agentSlug,
+    this.taskId,
+    this.createdAt,
+  });
+
+  final String id;
+  final String kind;
+  final String title;
+  final String? body;
+  final String? agentSlug;
+  final String? taskId;
+  final DateTime? createdAt;
+
+  factory VtTimelineItem.fromJson(Map<String, dynamic> json) {
+    final created = asString(json['created_at']);
+    return VtTimelineItem(
+      id: asString(json['id']) ?? '',
+      kind: asString(json['kind']) ?? 'event',
+      title: asString(json['title']) ?? 'Evento',
+      body: asString(json['body']),
+      agentSlug: asString(json['agent_slug']),
+      taskId: asString(json['task_id']),
+      createdAt: created != null ? DateTime.tryParse(created) : null,
+    );
+  }
+}
+
+class VtAlert {
+  const VtAlert({
+    required this.id,
+    required this.title,
+    required this.body,
+    required this.severity,
+    required this.status,
+    this.source,
+    this.agentSlug,
+    this.createdAt,
+  });
+
+  final String id;
+  final String title;
+  final String body;
+  final String severity;
+  final String status;
+  final String? source;
+  final String? agentSlug;
+  final DateTime? createdAt;
+
+  factory VtAlert.fromJson(Map<String, dynamic> json) {
+    final created = asString(json['created_at']);
+    return VtAlert(
+      id: asString(json['id']) ?? '',
+      title: asString(json['title']) ?? 'Alerta',
+      body: asString(json['body'] ?? json['summary']) ?? '',
+      severity: asString(json['severity']) ?? 'medium',
+      status: asString(json['status']) ?? 'open',
+      source: asString(json['source']),
+      agentSlug: asString(json['agent_slug']),
+      createdAt: created != null ? DateTime.tryParse(created) : null,
+    );
+  }
+}
+
+class VtSearchResults {
+  const VtSearchResults({
+    required this.query,
+    required this.total,
+    required this.tasks,
+    required this.agents,
+    required this.handoffs,
+    required this.memory,
+    required this.executions,
+  });
+
+  final String query;
+  final int total;
+  final List<Map<String, dynamic>> tasks;
+  final List<Map<String, dynamic>> agents;
+  final List<Map<String, dynamic>> handoffs;
+  final List<Map<String, dynamic>> memory;
+  final List<Map<String, dynamic>> executions;
+
+  bool get isEmpty => total == 0;
+
+  factory VtSearchResults.fromJson(
+    Map<String, dynamic> data, {
+    Map<String, dynamic>? meta,
+    required String query,
+  }) {
+    return VtSearchResults(
+      query: asString(meta?['q']) ?? query,
+      total: asInt(meta?['total']),
+      tasks: asMapList(data['tasks']),
+      agents: asMapList(data['agents']),
+      handoffs: asMapList(data['handoffs']),
+      memory: asMapList(data['memory']),
+      executions: asMapList(data['executions']),
+    );
+  }
+}
+
+class VtTeamRoot {
+  const VtTeamRoot({
+    required this.dashboard,
+    required this.agentsState,
+    required this.recentHandoffs,
+    required this.stats,
+    this.sprint,
+    this.generatedAt,
+    this.fromCache = false,
+    this.cacheAgeLabel,
+  });
+
+  final VtDashboard dashboard;
+  final List<VtAgent> agentsState;
+  final List<VtHandoff> recentHandoffs;
+  final Map<String, dynamic> stats;
+  final String? sprint;
+  final DateTime? generatedAt;
+  final bool fromCache;
+  final String? cacheAgeLabel;
+
+  factory VtTeamRoot.fromJson(
+    Map<String, dynamic> json, {
+    bool fromCache = false,
+    String? cacheAgeLabel,
+  }) {
+    final gen = asString(json['generated_at']);
+    final dash = asMap(json['dashboard']);
+    return VtTeamRoot(
+      sprint: asString(json['sprint']),
+      generatedAt: gen != null ? DateTime.tryParse(gen) : null,
+      dashboard: VtDashboard.fromJson(dash.isEmpty ? json : dash),
+      agentsState: asMapList(json['agents_state']).map(VtAgent.fromJson).toList(),
+      recentHandoffs:
+          asMapList(json['recent_handoffs']).map(VtHandoff.fromJson).toList(),
+      stats: asMap(json['stats']),
+      fromCache: fromCache,
+      cacheAgeLabel: cacheAgeLabel,
+    );
+  }
 }

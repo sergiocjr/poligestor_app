@@ -8,14 +8,14 @@
 | 8 | Gestão do mandato (dashboard staff) | CONCLUÍDA |
 | 9 | Inteligência do mandato (briefing/insights/trends) | CONCLUÍDA |
 | 9.5 | Hardening completo (produção) | CONCLUÍDA |
-| **10.1** | Equipe Virtual (agentes / operação) | **CONCLUÍDA** |
+| **10.1** | Equipe Virtual (agentes / operação) | **CONCLUÍDA (Final)** |
 | 10+ | Evoluções restantes | Em aberto |
 
 ## Sprint 10.1 (fechada)
 
-**STATUS: CONCLUÍDA.**
+**STATUS: CONCLUÍDA (Final).**
 
-Centro operacional Equipe Virtual consumindo `/api/v1/virtual-team/*` (descobertos) + `/api/v1/ai/handoffs`. Endpoints 404 preparados no repository/UI sem mocks.
+Centro operacional Equipe Virtual com todos os endpoints REST `/api/v1/virtual-team/*` (root, ops, governança e sub-rotas de agente) integrados sem mocks.
 
 ## Sprint 9.5 (fechada)
 

@@ -97,21 +97,26 @@ enum AuthMode {
   String get mandateBriefingsPath => '/v1/mandate/briefings';
 
   // --- Sprint 10.1: Equipe Virtual (staff) ---
+  String get virtualTeamRootPath => '/v1/virtual-team';
   String get virtualTeamDashboardPath => '/v1/virtual-team/dashboard';
   String get virtualTeamAgentsPath => '/v1/virtual-team/agents';
   String virtualTeamAgentPath(String slug) => '/v1/virtual-team/agents/$slug';
+  String virtualTeamAgentTasksPath(String slug) =>
+      '/v1/virtual-team/agents/$slug/tasks';
+  String virtualTeamAgentExecutionsPath(String slug) =>
+      '/v1/virtual-team/agents/$slug/executions';
+  String virtualTeamAgentLogsPath(String slug) =>
+      '/v1/virtual-team/agents/$slug/logs';
+  String virtualTeamAgentMetricsPath(String slug) =>
+      '/v1/virtual-team/agents/$slug/metrics';
+  String virtualTeamAgentTimelinePath(String slug) =>
+      '/v1/virtual-team/agents/$slug/timeline';
   String get virtualTeamTasksPath => '/v1/virtual-team/tasks';
   String get virtualTeamExecutionsPath => '/v1/virtual-team/executions';
   String get virtualTeamEventsPath => '/v1/virtual-team/events';
   String get virtualTeamMemoryPath => '/v1/virtual-team/memory';
   String get virtualTeamLearningPath => '/v1/virtual-team/learning';
   String get virtualTeamQueuePath => '/v1/virtual-team/queue';
-  // Catálogo legado + hand-offs (namespace /v1/ai)
-  String get aiAgentsCatalogPath => '/v1/ai/agents';
-  String get aiHandoffsPath => '/v1/ai/handoffs';
-  String get aiConversationsPath => '/v1/ai/conversations';
-
-  // Reservados (ainda 404 na VPS — preparados no repository)
   String get virtualTeamLogsPath => '/v1/virtual-team/logs';
   String get virtualTeamAuditPath => '/v1/virtual-team/audit';
   String get virtualTeamSearchPath => '/v1/virtual-team/search';
@@ -119,4 +124,9 @@ enum AuthMode {
   String get virtualTeamTimelinePath => '/v1/virtual-team/timeline';
   String get virtualTeamAlertsPath => '/v1/virtual-team/alerts';
   String get virtualTeamHandoffsPath => '/v1/virtual-team/handoffs';
+  // Catálogo legado (namespace /v1/ai)
+  String get aiAgentsCatalogPath => '/v1/ai/agents';
+  String get aiTeamPath => '/v1/ai/team';
+  String get aiHandoffsPath => '/v1/ai/handoffs';
+  String get aiConversationsPath => '/v1/ai/conversations';
 }
