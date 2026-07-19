@@ -219,10 +219,20 @@ void main() {
     test('status usa linguagem simples', () {
       expect(
         ProtocolStatusLabel.pt('aguardando_cidadao'),
-        'Aguardando informação',
+        'Aguardando cidadão',
       );
       expect(ProtocolStatusLabel.pt('em_analise'), 'Em análise');
+      expect(ProtocolStatusLabel.pt('em_execucao'), 'Em execução');
+      expect(ProtocolStatusLabel.pt('arquivado'), 'Arquivado');
+      expect(ProtocolStatusLabel.pt('novo'), 'Novo');
       expect(ProtocolPriorityLabel.pt('high'), 'Alta');
+      expect(
+        ProtocolStatusLabel.display(
+          status: 'recebido',
+          statusLabel: 'Recebido pelo gabinete',
+        ),
+        'Recebido pelo gabinete',
+      );
     });
 
     test('lista destaca não lidas e preview', () {
@@ -231,12 +241,53 @@ void main() {
         'title': 'Iluminação',
         'number': '9',
         'status': 'em_andamento',
+        'status_label': 'Em andamento',
         'unread_count': 2,
         'last_message_preview': 'Vamos verificar amanhã.',
         'updated_at': '2026-07-18T16:00:00Z',
       });
       expect(item.showUnreadBadge, isTrue);
       expect(item.lastMessagePreview, contains('verificar'));
+      expect(item.displayStatus, 'Em andamento');
+    });
+
+    test('anexo reconhece PDF áudio e vídeo', () {
+      expect(
+        ProtocolAttachment(
+          id: 1,
+          name: 'doc.pdf',
+          mimeType: 'application/pdf',
+        ).kindLabel,
+        'PDF',
+      );
+      expect(
+        ProtocolAttachment(
+          id: 2,
+          name: 'voz.m4a',
+          mimeType: 'audio/mp4',
+        ).isAudio,
+        isTrue,
+      );
+      expect(
+        ProtocolAttachment(
+          id: 3,
+          name: 'clip.mp4',
+          mimeType: 'video/mp4',
+        ).isVideo,
+        isTrue,
+      );
+    });
+
+    test('avaliação com can_rate sem link não é rejeitada no model', () {
+      final detail = ProtocolDetail.fromJson({
+        'id': 'abc',
+        'title': 'X',
+        'status': 'resolvido',
+        'can_rate': true,
+        'links': {'rate': null},
+      });
+      expect(detail.canRate, isTrue);
+      expect(detail.rateUrl, isNull);
     });
   });
 

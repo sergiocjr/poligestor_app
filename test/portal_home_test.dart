@@ -120,7 +120,7 @@ void main() {
       expect(home.recentProtocols.first.title, 'Poste apagado');
       expect(
         ProtocolStatusLabel.pt(home.recentProtocols.first.status),
-        'Em andamento',
+        'Em execução',
       );
       expect(ProtocolStatusLabel.pt('recebido'), 'Recebida');
 

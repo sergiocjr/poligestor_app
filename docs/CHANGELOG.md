@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Portal/Protocolos — auditoria] — 2026-07-19
+
+### Improved
+
+- Status: `status_label` LIVE + rótulos Novo / Em execução / Aguardando cidadão / Arquivado
+- Timeline agrupada por data (cards)
+- Lista cidadão: search + sort nos contratos LIVE
+- Rating: fallback `/rating` e `/rate` quando `can_rate` sem link
+- Anexos: PDF/áudio/vídeo + thumbnail; NPS UI preparada
+
+### Pending
+
+- 500 intermitente na listagem portal (VPS)
+- Share nativo; filtros período na UI; paridade staff list
+
 ## [Sprint 10.2 Fechamento APK/OAuth] — 2026-07-19
 
 ### Fixed

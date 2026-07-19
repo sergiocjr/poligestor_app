@@ -79,7 +79,7 @@ class _ProtocolsPageState extends State<ProtocolsPage> {
                   subtitle: Text(
                     [
                       if (item.number != null) '#${item.number}',
-                      ProtocolStatusLabel.pt(item.status),
+                      item.displayStatus,
                       if (item.createdAt != null)
                         dateFmt.format(item.createdAt!.toLocal()),
                     ].join(' · '),

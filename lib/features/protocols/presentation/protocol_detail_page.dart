@@ -66,8 +66,8 @@ class _ProtocolDetailPageState extends State<ProtocolDetailPage> {
                 runSpacing: 8,
                 children: [
                   if (p.number != null) Chip(label: Text('#${p.number}')),
-                  if (p.status != null)
-                    Chip(label: Text(ProtocolStatusLabel.pt(p.status))),
+                  if (p.status != null || p.statusLabel != null)
+                    Chip(label: Text(p.displayStatus)),
                   if (p.createdAt != null)
                     Chip(label: Text(dateFmt.format(p.createdAt!.toLocal()))),
                 ],

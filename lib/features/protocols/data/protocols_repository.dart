@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/api/api_client.dart';
+import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'protocol_models.dart';
 
@@ -46,11 +47,15 @@ class ProtocolRatingInput {
     required this.stars,
     required this.resolved,
     this.comment,
+    this.nps,
   });
 
   final int stars;
   final bool resolved;
   final String? comment;
+
+  /// Preparado: incluído no JSON só se preenchido (API pode ignorar).
+  final int? nps;
 
   Map<String, dynamic> toJson() => {
     'stars': stars,
@@ -62,6 +67,7 @@ class ProtocolRatingInput {
       'comment': comment!.trim(),
     if (comment != null && comment!.trim().isNotEmpty)
       'comentario': comment!.trim(),
+    if (nps != null) 'nps': nps,
   };
 }
 
@@ -187,29 +193,57 @@ class ProtocolsRepository {
     required ProtocolDetail detail,
     required ProtocolRatingInput input,
   }) async {
+    final candidates = <String>[];
     final url = detail.rateUrl;
-    if (url == null || url.trim().isEmpty) {
+    if (url != null && url.trim().isNotEmpty) {
+      final path = _toApiPath(url);
+      if (path != null) candidates.add(path);
+    }
+    // LIVE: `can_rate=true` pode vir sem `links.rate` — usa rotas convencionais.
+    if (detail.canRate) {
+      candidates.add('${mode.protocolsPath}/${detail.id}/rating');
+      candidates.add('${mode.protocolsPath}/${detail.id}/rate');
+    }
+    if (candidates.isEmpty) {
       throw const ProtocolFeatureUnavailable(
         'A avaliação ainda não está disponível para esta solicitação.',
       );
     }
-    final path = _toApiPath(url);
-    if (path == null) {
-      throw const ProtocolFeatureUnavailable(
-        'A avaliação ainda não está disponível para esta solicitação.',
-      );
+
+    Object? lastError;
+    for (final path in candidates.toSet()) {
+      try {
+        await _api.postEnvelope<Map<String, dynamic>>(
+          path,
+          data: input.toJson(),
+          mode: mode,
+          parse: (raw) {
+            if (raw is Map<String, dynamic>) return raw;
+            if (raw is Map) return Map<String, dynamic>.from(raw);
+            return <String, dynamic>{};
+          },
+        );
+        return true;
+      } catch (e) {
+        lastError = e;
+        // 404/405 → tenta candidato seguinte; outros erros sobem.
+        if (e is ApiException && (e.statusCode == 404 || e.statusCode == 405)) {
+          continue;
+        }
+        final msg = e.toString().toLowerCase();
+        if (msg.contains('404') ||
+            msg.contains('405') ||
+            msg.contains('not found') ||
+            msg.contains('não encontr')) {
+          continue;
+        }
+        rethrow;
+      }
     }
-    await _api.postEnvelope<Map<String, dynamic>>(
-      path,
-      data: input.toJson(),
-      mode: mode,
-      parse: (raw) {
-        if (raw is Map<String, dynamic>) return raw;
-        if (raw is Map) return Map<String, dynamic>.from(raw);
-        return <String, dynamic>{};
-      },
+    if (lastError != null) throw lastError;
+    throw const ProtocolFeatureUnavailable(
+      'A avaliação ainda não está disponível para esta solicitação.',
     );
-    return true;
   }
 
   Future<ProtocolAttachment> uploadAttachment({

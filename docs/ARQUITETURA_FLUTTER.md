@@ -30,12 +30,12 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **account** (Sprint 10.2) — perfil, sessões, logout remoto, register/forgot/OAuth preparados
 - **auth** — splash, login, register, forgot
 - **notifications** — FCM, prefs, inbox, `RealtimeSyncService`, `AppSyncController`
-- **protocols** — modelos e repositório compartilhados staff/cidadão
+- **protocols** — modelos/repositório staff+cidadão (search/sort LIVE, timeline agrupada, rating fallback, anexos tipados)
 - **agenda** — compromissos (staff events / portal appointments)
 - **mandate** (Fase 8) — gestão do mandato, só staff
 - **intelligence** (Fase 9) — briefing, insights, trends, analytics, só staff
 - **virtual_team** (Sprint 10.1) — Equipe Virtual operational center
-- **citizen** — portal
+- **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 
 ## Navegação (GoRouter)

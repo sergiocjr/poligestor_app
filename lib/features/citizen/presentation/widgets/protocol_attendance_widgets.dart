@@ -78,17 +78,62 @@ class ProtocolHistorySection extends StatelessWidget {
     if (events.isEmpty) {
       return const Text(UserMessages.emptyHistory);
     }
+
+    // Agrupa por dia (estilo timeline Jira).
+    final groups = <DateTime, List<ProtocolHistoryEvent>>{};
+    for (final e in events) {
+      final at =
+          e.createdAt?.toLocal() ?? DateTime.fromMillisecondsSinceEpoch(0);
+      final day = DateTime(at.year, at.month, at.day);
+      (groups[day] ??= <ProtocolHistoryEvent>[]).add(e);
+    }
+    final days = groups.keys.toList()..sort();
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        for (var i = 0; i < events.length; i++)
-          _HistoryTile(
-            event: events[i],
-            isLast: i == events.length - 1,
-            dateFmt: dateFmt,
-            timeFmt: timeFmt,
+        for (final day in days) ...[
+          Padding(
+            padding: const EdgeInsets.only(top: 8, bottom: 10),
+            child: Row(
+              children: [
+                Chip(
+                  visualDensity: VisualDensity.compact,
+                  avatar: const Icon(Icons.calendar_today_outlined, size: 14),
+                  label: Text(
+                    _dayLabel(day, dateFmt),
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Divider(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
+          for (var i = 0; i < groups[day]!.length; i++)
+            _HistoryTile(
+              event: groups[day]![i],
+              isLast: day == days.last && i == groups[day]!.length - 1,
+              dateFmt: dateFmt,
+              timeFmt: timeFmt,
+              showDate: false,
+            ),
+        ],
       ],
     );
+  }
+
+  String _dayLabel(DateTime day, DateFormat dateFmt) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    if (day == today) return 'Hoje';
+    if (day == yesterday) return 'Ontem';
+    return dateFmt.format(day);
   }
 }
 
@@ -98,77 +143,94 @@ class _HistoryTile extends StatelessWidget {
     required this.isLast,
     required this.dateFmt,
     required this.timeFmt,
+    this.showDate = true,
   });
 
   final ProtocolHistoryEvent event;
   final bool isLast;
   final DateFormat dateFmt;
   final DateFormat timeFmt;
+  final bool showDate;
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final icon = historyIcon(ProtocolHistoryLabels.iconFor(event.kind));
     final when = event.createdAt?.toLocal();
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 32,
-          child: Column(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: scheme.primaryContainer,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, size: 16, color: scheme.onPrimaryContainer),
-              ),
-              if (!isLast)
-                Container(
-                  width: 2,
-                  height: 48,
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  color: scheme.outlineVariant,
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  event.title,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                if (event.description != null &&
-                    event.description!.trim().isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    event.description!,
-                    style: TextStyle(color: scheme.onSurfaceVariant),
-                  ),
-                ],
-                if (when != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    '${dateFmt.format(when)} · ${timeFmt.format(when)}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.onSurfaceVariant,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      elevation: 0,
+      color: scheme.surfaceContainerLowest,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: scheme.outlineVariant.withValues(alpha: 0.7)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 32,
+              child: Column(
+                children: [
+                  Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: scheme.primaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      icon,
+                      size: 16,
+                      color: scheme.onPrimaryContainer,
                     ),
                   ),
+                  if (!isLast)
+                    Container(
+                      width: 2,
+                      height: 28,
+                      margin: const EdgeInsets.only(top: 4),
+                      color: scheme.outlineVariant,
+                    ),
                 ],
-              ],
+              ),
             ),
-          ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    event.title,
+                    style: const TextStyle(fontWeight: FontWeight.w800),
+                  ),
+                  if (event.description != null &&
+                      event.description!.trim().isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      event.description!,
+                      style: TextStyle(color: scheme.onSurfaceVariant),
+                    ),
+                  ],
+                  if (when != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      showDate
+                          ? '${dateFmt.format(when)} · ${timeFmt.format(when)}'
+                          : timeFmt.format(when),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -407,10 +469,31 @@ class ProtocolAttachmentTile extends StatelessWidget {
               Icon(
                 attachment.isImage
                     ? Icons.image_outlined
+                    : attachment.isPdf
+                    ? Icons.picture_as_pdf_outlined
+                    : attachment.isAudio
+                    ? Icons.audiotrack_outlined
+                    : attachment.isVideo
+                    ? Icons.videocam_outlined
                     : Icons.insert_drive_file_outlined,
                 color: scheme.primary,
               ),
               const SizedBox(width: 10),
+              if (attachment.isImage &&
+                  attachment.url != null &&
+                  attachment.url!.isNotEmpty) ...[
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    attachment.url!,
+                    width: 44,
+                    height: 44,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,9 +509,7 @@ class ProtocolAttachmentTile extends StatelessWidget {
                       LinearProgressIndicator(value: progress!.clamp(0, 1))
                     else
                       Text(
-                        failed
-                            ? 'Falha no envio'
-                            : (attachment.isImage ? 'Imagem' : 'Documento'),
+                        failed ? 'Falha no envio' : attachment.kindLabel,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: failed
                               ? scheme.error
@@ -500,6 +581,7 @@ class ProtocolRatingCard extends StatefulWidget {
 class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
   late int _stars;
   bool? _resolved;
+  int? _nps;
   final _comment = TextEditingController();
   bool _sent = false;
 
@@ -570,6 +652,29 @@ class _ProtocolRatingCardState extends State<ProtocolRatingCard> {
                     size: 32,
                   ),
                   tooltip: '$i estrela${i > 1 ? 's' : ''}',
+                ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // NPS preparado — UI visível; envio no payload só quando preenchido.
+          Text(
+            'Recomendaria o atendimento? (NPS)',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              for (var n = 0; n <= 10; n++)
+                ChoiceChip(
+                  label: Text('$n'),
+                  selected: _nps == n,
+                  onSelected: !_editable || widget.busy
+                      ? null
+                      : (_) => setState(() => _nps = n),
                 ),
             ],
           ),

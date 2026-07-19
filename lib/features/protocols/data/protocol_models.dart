@@ -8,6 +8,7 @@ class ProtocolSummary {
     required this.title,
     this.number,
     this.status,
+    this.statusLabel,
     this.priority,
     this.category,
     this.createdAt,
@@ -23,6 +24,9 @@ class ProtocolSummary {
   final String title;
   final String? number;
   final String? status;
+
+  /// Rótulo humano vindo da API (`status_label`) — preferir na UI.
+  final String? statusLabel;
   final String? priority;
   final String? category;
   final DateTime? createdAt;
@@ -32,6 +36,9 @@ class ProtocolSummary {
   final bool hasUnread;
   final String? lastMessagePreview;
   final bool awaitingCitizen;
+
+  String get displayStatus =>
+      ProtocolStatusLabel.display(status: status, statusLabel: statusLabel);
 
   factory ProtocolSummary.fromJson(Map<String, dynamic> json) {
     final title =
@@ -80,6 +87,15 @@ class ProtocolSummary {
                   json['protocolo'])
               ?.toString(),
       status: (json['status'] ?? json['situacao'])?.toString(),
+      statusLabel: () {
+        final raw =
+            (json['status_label'] ??
+                    json['situacao_label'] ??
+                    json['statusLabel'])
+                ?.toString()
+                .trim();
+        return (raw == null || raw.isEmpty || raw == 'null') ? null : raw;
+      }(),
       priority: (json['priority'] ?? json['prioridade'])?.toString(),
       category: _categoryLabel(json['category'] ?? json['categoria']),
       description: (json['description'] ?? json['descricao'])?.toString(),
@@ -107,20 +123,28 @@ class ProtocolSummary {
   bool get isOpen =>
       status == 'open' ||
       status == 'aberto' ||
+      status == 'novo' ||
+      status == 'new' ||
       status == 'waiting' ||
       status == 'recebido' ||
+      status == 'received' ||
       status == 'em_analise';
   bool get isInProgress =>
       status == 'in_progress' ||
       status == 'andamento' ||
       status == 'em_andamento' ||
+      status == 'em_execucao' ||
+      status == 'em_execução' ||
       status == 'encaminhado' ||
       status == 'respondida';
   bool get isResolved =>
       status == 'resolved' ||
       status == 'closed' ||
       status == 'resolvido' ||
-      status == 'concluido';
+      status == 'concluido' ||
+      status == 'concluído' ||
+      status == 'arquivado' ||
+      status == 'archived';
   bool get isAwaitingCitizen =>
       awaitingCitizen || _statusIsAwaitingCitizen(status);
 
@@ -248,6 +272,41 @@ class ProtocolAttachment {
         n.endsWith('.gif');
   }
 
+  bool get isPdf {
+    final m = (mimeType ?? '').toLowerCase();
+    final n = (name ?? '').toLowerCase();
+    return m == 'application/pdf' || n.endsWith('.pdf');
+  }
+
+  bool get isAudio {
+    final m = (mimeType ?? '').toLowerCase();
+    final n = (name ?? '').toLowerCase();
+    return m.startsWith('audio/') ||
+        n.endsWith('.mp3') ||
+        n.endsWith('.m4a') ||
+        n.endsWith('.wav') ||
+        n.endsWith('.aac') ||
+        n.endsWith('.ogg');
+  }
+
+  bool get isVideo {
+    final m = (mimeType ?? '').toLowerCase();
+    final n = (name ?? '').toLowerCase();
+    return m.startsWith('video/') ||
+        n.endsWith('.mp4') ||
+        n.endsWith('.mov') ||
+        n.endsWith('.webm') ||
+        n.endsWith('.mkv');
+  }
+
+  String get kindLabel {
+    if (isImage) return 'Imagem';
+    if (isPdf) return 'PDF';
+    if (isAudio) return 'Áudio';
+    if (isVideo) return 'Vídeo';
+    return 'Documento';
+  }
+
   factory ProtocolAttachment.fromJson(Map<String, dynamic> json) {
     return ProtocolAttachment(
       id: json['id'] ?? json['uuid'] ?? json['name'],
@@ -348,6 +407,7 @@ class ProtocolDetail extends ProtocolSummary {
     required super.title,
     super.number,
     super.status,
+    super.statusLabel,
     super.priority,
     super.category,
     super.createdAt,
@@ -571,6 +631,7 @@ class ProtocolDetail extends ProtocolSummary {
       title: base.title,
       number: base.number,
       status: base.status,
+      statusLabel: base.statusLabel,
       priority: base.priority,
       category: base.category,
       createdAt: base.createdAt,
@@ -649,8 +710,18 @@ class ProtocolDetail extends ProtocolSummary {
 }
 
 class ProtocolStatusLabel {
+  /// Prefere `status_label` da API; cai no mapa PT do código.
+  static String display({String? status, String? statusLabel}) {
+    final label = statusLabel?.trim();
+    if (label != null && label.isNotEmpty && label.toLowerCase() != 'null') {
+      return label;
+    }
+    return pt(status);
+  }
+
   static String pt(String? status) {
     return switch ((status ?? '').toLowerCase().trim()) {
+      'new' || 'novo' => 'Novo',
       'open' || 'aberto' || 'recebido' || 'received' => 'Recebida',
       'em_analise' ||
       'em análise' ||
@@ -660,16 +731,22 @@ class ProtocolStatusLabel {
       'encaminhada' ||
       'forwarded' ||
       'assigned' => 'Encaminhada',
-      'in_progress' || 'andamento' || 'em_andamento' => 'Em andamento',
+      'in_progress' ||
+      'andamento' ||
+      'em_andamento' ||
+      'em_execucao' ||
+      'em_execução' ||
+      'executing' => 'Em execução',
       'aguardando_cidadao' ||
       'aguardando cidadão' ||
       'aguardando_informacao' ||
       'waiting_citizen' ||
-      'info_requested' => 'Aguardando informação',
+      'info_requested' => 'Aguardando cidadão',
       'respondida' || 'answered' || 'replied' => 'Respondida',
       'waiting' || 'aguardando' => 'Aguardando',
-      'resolved' || 'resolvido' || 'encerrado' => 'Resolvida',
-      'closed' || 'fechado' || 'concluido' || 'concluído' => 'Concluída',
+      'resolved' || 'resolvido' || 'encerrado' => 'Resolvido',
+      'closed' || 'fechado' || 'concluido' || 'concluído' => 'Concluído',
+      'arquivado' || 'archived' => 'Arquivado',
       '' => '—',
       _ => status!,
     };
@@ -702,13 +779,23 @@ class ProtocolHistoryLabels {
       'encaminhada' ||
       'encaminhado' ||
       'assigned' => 'Encaminhada',
-      'in_progress' || 'em_andamento' || 'andamento' => 'Em andamento',
+      'in_progress' ||
+      'em_andamento' ||
+      'andamento' ||
+      'em_execucao' ||
+      'em_execução' => 'Em execução',
       'awaiting_citizen' ||
       'aguardando_cidadao' ||
       'aguardando_informacao' ||
-      'info_requested' => 'Aguardando informação',
+      'info_requested' => 'Aguardando cidadão',
       'answered' || 'respondida' || 'replied' => 'Respondida',
-      'resolved' || 'resolvida' || 'resolvido' || 'closed' => 'Resolvida',
+      'resolved' ||
+      'resolvida' ||
+      'resolvido' ||
+      'closed' ||
+      'concluido' => 'Resolvido',
+      'arquivado' || 'archived' => 'Arquivado',
+      'new' || 'novo' => 'Novo',
       _ => null,
     };
   }
@@ -719,7 +806,9 @@ class ProtocolHistoryLabels {
       'recebido' ||
       'recebida' ||
       'created' ||
-      'aberta' => IconDataForHistory.inbox,
+      'aberta' ||
+      'new' ||
+      'novo' => IconDataForHistory.inbox,
       'under_review' || 'em_analise' || 'analise' => IconDataForHistory.search,
       'forwarded' ||
       'encaminhada' ||
@@ -727,7 +816,9 @@ class ProtocolHistoryLabels {
       'assigned' => IconDataForHistory.forward,
       'in_progress' ||
       'em_andamento' ||
-      'andamento' => IconDataForHistory.progress,
+      'andamento' ||
+      'em_execucao' ||
+      'em_execução' => IconDataForHistory.progress,
       'awaiting_citizen' ||
       'aguardando_cidadao' ||
       'aguardando_informacao' ||
@@ -736,7 +827,9 @@ class ProtocolHistoryLabels {
       'resolved' ||
       'resolvida' ||
       'resolvido' ||
-      'closed' => IconDataForHistory.done,
+      'closed' ||
+      'arquivado' ||
+      'archived' => IconDataForHistory.done,
       _ => IconDataForHistory.dot,
     };
   }
@@ -788,7 +881,10 @@ enum RequestStatusFilter {
       RequestStatusFilter.open =>
         s == 'open' ||
             s == 'aberto' ||
+            s == 'novo' ||
+            s == 'new' ||
             s == 'recebido' ||
+            s == 'received' ||
             s == 'em_analise' ||
             s == 'em análise' ||
             s == 'waiting' ||
@@ -797,6 +893,8 @@ enum RequestStatusFilter {
         s == 'in_progress' ||
             s == 'andamento' ||
             s == 'em_andamento' ||
+            s == 'em_execucao' ||
+            s == 'em_execução' ||
             s == 'encaminhado' ||
             s == 'aguardando_cidadao' ||
             s == 'aguardando cidadão' ||
@@ -810,7 +908,9 @@ enum RequestStatusFilter {
             s == 'closed' ||
             s == 'fechado' ||
             s == 'concluido' ||
-            s == 'concluído',
+            s == 'concluído' ||
+            s == 'arquivado' ||
+            s == 'archived',
     };
   }
 }

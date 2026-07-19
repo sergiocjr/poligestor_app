@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -21,11 +23,21 @@ class CitizenRequestsPage extends StatefulWidget {
 class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
   Future<List<ProtocolSummary>>? _future;
   late RequestStatusFilter? _filter;
+  final _searchCtrl = TextEditingController();
+  String _sort = '-updated_at';
+  Timer? _debounce;
 
   @override
   void initState() {
     super.initState();
     _filter = RequestStatusFilter.tryParse(widget.initialStatusFilter);
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -44,7 +56,10 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
 
   Future<List<ProtocolSummary>> _load() {
     final auth = context.read<AuthController>();
-    return context.read<ProtocolsRepository>().list(mode: auth.mode);
+    final q = <String, dynamic>{'sort': _sort};
+    final search = _searchCtrl.text.trim();
+    if (search.isNotEmpty) q['search'] = search;
+    return context.read<ProtocolsRepository>().list(mode: auth.mode, query: q);
   }
 
   Future<void> _reload() async {
@@ -52,6 +67,13 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
       _future = _load();
     });
     await _future;
+  }
+
+  void _onSearchChanged(String _) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 350), () {
+      _reload();
+    });
   }
 
   List<ProtocolSummary> _applyFilter(List<ProtocolSummary> items) {
@@ -96,6 +118,68 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchCtrl,
+                    onChanged: _onSearchChanged,
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Pesquisar solicitações',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: _searchCtrl.text.isEmpty
+                          ? null
+                          : IconButton(
+                              tooltip: 'Limpar',
+                              onPressed: () {
+                                _searchCtrl.clear();
+                                _reload();
+                                setState(() {});
+                              },
+                              icon: const Icon(Icons.clear),
+                            ),
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                PopupMenuButton<String>(
+                  tooltip: 'Ordenar',
+                  initialValue: _sort,
+                  onSelected: (v) {
+                    setState(() => _sort = v);
+                    _reload();
+                  },
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: '-updated_at',
+                      child: Text('Mais recentes'),
+                    ),
+                    PopupMenuItem(
+                      value: 'updated_at',
+                      child: Text('Mais antigos'),
+                    ),
+                    PopupMenuItem(
+                      value: '-created_at',
+                      child: Text('Criação (novo)'),
+                    ),
+                    PopupMenuItem(
+                      value: 'created_at',
+                      child: Text('Criação (antigo)'),
+                    ),
+                  ],
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(Icons.sort_rounded),
+                  ),
+                ),
+              ],
+            ),
+          ),
           SizedBox(
             height: 52,
             child: ListView(
@@ -214,7 +298,7 @@ class _CitizenRequestsPageState extends State<CitizenRequestsPage> {
                                 Text(
                                   [
                                     if (p.number != null) 'nº ${p.number}',
-                                    ProtocolStatusLabel.pt(p.status),
+                                    p.displayStatus,
                                     if (updated != null)
                                       _relativeOrTime(
                                         updated,

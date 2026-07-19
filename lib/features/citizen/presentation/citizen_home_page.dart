@@ -558,9 +558,7 @@ class _CitizenHomePageState extends State<CitizenHomePage>
                                         title: data.protocols[i].title,
                                         number: data.protocols[i].number,
                                         statusLabel: [
-                                          ProtocolStatusLabel.pt(
-                                            data.protocols[i].status,
-                                          ),
+                                          data.protocols[i].displayStatus,
                                           if (data.protocols[i].showUnreadBadge)
                                             'nova mensagem',
                                           if (data.protocols[i].updatedAt !=

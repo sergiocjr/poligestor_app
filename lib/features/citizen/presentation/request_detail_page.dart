@@ -659,7 +659,7 @@ class _RequestDetailPageState extends State<RequestDetailPage> {
             children: [
               if (detail.number != null)
                 Chip(label: Text('Protocolo nº ${detail.number}')),
-              Chip(label: Text(ProtocolStatusLabel.pt(detail.status))),
+              Chip(label: Text(detail.displayStatus)),
               if (detail.category != null) Chip(label: Text(detail.category!)),
               if (detail.priority != null)
                 Chip(

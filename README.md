@@ -40,6 +40,7 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **9.5** | Hardening produção | **CONCLUÍDA** |
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
 | **10.2** | Identidade / Auth / Multi-tenant | **FECHADA (Flutter + APK SM-A105M)** |
+| — | Auditoria Portal/Protocolos | Hardening (sem Sprint 10.4) |
 | 10+ | Evolução + credenciais OAuth reais | Em andamento |
 
 ## Sprint 10.2 — Identidade (FECHADA)
