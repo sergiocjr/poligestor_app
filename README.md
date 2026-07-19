@@ -43,7 +43,8 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.4** | Central de Comunicação | **CONCLUÍDA** |
 | **10.5** | Assistente Inteligente | **CONCLUÍDA** |
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
-| 10.7 | — | **Não iniciada** |
+| **10.7** | Painel Estratégico | **CONCLUÍDA** |
+| 10.8 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -56,6 +57,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.7 — Painel Estratégico
+
+Staff — **Mais → Painel Estratégico** (`/home/strategy`): KPIs, heatmap, tendências, alertas, regiões, bairros, previsões LIVE (`/v1/strategy/*`); metas/comparativos preparados.
 
 ## Sprint 10.6 — Central de Automação
 
@@ -134,6 +139,7 @@ lib/
     communication/  # Sprint 10.4 — canais / templates / campanhas
     smart_assistant/# Sprint 10.5 — hub IA / chat gabinete
     automation/     # Sprint 10.6 — Central de Automação
+    strategy/       # Sprint 10.7 — Painel Estratégico
     home/
     more/
     assistant/

@@ -49,6 +49,10 @@
                 <data android:scheme="poligestor" android:host="automation"/>
                 <data android:scheme="poligestor" android:host="automacao"/>
                 <data android:scheme="poligestor" android:host="automations"/>
+                <data android:scheme="poligestor" android:host="strategy"/>
+                <data android:scheme="poligestor" android:host="estrategia"/>
+                <data android:scheme="poligestor" android:host="strategic"/>
+                <data android:scheme="poligestor" android:host="painel-estrategico"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

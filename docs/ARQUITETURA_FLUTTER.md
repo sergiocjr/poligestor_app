@@ -38,6 +38,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **communication** (Sprint 10.4) — Central de Comunicação (channels/templates/campaigns LIVE)
 - **smart_assistant** (Sprint 10.5) — Hub Assistente Inteligente (`/home/chat`)
 - **automation** (Sprint 10.6) — Central de Automação (`/home/automation`)
+- **strategy** (Sprint 10.7) — Painel Estratégico (`/home/strategy`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -47,9 +48,9 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
 2. Sem org → `/org`
 3. Com org, sem sessão → `/login` (+ register/forgot)
-4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/account/*`)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/home/strategy/*`, `/account/*`)
 5. Portal autenticado → `/citizen/*` (+ `/account/*`)
-6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|org|tenant/...`
+6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|strategy|org|tenant/...`
 
 ## Estado
 
@@ -141,6 +142,13 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - LIVE operacional via `VirtualTeamRepository` (sem duplicar regra VT)
 - Pending: `/v1/automations*` (lista, aprovações, agenda, editor, escrita autonomia)
 - Cache `pg_auto_{tenant}_*`; realtime via `MandateRefreshController`
+
+## Sprint 10.7 — Painel Estratégico
+
+- Feature `lib/features/strategy/` — hub próprio
+- LIVE `/v1/strategy/{kpis,heatmap,trends,alerts,regions,neighborhoods,forecasts,reports}`
+- Reuse mapa mandato; pending goals/compare/indicators/predictions/map
+- Cache `pg_strategy_{tenant}_*`; docs `docs/INTEGRACOES.md`
 
 ## Segurança
 

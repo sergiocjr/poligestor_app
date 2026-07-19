@@ -84,6 +84,12 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/automation'),
           ),
           ListTile(
+            leading: const Icon(Icons.insights_outlined),
+            title: const Text('Painel Estratégico'),
+            subtitle: const Text('KPIs, heatmap, tendências e previsões'),
+            onTap: () => context.push('/home/strategy'),
+          ),
+          ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
             subtitle: const Text('Canais, templates e campanhas'),

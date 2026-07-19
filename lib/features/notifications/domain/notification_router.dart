@@ -50,6 +50,17 @@ class NotificationRouter {
               : '/home/automation/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 10.7 — Painel Estratégico
+        if (uri.host == 'strategy' ||
+            uri.host == 'estrategia' ||
+            uri.host == 'strategic' ||
+            uri.host == 'painel-estrategico') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/strategy'
+              : '/home/strategy/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

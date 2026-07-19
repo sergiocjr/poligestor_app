@@ -11,6 +11,7 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/automation/presentation/automation_pages.dart';
+import '../../features/strategy/presentation/strategy_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -87,6 +88,7 @@ GoRouter createAppRouter({
       final isVirtualTeamPath = loc.startsWith('/home/virtual-team');
       final isCommunicationPath = loc.startsWith('/home/communication');
       final isAutomationPath = loc.startsWith('/home/automation');
+      final isStrategyPath = loc.startsWith('/home/strategy');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -100,12 +102,13 @@ GoRouter createAppRouter({
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
       }
-      // Mandato / Inteligência / Equipe Virtual / Comunicação / Automação exclusivos de staff.
+      // Mandato / Inteligência / Equipe Virtual / Comunicação / Automação / Estratégia exclusivos de staff.
       if ((isMandatePath ||
               isIntelPath ||
               isVirtualTeamPath ||
               isCommunicationPath ||
-              isAutomationPath) &&
+              isAutomationPath ||
+              isStrategyPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -267,6 +270,74 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(path: '/home/more', builder: (_, _) => const MorePage()),
             ],
+          ),
+        ],
+      ),
+
+      // Painel Estratégico (Sprint 10.7) — staff only.
+      GoRoute(
+        path: '/home/strategy',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const StrategyHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const StrategyDashboardPage(),
+          ),
+          GoRoute(path: 'kpis', builder: (_, _) => const StrategyKpisPage()),
+          GoRoute(path: 'map', builder: (_, _) => const StrategyMapPage()),
+          GoRoute(
+            path: 'heatmap',
+            builder: (_, _) => const StrategyHeatmapPage(),
+          ),
+          GoRoute(
+            path: 'trends',
+            builder: (_, _) => const StrategyTrendsPage(),
+          ),
+          GoRoute(path: 'goals', builder: (_, _) => const StrategyGoalsPage()),
+          GoRoute(
+            path: 'alerts',
+            builder: (_, _) => const StrategyAlertsPage(),
+          ),
+          GoRoute(
+            path: 'compare',
+            builder: (_, _) => StrategyPendingPage(
+              title: 'Comparativos',
+              path: AuthMode.staff.strategyComparePath,
+              probe: (repo) => repo.compare(),
+            ),
+          ),
+          GoRoute(
+            path: 'regions',
+            builder: (_, _) => const StrategyRegionsPage(),
+          ),
+          GoRoute(
+            path: 'neighborhoods',
+            builder: (_, _) => const StrategyNeighborhoodsPage(),
+          ),
+          GoRoute(
+            path: 'forecasts',
+            builder: (_, _) => const StrategyForecastsPage(),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => const StrategyReportsPage(),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => StrategyPendingPage(
+              title: 'Indicadores',
+              path: AuthMode.staff.strategyIndicatorsPath,
+              probe: (repo) => repo.indicators(),
+            ),
+          ),
+          GoRoute(
+            path: 'predictions',
+            builder: (_, _) => StrategyPendingPage(
+              title: 'Predições',
+              path: AuthMode.staff.strategyPredictionsPath,
+              probe: (repo) => repo.predictions(),
+            ),
           ),
         ],
       ),

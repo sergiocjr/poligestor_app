@@ -17,6 +17,7 @@ import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
 import 'features/automation/data/automation_repository.dart';
 import 'features/communication/data/communication_repository.dart';
+import 'features/strategy/data/strategy_repository.dart';
 import 'features/identity/data/identity_cache.dart';
 import 'features/identity/data/identity_repository.dart';
 import 'features/identity/domain/tenant_controller.dart';
@@ -70,6 +71,7 @@ Future<void> main() async {
   final intelligenceRepo = IntelligenceRepository(api);
   final virtualTeamRepo = VirtualTeamRepository(api);
   final automationRepo = AutomationRepository(api, virtualTeamRepo);
+  final strategyRepo = StrategyRepository(api, mandateRepo);
   final communicationRepo = CommunicationRepository(api);
   final smartAssistantRepo = SmartAssistantRepository(api);
   final mandateRefresh = MandateRefreshController();
@@ -118,6 +120,7 @@ Future<void> main() async {
         Provider.value(value: intelligenceRepo),
         Provider.value(value: virtualTeamRepo),
         Provider.value(value: automationRepo),
+        Provider.value(value: strategyRepo),
         Provider.value(value: communicationRepo),
         Provider.value(value: smartAssistantRepo),
         Provider.value(value: realtime),

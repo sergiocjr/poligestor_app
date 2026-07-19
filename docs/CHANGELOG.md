@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.7 — Painel Estratégico] — 2026-07-19
+
+### Added
+
+- Hub `/home/strategy` (dashboard, KPIs, heatmap, tendências, alertas, regiões, bairros, previsões, relatórios, mapa)
+- Contratos LIVE `/v1/strategy/*` com cache `pg_strategy_*` e realtime via `MandateRefreshController`
+- Pending honesto: metas, comparativos, indicadores, predições, mapa dedicado
+- Reuso do mapa/bairros/relatórios do Mandato (sem duplicar regra)
+- Deep links `poligestor://strategy|estrategia|strategic|painel-estrategico`
+- Docs `docs/INTEGRACOES.md`; testes `test/sprint107_strategy_test.dart`
+
+### Not started
+
+- Sprint 10.8
+
 ## [Sprint 10.6 — Central de Automação] — 2026-07-19
 
 ### Added

@@ -100,6 +100,23 @@ enum AuthMode {
   String automationPath(String id) => '/v1/automations/$id';
   String get automationsAutonomyPath => '/v1/automations/autonomy';
 
+  // --- Sprint 10.7: Painel Estratégico (staff) ---
+  String get strategyRootPath => '/v1/strategy';
+  String get strategyDashboardPath => '/v1/strategy/dashboard';
+  String get strategyKpisPath => '/v1/strategy/kpis';
+  String get strategyHeatmapPath => '/v1/strategy/heatmap';
+  String get strategyTrendsPath => '/v1/strategy/trends';
+  String get strategyGoalsPath => '/v1/strategy/goals';
+  String get strategyAlertsPath => '/v1/strategy/alerts';
+  String get strategyComparePath => '/v1/strategy/compare';
+  String get strategyForecastsPath => '/v1/strategy/forecasts';
+  String get strategyRegionsPath => '/v1/strategy/regions';
+  String get strategyNeighborhoodsPath => '/v1/strategy/neighborhoods';
+  String get strategyReportsPath => '/v1/strategy/reports';
+  String get strategyMapPath => '/v1/strategy/map';
+  String get strategyIndicatorsPath => '/v1/strategy/indicators';
+  String get strategyPredictionsPath => '/v1/strategy/predictions';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';

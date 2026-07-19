@@ -13,13 +13,18 @@
 | **10.4** | Central de Comunicação | **CONCLUÍDA** |
 | **10.5** | Assistente Inteligente | **CONCLUÍDA** |
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
-| 10.7 | — | **Não iniciada** |
+| **10.7** | Painel Estratégico | **CONCLUÍDA** |
+| 10.8 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
 
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
+
+## Sprint 10.7 (CONCLUÍDA)
+
+Painel Estratégico em `/home/strategy`. LIVE `/v1/strategy/*`; pending: goals/compare/indicators/predictions/map dedicado. Reuso mandato/inteligência.
 
 ## Sprint 10.6 (CONCLUÍDA)
 
