@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.4 — Central de Comunicação)
+Atualizado: 2026-07-19 (Sprint 10.4 — CONCLUÍDA)
 
 ## Resumo
 
@@ -15,10 +15,12 @@ Atualizado: 2026-07-19 (Sprint 10.4 — Central de Comunicação)
 | Sprint 9.5 — Hardening produção | CONCLUÍDA |
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
 | Sprint 10.2 — Identidade / Auth / Multi-tenant | **FECHADA** |
-| Sprint 10.4 — Central de Comunicação | **SINCRONIZADA** (LIVE omnichannel) |
+| Sprint 10.4 — Central de Comunicação | **CONCLUÍDA** |
 | Sprint 10.5 | **Não iniciada** |
 
 ## Sprint 10.4 — Central de Comunicação
+
+**STATUS: CONCLUÍDA.**
 
 Produto exclusivo **PoliGestor/MandatoOS**. Isolamento absoluto: sem NexChat, NexISP, GestFin nem recursos compartilhados ONNEXIS.
 

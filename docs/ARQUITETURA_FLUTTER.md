@@ -123,6 +123,8 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - Cache `pg_comms_*`; refresh via `MandateRefreshController`
 - Sem integração com NexChat / NexISP / GestFin
 
+**STATUS: CONCLUÍDA.**
+
 ## Segurança
 
 - Não versionar `google-services.json`

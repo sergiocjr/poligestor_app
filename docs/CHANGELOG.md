@@ -1,5 +1,11 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.4 — CONCLUÍDA] — 2026-07-19
+
+### Status
+
+- Sprint 10.4 marcada como **CONCLUÍDA** (canais, templates, campanhas + omnichannel conversations/queue/operators LIVE)
+
 ## [Sprint 10.4 sync — omnichannel LIVE] — 2026-07-19
 
 ### Changed

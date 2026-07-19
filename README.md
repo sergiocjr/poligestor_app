@@ -40,7 +40,7 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **9.5** | Hardening produção | **CONCLUÍDA** |
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
 | **10.2** | Identidade / Auth / Multi-tenant | **FECHADA (Flutter + APK SM-A105M)** |
-| **10.4** | Central de Comunicação | **EM ENTREGA (LIVE canais/templates/campanhas)** |
+| **10.4** | Central de Comunicação | **CONCLUÍDA** |
 | — | Auditoria Portal/Protocolos | Hardening (sem misturar com 10.4) |
 | 10.5 | — | **Não iniciada** |
 
@@ -56,7 +56,7 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
-## Sprint 10.4 — Central de Comunicação (PoliGestor only)
+## Sprint 10.4 — Central de Comunicação (CONCLUÍDA)
 
 Staff — **Mais → Central de Comunicação** (`/home/communication`):
 
