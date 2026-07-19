@@ -1,10 +1,30 @@
 # Integrações LIVE — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.9)
+Atualizado: 2026-07-19 (Sprint 11.0)
 
 Base API: `https://poligestor.onnexis.com.br/api`
 
 Regra permanente: consumir somente contratos publicados pela VPS. Sem mocks na entrega final. Sem backend local. Ausência → `EndpointPendingState`.
+
+## Sprint 11.0 — `/v1/agreements/*`
+
+Namespace dedicado **ainda não publicado** na VPS (probe 404 em todos os paths abaixo). App preparado com Models/Repo/UI/Cache e `EndpointPendingState`.
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/agreements/dashboard` | Preparado (404) |
+| GET | `/v1/agreements/agreements` (+ `/{id}`) | Preparado (404) |
+| GET | `/v1/agreements/resources` | Preparado (404) |
+| GET | `/v1/agreements/projects` | Preparado (404) |
+| GET | `/v1/agreements/execution` | Preparado (404) |
+| GET | `/v1/agreements/accountability` | Preparado (404) |
+| GET | `/v1/agreements/schedule` | Preparado (404) |
+| GET | `/v1/agreements/timeline` | Preparado (404) |
+| GET | `/v1/agreements/documents` | Preparado (404) |
+| GET | `/v1/agreements/attachments` | Preparado (404) |
+| GET | `/v1/agreements/indicators` | Preparado (404) |
+| GET | `/v1/agreements/reports` | Preparado (404) |
+| GET | `/v1/agreements/search` | Preparado (404) — filtros locais nas listas |
 
 ## Sprint 10.9 — `/v1/works/*`
 

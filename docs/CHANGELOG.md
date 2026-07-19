@@ -1,5 +1,19 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 11.0 — Painel de Convênios] — 2026-07-19
+
+### Added
+
+- Hub `/home/agreements` (painel, convênios, recursos, projetos, execução, prestação de contas, cronograma, linha do tempo, documentos, anexos, indicadores, relatórios, pesquisa)
+- Contratos preparados `/v1/agreements/*` com `EndpointPendingState` honesto (namespace ainda ausente na VPS)
+- Cache `pg_agree_*`, realtime via `MandateRefreshController`, filtros locais nas listas
+- Deep links `poligestor://agreements|convenios|painel-convenios`
+- Testes `test/sprint110_agreements_test.dart`
+
+### Not started
+
+- Sprint 11.1
+
 ## [Sprint 10.9 — Painel Obras] — 2026-07-19
 
 ### Added

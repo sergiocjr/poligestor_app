@@ -162,6 +162,23 @@ enum AuthMode {
   String get worksReportsPath => '/v1/works/reports';
   String get worksSearchPath => '/v1/works/search';
 
+  // --- Sprint 11.0: Painel de Convênios (staff) — namespace dedicado (ainda pending VPS) ---
+  String get agreementsRootPath => '/v1/agreements';
+  String get agreementsDashboardPath => '/v1/agreements/dashboard';
+  String get agreementsListPath => '/v1/agreements/agreements';
+  String agreementsItemPath(String id) => '/v1/agreements/agreements/$id';
+  String get agreementsResourcesPath => '/v1/agreements/resources';
+  String get agreementsProjectsPath => '/v1/agreements/projects';
+  String get agreementsExecutionPath => '/v1/agreements/execution';
+  String get agreementsAccountabilityPath => '/v1/agreements/accountability';
+  String get agreementsSchedulePath => '/v1/agreements/schedule';
+  String get agreementsTimelinePath => '/v1/agreements/timeline';
+  String get agreementsDocumentsPath => '/v1/agreements/documents';
+  String get agreementsAttachmentsPath => '/v1/agreements/attachments';
+  String get agreementsIndicatorsPath => '/v1/agreements/indicators';
+  String get agreementsReportsPath => '/v1/agreements/reports';
+  String get agreementsSearchPath => '/v1/agreements/search';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';

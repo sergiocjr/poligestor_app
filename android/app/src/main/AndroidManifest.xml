@@ -60,6 +60,9 @@
                 <data android:scheme="poligestor" android:host="works"/>
                 <data android:scheme="poligestor" android:host="obras"/>
                 <data android:scheme="poligestor" android:host="painel-obras"/>
+                <data android:scheme="poligestor" android:host="agreements"/>
+                <data android:scheme="poligestor" android:host="convenios"/>
+                <data android:scheme="poligestor" android:host="painel-convenios"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

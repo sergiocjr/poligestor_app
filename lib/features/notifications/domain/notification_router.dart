@@ -80,6 +80,16 @@ class NotificationRouter {
           final location = rest.isEmpty ? '/home/works' : '/home/works/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 11.0 — Painel de Convênios
+        if (uri.host == 'agreements' ||
+            uri.host == 'convenios' ||
+            uri.host == 'painel-convenios') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/agreements'
+              : '/home/agreements/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

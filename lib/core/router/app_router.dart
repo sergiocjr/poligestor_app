@@ -14,6 +14,7 @@ import '../../features/automation/presentation/automation_pages.dart';
 import '../../features/strategy/presentation/strategy_pages.dart';
 import '../../features/parliament/presentation/parliament_pages.dart';
 import '../../features/works/presentation/works_pages.dart';
+import '../../features/agreements/presentation/agreements_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -107,6 +108,7 @@ GoRouter createAppRouter({
       final isStrategyPath = loc.startsWith('/home/strategy');
       final isParliamentPath = loc.startsWith('/home/parliament');
       final isWorksPath = loc.startsWith('/home/works');
+      final isAgreementsPath = loc.startsWith('/home/agreements');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -128,7 +130,8 @@ GoRouter createAppRouter({
               isAutomationPath ||
               isStrategyPath ||
               isParliamentPath ||
-              isWorksPath) &&
+              isWorksPath ||
+              isAgreementsPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -640,6 +643,129 @@ GoRouter createAppRouter({
             ),
           ),
           GoRoute(path: 'search', builder: (_, _) => const WorksSearchPage()),
+        ],
+      ),
+
+      // Painel de Convênios (Sprint 11.0) — staff only.
+      GoRoute(
+        path: '/home/agreements',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AgreementsHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const AgreementsDashboardPage(),
+          ),
+          GoRoute(
+            path: 'list',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Convênios',
+              detailRoutePrefix: '/home/agreements/list',
+              emptyMessage: 'Nenhum convênio encontrado.',
+              loader: (repo, tenant) => repo.agreements(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) =>
+                    AgreementsDetailPage(id: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'resources',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Recursos',
+              detailRoutePrefix: '/home/agreements/resources',
+              emptyMessage: 'Nenhum recurso encontrado.',
+              loader: (repo, tenant) => repo.resources(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'projects',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Projetos',
+              detailRoutePrefix: '/home/agreements/projects',
+              emptyMessage: 'Nenhum projeto encontrado.',
+              loader: (repo, tenant) => repo.projects(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'execution',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Execução',
+              detailRoutePrefix: '/home/agreements/execution',
+              emptyMessage: 'Nenhum registro de execução.',
+              loader: (repo, tenant) => repo.execution(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'accountability',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Prestação de Contas',
+              detailRoutePrefix: '/home/agreements/accountability',
+              emptyMessage: 'Nenhuma prestação de contas encontrada.',
+              loader: (repo, tenant) => repo.accountability(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'schedule',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Cronograma',
+              detailRoutePrefix: '/home/agreements/schedule',
+              emptyMessage: 'Cronograma vazio.',
+              loader: (repo, tenant) => repo.schedule(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'timeline',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Linha do Tempo',
+              detailRoutePrefix: '/home/agreements/timeline',
+              emptyMessage: 'Linha do tempo vazia.',
+              loader: (repo, tenant) => repo.timeline(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'documents',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Documentos',
+              detailRoutePrefix: '/home/agreements/documents',
+              emptyMessage: 'Nenhum documento encontrado.',
+              loader: (repo, tenant) => repo.documents(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attachments',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Anexos',
+              detailRoutePrefix: '/home/agreements/attachments',
+              emptyMessage: 'Nenhum anexo encontrado.',
+              loader: (repo, tenant) => repo.attachments(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Indicadores',
+              detailRoutePrefix: '/home/agreements/indicators',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => AgreementsListPage(
+              title: 'Relatórios',
+              detailRoutePrefix: '/home/agreements/reports',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const AgreementsSearchPage(),
+          ),
         ],
       ),
 

@@ -41,6 +41,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **strategy** (Sprint 10.7) — Painel Estratégico (`/home/strategy`)
 - **parliament** (Sprint 10.8) — Painel Parlamentar (`/home/parliament`)
 - **works** (Sprint 10.9) — Painel Obras (`/home/works`)
+- **agreements** (Sprint 11.0) — Painel de Convênios (`/home/agreements`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -165,6 +166,13 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - Namespace preparado `/v1/works/{dashboard,projects,demands,inspections,schedule,map,timeline,photos,attachments,checklist,indicators,reports,search}`
 - Reuse mapa mandato LIVE; `EndpointPendingState` até a VPS publicar o namespace
 - Cache `pg_works_{tenant}_*`
+
+## Sprint 11.0 — Painel de Convênios
+
+- Feature `lib/features/agreements/` — hub próprio
+- Namespace preparado `/v1/agreements/{dashboard,agreements,resources,projects,execution,accountability,schedule,timeline,documents,attachments,indicators,reports,search}`
+- `EndpointPendingState` até a VPS publicar o namespace
+- Cache `pg_agree_{tenant}_*`
 
 ## Segurança
 

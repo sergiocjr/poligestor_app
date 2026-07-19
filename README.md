@@ -46,7 +46,8 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
 | **10.9** | Painel Obras | **CONCLUÍDA** |
-| 11.0 | — | **Não iniciada** |
+| **11.0** | Painel de Convênios | **CONCLUÍDA** |
+| 11.1 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -59,6 +60,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 11.0 — Painel de Convênios
+
+Staff — **Mais → Painel de Convênios** (`/home/agreements`): painel, convênios, recursos, projetos, execução, prestação de contas, cronograma, documentos e indicadores. Namespace `/v1/agreements/*` preparado (EndpointPending).
 
 ## Sprint 10.9 — Painel Obras
 
@@ -152,6 +157,7 @@ lib/
     strategy/       # Sprint 10.7 — Painel Estratégico
     parliament/     # Sprint 10.8 — Painel Parlamentar
     works/          # Sprint 10.9 — Painel Obras
+    agreements/     # Sprint 11.0 — Painel de Convênios
     home/
     more/
     assistant/

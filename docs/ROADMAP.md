@@ -16,13 +16,18 @@
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
 | **10.9** | Painel Obras | **CONCLUÍDA** |
-| 11.0 | — | **Não iniciada** |
+| **11.0** | Painel de Convênios | **CONCLUÍDA** |
+| 11.1 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
 
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
+
+## Sprint 11.0 (CONCLUÍDA)
+
+Painel de Convênios em `/home/agreements`. Namespace preparado `/v1/agreements/*` com EndpointPendingState.
 
 ## Sprint 10.9 (CONCLUÍDA)
 

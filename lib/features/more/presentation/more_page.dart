@@ -108,6 +108,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/works'),
           ),
           ListTile(
+            leading: const Icon(Icons.handshake_outlined),
+            title: const Text('Painel de Convênios'),
+            subtitle: const Text(
+              'Convênios, recursos, execução e prestação de contas',
+            ),
+            onTap: () => context.push('/home/agreements'),
+          ),
+          ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
             subtitle: const Text('Canais, modelos e campanhas'),

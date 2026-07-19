@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.9 — Painel Obras CONCLUÍDA)
+Atualizado: 2026-07-19 (Sprint 11.0 — Painel de Convênios CONCLUÍDA)
 
 ## Resumo
 
@@ -21,39 +21,38 @@ Atualizado: 2026-07-19 (Sprint 10.9 — Painel Obras CONCLUÍDA)
 | Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** |
 | Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
 | Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
-| Sprint 11.0 | **Não iniciada** |
+| Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** |
+| Sprint 11.1 | **Não iniciada** |
 
-## Sprint 10.9 — Painel Obras
+## Sprint 11.0 — Painel de Convênios
 
-Hub próprio em **Mais → Painel Obras** (`/home/works`).
+Hub próprio em **Mais → Painel de Convênios** (`/home/agreements`).
 
-Namespace preparado `/v1/works/*` (ainda não publicado na VPS). Mapa territorial reusa mandato LIVE (`/v1/mandate/map`). Interface em PT-BR.
+Namespace preparado `/v1/agreements/*` (ainda não publicado na VPS — probe 404). Interface em PT-BR.
 
 ### Telas
 
-Painel · Lista · Detalhes · Mapa · Linha do tempo · Fotos · Relatórios · Pesquisa · Filtros (locais nas listas).
+Painel · Lista · Detalhes · Pesquisa · Filtros (locais) · Linha do tempo · Anexos · Indicadores · Relatórios · Documentos · Recursos · Projetos · Execução · Prestação de Contas · Cronograma.
 
-### Domínios cobertos (UI + Models + Repo + Cache + EndpointPending)
+### Domínios (UI + Models + Repo + Cache + EndpointPending)
 
 | Recurso | Contrato preparado | Rota |
 |---------|--------------------|------|
-| Painel / Indicadores | `/v1/works/dashboard` | `/home/works/dashboard` |
-| Obras | `/v1/works/projects` (+ `/{id}`) | `/home/works/list` |
-| Demandas | `/v1/works/demands` | `/home/works/demands` |
-| Fiscalizações | `/v1/works/inspections` | `/home/works/inspections` |
-| Cronograma | `/v1/works/schedule` | `/home/works/schedule` |
-| Mapa dedicado | `/v1/works/map` | `/home/works/map` (+ mandate map LIVE) |
-| Linha do tempo | `/v1/works/timeline` | `/home/works/timeline` |
-| Fotos | `/v1/works/photos` | `/home/works/photos` |
-| Anexos | `/v1/works/attachments` | `/home/works/attachments` |
-| Checklist | `/v1/works/checklist` | `/home/works/checklist` |
-| Indicadores | `/v1/works/indicators` | `/home/works/indicators` |
-| Relatórios | `/v1/works/reports` | `/home/works/reports` |
-| Pesquisa | `/v1/works/search` | `/home/works/search` |
+| Painel / Indicadores | `/v1/agreements/dashboard` | `/home/agreements/dashboard` |
+| Convênios | `/v1/agreements/agreements` (+ `/{id}`) | `/home/agreements/list` |
+| Recursos | `/v1/agreements/resources` | `/home/agreements/resources` |
+| Projetos | `/v1/agreements/projects` | `/home/agreements/projects` |
+| Execução | `/v1/agreements/execution` | `/home/agreements/execution` |
+| Prestação de Contas | `/v1/agreements/accountability` | `/home/agreements/accountability` |
+| Cronograma | `/v1/agreements/schedule` | `/home/agreements/schedule` |
+| Linha do tempo | `/v1/agreements/timeline` | `/home/agreements/timeline` |
+| Documentos | `/v1/agreements/documents` | `/home/agreements/documents` |
+| Anexos | `/v1/agreements/attachments` | `/home/agreements/attachments` |
+| Indicadores | `/v1/agreements/indicators` | `/home/agreements/indicators` |
+| Relatórios | `/v1/agreements/reports` | `/home/agreements/reports` |
+| Pesquisa | `/v1/agreements/search` | `/home/agreements/search` |
 
-Cache: `pg_works_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://works|obras|painel-obras/...` (redirect GoRouter → `/home/works/...`).
-
-**Nota:** não há tela dedicada “Visitas”; cobertura via **Fiscalizações**. Filtros são locais nas listas (query + status).
+Cache: `pg_agree_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://agreements|convenios|painel-convenios/...`.
 
 ## Idioma (regra permanente)
 
@@ -63,7 +62,7 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 
 - `flutter analyze` / `flutter test` / APK + web + SM-A105M
 - Nenhum emulador
-- Sprint 11.0 não iniciada
+- Sprint 11.1 não iniciada
 
 ## Repositório
 
