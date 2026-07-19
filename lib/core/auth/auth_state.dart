@@ -37,6 +37,18 @@ class AuthUser {
     return 'Meu bairro';
   }
 
+  /// Documento mascarado para UI/cache (nunca exibir CPF completo).
+  String? get maskedDocument => maskDocument(document);
+
+  static String? maskDocument(String? document) {
+    if (document == null) return null;
+    final digits = document.replaceAll(RegExp(r'\D'), '');
+    if (digits.isEmpty) return null;
+    if (digits.length < 3) return '***';
+    final tail = digits.substring(digits.length - 2);
+    return '***.***.***-$tail';
+  }
+
   factory AuthUser.fromJson(Map<String, dynamic> json) {
     final person = json['person'] is Map
         ? Map<String, dynamic>.from(json['person'] as Map)
@@ -80,7 +92,8 @@ class AuthUser {
         if (tenantName != null) 'tenant': {'name': tenantName},
         if (document != null || district != null || city != null)
           'person': {
-            if (document != null) 'document': document,
+            // Cache sem documento em claro.
+            if (maskedDocument != null) 'document': maskedDocument,
             'addresses': [
               {
                 if (district != null) 'district': district,

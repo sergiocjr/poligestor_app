@@ -136,12 +136,12 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                   title: const Text('Meu bairro'),
                   subtitle: Text(user?.neighborhoodLabel ?? '—'),
                 ),
-                if (user?.document != null) ...[
+                if (user?.maskedDocument != null) ...[
                   const Divider(height: 1),
                   ListTile(
                     leading: const Icon(Icons.badge_outlined),
                     title: const Text('Documento'),
-                    subtitle: Text(user!.document!),
+                    subtitle: Text(user!.maskedDocument!),
                   ),
                 ],
               ],

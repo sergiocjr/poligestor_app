@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailCtrl = TextEditingController(text: 'admin@demo.local');
-  final _passwordCtrl = TextEditingController(text: 'password');
+  final _emailCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
   final _tenantCtrl = TextEditingController(text: AppConfig.defaultTenantSlug);
 
   AuthMode _mode = AuthMode.staff;
@@ -29,6 +30,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+    if (kDebugMode) {
+      _emailCtrl.text = 'admin@demo.local';
+      _passwordCtrl.text = 'password';
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) => _loadPrefs());
   }
 
@@ -44,7 +49,9 @@ class _LoginPageState extends State<LoginPage> {
       if (tenant != null) _tenantCtrl.text = tenant;
       if (mode != null) {
         _mode = mode;
-        if (mode == AuthMode.portal && _emailCtrl.text.contains('admin')) {
+        if (kDebugMode &&
+            mode == AuthMode.portal &&
+            _emailCtrl.text.contains('admin')) {
           _emailCtrl.text = 'cidadao@demo.local';
         }
       }
@@ -83,12 +90,14 @@ class _LoginPageState extends State<LoginPage> {
   void _onModeChanged(AuthMode mode) {
     setState(() {
       _mode = mode;
-      if (mode == AuthMode.staff) {
-        _emailCtrl.text = 'admin@demo.local';
-      } else {
-        _emailCtrl.text = 'cidadao@demo.local';
+      if (kDebugMode) {
+        if (mode == AuthMode.staff) {
+          _emailCtrl.text = 'admin@demo.local';
+        } else {
+          _emailCtrl.text = 'cidadao@demo.local';
+        }
+        _passwordCtrl.text = 'password';
       }
-      _passwordCtrl.text = 'password';
     });
   }
 
@@ -203,14 +212,16 @@ class _LoginPageState extends State<LoginPage> {
                             )
                           : const Text('Entrar'),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Demo: admin@demo.local / cidadao@demo.local — senha: password',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                    ),
+                    if (kDebugMode) ...[
+                      const SizedBox(height: 16),
+                      Text(
+                        'Demo: admin@demo.local / cidadao@demo.local — senha: password',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: scheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ],
                   ],
                 ),
               ),
