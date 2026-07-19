@@ -39,21 +39,20 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **9** | Inteligência do mandato | **CONCLUÍDA** |
 | **9.5** | Hardening produção | **CONCLUÍDA** |
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
-| **10.2** | Identidade / Auth / Multi-tenant | **CONCLUÍDA (Flutter)** |
-| 10+ | Evolução + estabilização VPS 10.2 | Em andamento |
+| **10.2** | Identidade / Auth / Multi-tenant | **FECHADA (Flutter + APK SM-A105M)** |
+| 10+ | Evolução + credenciais OAuth reais | Em andamento |
 
-## Sprint 10.2 — Identidade (VALIDAÇÃO FINAL)
+## Sprint 10.2 — Identidade (FECHADA)
 
 Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS:
 
-- Resolve por slug / código / domínio (`GET /v1/identity/tenants/resolve`)
-- Branding dinâmico (`GET /v1/portal/branding`)
-- Providers (`GET …/auth/providers`) — botões só se habilitados e ready
-- OAuth Google/Apple/Gov.br — tokens aplicados na sessão
-- Cadastro / forgot / reset / perfil / sessões / linked accounts (contratos ativos)
+- Resolve / branding / providers LIVE
+- OAuth externos **desabilitados** na VPS (`ready=false`; POST 501) — UI sem botões sociais
+- Cadastro / forgot / reset / perfil / sessões / linked accounts (portal 200; staff profile/linked 403)
+- APK debug no **SM-A105M**; toolchain AGP 9.0.1 / Gradle 9.1.0 / Kotlin 2.3.20 / Java target 17
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
-Detalhes e classificação de status: [STATUS](docs/STATUS_PROJETO.md).
+Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
 ## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
 

@@ -110,6 +110,36 @@ void main() {
       expect(list[3].canUse, isFalse);
       expect(list[1].label, 'Google');
     });
+
+    test('VPS corrected providers are not usable', () {
+      final list = [
+        {
+          'provider': 'password',
+          'is_enabled': true,
+          'ready': true,
+          'status': 'ok',
+        },
+        {
+          'provider': 'google',
+          'is_enabled': false,
+          'ready': false,
+          'status': 'provider_disabled',
+        },
+        {
+          'provider': 'apple',
+          'is_enabled': false,
+          'ready': false,
+          'status': 'provider_disabled',
+        },
+        {
+          'provider': 'govbr',
+          'is_enabled': false,
+          'ready': false,
+          'status': 'provider_disabled',
+        },
+      ].map(AuthProviderInfo.fromJson).toList();
+      expect(list.where((p) => p.canUse), isEmpty);
+    });
   });
 
   group('AuthSessionInfo parsing', () {

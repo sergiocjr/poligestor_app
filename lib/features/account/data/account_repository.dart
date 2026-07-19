@@ -238,7 +238,10 @@ class AccountRepository {
       );
       return envelope.data;
     } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 501) {
+      if (e.statusCode == 404 ||
+          e.statusCode == 405 ||
+          e.statusCode == 501 ||
+          e.statusCode == 503) {
         throw EndpointUnavailableException(path, statusCode: e.statusCode);
       }
       rethrow;

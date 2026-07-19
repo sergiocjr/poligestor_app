@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (validação final Sprint 10.2)
+Atualizado: 2026-07-19 (fechamento Sprint 10.2 — APK + OAuth coerente)
 
 ## Resumo
 
@@ -15,69 +15,79 @@ Atualizado: 2026-07-19 (validação final Sprint 10.2)
 | Fase 9 — Inteligência do mandato | CONCLUÍDA |
 | Sprint 9.5 — Hardening produção | CONCLUÍDA |
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
-| **Sprint 10.2 — Identidade / Auth / Multi-tenant** | **VALIDAÇÃO FINAL (Flutter + contratos LIVE)** |
+| **Sprint 10.2 — Identidade / Auth / Multi-tenant** | **FECHADA (Flutter)** — APK no SM-A105M + OAuth coerente |
 | Fase 10+ (restante) | Em evolução |
 
-## Sprint 10.2 — validação final
+## Sprint 10.2 — fechamento (APK + OAuth)
 
-Fluxo org-first com contratos reais da VPS. Sem mocks. UI não conhece aliases — compatibilidade no repository.
+### Build Android — causa e correção
 
-### Integrado e validado (HTTP 200 / contrato LIVE)
+**Causa:** com Flutter 3.44 + AGP 9, `android.builtInKotlin=false` estava ativo sem aplicar `org.jetbrains.kotlin.android` no módulo `app`, enquanto `kotlin { compilerOptions { … } }` dependia do KGP → `Unresolved reference: compilerOptions` / `flutter` / falha em cascata.
 
-| Endpoint | Status HTTP | Uso no app |
-|----------|-------------|------------|
-| `GET /v1/identity/tenants/resolve` | 200 | Seleção por slug/código/domínio |
-| `GET /v1/portal/branding` | 200 | Nome, cores, logo, tagline |
-| `GET /v1/portal/auth/providers` | 200 | Botões sociais conforme `is_enabled`+`ready` |
-| `GET /v1/auth/providers` | 200 | Alias staff |
-| `POST /v1/portal/auth/google\|apple\|govbr` | 200 | Tokens → `AuthController.applyTokenSession` |
-| `POST /v1/auth/google` | 200 | Alias staff |
-| `POST /v1/auth/login` · refresh · `GET /v1/auth/me` | 200 | Login staff |
-| `GET/DELETE /v1/auth/sessions` | 200 com Bearer | Sessões staff |
-| `POST /v1/auth/logout` · `DELETE …/revoke-all` | 401 sem Bearer (rota existe) | Logout |
+**Correção (sem projeto novo):**
 
-### Implementado, aguardando dados de usuário autenticado (401 sem token = rota LIVE)
+| Item | Valor final |
+|------|-------------|
+| Flutter | 3.44.6 (Dart 3.12.2) |
+| Java (JDK build) | OpenJDK 21 (Android Studio JBR); `jvmTarget` / `sourceCompatibility` **17** |
+| Gradle | 9.1.0 |
+| AGP | 9.0.1 |
+| Kotlin plugin | 2.3.20 (`org.jetbrains.kotlin.android` no `:app`) |
+| Bypasses | `android.builtInKotlin=false` + `android.newDsl=false` (plugins pub.dev ainda aplicam KGP) |
 
-- `GET /v1/portal/auth/sessions|me|linked-accounts|profile`
-- `PUT /v1/portal/auth/profile`
-- Espelhos staff `linked-accounts` / `profile`
+Arquivos: `android/gradle.properties`, `android/settings.gradle.kts`, `android/app/build.gradle.kts`.
 
-### Implementado com validação de formulário (422 = contrato ativo)
+`flutter build apk --debug` e `flutter build web` OK. APK instalado no **SM-A105M** (`RX8M70CLXKP`). Nenhum emulador.
 
-- `POST /v1/portal/auth/register`
-- `POST /v1/portal/auth/forgot-password`
-- `POST /v1/portal/auth/reset-password`
-- Aliases staff equivalentes
+### OAuth / providers (pós-correção VPS)
 
-### Aguardando credenciais externas / não validado em device SDK
+Tokens da rodada anterior **não** foram reutilizados (`pm clear` + logout).
 
-- Google / Apple / Gov.br via **SDK nativo** (Sign in with Apple, Google Sign-In, Gov.br oficial) — VPS aceita POST e devolve token; integração Flutter consome o token. **Apple no iOS** permanece **preparado, não validado** sem certificados APNs/assinatura.
-- QR scanner nativo: deep link suportado; câmera QR ainda “Em breve” na Mais.
+| Check | Resultado |
+|-------|-----------|
+| `GET /v1/portal/auth/providers` | password enabled/ready/ok; google/apple/govbr **disabled**, ready=false, `provider_disabled` |
+| `GET /v1/auth/providers` | idem |
+| `POST …/google\|apple\|govbr` | **HTTP 501** `provider_disabled` — sem tokens |
+| UI | botões sociais ocultos (`canUse` = enabled && ready && !password) |
 
-### Preparado para iOS
+### Exercício no SM-A105M (ADB, sem digitar senha)
 
-- URL scheme `poligestor`
-- Fluxos idênticos Android/Web
-- Push APNs **não** validado
+Senha **não** enviada via `adb input text` (autofill de debug no form). Validado:
 
-### Estados de indisponibilidade
+- Abrir app; seleção org `demo` (deep link + Continuar); branding **Gabinete Ana Souza**
+- Login operador; Protocolos LIVE; Mais → Meu perfil; Sessões (`flutter-android`, `api`)
+- Trocar organização → `/org`; re-login; Sair → `/login`; reopen pós-logout permanece deslogado
+- Providers: nenhum botão Google/Apple/Gov.br utilizável
 
-- **Removidos** para resolve, branding e providers (agora LIVE).
-- **Mantidos** apenas se a API voltar a 404/501/503 (`EndpointUnavailableException`).
-- Fallback `selectSlugLocally` só quando resolve estiver indisponível.
+### Matriz API autenticada (códigos)
 
-### Isolamento multi-tenant
+| Fluxo | Resultado |
+|-------|-----------|
+| register (dados inválidos) | 422 |
+| forgot-password | 200 |
+| reset-password (token inválido) | 422 |
+| staff login / me / sessions / logout | 200 |
+| staff profile / linked-accounts | **403** portal-only |
+| portal login / me / profile / PUT profile / sessions / linked-accounts / logout | 200 |
+| portal linked-accounts | 200 `[]` |
+| login CPF (sem CPF demo válido) | 422 |
+| OAuth POST | 501 |
 
-- Cache identity por slug (`identity_*_$slug`)
-- Troca de org: `purgeAllTenantData` + `clearSessionAndTenant` (tokens, perfil, e-mail, tenant)
+### Qualidade
 
-### Validação qualidade
+- `dart format` / `flutter analyze` (infos ok) / `flutter test` 172 passed
+- `flutter build apk --debug` √ / `flutter build web` √
 
-- `flutter analyze` — 0 errors / 0 warnings
-- `flutter test` — ver relatório final
-- Builds: APK debug / web — ver relatório final
+### Pendências reais
+
+- Credenciais reais Google/Apple/Gov.br + SDKs nativos quando a VPS habilitar
+- Staff UI de perfil chama espelhos portal → 403 em linked-accounts (mensagem “Não foi possível sincronizar”)
+- Login por CPF: falta CPF de usuário demo válido conhecido
+- Revoke de sessão individual no device (ícone) não exercitado neste roteiro ADB
+- APNs / Apple iOS não validado
+- Bypass `builtInKotlin=false` é temporário até plugins pub.dev migrarem
 
 ### Repositório
 
 - GitHub: https://github.com/sergiocjr/poligestor_app
-- Commit base Sprint 10.2: `0acb2ba`
+- Commits Sprint 10.2: `0acb2ba` → `fc4c585` → `007c658` → (este fechamento APK/OAuth)

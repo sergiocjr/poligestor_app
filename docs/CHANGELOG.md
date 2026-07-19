@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.2 Fechamento APK/OAuth] — 2026-07-19
+
+### Fixed
+
+- Build Android (AGP 9 + Flutter 3.44): aplicar `org.jetbrains.kotlin.android` no `:app` com `android.builtInKotlin=false` / `android.newDsl=false`
+- OAuth POST trata 501/503 como indisponível; providers desabilitados não geram sessão
+
+### Validated
+
+- `flutter build apk --debug` + install SM-A105M; org → branding → login → perfil → sessões → troca org → logout
+- Providers LIVE coerentes: password ok; google/apple/govbr disabled/ready=false; POST 501
+- Portal profile/sessions/linked-accounts 200; staff profile/linked 403 (portal-only)
+
+### Pending
+
+- Credenciais OAuth reais + SDKs nativos; APNs; CPF demo válido; sync linked em modo staff
+
 ## [Sprint 10.2 Validação Final] — 2026-07-19
 
 ### Changed / Completed
@@ -13,9 +30,8 @@
 - Testes de contrato LIVE em `test/sprint102_identity_test.dart`
 - STATUS atualizado com classificação integrado / aguardando / iOS
 
-### Pending
+### Pending (histórico — parcialmente resolvido no fechamento APK/OAuth)
 
-- Validação visual no SM-A105M e Flutter Web builds
 - Apple/Google SDKs nativos + APNs (credenciais externas)
 - QR camera nativo (deep link já funciona)
 
