@@ -40,8 +40,9 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **9.5** | Hardening produção | **CONCLUÍDA** |
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
 | **10.2** | Identidade / Auth / Multi-tenant | **FECHADA (Flutter + APK SM-A105M)** |
-| — | Auditoria Portal/Protocolos | Hardening (sem Sprint 10.4) |
-| 10+ | Evolução + credenciais OAuth reais | Em andamento |
+| **10.4** | Central de Comunicação | **EM ENTREGA (LIVE canais/templates/campanhas)** |
+| — | Auditoria Portal/Protocolos | Hardening (sem misturar com 10.4) |
+| 10.5 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -54,6 +55,17 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.4 — Central de Comunicação (PoliGestor only)
+
+Staff — **Mais → Central de Comunicação** (`/home/communication`):
+
+- **LIVE:** canais (`GET /v1/channels`), templates (`GET /v1/templates` + detalhe), campanhas (`GET /v1/campaigns` + detalhe)
+- Filtros LIVE: `search`, `status`, `channel_type`, `sort`
+- Cache offline local (`pg_comms_*`) + refresh via `MandateRefreshController`
+- **Pendente VPS (sem mock):** conversas `/v1/conversations`, fila `/v1/queue`, operadores `/v1/operators` — UI com `EndpointPendingState`
+- Isolamento absoluto: nenhum código/DB/API de NexChat, NexISP, GestFin ou outros produtos ONNEXIS
+- Deep links `poligestor://communication/...`
 
 ## Sprint 10.1 — Equipe Virtual (CONCLUÍDA Final)
 
@@ -108,6 +120,7 @@ lib/
     mandate/        # Fase 8
     intelligence/   # Fase 9
     virtual_team/   # Sprint 10.1
+    communication/  # Sprint 10.4 — canais / templates / campanhas
     home/
     more/
     assistant/

@@ -38,6 +38,7 @@ import '../../features/mandate/presentation/mandate_search_page.dart';
 import '../../features/mandate/presentation/mandate_subjects_page.dart';
 import '../../features/mandate/presentation/mandate_team_page.dart';
 import '../../features/mandate/presentation/mandate_tv_page.dart';
+import '../../features/communication/presentation/communication_pages.dart';
 import '../../features/more/presentation/more_page.dart';
 import '../../features/protocols/presentation/protocol_detail_page.dart';
 import '../../features/protocols/presentation/protocols_page.dart';
@@ -82,6 +83,7 @@ GoRouter createAppRouter({
       final isMandatePath = loc.startsWith('/home/mandate');
       final isIntelPath = loc.startsWith('/home/intelligence');
       final isVirtualTeamPath = loc.startsWith('/home/virtual-team');
+      final isCommunicationPath = loc.startsWith('/home/communication');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -95,8 +97,11 @@ GoRouter createAppRouter({
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
       }
-      // Mandato / Inteligência / Equipe Virtual exclusivos de staff.
-      if ((isMandatePath || isIntelPath || isVirtualTeamPath) &&
+      // Mandato / Inteligência / Equipe Virtual / Comunicação exclusivos de staff.
+      if ((isMandatePath ||
+              isIntelPath ||
+              isVirtualTeamPath ||
+              isCommunicationPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -267,6 +272,27 @@ GoRouter createAppRouter({
         path: '/home/chat',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const ChatPage(),
+      ),
+
+      // Central de Comunicação (Sprint 10.4) — staff only, PoliGestor.
+      GoRoute(
+        path: '/home/communication',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const CommunicationHubPage(),
+        routes: [
+          GoRoute(
+            path: 'templates/:id',
+            builder: (context, state) => CommunicationTemplateDetailPage(
+              id: state.pathParameters['id']!,
+            ),
+          ),
+          GoRoute(
+            path: 'campaigns/:id',
+            builder: (context, state) => CommunicationCampaignDetailPage(
+              id: state.pathParameters['id']!,
+            ),
+          ),
+        ],
       ),
 
       // Equipe Virtual (Sprint 10.1) — acesso via Mais / deep link.

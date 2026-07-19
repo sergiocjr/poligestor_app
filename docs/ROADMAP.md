@@ -9,17 +9,22 @@
 | 9 | Inteligência do mandato (briefing/insights/trends) | CONCLUÍDA |
 | 9.5 | Hardening completo (produção) | CONCLUÍDA |
 | 10.1 | Equipe Virtual (agentes / operação) | CONCLUÍDA (Final) |
-| **10.2** | Identidade, autenticação e multi-tenant | **VALIDAÇÃO FINAL (Flutter)** |
-| Próximo | SDKs OAuth nativos + validação visual device | Em aberto |
-| 10+ | Evoluções restantes | Em aberto |
+| **10.2** | Identidade, autenticação e multi-tenant | **FECHADA (Flutter)** |
+| **10.4** | Central de Comunicação | **EM ENTREGA** (canais/templates/campanhas LIVE) |
+| 10.5 | — | **Não iniciada** |
+| Próximo | Conversas/fila/operadores quando VPS publicar + OAuth nativo | Em aberto |
 
-## Retomada (amanhã)
+## Retomada
 
-1. Backend: migrations `tenant_domains` / `tenant_branding` + endpoints 500 → 200
-2. Backend: providers, register, forgot/reset, OAuth (staff + portal)
-3. Flutter: validar branding real, resolve remoto e fluxos sociais no SM-A105M (app já plugado)
+1. VPS: publicar conversas / fila / operadores no namespace PoliGestor (`/v1/conversations` etc.)
+2. Flutter: ligar aba Conversas nos contratos reais (sem mock)
+3. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 
-## Sprint 10.2 (Flutter fechado — pendências na VPS)
+## Sprint 10.4 (em entrega)
+
+**Central de Comunicação** exclusiva PoliGestor. LIVE: channels, templates, campaigns. Pendente VPS: conversations/queue/operators — UI com estado indisponível honesto.
+
+## Sprint 10.2 (Flutter fechado — pendências OAuth nativo)
 
 Fluxo org-first, branding dinâmico, sessão/perfil/recuperação. App pronto; backend ainda precisa estabilizar resolve/branding/providers/register/forgot/OAuth.
 

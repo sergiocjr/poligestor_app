@@ -194,4 +194,14 @@ enum AuthMode {
 
   /// Resolução de organização (pública — rota detectada na VPS).
   String get tenantsResolvePath => '/v1/identity/tenants/resolve';
+
+  /// Central de Comunicação (PoliGestor) — contratos LIVE staff.
+  String get communicationChannelsPath => '/v1/channels';
+  String get communicationTemplatesPath => '/v1/templates';
+  String get communicationCampaignsPath => '/v1/campaigns';
+
+  /// Ainda 404 na VPS — UI usa estado "indisponível", sem mock.
+  String get communicationConversationsPath => '/v1/conversations';
+  String get communicationQueuePath => '/v1/queue';
+  String get communicationOperatorsPath => '/v1/operators';
 }

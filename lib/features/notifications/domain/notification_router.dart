@@ -40,6 +40,16 @@ class NotificationRouter {
               : '/home/virtual-team/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 10.4 — Central de Comunicação (somente PoliGestor)
+        if (uri.host == 'communication' ||
+            uri.host == 'comunicacao' ||
+            uri.host == 'comms') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/communication'
+              : '/home/communication/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.2 — Organização / tenant
         if (uri.host == 'org' ||
             uri.host == 'tenant' ||

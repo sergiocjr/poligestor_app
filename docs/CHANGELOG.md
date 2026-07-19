@@ -1,5 +1,24 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.4 — Central de Comunicação] — 2026-07-19
+
+### Added
+
+- Feature `communication/` (PoliGestor only): modelos, cache, repository, hub Material 3
+- LIVE: `GET /v1/channels`, `/v1/templates` (+ detalhe), `/v1/campaigns` (+ detalhe)
+- Filtros `search` / `status` / `channel_type` / `sort` conforme contrato VPS
+- Entrada staff em Mais; rotas `/home/communication/*`; deep links `poligestor://communication|comunicacao|comms`
+- Testes `test/sprint104_communication_test.dart`
+
+### Pending (VPS — sem mock)
+
+- Conversas `/v1/conversations`, fila `/v1/queue`, operadores `/v1/operators`
+- Preview/métricas de campanha quando publicados na API deste produto
+
+### Isolation
+
+- Nenhum código, API, DB, Redis, Reverb ou módulo de NexChat / NexISP / GestFin
+
 ## [Portal/Protocolos — auditoria] — 2026-07-19
 
 ### Improved

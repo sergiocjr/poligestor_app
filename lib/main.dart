@@ -15,6 +15,7 @@ import 'features/account/data/account_repository.dart';
 import 'features/agenda/data/appointments_repository.dart';
 import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
+import 'features/communication/data/communication_repository.dart';
 import 'features/identity/data/identity_cache.dart';
 import 'features/identity/data/identity_repository.dart';
 import 'features/identity/domain/tenant_controller.dart';
@@ -66,6 +67,7 @@ Future<void> main() async {
   final mandateRepo = MandateRepository(api);
   final intelligenceRepo = IntelligenceRepository(api);
   final virtualTeamRepo = VirtualTeamRepository(api);
+  final communicationRepo = CommunicationRepository(api);
   final mandateRefresh = MandateRefreshController();
   final notificationsController = NotificationsController(
     repository: notificationsRepo,
@@ -111,6 +113,7 @@ Future<void> main() async {
         Provider.value(value: mandateRepo),
         Provider.value(value: intelligenceRepo),
         Provider.value(value: virtualTeamRepo),
+        Provider.value(value: communicationRepo),
         Provider.value(value: realtime),
         Provider.value(value: push),
         Provider.value(value: appSync),

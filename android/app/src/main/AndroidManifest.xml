@@ -39,6 +39,9 @@
                 <data android:scheme="poligestor" android:host="notifications"/>
                 <data android:scheme="poligestor" android:host="notification"/>
                 <data android:scheme="poligestor" android:host="virtual-team"/>
+                <data android:scheme="poligestor" android:host="communication"/>
+                <data android:scheme="poligestor" android:host="comunicacao"/>
+                <data android:scheme="poligestor" android:host="comms"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

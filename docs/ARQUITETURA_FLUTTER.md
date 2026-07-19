@@ -35,17 +35,19 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **mandate** (Fase 8) — gestão do mandato, só staff
 - **intelligence** (Fase 9) — briefing, insights, trends, analytics, só staff
 - **virtual_team** (Sprint 10.1) — Equipe Virtual operational center
+- **communication** (Sprint 10.4) — Central de Comunicação (channels/templates/campaigns LIVE)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
+- **more** / **assistant**
 
 ## Navegação (GoRouter)
 
 1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
 2. Sem org → `/org`
 3. Com org, sem sessão → `/login` (+ register/forgot)
-4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/account/*`)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/account/*`)
 5. Portal autenticado → `/citizen/*` (+ `/account/*`)
-6. Deep links: `poligestor://protocols|notifications|virtual-team|org|tenant/...`
+6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|org|tenant/...`
 
 ## Estado
 
@@ -113,8 +115,16 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 
 **STATUS: VALIDADA** com APIs VPS 200. Pendências: SDKs nativos OAuth/Apple iOS, QR camera, validação visual em device.
 
+## Sprint 10.4 — Central de Comunicação
+
+- Feature isolada `lib/features/communication/` (somente PoliGestor)
+- LIVE: `/v1/channels`, `/v1/templates`, `/v1/campaigns` (+ detalhe)
+- Pendente VPS: `/v1/conversations`, `/v1/queue`, `/v1/operators` → `EndpointPendingState`
+- Cache `pg_comms_*`; refresh via `MandateRefreshController`
+- Sem integração com NexChat / NexISP / GestFin
+
 ## Segurança
 
 - Não versionar `google-services.json`
 - Não logar tokens/CPF completos
-- RBAC fino no servidor; app oculta superfícies por `AuthMode` (Mandato / Inteligência / Equipe Virtual = staff)
+- RBAC fino no servidor; app oculta superfícies por `AuthMode` (Mandato / Inteligência / Equipe Virtual / Comunicação = staff)
