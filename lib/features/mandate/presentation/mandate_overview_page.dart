@@ -296,6 +296,7 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
   }
 
   static const _hubLinks = <(String, String, IconData)>[
+    ('Inteligência', '/home/intelligence', Icons.auto_awesome_outlined),
     ('Agenda', '/home/mandate/agenda', Icons.event_outlined),
     ('Bairros', '/home/mandate/neighborhoods', Icons.location_city_outlined),
     ('Assuntos', '/home/mandate/subjects', Icons.category_outlined),

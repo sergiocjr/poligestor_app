@@ -17,6 +17,12 @@ import '../../features/citizen/presentation/citizen_shell.dart';
 import '../../features/citizen/presentation/new_request_page.dart';
 import '../../features/citizen/presentation/request_detail_page.dart';
 import '../../features/home/presentation/home_shell.dart';
+import '../../features/intelligence/presentation/intelligence_analytics_page.dart';
+import '../../features/intelligence/presentation/intelligence_briefing_page.dart';
+import '../../features/intelligence/presentation/intelligence_dashboard_page.dart';
+import '../../features/intelligence/presentation/intelligence_insights_page.dart';
+import '../../features/intelligence/presentation/intelligence_summaries_page.dart';
+import '../../features/intelligence/presentation/intelligence_trends_page.dart';
 import '../../features/mandate/presentation/mandate_agenda_page.dart';
 import '../../features/mandate/presentation/mandate_map_page.dart';
 import '../../features/mandate/presentation/mandate_neighborhoods_page.dart';
@@ -52,6 +58,7 @@ GoRouter createAppRouter(AuthController auth) {
       final isCitizenPath = loc.startsWith('/citizen');
       final isStaffPath = loc.startsWith('/home');
       final isMandatePath = loc.startsWith('/home/mandate');
+      final isIntelPath = loc.startsWith('/home/intelligence');
 
       if (isSplash || isLogin) {
         return auth.mode == AuthMode.portal
@@ -65,8 +72,8 @@ GoRouter createAppRouter(AuthController auth) {
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
       }
-      // Mandato é exclusivo de staff (cidadão já redirecionado acima).
-      if (isMandatePath && auth.mode != AuthMode.staff) {
+      // Mandato / Inteligência exclusivos de staff.
+      if ((isMandatePath || isIntelPath) && auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
 
@@ -103,14 +110,6 @@ GoRouter createAppRouter(AuthController auth) {
               GoRoute(
                 path: '/home/agenda',
                 builder: (_, _) => const AgendaPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: '/home/chat',
-                builder: (_, _) => const ChatPage(),
               ),
             ],
           ),
@@ -159,12 +158,75 @@ GoRouter createAppRouter(AuthController auth) {
           StatefulShellBranch(
             routes: [
               GoRoute(
+                path: '/home/intelligence',
+                builder: (_, _) => const IntelligenceDashboardPage(),
+                routes: [
+                  GoRoute(
+                    path: 'briefing',
+                    builder: (_, _) => const IntelligenceBriefingPage(),
+                  ),
+                  GoRoute(
+                    path: 'insights',
+                    builder: (_, _) => const IntelligenceInsightsPage(),
+                  ),
+                  GoRoute(
+                    path: 'opportunities',
+                    builder: (_, _) => const IntelligenceInsightsPage(
+                      opportunitiesOnly: true,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'trends',
+                    builder: (_, _) => const IntelligenceTrendsPage(),
+                  ),
+                  GoRoute(
+                    path: 'summaries',
+                    builder: (_, _) => const IntelligenceSummariesPage(),
+                  ),
+                  GoRoute(
+                    path: 'analytics/neighborhoods',
+                    builder: (_, _) => const IntelligenceAnalyticsPage(
+                      focus: AnalyticsFocus.neighborhoods,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'analytics/subjects',
+                    builder: (_, _) => const IntelligenceAnalyticsPage(
+                      focus: AnalyticsFocus.subjects,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'analytics/team',
+                    builder: (_, _) => const IntelligenceAnalyticsPage(
+                      focus: AnalyticsFocus.team,
+                    ),
+                  ),
+                  GoRoute(
+                    path: 'analytics/productivity',
+                    builder: (_, _) => const IntelligenceAnalyticsPage(
+                      focus: AnalyticsFocus.productivity,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
                 path: '/home/more',
                 builder: (_, _) => const MorePage(),
               ),
             ],
           ),
         ],
+      ),
+
+      // Chat IA fora do bottom bar (acesso via Mais).
+      GoRoute(
+        path: '/home/chat',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const ChatPage(),
       ),
 
       // Citizen shell

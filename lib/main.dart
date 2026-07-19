@@ -15,6 +15,7 @@ import 'core/theme/app_theme.dart';
 import 'features/agenda/data/appointments_repository.dart';
 import 'features/assistant/data/assistant_repository.dart';
 import 'features/citizen/data/portal_home_repository.dart';
+import 'features/intelligence/data/intelligence_repository.dart';
 import 'features/mandate/data/mandate_repository.dart';
 import 'features/mandate/domain/mandate_refresh_controller.dart';
 import 'features/notifications/data/devices_repository.dart';
@@ -50,6 +51,7 @@ Future<void> main() async {
   final portalHomeRepo = PortalHomeRepository(api);
   final assistantRepo = AssistantRepository(api);
   final mandateRepo = MandateRepository(api);
+  final intelligenceRepo = IntelligenceRepository(api);
   final mandateRefresh = MandateRefreshController();
   final notificationsController = NotificationsController(
     repository: notificationsRepo,
@@ -90,6 +92,7 @@ Future<void> main() async {
         Provider.value(value: portalHomeRepo),
         Provider.value(value: assistantRepo),
         Provider.value(value: mandateRepo),
+        Provider.value(value: intelligenceRepo),
         Provider.value(value: realtime),
         Provider.value(value: push),
         Provider.value(value: appSync),

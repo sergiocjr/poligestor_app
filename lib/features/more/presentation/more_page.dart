@@ -29,6 +29,16 @@ class MorePage extends StatelessWidget {
               isThreeLine: true,
             ),
           const Divider(),
+          ListTile(
+            leading: const Icon(Icons.smart_toy_outlined),
+            title: const Text('Chat IA'),
+            onTap: () => context.push('/home/chat'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.auto_awesome_outlined),
+            title: const Text('Inteligência'),
+            onTap: () => context.go('/home/intelligence'),
+          ),
           const ListTile(
             leading: Icon(Icons.notifications_outlined),
             title: Text('Notificações'),

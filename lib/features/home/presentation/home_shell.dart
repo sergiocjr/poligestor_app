@@ -32,14 +32,14 @@ class HomeShell extends StatelessWidget {
             label: 'Agenda',
           ),
           NavigationDestination(
-            icon: Icon(Icons.smart_toy_outlined),
-            selectedIcon: Icon(Icons.smart_toy),
-            label: 'Chat IA',
-          ),
-          NavigationDestination(
             icon: Icon(Icons.account_balance_outlined),
             selectedIcon: Icon(Icons.account_balance),
             label: 'Mandato',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.auto_awesome_outlined),
+            selectedIcon: Icon(Icons.auto_awesome),
+            label: 'Inteligência',
           ),
           NavigationDestination(
             icon: Icon(Icons.more_horiz),

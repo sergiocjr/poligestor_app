@@ -89,4 +89,10 @@ enum AuthMode {
   String get mandateTvPath => '/v1/mandate/tv';
   String get mandateAgendaPath => '/v1/mandate/agenda';
   String get mandateBriefingPath => '/v1/mandate/briefing';
+
+  // --- Fase 9: Inteligência do mandato (staff) ---
+  String get mandateAnalyticsPath => '/v1/mandate/analytics';
+  String get mandateTrendsPath => '/v1/mandate/trends';
+  String get mandateInsightsPath => '/v1/mandate/insights';
+  String get mandateBriefingsPath => '/v1/mandate/briefings';
 }
