@@ -11,6 +11,7 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/chat/presentation/chat_page.dart';
+import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
 import '../../features/citizen/presentation/citizen_content_pages.dart';
 import '../../features/citizen/presentation/citizen_home_page.dart';
@@ -267,11 +268,87 @@ GoRouter createAppRouter({
         ],
       ),
 
-      // Chat IA fora do bottom bar (acesso via Mais).
+      // Assistente Inteligente (Sprint 10.5) — hub em /home/chat (rota legada).
       GoRoute(
         path: '/home/chat',
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const ChatPage(),
+        routes: [
+          GoRoute(
+            path: 'gabinete',
+            builder: (_, _) => const SmartAssistantGabineteChatPage(),
+          ),
+          GoRoute(
+            path: 'briefings',
+            builder: (_, _) => const SmartAssistantBriefingsPage(),
+          ),
+          GoRoute(
+            path: 'summary',
+            builder: (_, _) => const SmartAssistantDaySummaryPage(),
+            routes: [
+              GoRoute(
+                path: 'daily',
+                builder: (_, _) => const SmartAssistantDaySummaryPage(),
+              ),
+              GoRoute(
+                path: 'weekly',
+                builder: (_, _) => SmartAssistantPendingPage(
+                  title: 'Resumo semanal',
+                  path: AuthMode.staff.mandateSummaryWeeklyPath,
+                  probe: (repo) => repo.weeklySummary(),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'suggestions',
+            builder: (_, _) => SmartAssistantPendingPage(
+              title: 'Sugestões',
+              path: AuthMode.staff.mandateSuggestionsPath,
+              probe: (repo) => repo.suggestions(),
+            ),
+          ),
+          GoRoute(
+            path: 'priorities',
+            builder: (_, _) => SmartAssistantPendingPage(
+              title: 'Prioridades',
+              path: AuthMode.staff.mandatePrioritiesPath,
+              probe: (repo) => repo.priorities(),
+            ),
+          ),
+          GoRoute(
+            path: 'insights',
+            builder: (_, _) => const SmartAssistantInsightsPage(),
+          ),
+          GoRoute(
+            path: 'questions',
+            builder: (_, _) => SmartAssistantPendingPage(
+              title: 'Perguntas ao gabinete',
+              path: AuthMode.staff.aiQuestionsPath,
+              probe: (repo) => repo.questions(),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => const SmartAssistantHistoryPage(),
+          ),
+          GoRoute(
+            path: 'favorites',
+            builder: (_, _) => SmartAssistantPendingPage(
+              title: 'Favoritos',
+              path: AuthMode.staff.aiFavoritesPath,
+              probe: (repo) => repo.favorites(),
+            ),
+          ),
+          GoRoute(
+            path: 'share',
+            builder: (_, _) => SmartAssistantPendingPage(
+              title: 'Compartilhar',
+              path: AuthMode.staff.aiSharePath,
+              probe: (repo) => repo.share(),
+            ),
+          ),
+        ],
       ),
 
       // Central de Comunicação (Sprint 10.4) — staff only, PoliGestor.

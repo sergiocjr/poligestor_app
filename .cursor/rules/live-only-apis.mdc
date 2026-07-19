@@ -1,0 +1,42 @@
+---
+description: Consumir exclusivamente endpoints LIVE da VPS PoliGestor — sem inventar APIs/mocks
+alwaysApply: true
+---
+
+# LIVE-only APIs (permanente)
+
+Aplicável somente a `C:\src\poligestor_app` (PoliGestor/MandatoOS).
+
+## Obrigatório
+
+- Consumir **exclusivamente** endpoints LIVE publicados pela VPS `https://poligestor.onnexis.com.br/api`.
+- **Não** inventar APIs, paths, contratos ou payloads.
+- **Não** criar backend local.
+- **Não** usar mocks na entrega final.
+- **Não** integrar código/API/DB de outros produtos ONNEXIS (NexChat, NexISP, GestFin, etc.).
+
+## Quando o endpoint ainda não existir (404/405/501)
+
+Implementar a feature completa e preparar integração:
+
+- Models / DTOs
+- Repository
+- Provider / services
+- Cache offline
+- Navegação / rotas
+- UI completa (Material 3)
+- Deep links
+- Testes possíveis
+- Documentação
+
+Exibir **`EndpointPendingState`** honesto com o path esperado.
+
+## Quando a VPS publicar o contrato
+
+- Substituir o `EndpointPendingState` pela implementação definitiva.
+- Sem refatorações grandes.
+- Sem remover telas, esconder funcionalidades, alterar navegação ou criar caminhos alternativos.
+
+## Validação
+
+Antes de marcar um contrato como LIVE: confirmar HTTP 200 (ou método correto, ex. POST) na VPS deste produto.

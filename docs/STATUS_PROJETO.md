@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.4 — CONCLUÍDA)
+Atualizado: 2026-07-19 (Sprint 10.5 — Assistente Inteligente)
 
 ## Resumo
 
@@ -16,7 +16,8 @@ Atualizado: 2026-07-19 (Sprint 10.4 — CONCLUÍDA)
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
 | Sprint 10.2 — Identidade / Auth / Multi-tenant | **FECHADA** |
 | Sprint 10.4 — Central de Comunicação | **CONCLUÍDA** |
-| Sprint 10.5 | **Não iniciada** |
+| Sprint 10.5 — Assistente Inteligente | **EM ENTREGA** |
+| Sprint 10.6 | **Não iniciada** |
 
 ## Sprint 10.4 — Central de Comunicação
 
@@ -39,12 +40,39 @@ Cache offline: `CommunicationCache` (`pg_comms_*`). Refresh: `MandateRefreshCont
 
 Entrada: **Mais → Central de Comunicação** (`/home/communication`). Staff only. Deep link: `poligestor://communication/...`.
 
+## Sprint 10.5 — Assistente Inteligente
+
+Hub em **Mais → Assistente Inteligente** (`/home/chat`). Isolamento PoliGestor; regra LIVE-only permanente.
+
+### LIVE
+
+| Recurso | Contrato | Rota app |
+|---------|----------|----------|
+| Chat do Gabinete | `POST /v1/ai/chat` | `/home/chat/gabinete` |
+| Histórico | `GET /v1/ai/conversations` | `/home/chat/history` |
+| Briefings | `GET /v1/mandate/briefings` | `/home/chat/briefings` |
+| Resumo do dia | `GET /v1/mandate/briefing` | `/home/chat/summary/daily` |
+| Insights | `GET /v1/mandate/insights` | `/home/chat/insights` |
+
+### Preparado (EndpointPendingState)
+
+| Recurso | Path esperado |
+|---------|---------------|
+| Resumo semanal | `/v1/mandate/summary/weekly` |
+| Sugestões | `/v1/mandate/suggestions` |
+| Prioridades | `/v1/mandate/priorities` |
+| Perguntas | `/v1/ai/questions` |
+| Favoritos | `/v1/ai/favorites` |
+| Compartilhar | `/v1/ai/share` |
+
+Deep links: `poligestor://assistant|assistente|chat|ai/...`.
+
 ## Qualidade
 
-- `flutter analyze` — 0 errors/warnings nos arquivos da sync
-- `flutter test` — **185 passed**
-- APK debug + install **SM-A105M** (`RX8M70CLXKP`)
-- Device UI Conversas: fila KPIs + operadores LIVE + lista vazia honesta
+- `flutter analyze` — 0 issues (Sprint 10.5)
+- `flutter test` — **191 passed**
+- APK debug + web + install **SM-A105M** (`RX8M70CLXKP`)
+- Device: Hub Assistente Inteligente + EndpointPending (Sugestões) + Briefings LIVE
 - Nenhum emulador
 
 ## Repositório

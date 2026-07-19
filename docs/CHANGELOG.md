@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.5 — Assistente Inteligente] — 2026-07-19
+
+### Added
+
+- Hub IA em `/home/chat` (rota legada Mais → Assistente Inteligente)
+- LIVE: chat gabinete (`POST /v1/ai/chat`), conversas, briefing/briefings, insights
+- Prepared + `EndpointPendingState`: resumo semanal, sugestões, prioridades, perguntas, favoritos, compartilhar
+- Cache `pg_sa_*`, deep links `poligestor://assistant|assistente|chat|ai`
+- Regra permanente LIVE-only em `.cursor/rules/live-only-apis.mdc`
+- Testes `test/sprint105_smart_assistant_test.dart`
+
+### Not started
+
+- Sprint 10.6
+
 ## [Sprint 10.4 — CONCLUÍDA] — 2026-07-19
 
 ### Status

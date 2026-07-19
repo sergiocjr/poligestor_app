@@ -41,8 +41,8 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.1** | Equipe Virtual | **CONCLUÍDA** |
 | **10.2** | Identidade / Auth / Multi-tenant | **FECHADA (Flutter + APK SM-A105M)** |
 | **10.4** | Central de Comunicação | **CONCLUÍDA** |
-| — | Auditoria Portal/Protocolos | Hardening (sem misturar com 10.4) |
-| 10.5 | — | **Não iniciada** |
+| **10.5** | Assistente Inteligente | **EM ENTREGA** |
+| 10.6 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -55,6 +55,13 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.5 — Assistente Inteligente
+
+Staff — **Mais → Assistente Inteligente** (`/home/chat`):
+
+- Hub com Chat, Briefings, Resumo do dia/semana, Sugestões, Prioridades, Insights, Perguntas, Histórico, Favoritos, Compartilhar
+- LIVE + pending honesto conforme VPS; deep links `poligestor://assistant/...`
 
 ## Sprint 10.4 — Central de Comunicação (CONCLUÍDA)
 
@@ -120,6 +127,7 @@ lib/
     intelligence/   # Fase 9
     virtual_team/   # Sprint 10.1
     communication/  # Sprint 10.4 — canais / templates / campanhas
+    smart_assistant/# Sprint 10.5 — hub IA / chat gabinete
     home/
     more/
     assistant/

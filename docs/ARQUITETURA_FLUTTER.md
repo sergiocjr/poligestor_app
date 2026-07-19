@@ -36,6 +36,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **intelligence** (Fase 9) — briefing, insights, trends, analytics, só staff
 - **virtual_team** (Sprint 10.1) — Equipe Virtual operational center
 - **communication** (Sprint 10.4) — Central de Comunicação (channels/templates/campaigns LIVE)
+- **smart_assistant** (Sprint 10.5) — Hub Assistente Inteligente (`/home/chat`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -124,6 +125,14 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - Sem integração com NexChat / NexISP / GestFin
 
 **STATUS: CONCLUÍDA.**
+
+## Sprint 10.5 — Assistente Inteligente
+
+- Feature `lib/features/smart_assistant/` (hub em rota legada `/home/chat`)
+- LIVE: `POST /v1/ai/chat`, `GET /v1/ai/conversations`, briefing/briefings/insights
+- Pending preparado: summary/weekly, suggestions, priorities, questions, favorites, share
+- Deep links `poligestor://assistant|assistente|chat|ai/...`
+- Regra permanente: `.cursor/rules/live-only-apis.mdc`
 
 ## Segurança
 

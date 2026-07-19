@@ -31,6 +31,7 @@ import 'features/notifications/domain/notifications_controller.dart';
 import 'features/notifications/domain/push_notification_service.dart';
 import 'features/notifications/domain/realtime_sync_service.dart';
 import 'features/protocols/data/protocols_repository.dart';
+import 'features/smart_assistant/data/smart_assistant_repository.dart';
 import 'features/virtual_team/data/virtual_team_repository.dart';
 
 Future<void> main() async {
@@ -68,6 +69,7 @@ Future<void> main() async {
   final intelligenceRepo = IntelligenceRepository(api);
   final virtualTeamRepo = VirtualTeamRepository(api);
   final communicationRepo = CommunicationRepository(api);
+  final smartAssistantRepo = SmartAssistantRepository(api);
   final mandateRefresh = MandateRefreshController();
   final notificationsController = NotificationsController(
     repository: notificationsRepo,
@@ -114,6 +116,7 @@ Future<void> main() async {
         Provider.value(value: intelligenceRepo),
         Provider.value(value: virtualTeamRepo),
         Provider.value(value: communicationRepo),
+        Provider.value(value: smartAssistantRepo),
         Provider.value(value: realtime),
         Provider.value(value: push),
         Provider.value(value: appSync),

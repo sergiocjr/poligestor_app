@@ -77,6 +77,17 @@ enum AuthMode {
     AuthMode.portal => '/v1/portal/assistant/message',
   };
 
+  // --- Sprint 10.5: Assistente Inteligente (staff hub) ---
+  String get aiConversationsPath => '/v1/ai/conversations';
+  String get aiHistoryPath => '/v1/ai/history';
+  String get aiFavoritesPath => '/v1/ai/favorites';
+  String get aiQuestionsPath => '/v1/ai/questions';
+  String get aiSharePath => '/v1/ai/share';
+  String get mandateSuggestionsPath => '/v1/mandate/suggestions';
+  String get mandatePrioritiesPath => '/v1/mandate/priorities';
+  String get mandateSummaryDailyPath => '/v1/mandate/summary/daily';
+  String get mandateSummaryWeeklyPath => '/v1/mandate/summary/weekly';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';
@@ -127,7 +138,6 @@ enum AuthMode {
   String get aiAgentsCatalogPath => '/v1/ai/agents';
   String get aiTeamPath => '/v1/ai/team';
   String get aiHandoffsPath => '/v1/ai/handoffs';
-  String get aiConversationsPath => '/v1/ai/conversations';
 
   // --- Sprint 10.2: Identidade / sessão ---
   String get logoutPath => switch (this) {
