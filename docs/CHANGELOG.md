@@ -1,5 +1,19 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.6 — Central de Automação] — 2026-07-19
+
+### Added
+
+- Hub `/home/automation` (dashboard, execuções, alertas, agentes, logs, métricas, histórico, autonomia)
+- Reuso LIVE Equipe Virtual + `/v1/ai/team` sem duplicar regra de negócio
+- Pending honesto: `/v1/automations*`, aprovações, agenda, editor (10 passos), escrita de autonomia com confirmação
+- Cache por tenant `pg_auto_*`; deep links `poligestor://automation|automacao|automations`
+- Testes `test/sprint106_automation_test.dart`
+
+### Not started
+
+- Sprint 10.7
+
 ## [Sprint 10.5 — Assistente Inteligente] — 2026-07-19
 
 ### Added
@@ -10,10 +24,6 @@
 - Cache `pg_sa_*`, deep links `poligestor://assistant|assistente|chat|ai`
 - Regra permanente LIVE-only em `.cursor/rules/live-only-apis.mdc`
 - Testes `test/sprint105_smart_assistant_test.dart`
-
-### Not started
-
-- Sprint 10.6
 
 ## [Sprint 10.4 — CONCLUÍDA] — 2026-07-19
 

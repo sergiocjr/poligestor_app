@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.5 — Assistente Inteligente)
+Atualizado: 2026-07-19 (Sprint 10.6 — CONCLUÍDA)
 
 ## Resumo
 
@@ -16,66 +16,46 @@ Atualizado: 2026-07-19 (Sprint 10.5 — Assistente Inteligente)
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
 | Sprint 10.2 — Identidade / Auth / Multi-tenant | **FECHADA** |
 | Sprint 10.4 — Central de Comunicação | **CONCLUÍDA** |
-| Sprint 10.5 — Assistente Inteligente | **EM ENTREGA** |
-| Sprint 10.6 | **Não iniciada** |
+| Sprint 10.5 — Assistente Inteligente | **CONCLUÍDA** |
+| Sprint 10.6 — Automação Inteligente | **CONCLUÍDA** |
+| Sprint 10.7 | **Não iniciada** |
 
-## Sprint 10.4 — Central de Comunicação
+## Sprint 10.6 — Central de Automação
 
-**STATUS: CONCLUÍDA.**
+Hub próprio em **Mais → Central de Automação** (`/home/automation`).
 
-Produto exclusivo **PoliGestor/MandatoOS**. Isolamento absoluto: sem NexChat, NexISP, GestFin nem recursos compartilhados ONNEXIS.
+Reusa contratos LIVE da Equipe Virtual para operação (dashboard/execuções/alertas/agentes/logs/métricas/timeline). Namespace dedicado `/v1/automations*` ainda 404 → UI + `EndpointPendingState`.
 
-### Integrado (contratos LIVE 200)
+### LIVE (via `/v1/virtual-team/*` + `/v1/ai/team`)
 
-| Recurso | Contrato | App |
-|---------|----------|-----|
-| Canais | `GET /v1/channels` | Aba Canais |
-| Templates | `GET /v1/templates`, `GET /v1/templates/{id}` | Lista + detalhe; filtros `channel_type`, `search` |
-| Campanhas | `GET /v1/campaigns`, `GET /v1/campaigns/{id}` | Lista + detalhe; filtros `status`, `search`, `sort` |
-| Conversas | `GET /v1/omnichannel/conversations` | Aba Conversas |
-| Fila | `GET /v1/omnichannel/queue` | KPIs na aba Conversas |
-| Operadores | `GET /v1/omnichannel/operators` | Lista na aba Conversas |
+| Recurso | Contrato | Rota |
+|---------|----------|------|
+| Dashboard KPIs | dashboard + alerts + queue | `/home/automation/dashboard` |
+| Execuções | executions | `/home/automation/executions` |
+| Alertas | alerts | `/home/automation/alerts` |
+| Agentes | agents | `/home/automation/agents` → detalhe VT |
+| Histórico | timeline | `/home/automation/history` |
+| Logs | logs | `/home/automation/logs` |
+| Métricas | metrics | `/home/automation/metrics` |
+| Autonomia (leitura) | `/v1/ai/team` | `/home/automation/autonomy` |
 
-Cache offline: `CommunicationCache` (`pg_comms_*`). Refresh: `MandateRefreshController`.
+### Preparado (EndpointPending)
 
-Entrada: **Mais → Central de Comunicação** (`/home/communication`). Staff only. Deep link: `poligestor://communication/...`.
+| Recurso | Path |
+|---------|------|
+| Automações / editor / detalhe | `/v1/automations` |
+| Aprovações | `/v1/automations/approvals` |
+| Agenda | `/v1/automations/schedule` |
+| Escrita autonomia | `/v1/automations/autonomy` |
 
-## Sprint 10.5 — Assistente Inteligente
-
-Hub em **Mais → Assistente Inteligente** (`/home/chat`). Isolamento PoliGestor; regra LIVE-only permanente.
-
-### LIVE
-
-| Recurso | Contrato | Rota app |
-|---------|----------|----------|
-| Chat do Gabinete | `POST /v1/ai/chat` | `/home/chat/gabinete` |
-| Histórico | `GET /v1/ai/conversations` | `/home/chat/history` |
-| Briefings | `GET /v1/mandate/briefings` | `/home/chat/briefings` |
-| Resumo do dia | `GET /v1/mandate/briefing` | `/home/chat/summary/daily` |
-| Insights | `GET /v1/mandate/insights` | `/home/chat/insights` |
-
-### Preparado (EndpointPendingState)
-
-| Recurso | Path esperado |
-|---------|---------------|
-| Resumo semanal | `/v1/mandate/summary/weekly` |
-| Sugestões | `/v1/mandate/suggestions` |
-| Prioridades | `/v1/mandate/priorities` |
-| Perguntas | `/v1/ai/questions` |
-| Favoritos | `/v1/ai/favorites` |
-| Compartilhar | `/v1/ai/share` |
-
-Deep links: `poligestor://assistant|assistente|chat|ai/...`.
+Cache tenant: `pg_auto_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://automation|automacao|automations/...`.
 
 ## Qualidade
 
-- `flutter analyze` — 0 issues (Sprint 10.5)
-- `flutter test` — **191 passed**
-- APK debug + web + install **SM-A105M** (`RX8M70CLXKP`)
-- Device: Hub Assistente Inteligente + EndpointPending (Sugestões) + Briefings LIVE
+- `flutter analyze` / `flutter test` / APK + web + SM-A105M
 - Nenhum emulador
+- Sprint 10.7 não iniciada
 
 ## Repositório
 
 - https://github.com/sergiocjr/poligestor_app
-- Tag anterior: `sprint-10.2-final` @ `d01613c`

@@ -11,8 +11,9 @@
 | 10.1 | Equipe Virtual (agentes / operação) | CONCLUÍDA (Final) |
 | **10.2** | Identidade, autenticação e multi-tenant | **FECHADA (Flutter)** |
 | **10.4** | Central de Comunicação | **CONCLUÍDA** |
-| **10.5** | Assistente Inteligente | **EM ENTREGA** |
-| 10.6 | — | **Não iniciada** |
+| **10.5** | Assistente Inteligente | **CONCLUÍDA** |
+| **10.6** | Automação Inteligente | **CONCLUÍDA** |
+| 10.7 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
@@ -20,9 +21,13 @@
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
 
-## Sprint 10.5 (em entrega)
+## Sprint 10.6 (CONCLUÍDA)
 
-Hub Assistente Inteligente em `/home/chat`. LIVE: chat, conversations, briefing(s), insights. Pending preparado: summary/weekly, suggestions, priorities, questions, favorites, share.
+Central de Automação em `/home/automation`. LIVE via Virtual Team; `/v1/automations*` preparado com EndpointPendingState.
+
+## Sprint 10.5 (CONCLUÍDA)
+
+Hub Assistente Inteligente em `/home/chat`. LIVE: chat, conversations, briefing(s), insights. Pending: summary/weekly, suggestions, priorities, questions, favorites, share.
 
 ## Sprint 10.4 (CONCLUÍDA)
 

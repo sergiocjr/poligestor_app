@@ -40,6 +40,16 @@ class NotificationRouter {
               : '/home/virtual-team/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 10.6 — Central de Automação
+        if (uri.host == 'automation' ||
+            uri.host == 'automacao' ||
+            uri.host == 'automations') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/automation'
+              : '/home/automation/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

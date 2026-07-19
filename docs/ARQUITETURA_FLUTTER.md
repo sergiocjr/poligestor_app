@@ -37,6 +37,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **virtual_team** (Sprint 10.1) — Equipe Virtual operational center
 - **communication** (Sprint 10.4) — Central de Comunicação (channels/templates/campaigns LIVE)
 - **smart_assistant** (Sprint 10.5) — Hub Assistente Inteligente (`/home/chat`)
+- **automation** (Sprint 10.6) — Central de Automação (`/home/automation`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -46,9 +47,9 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
 2. Sem org → `/org`
 3. Com org, sem sessão → `/login` (+ register/forgot)
-4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/account/*`)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/account/*`)
 5. Portal autenticado → `/citizen/*` (+ `/account/*`)
-6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|org|tenant/...`
+6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|org|tenant/...`
 
 ## Estado
 
@@ -133,6 +134,13 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - Pending preparado: summary/weekly, suggestions, priorities, questions, favorites, share
 - Deep links `poligestor://assistant|assistente|chat|ai/...`
 - Regra permanente: `.cursor/rules/live-only-apis.mdc`
+
+## Sprint 10.6 — Central de Automação
+
+- Feature `lib/features/automation/` — hub próprio
+- LIVE operacional via `VirtualTeamRepository` (sem duplicar regra VT)
+- Pending: `/v1/automations*` (lista, aprovações, agenda, editor, escrita autonomia)
+- Cache `pg_auto_{tenant}_*`; realtime via `MandateRefreshController`
 
 ## Segurança
 

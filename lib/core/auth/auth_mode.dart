@@ -88,6 +88,18 @@ enum AuthMode {
   String get mandateSummaryDailyPath => '/v1/mandate/summary/daily';
   String get mandateSummaryWeeklyPath => '/v1/mandate/summary/weekly';
 
+  // --- Sprint 10.6: Automação Inteligente (staff) — namespace dedicado (ainda pending VPS) ---
+  String get automationsRootPath => '/v1/automations';
+  String get automationsDashboardPath => '/v1/automations/dashboard';
+  String get automationsExecutionsPath => '/v1/automations/executions';
+  String get automationsApprovalsPath => '/v1/automations/approvals';
+  String get automationsAlertsPath => '/v1/automations/alerts';
+  String get automationsMetricsPath => '/v1/automations/metrics';
+  String get automationsSchedulePath => '/v1/automations/schedule';
+  String get automationsLogsPath => '/v1/automations/logs';
+  String automationPath(String id) => '/v1/automations/$id';
+  String get automationsAutonomyPath => '/v1/automations/autonomy';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';

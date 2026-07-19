@@ -10,6 +10,7 @@ import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
+import '../../features/automation/presentation/automation_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -85,6 +86,7 @@ GoRouter createAppRouter({
       final isIntelPath = loc.startsWith('/home/intelligence');
       final isVirtualTeamPath = loc.startsWith('/home/virtual-team');
       final isCommunicationPath = loc.startsWith('/home/communication');
+      final isAutomationPath = loc.startsWith('/home/automation');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -98,11 +100,12 @@ GoRouter createAppRouter({
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/protocols';
       }
-      // Mandato / Inteligência / Equipe Virtual / Comunicação exclusivos de staff.
+      // Mandato / Inteligência / Equipe Virtual / Comunicação / Automação exclusivos de staff.
       if ((isMandatePath ||
               isIntelPath ||
               isVirtualTeamPath ||
-              isCommunicationPath) &&
+              isCommunicationPath ||
+              isAutomationPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -264,6 +267,82 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(path: '/home/more', builder: (_, _) => const MorePage()),
             ],
+          ),
+        ],
+      ),
+
+      // Central de Automação (Sprint 10.6) — staff only.
+      GoRoute(
+        path: '/home/automation',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AutomationHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const AutomationDashboardPage(),
+          ),
+          GoRoute(
+            path: 'list',
+            builder: (_, _) => const AutomationAutomationsPage(),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => AutomationPendingPage(
+                  title: 'Detalhe da automação',
+                  path: AuthMode.staff.automationPath(
+                    state.pathParameters['id']!,
+                  ),
+                  probe: (repo) => repo.assertPending(
+                    AuthMode.staff.automationPath(state.pathParameters['id']!),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'executions',
+            builder: (_, _) => const AutomationExecutionsPage(),
+          ),
+          GoRoute(
+            path: 'approvals',
+            builder: (_, _) => AutomationPendingPage(
+              title: 'Aprovações',
+              path: AuthMode.staff.automationsApprovalsPath,
+              probe: (repo) => repo.approvals(),
+            ),
+          ),
+          GoRoute(
+            path: 'alerts',
+            builder: (_, _) => const AutomationAlertsPage(),
+          ),
+          GoRoute(
+            path: 'agents',
+            builder: (_, _) => const AutomationAgentsPage(),
+          ),
+          GoRoute(
+            path: 'schedule',
+            builder: (_, _) => AutomationPendingPage(
+              title: 'Agenda de execuções',
+              path: AuthMode.staff.automationsSchedulePath,
+              probe: (repo) => repo.schedule(),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => const AutomationHistoryPage(),
+          ),
+          GoRoute(path: 'logs', builder: (_, _) => const AutomationLogsPage()),
+          GoRoute(
+            path: 'metrics',
+            builder: (_, _) => const AutomationMetricsPage(),
+          ),
+          GoRoute(
+            path: 'autonomy',
+            builder: (_, _) => const AutomationAutonomyPage(),
+          ),
+          GoRoute(
+            path: 'editor',
+            builder: (_, _) => const AutomationEditorPage(),
           ),
         ],
       ),

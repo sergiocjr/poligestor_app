@@ -46,6 +46,9 @@
                 <data android:scheme="poligestor" android:host="assistente"/>
                 <data android:scheme="poligestor" android:host="chat"/>
                 <data android:scheme="poligestor" android:host="ai"/>
+                <data android:scheme="poligestor" android:host="automation"/>
+                <data android:scheme="poligestor" android:host="automacao"/>
+                <data android:scheme="poligestor" android:host="automations"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>
