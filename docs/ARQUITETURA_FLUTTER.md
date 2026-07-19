@@ -39,6 +39,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **smart_assistant** (Sprint 10.5) — Hub Assistente Inteligente (`/home/chat`)
 - **automation** (Sprint 10.6) — Central de Automação (`/home/automation`)
 - **strategy** (Sprint 10.7) — Painel Estratégico (`/home/strategy`)
+- **parliament** (Sprint 10.8) — Painel Parlamentar (`/home/parliament`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -48,9 +49,9 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
 2. Sem org → `/org`
 3. Com org, sem sessão → `/login` (+ register/forgot)
-4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/home/strategy/*`, `/account/*`)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/home/strategy/*`, `/home/parliament/*`, `/account/*`)
 5. Portal autenticado → `/citizen/*` (+ `/account/*`)
-6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|strategy|org|tenant/...`
+6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|strategy|parliament|org|tenant/...`
 
 ## Estado
 
@@ -149,6 +150,13 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - LIVE `/v1/strategy/{kpis,heatmap,trends,alerts,regions,neighborhoods,forecasts,reports}`
 - Reuse mapa mandato; pending goals/compare/indicators/predictions/map
 - Cache `pg_strategy_{tenant}_*`; docs `docs/INTEGRACOES.md`
+
+## Sprint 10.8 — Painel Parlamentar
+
+- Feature `lib/features/parliament/` — hub próprio
+- LIVE `/v1/parliament/{dashboard,bills,projects,indications,requests,motions,amendments,agenda,sessions,votes,support-base,demands}`
+- Pending: promises, search, timeline, history, attachments
+- Cache `pg_parl_{tenant}_*`
 
 ## Segurança
 

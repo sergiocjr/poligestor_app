@@ -12,6 +12,7 @@ import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
 import '../../features/automation/presentation/automation_pages.dart';
 import '../../features/strategy/presentation/strategy_pages.dart';
+import '../../features/parliament/presentation/parliament_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -89,6 +90,7 @@ GoRouter createAppRouter({
       final isCommunicationPath = loc.startsWith('/home/communication');
       final isAutomationPath = loc.startsWith('/home/automation');
       final isStrategyPath = loc.startsWith('/home/strategy');
+      final isParliamentPath = loc.startsWith('/home/parliament');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -108,7 +110,8 @@ GoRouter createAppRouter({
               isVirtualTeamPath ||
               isCommunicationPath ||
               isAutomationPath ||
-              isStrategyPath) &&
+              isStrategyPath ||
+              isParliamentPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -270,6 +273,243 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(path: '/home/more', builder: (_, _) => const MorePage()),
             ],
+          ),
+        ],
+      ),
+
+      // Painel Parlamentar (Sprint 10.8) — staff only.
+      GoRoute(
+        path: '/home/parliament',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const ParliamentHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const ParliamentDashboardPage(),
+          ),
+          GoRoute(
+            path: 'bills',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Projetos de Lei',
+              detailRoutePrefix: '/home/parliament/bills',
+              emptyMessage: 'Nenhum projeto de lei encontrado.',
+              loader: (repo, tenant) => repo.bills(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe do projeto de lei',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) =>
+                      repo.billDetail(state.pathParameters['id']!),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'projects',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Projetos',
+              detailRoutePrefix: '/home/parliament/projects',
+              emptyMessage: 'Nenhum projeto encontrado.',
+              loader: (repo, tenant) => repo.projects(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe do projeto',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentProjectsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'indications',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Indicações',
+              detailRoutePrefix: '/home/parliament/indications',
+              emptyMessage: 'Nenhuma indicação encontrada.',
+              loader: (repo, tenant) => repo.indications(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe da indicação',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentIndicationsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'requests',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Requerimentos',
+              detailRoutePrefix: '/home/parliament/requests',
+              emptyMessage: 'Nenhum requerimento encontrado.',
+              loader: (repo, tenant) => repo.requests(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe do requerimento',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentRequestsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'motions',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Moções',
+              detailRoutePrefix: '/home/parliament/motions',
+              emptyMessage: 'Nenhuma moção encontrada.',
+              loader: (repo, tenant) => repo.motions(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe da moção',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentMotionsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'amendments',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Emendas',
+              detailRoutePrefix: '/home/parliament/amendments',
+              emptyMessage: 'Nenhuma emenda encontrada.',
+              loader: (repo, tenant) => repo.amendments(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe da emenda',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentAmendmentsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'agenda',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Agenda',
+              detailRoutePrefix: '/home/parliament/agenda',
+              emptyMessage: 'Agenda vazia.',
+              loader: (repo, tenant) => repo.agenda(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'sessions',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Sessões',
+              detailRoutePrefix: '/home/parliament/sessions',
+              emptyMessage: 'Nenhuma sessão encontrada.',
+              loader: (repo, tenant) => repo.sessions(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) => ParliamentDetailPage(
+                  title: 'Detalhe da sessão',
+                  id: state.pathParameters['id']!,
+                  loader: (repo) => repo.itemDetail(
+                    collectionPath: AuthMode.staff.parliamentSessionsPath,
+                    id: state.pathParameters['id']!,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'votes',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Votações',
+              detailRoutePrefix: '/home/parliament/votes',
+              emptyMessage: 'Nenhuma votação encontrada.',
+              loader: (repo, tenant) => repo.votes(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'promises',
+            builder: (_, _) => ParliamentPendingPage(
+              title: 'Promessas',
+              path: AuthMode.staff.parliamentPromisesPath,
+              probe: (repo) => repo.promises(),
+            ),
+          ),
+          GoRoute(
+            path: 'support-base',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Base de Apoio',
+              detailRoutePrefix: '/home/parliament/support-base',
+              emptyMessage: 'Nenhum registro na base de apoio.',
+              loader: (repo, tenant) => repo.supportBase(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'demands',
+            builder: (_, _) => ParliamentListPage(
+              title: 'Demandas',
+              detailRoutePrefix: '/home/parliament/demands',
+              emptyMessage: 'Nenhuma demanda encontrada.',
+              loader: (repo, tenant) => repo.demands(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const ParliamentSearchPage(),
+          ),
+          GoRoute(
+            path: 'timeline',
+            builder: (_, _) => ParliamentPendingPage(
+              title: 'Linha do Tempo',
+              path: AuthMode.staff.parliamentTimelinePath,
+              probe: (repo) => repo.timeline(),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => ParliamentPendingPage(
+              title: 'Histórico',
+              path: AuthMode.staff.parliamentHistoryPath,
+              probe: (repo) => repo.history(),
+            ),
+          ),
+          GoRoute(
+            path: 'attachments',
+            builder: (_, _) => ParliamentPendingPage(
+              title: 'Anexos',
+              path: AuthMode.staff.parliamentAttachmentsPath,
+              probe: (repo) => repo.attachments(),
+            ),
           ),
         ],
       ),

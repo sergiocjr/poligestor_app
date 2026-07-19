@@ -44,7 +44,8 @@ Contas demo (após selecionar organização, ex.: `demo`):
 | **10.5** | Assistente Inteligente | **CONCLUÍDA** |
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
-| 10.8 | — | **Não iniciada** |
+| **10.8** | Painel Parlamentar | **CONCLUÍDA** |
+| 10.9 | — | **Não iniciada** |
 
 ## Sprint 10.2 — Identidade (FECHADA)
 
@@ -57,6 +58,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 - Cache por tenant; deep links `poligestor://org/{slug}`
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
+
+## Sprint 10.8 — Painel Parlamentar
+
+Staff — **Mais → Painel Parlamentar** (`/home/parliament`): painel, projetos de lei, sessões, votações e demandas LIVE (`/v1/parliament/*`).
 
 ## Sprint 10.7 — Painel Estratégico
 
@@ -140,6 +145,7 @@ lib/
     smart_assistant/# Sprint 10.5 — hub IA / chat gabinete
     automation/     # Sprint 10.6 — Central de Automação
     strategy/       # Sprint 10.7 — Painel Estratégico
+    parliament/     # Sprint 10.8 — Painel Parlamentar
     home/
     more/
     assistant/

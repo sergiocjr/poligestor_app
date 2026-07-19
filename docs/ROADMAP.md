@@ -14,13 +14,18 @@
 | **10.5** | Assistente Inteligente | **CONCLUÍDA** |
 | **10.6** | Automação Inteligente | **CONCLUÍDA** |
 | **10.7** | Painel Estratégico | **CONCLUÍDA** |
-| 10.8 | — | **Não iniciada** |
+| **10.8** | Painel Parlamentar | **CONCLUÍDA** |
+| 10.9 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
 
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
+
+## Sprint 10.8 (CONCLUÍDA)
+
+Painel Parlamentar em `/home/parliament`. LIVE `/v1/parliament/*`; pending: promises/search/timeline/history/attachments.
 
 ## Sprint 10.7 (CONCLUÍDA)
 

@@ -6,6 +6,28 @@ Base API: `https://poligestor.onnexis.com.br/api`
 
 Regra permanente: consumir somente contratos publicados pela VPS. Sem mocks na entrega final. Sem backend local. Ausência → `EndpointPendingState`.
 
+## Sprint 10.8 — `/v1/parliament/*`
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/parliament/dashboard` | LIVE |
+| GET | `/v1/parliament/bills` (+ `/{id}`) | LIVE |
+| GET | `/v1/parliament/projects` | LIVE |
+| GET | `/v1/parliament/indications` | LIVE |
+| GET | `/v1/parliament/requests` | LIVE |
+| GET | `/v1/parliament/motions` | LIVE |
+| GET | `/v1/parliament/amendments` | LIVE |
+| GET | `/v1/parliament/agenda` | LIVE |
+| GET | `/v1/parliament/sessions` | LIVE |
+| GET | `/v1/parliament/votes` | LIVE |
+| GET | `/v1/parliament/support-base` | LIVE |
+| GET | `/v1/parliament/demands` | LIVE |
+| GET | `/v1/parliament/promises` | Preparado (404) |
+| GET | `/v1/parliament/search` | Preparado (404) — busca local nas listas |
+| GET | `/v1/parliament/timeline` | Preparado (404) |
+| GET | `/v1/parliament/history` | Preparado (404) |
+| GET | `/v1/parliament/attachments` | Preparado (404) |
+
 ## Sprint 10.7 — `/v1/strategy/*`
 
 | Método | Path | Status app |

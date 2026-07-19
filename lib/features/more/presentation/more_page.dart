@@ -86,13 +86,23 @@ class MorePage extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.insights_outlined),
             title: const Text('Painel Estratégico'),
-            subtitle: const Text('KPIs, heatmap, tendências e previsões'),
+            subtitle: const Text(
+              'Indicadores, mapa de calor, tendências e previsões',
+            ),
             onTap: () => context.push('/home/strategy'),
+          ),
+          ListTile(
+            leading: const Icon(Icons.account_balance_outlined),
+            title: const Text('Painel Parlamentar'),
+            subtitle: const Text(
+              'Projetos de lei, sessões, votações e demandas',
+            ),
+            onTap: () => context.push('/home/parliament'),
           ),
           ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
-            subtitle: const Text('Canais, templates e campanhas'),
+            subtitle: const Text('Canais, modelos e campanhas'),
             onTap: () => context.push('/home/communication'),
           ),
           ListTile(

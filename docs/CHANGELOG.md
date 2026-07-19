@@ -1,5 +1,19 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.8 — Painel Parlamentar] — 2026-07-19
+
+### Added
+
+- Hub `/home/parliament` (painel, projetos de lei, indicações, requerimentos, moções, emendas, agenda, sessões, votações, base de apoio, demandas, pesquisa)
+- Contratos LIVE `/v1/parliament/*` com cache `pg_parl_*` e realtime
+- Pending: promessas, pesquisa dedicada, linha do tempo, histórico, anexos
+- Deep links `poligestor://parliament|parlamentar|legislativo|painel-parlamentar`
+- Testes `test/sprint108_parliament_test.dart`
+
+### Not started
+
+- Sprint 10.9
+
 ## [Idioma PT-BR na interface] — 2026-07-19
 
 ### Changed

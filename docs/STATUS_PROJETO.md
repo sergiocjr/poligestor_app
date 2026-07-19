@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 10.7 — Painel Estratégico CONCLUÍDA)
+Atualizado: 2026-07-19 (Sprint 10.8 — Painel Parlamentar CONCLUÍDA)
 
 ## Resumo
 
@@ -19,49 +19,51 @@ Atualizado: 2026-07-19 (Sprint 10.7 — Painel Estratégico CONCLUÍDA)
 | Sprint 10.5 — Assistente Inteligente | **CONCLUÍDA** |
 | Sprint 10.6 — Automação Inteligente | **CONCLUÍDA** |
 | Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** |
-| Sprint 10.8 | **Não iniciada** |
+| Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
+| Sprint 10.9 | **Não iniciada** |
 
-## Sprint 10.7 — Painel Estratégico
+## Sprint 10.8 — Painel Parlamentar
 
-Hub próprio em **Mais → Painel Estratégico** (`/home/strategy`).
+Hub próprio em **Mais → Painel Parlamentar** (`/home/parliament`).
 
-Namespace LIVE `/v1/strategy/*`. Reuso de mapa/bairros/relatórios do Mandato e atalhos para Inteligência, sem duplicar regra de negócio.
+Namespace LIVE `/v1/parliament/*`. Interface em PT-BR.
 
 ### LIVE
 
 | Recurso | Contrato | Rota |
 |---------|----------|------|
-| Painel / Indicadores | `/v1/strategy/kpis` (+ fallback se painel 500) | `/home/strategy/dashboard`, `/kpis` |
-| Mapa de calor | `/v1/strategy/heatmap` | `/home/strategy/heatmap` |
-| Tendências | `/v1/strategy/trends` | `/home/strategy/trends` |
-| Alertas | `/v1/strategy/alerts` | `/home/strategy/alerts` |
-| Regiões | `/v1/strategy/regions` | `/home/strategy/regions` |
-| Bairros | `/v1/strategy/neighborhoods` | `/home/strategy/neighborhoods` |
-| Previsões | `/v1/strategy/forecasts` | `/home/strategy/forecasts` |
-| Relatórios | `/v1/strategy/reports` | `/home/strategy/reports` |
-| Mapa (reuse) | `/v1/mandate/map` | `/home/strategy/map` → mapa mandato |
+| Painel | `/v1/parliament/dashboard` | `/home/parliament/dashboard` |
+| Projetos de Lei | `/v1/parliament/bills` (+ detalhe) | `/home/parliament/bills` |
+| Projetos | `/v1/parliament/projects` | `/home/parliament/projects` |
+| Indicações | `/v1/parliament/indications` | `/home/parliament/indications` |
+| Requerimentos | `/v1/parliament/requests` | `/home/parliament/requests` |
+| Moções | `/v1/parliament/motions` | `/home/parliament/motions` |
+| Emendas | `/v1/parliament/amendments` | `/home/parliament/amendments` |
+| Agenda / Sessões / Votações | agenda, sessions, votes | rotas correspondentes |
+| Base de Apoio / Demandas | support-base, demands | rotas correspondentes |
+| Pesquisa | busca local + pending `/search` | `/home/parliament/search` |
 
 ### Preparado (EndpointPending)
 
 | Recurso | Path |
 |---------|------|
-| Metas | `/v1/strategy/goals` (404/500) |
-| Comparativos | `/v1/strategy/compare` |
-| Indicadores dedicados | `/v1/strategy/indicators` |
-| Predições | `/v1/strategy/predictions` |
-| Mapa dedicado | `/v1/strategy/map` |
+| Promessas | `/v1/parliament/promises` |
+| Pesquisa dedicada | `/v1/parliament/search` |
+| Linha do tempo | `/v1/parliament/timeline` |
+| Histórico | `/v1/parliament/history` |
+| Anexos | `/v1/parliament/attachments` |
 
-Cache tenant: `pg_strategy_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://strategy|estrategia|strategic|painel-estrategico/...`.
+Cache: `pg_parl_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://parliament|parlamentar|legislativo|painel-parlamentar/...`.
 
 ## Idioma (regra permanente)
 
-Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`. Helpers: `lib/shared/i18n/ui_labels.dart`.
+Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`.
 
 ## Qualidade
 
 - `flutter analyze` / `flutter test` / APK + web + SM-A105M
 - Nenhum emulador
-- Sprint 10.8 não iniciada
+- Sprint 10.9 não iniciada
 
 ## Repositório
 

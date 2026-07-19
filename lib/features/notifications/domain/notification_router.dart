@@ -61,6 +61,17 @@ class NotificationRouter {
               : '/home/strategy/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Sprint 10.8 — Painel Parlamentar
+        if (uri.host == 'parliament' ||
+            uri.host == 'parlamentar' ||
+            uri.host == 'legislativo' ||
+            uri.host == 'painel-parlamentar') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/parliament'
+              : '/home/parliament/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

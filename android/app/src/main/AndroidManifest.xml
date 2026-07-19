@@ -53,6 +53,10 @@
                 <data android:scheme="poligestor" android:host="estrategia"/>
                 <data android:scheme="poligestor" android:host="strategic"/>
                 <data android:scheme="poligestor" android:host="painel-estrategico"/>
+                <data android:scheme="poligestor" android:host="parliament"/>
+                <data android:scheme="poligestor" android:host="parlamentar"/>
+                <data android:scheme="poligestor" android:host="legislativo"/>
+                <data android:scheme="poligestor" android:host="painel-parlamentar"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

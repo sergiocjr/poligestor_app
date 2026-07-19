@@ -117,6 +117,34 @@ enum AuthMode {
   String get strategyIndicatorsPath => '/v1/strategy/indicators';
   String get strategyPredictionsPath => '/v1/strategy/predictions';
 
+  // --- Sprint 10.8: Painel Parlamentar (staff) ---
+  String get parliamentRootPath => '/v1/parliament';
+  String get parliamentDashboardPath => '/v1/parliament/dashboard';
+  String get parliamentBillsPath => '/v1/parliament/bills';
+  String parliamentBillPath(String id) => '/v1/parliament/bills/$id';
+  String get parliamentProjectsPath => '/v1/parliament/projects';
+  String parliamentProjectPath(String id) => '/v1/parliament/projects/$id';
+  String get parliamentIndicationsPath => '/v1/parliament/indications';
+  String parliamentIndicationPath(String id) =>
+      '/v1/parliament/indications/$id';
+  String get parliamentRequestsPath => '/v1/parliament/requests';
+  String parliamentRequestPath(String id) => '/v1/parliament/requests/$id';
+  String get parliamentMotionsPath => '/v1/parliament/motions';
+  String parliamentMotionPath(String id) => '/v1/parliament/motions/$id';
+  String get parliamentAmendmentsPath => '/v1/parliament/amendments';
+  String parliamentAmendmentPath(String id) => '/v1/parliament/amendments/$id';
+  String get parliamentAgendaPath => '/v1/parliament/agenda';
+  String get parliamentSessionsPath => '/v1/parliament/sessions';
+  String parliamentSessionPath(String id) => '/v1/parliament/sessions/$id';
+  String get parliamentVotesPath => '/v1/parliament/votes';
+  String get parliamentPromisesPath => '/v1/parliament/promises';
+  String get parliamentSupportBasePath => '/v1/parliament/support-base';
+  String get parliamentDemandsPath => '/v1/parliament/demands';
+  String get parliamentSearchPath => '/v1/parliament/search';
+  String get parliamentTimelinePath => '/v1/parliament/timeline';
+  String get parliamentHistoryPath => '/v1/parliament/history';
+  String get parliamentAttachmentsPath => '/v1/parliament/attachments';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';
