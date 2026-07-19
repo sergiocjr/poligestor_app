@@ -116,10 +116,104 @@ class CommunicationCache {
     }
   }
 
+  static const _conversationsKey = 'pg_comms_conversations_v1';
+  static const _queueKey = 'pg_comms_queue_v1';
+  static const _operatorsKey = 'pg_comms_operators_v1';
+
+  Future<void> saveConversations(List<CommConversation> items) async {
+    final prefs = await _prefsFuture;
+    final raw = items
+        .map(
+          (e) => {
+            'id': e.id,
+            'title': e.title,
+            'status': e.status,
+            'channel_type': e.channelType,
+            'contact_name': e.contactName,
+            'assigned_to': e.assignedTo,
+            'updated_at': e.updatedAt?.toIso8601String(),
+            'unread_count': e.unreadCount,
+          },
+        )
+        .toList();
+    await prefs.setString(_conversationsKey, jsonEncode(raw));
+  }
+
+  Future<List<CommConversation>?> getConversations() async {
+    final prefs = await _prefsFuture;
+    final s = prefs.getString(_conversationsKey);
+    if (s == null || s.isEmpty) return null;
+    try {
+      return asMapList(jsonDecode(s)).map(CommConversation.fromJson).toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> saveQueue(CommQueueSnapshot q) async {
+    final prefs = await _prefsFuture;
+    await prefs.setString(
+      _queueKey,
+      jsonEncode({
+        'queue': q.queue,
+        'assigned': q.assigned,
+        'closed': q.closed,
+        'operators': q.operators,
+      }),
+    );
+  }
+
+  Future<CommQueueSnapshot?> getQueue() async {
+    final prefs = await _prefsFuture;
+    final s = prefs.getString(_queueKey);
+    if (s == null || s.isEmpty) return null;
+    try {
+      final map = jsonDecode(s);
+      if (map is Map<String, dynamic>) return CommQueueSnapshot.fromJson(map);
+      if (map is Map) {
+        return CommQueueSnapshot.fromJson(Map<String, dynamic>.from(map));
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> saveOperators(List<CommOperator> items) async {
+    final prefs = await _prefsFuture;
+    final raw = items
+        .map(
+          (e) => {
+            'id': e.id,
+            'name': e.name,
+            'email': e.email,
+            'status': e.status,
+            'active_conversations': e.activeConversations,
+            'last_seen_at': e.lastSeenAt?.toIso8601String(),
+          },
+        )
+        .toList();
+    await prefs.setString(_operatorsKey, jsonEncode(raw));
+  }
+
+  Future<List<CommOperator>?> getOperators() async {
+    final prefs = await _prefsFuture;
+    final s = prefs.getString(_operatorsKey);
+    if (s == null || s.isEmpty) return null;
+    try {
+      return asMapList(jsonDecode(s)).map(CommOperator.fromJson).toList();
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> clear() async {
     final prefs = await _prefsFuture;
     await prefs.remove(_channelsKey);
     await prefs.remove(_templatesKey);
     await prefs.remove(_campaignsKey);
+    await prefs.remove(_conversationsKey);
+    await prefs.remove(_queueKey);
+    await prefs.remove(_operatorsKey);
   }
 }

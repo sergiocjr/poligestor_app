@@ -5,9 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/auth_mode.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/communication_models.dart';
 import '../data/communication_repository.dart';
@@ -64,7 +62,7 @@ class _CommunicationHubPageState extends State<CommunicationHubPage>
           final child = TabBarView(
             controller: _tabs,
             children: const [
-              _ConversationsPendingTab(),
+              _OmnichannelInboxTab(),
               _ChannelsTab(),
               CommunicationTemplatesPage(embedded: true),
               CommunicationCampaignsPage(embedded: true),
@@ -84,45 +82,219 @@ class _CommunicationHubPageState extends State<CommunicationHubPage>
   }
 }
 
-class _ConversationsPendingTab extends StatelessWidget {
-  const _ConversationsPendingTab();
+class _OmnichannelInboxTab extends StatefulWidget {
+  const _OmnichannelInboxTab();
+
+  @override
+  State<_OmnichannelInboxTab> createState() => _OmnichannelInboxTabState();
+}
+
+class _OmnichannelSnapshot {
+  const _OmnichannelSnapshot({
+    required this.conversations,
+    required this.queue,
+    required this.operators,
+  });
+
+  final List<CommConversation> conversations;
+  final CommQueueSnapshot queue;
+  final List<CommOperator> operators;
+}
+
+class _OmnichannelInboxTabState extends State<_OmnichannelInboxTab>
+    with _CommsRefresh {
+  Future<_OmnichannelSnapshot>? _future;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bindCommsRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
+  }
+
+  Future<_OmnichannelSnapshot> _load() async {
+    final repo = context.read<CommunicationRepository>();
+    final conversations = repo.conversations();
+    final queue = repo.queue();
+    final operators = repo.operators();
+    return _OmnichannelSnapshot(
+      conversations: await conversations,
+      queue: await queue,
+      operators: await operators,
+    );
+  }
+
+  Future<void> _reload() async {
+    setState(() => _future = _load());
+    await _future;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        EndpointPendingState(
-          path: AuthMode.staff.communicationConversationsPath,
-          message:
-              'Lista de conversas ainda não está disponível na API deste produto. '
-              'Fila e operadores também aguardam endpoints LIVE.',
+    final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
+    return RefreshIndicator(
+      onRefresh: _reload,
+      child: FutureBuilder<_OmnichannelSnapshot>(
+        future: _future,
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              children: const [
+                SkeletonBox(height: 88, radius: 14),
+                SizedBox(height: 10),
+                SkeletonBox(height: 72, radius: 14),
+                SizedBox(height: 10),
+                SkeletonBox(height: 72, radius: 14),
+              ],
+            );
+          }
+          if (snap.hasError) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: MediaQuery.sizeOf(context).height * 0.5,
+                  child: AppErrorState(error: snap.error, onRetry: _reload),
+                ),
+              ],
+            );
+          }
+          final data = snap.data!;
+          final q = data.queue;
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
+            children: [
+              Text(
+                'Fila',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  _QueueChip(label: 'Na fila', value: q.queue),
+                  _QueueChip(label: 'Atribuídas', value: q.assigned),
+                  _QueueChip(label: 'Fechadas', value: q.closed),
+                  _QueueChip(label: 'Operadores', value: q.operators),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Operadores',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              if (data.operators.isEmpty)
+                const Card(
+                  child: ListTile(title: Text('Nenhum operador disponível.')),
+                )
+              else
+                ...data.operators.map(
+                  (op) => Card(
+                    child: ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: op.isOnline
+                            ? Colors.green.shade100
+                            : null,
+                        child: Icon(
+                          Icons.support_agent_outlined,
+                          color: op.isOnline ? Colors.green.shade800 : null,
+                        ),
+                      ),
+                      title: Text(
+                        op.name,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      subtitle: Text(
+                        [
+                          op.statusLabel,
+                          if (op.email != null && op.email!.isNotEmpty)
+                            op.email!,
+                          '${op.activeConversations} ativa(s)',
+                        ].join(' · '),
+                      ),
+                    ),
+                  ),
+                ),
+              const SizedBox(height: 20),
+              Text(
+                'Conversas',
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+              ),
+              const SizedBox(height: 8),
+              if (data.conversations.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: AppEmptyState(message: 'Nenhuma conversa no momento.'),
+                )
+              else
+                ...data.conversations.map((c) {
+                  return Card(
+                    child: ListTile(
+                      leading: const CircleAvatar(
+                        child: Icon(Icons.forum_outlined),
+                      ),
+                      title: Text(
+                        c.title,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      subtitle: Text(
+                        [
+                          c.statusLabel,
+                          if (c.channelType != null &&
+                              c.channelType!.isNotEmpty)
+                            c.channelType!,
+                          if (c.contactName != null &&
+                              c.contactName!.isNotEmpty)
+                            c.contactName!,
+                          if (c.assignedTo != null && c.assignedTo!.isNotEmpty)
+                            c.assignedTo!,
+                          if (c.updatedAt != null)
+                            dateFmt.format(c.updatedAt!.toLocal()),
+                        ].join(' · '),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      trailing: c.unreadCount > 0
+                          ? Badge(label: Text('${c.unreadCount}'))
+                          : null,
+                    ),
+                  );
+                }),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _QueueChip extends StatelessWidget {
+  const _QueueChip({required this.label, required this.value});
+
+  final String label;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      avatar: CircleAvatar(
+        child: Text(
+          '$value',
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700),
         ),
-        const SizedBox(height: 12),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.inbox_outlined),
-            title: const Text('Fila'),
-            subtitle: Text(AuthMode.staff.communicationQueuePath),
-            trailing: const Icon(Icons.hourglass_empty),
-          ),
-        ),
-        Card(
-          child: ListTile(
-            leading: const Icon(Icons.support_agent_outlined),
-            title: const Text('Operadores'),
-            subtitle: Text(AuthMode.staff.communicationOperatorsPath),
-            trailing: const Icon(Icons.hourglass_empty),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Quando a VPS publicar os contratos, esta aba consumirá apenas rotas do PoliGestor — '
-          'sem integração com outros produtos ONNEXIS.',
-          style: Theme.of(context).textTheme.bodySmall,
-          textAlign: TextAlign.center,
-        ),
-      ],
+      ),
+      label: Text(label),
     );
   }
 }

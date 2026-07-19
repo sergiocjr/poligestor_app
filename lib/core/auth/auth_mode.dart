@@ -200,8 +200,8 @@ enum AuthMode {
   String get communicationTemplatesPath => '/v1/templates';
   String get communicationCampaignsPath => '/v1/campaigns';
 
-  /// Ainda 404 na VPS — UI usa estado "indisponível", sem mock.
-  String get communicationConversationsPath => '/v1/conversations';
-  String get communicationQueuePath => '/v1/queue';
-  String get communicationOperatorsPath => '/v1/operators';
+  /// Omnichannel LIVE (Sprint 10.4 sync).
+  String get communicationConversationsPath => '/v1/omnichannel/conversations';
+  String get communicationQueuePath => '/v1/omnichannel/queue';
+  String get communicationOperatorsPath => '/v1/omnichannel/operators';
 }

@@ -10,19 +10,18 @@
 | 9.5 | Hardening completo (produção) | CONCLUÍDA |
 | 10.1 | Equipe Virtual (agentes / operação) | CONCLUÍDA (Final) |
 | **10.2** | Identidade, autenticação e multi-tenant | **FECHADA (Flutter)** |
-| **10.4** | Central de Comunicação | **EM ENTREGA** (canais/templates/campanhas LIVE) |
+| **10.4** | Central de Comunicação | **SINCRONIZADA** (omnichannel LIVE) |
 | 10.5 | — | **Não iniciada** |
 | Próximo | Conversas/fila/operadores quando VPS publicar + OAuth nativo | Em aberto |
 
 ## Retomada
 
-1. VPS: publicar conversas / fila / operadores no namespace PoliGestor (`/v1/conversations` etc.)
-2. Flutter: ligar aba Conversas nos contratos reais (sem mock)
-3. OAuth SDKs nativos + APNs (fora do escopo 10.4)
+1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
+2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
 
-## Sprint 10.4 (em entrega)
+## Sprint 10.4 (sincronizada)
 
-**Central de Comunicação** exclusiva PoliGestor. LIVE: channels, templates, campaigns. Pendente VPS: conversations/queue/operators — UI com estado indisponível honesto.
+**Central de Comunicação** exclusiva PoliGestor. LIVE: channels, templates, campaigns + omnichannel conversations/queue/operators.
 
 ## Sprint 10.2 (Flutter fechado — pendências OAuth nativo)
 

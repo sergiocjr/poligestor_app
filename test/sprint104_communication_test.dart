@@ -14,9 +14,9 @@ void main() {
       expect(m.communicationChannelsPath, '/v1/channels');
       expect(m.communicationTemplatesPath, '/v1/templates');
       expect(m.communicationCampaignsPath, '/v1/campaigns');
-      expect(m.communicationConversationsPath, '/v1/conversations');
-      expect(m.communicationQueuePath, '/v1/queue');
-      expect(m.communicationOperatorsPath, '/v1/operators');
+      expect(m.communicationConversationsPath, '/v1/omnichannel/conversations');
+      expect(m.communicationQueuePath, '/v1/omnichannel/queue');
+      expect(m.communicationOperatorsPath, '/v1/omnichannel/operators');
     });
   });
 
@@ -104,6 +104,47 @@ void main() {
       });
       expect(list.length, 2);
       expect(list.first['name'], 'A');
+    });
+
+    test('queue snapshot and operator from LIVE omnichannel json', () {
+      final q = CommQueueSnapshot.fromJson({
+        'queue': 1,
+        'assigned': 2,
+        'closed': 3,
+        'operators': 4,
+      });
+      expect(q.queue, 1);
+      expect(q.assigned, 2);
+      expect(q.closed, 3);
+      expect(q.operators, 4);
+
+      final op = CommOperator.fromJson({
+        'id': null,
+        'user_id': 1,
+        'name': 'Admin Demo',
+        'email': 'admin@demo.local',
+        'status': 'offline',
+        'active_conversations': 0,
+        'last_seen_at': null,
+      });
+      expect(op.id, '1');
+      expect(op.statusLabel, 'Offline');
+      expect(op.isOnline, isFalse);
+    });
+
+    test('conversation parses contact and status', () {
+      final c = CommConversation.fromJson({
+        'id': 'cv-1',
+        'status': 'queued',
+        'channel': {'type': 'whatsapp'},
+        'contact': {'name': 'Maria'},
+        'unread_count': 2,
+      });
+      expect(c.id, 'cv-1');
+      expect(c.statusLabel, 'Na fila');
+      expect(c.channelType, 'whatsapp');
+      expect(c.contactName, 'Maria');
+      expect(c.unreadCount, 2);
     });
   });
 

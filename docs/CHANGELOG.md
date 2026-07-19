@@ -1,5 +1,12 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 10.4 sync — omnichannel LIVE] — 2026-07-19
+
+### Changed
+
+- Conversas / fila / operadores passam a consumir `GET /v1/omnichannel/conversations|queue|operators` (HTTP 200)
+- Removido `EndpointPendingState` dessas três rotas; aba Conversas lista KPIs, operadores e conversas
+
 ## [Sprint 10.4 — Central de Comunicação] — 2026-07-19
 
 ### Added

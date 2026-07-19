@@ -60,10 +60,9 @@ Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
 Staff — **Mais → Central de Comunicação** (`/home/communication`):
 
-- **LIVE:** canais (`GET /v1/channels`), templates (`GET /v1/templates` + detalhe), campanhas (`GET /v1/campaigns` + detalhe)
+- **LIVE:** canais, templates, campanhas + omnichannel (`/v1/omnichannel/conversations|queue|operators`)
 - Filtros LIVE: `search`, `status`, `channel_type`, `sort`
 - Cache offline local (`pg_comms_*`) + refresh via `MandateRefreshController`
-- **Pendente VPS (sem mock):** conversas `/v1/conversations`, fila `/v1/queue`, operadores `/v1/operators` — UI com `EndpointPendingState`
 - Isolamento absoluto: nenhum código/DB/API de NexChat, NexISP, GestFin ou outros produtos ONNEXIS
 - Deep links `poligestor://communication/...`
 

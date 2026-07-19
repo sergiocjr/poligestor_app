@@ -1,7 +1,5 @@
 import '../../../core/api/api_client.dart';
-import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
-import '../../identity/data/identity_models.dart';
 import 'communication_cache.dart';
 import 'communication_models.dart';
 
@@ -140,20 +138,66 @@ class CommunicationRepository {
     return envelope.data;
   }
 
-  /// Probe honesto — conversas ainda não existem na VPS (404).
-  Future<void> assertConversationsLive() async {
+  Future<List<CommConversation>> conversations({bool allowCache = true}) async {
     try {
-      await _api.getEnvelope<dynamic>(
+      final envelope = await _api.getEnvelope<List<CommConversation>>(
         AuthMode.staff.communicationConversationsPath,
         mode: AuthMode.staff,
-        parse: (raw) => raw,
+        parse: (raw) => asMapList(
+          raw,
+        ).map(CommConversation.fromJson).toList(growable: false),
       );
-    } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 501) {
-        throw EndpointUnavailableException(
-          AuthMode.staff.communicationConversationsPath,
-          statusCode: e.statusCode,
-        );
+      await _cache.saveConversations(envelope.data);
+      return envelope.data;
+    } catch (e) {
+      if (allowCache) {
+        final cached = await _cache.getConversations();
+        if (cached != null) return cached;
+      }
+      rethrow;
+    }
+  }
+
+  Future<CommQueueSnapshot> queue({bool allowCache = true}) async {
+    try {
+      final envelope = await _api.getEnvelope<CommQueueSnapshot>(
+        AuthMode.staff.communicationQueuePath,
+        mode: AuthMode.staff,
+        parse: (raw) {
+          if (raw is Map<String, dynamic>) {
+            return CommQueueSnapshot.fromJson(raw);
+          }
+          if (raw is Map) {
+            return CommQueueSnapshot.fromJson(Map<String, dynamic>.from(raw));
+          }
+          return const CommQueueSnapshot();
+        },
+      );
+      await _cache.saveQueue(envelope.data);
+      return envelope.data;
+    } catch (e) {
+      if (allowCache) {
+        final cached = await _cache.getQueue();
+        if (cached != null) return cached;
+      }
+      rethrow;
+    }
+  }
+
+  Future<List<CommOperator>> operators({bool allowCache = true}) async {
+    try {
+      final envelope = await _api.getEnvelope<List<CommOperator>>(
+        AuthMode.staff.communicationOperatorsPath,
+        mode: AuthMode.staff,
+        parse: (raw) =>
+            asMapList(raw).map(CommOperator.fromJson).toList(growable: false),
+      );
+      await _cache.saveOperators(envelope.data);
+      return envelope.data;
+    } catch (e) {
+      if (allowCache) {
+        final cached = await _cache.getOperators();
+        if (cached != null) return cached;
       }
       rethrow;
     }

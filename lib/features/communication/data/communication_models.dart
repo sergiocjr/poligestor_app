@@ -189,6 +189,152 @@ class CommCampaign {
   }
 }
 
+class CommConversation {
+  const CommConversation({
+    required this.id,
+    required this.title,
+    this.status,
+    this.channelType,
+    this.contactName,
+    this.assignedTo,
+    this.updatedAt,
+    this.unreadCount = 0,
+  });
+
+  final String id;
+  final String title;
+  final String? status;
+  final String? channelType;
+  final String? contactName;
+  final String? assignedTo;
+  final DateTime? updatedAt;
+  final int unreadCount;
+
+  factory CommConversation.fromJson(Map<String, dynamic> json) {
+    DateTime? parseDt(dynamic v) =>
+        v == null ? null : DateTime.tryParse(v.toString());
+    final contact = json['contact'] ?? json['citizen'] ?? json['customer'];
+    String? contactName;
+    if (contact is Map) {
+      contactName =
+          (contact['name'] ?? contact['display_name'] ?? contact['email'])
+              ?.toString();
+    } else if (contact != null) {
+      contactName = contact.toString();
+    }
+    final assigned =
+        json['assigned_to'] ?? json['operator'] ?? json['assignee'];
+    String? assignedTo;
+    if (assigned is Map) {
+      assignedTo = (assigned['name'] ?? assigned['email'])?.toString();
+    } else if (assigned != null) {
+      assignedTo = assigned.toString();
+    }
+    return CommConversation(
+      id: (json['id'] ?? json['uuid'] ?? '').toString(),
+      title:
+          (json['title'] ??
+                  json['subject'] ??
+                  json['preview'] ??
+                  contactName ??
+                  'Conversa')
+              .toString(),
+      status: json['status']?.toString(),
+      channelType: () {
+        final ch = json['channel'];
+        if (ch is Map) {
+          return (ch['type'] ?? ch['channel_type'])?.toString();
+        }
+        return (json['channel_type'] ?? json['channel'])?.toString();
+      }(),
+      contactName: contactName ?? json['contact_name']?.toString(),
+      assignedTo: assignedTo,
+      updatedAt: parseDt(
+        json['updated_at'] ?? json['last_message_at'] ?? json['created_at'],
+      ),
+      unreadCount: _asInt(json['unread_count'] ?? json['unread']),
+    );
+  }
+
+  String get statusLabel => switch ((status ?? '').toLowerCase()) {
+    'open' || 'opened' || 'aberta' || 'aberto' => 'Aberta',
+    'queued' || 'queue' || 'na_fila' || 'waiting' => 'Na fila',
+    'assigned' || 'atribuida' || 'atribuída' => 'Atribuída',
+    'closed' || 'resolved' || 'fechada' || 'resolvida' => 'Fechada',
+    'pending' || 'pendente' => 'Pendente',
+    '' => '—',
+    _ => status!,
+  };
+}
+
+class CommQueueSnapshot {
+  const CommQueueSnapshot({
+    this.queue = 0,
+    this.assigned = 0,
+    this.closed = 0,
+    this.operators = 0,
+  });
+
+  final int queue;
+  final int assigned;
+  final int closed;
+  final int operators;
+
+  factory CommQueueSnapshot.fromJson(Map<String, dynamic> json) {
+    final nested = json['data'];
+    final src = nested is Map ? Map<String, dynamic>.from(nested) : json;
+    return CommQueueSnapshot(
+      queue: _asInt(src['queue'] ?? src['waiting'] ?? src['pending']),
+      assigned: _asInt(src['assigned'] ?? src['in_progress']),
+      closed: _asInt(src['closed'] ?? src['resolved']),
+      operators: _asInt(src['operators'] ?? src['operators_online']),
+    );
+  }
+}
+
+class CommOperator {
+  const CommOperator({
+    required this.id,
+    required this.name,
+    this.email,
+    this.status,
+    this.activeConversations = 0,
+    this.lastSeenAt,
+  });
+
+  final String id;
+  final String name;
+  final String? email;
+  final String? status;
+  final int activeConversations;
+  final DateTime? lastSeenAt;
+
+  factory CommOperator.fromJson(Map<String, dynamic> json) {
+    return CommOperator(
+      id: (json['id'] ?? json['user_id'] ?? json['uuid'] ?? '').toString(),
+      name: (json['name'] ?? json['display_name'] ?? 'Operador').toString(),
+      email: json['email']?.toString(),
+      status: json['status']?.toString(),
+      activeConversations: _asInt(
+        json['active_conversations'] ?? json['active'],
+      ),
+      lastSeenAt: json['last_seen_at'] == null
+          ? null
+          : DateTime.tryParse(json['last_seen_at'].toString()),
+    );
+  }
+
+  String get statusLabel => switch ((status ?? '').toLowerCase()) {
+    'online' || 'disponivel' || 'disponível' => 'Online',
+    'offline' => 'Offline',
+    'busy' || 'ocupado' || 'away' => 'Ocupado',
+    '' => '—',
+    _ => status!,
+  };
+
+  bool get isOnline => (status ?? '').toLowerCase() == 'online';
+}
+
 List<dynamic> _asList(dynamic raw) {
   if (raw is List) return raw;
   if (raw is Map) {

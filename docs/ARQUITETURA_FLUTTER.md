@@ -119,7 +119,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 
 - Feature isolada `lib/features/communication/` (somente PoliGestor)
 - LIVE: `/v1/channels`, `/v1/templates`, `/v1/campaigns` (+ detalhe)
-- Pendente VPS: `/v1/conversations`, `/v1/queue`, `/v1/operators` → `EndpointPendingState`
+- LIVE omnichannel: `/v1/omnichannel/conversations`, `/queue`, `/operators`
 - Cache `pg_comms_*`; refresh via `MandateRefreshController`
 - Sem integração com NexChat / NexISP / GestFin
 
