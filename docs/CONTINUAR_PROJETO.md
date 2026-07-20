@@ -41,8 +41,8 @@ Atualizado: 2026-07-20 (Fase 18 — IA Avançada entregue no Flutter; fechamento
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (pendente — entrega Fase 18) |
-| Push | Pendente |
+| Último commit | `d217b15` — feat Fase 18 IA Avançada |
+| Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
