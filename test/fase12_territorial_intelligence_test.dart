@@ -3,6 +3,7 @@ import 'package:poligestor_app/core/auth/auth_mode.dart';
 import 'package:poligestor_app/features/notifications/data/push_payload.dart';
 import 'package:poligestor_app/features/notifications/domain/notification_router.dart';
 import 'package:poligestor_app/features/territorial_intelligence/data/territorial_intelligence_cache.dart';
+import 'package:poligestor_app/features/territorial_intelligence/data/territorial_intelligence_contracts.dart';
 import 'package:poligestor_app/features/territorial_intelligence/data/territorial_intelligence_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,6 +39,21 @@ void main() {
     });
   });
 
+  group('territorial intelligence LIVE contracts', () {
+    test('marks VPS-published slugs as live', () {
+      expect(territorialIntelligencePathLive('dashboard'), isTrue);
+      expect(territorialIntelligencePathLive('kpis'), isTrue);
+      expect(territorialIntelligencePathLive('charts'), isTrue);
+      expect(territorialIntelligencePathLive('neighborhoods'), isTrue);
+      expect(territorialIntelligencePathLive('regions'), isTrue);
+      expect(territorialIntelligencePathLive('trends'), isTrue);
+      expect(territorialIntelligencePathLive('projections'), isTrue);
+      expect(territorialIntelligencePathLive('bi'), isFalse);
+      expect(territorialIntelligencePathLive('heatmap'), isFalse);
+      expect(territorialIntelligencePathLive('exports'), isFalse);
+    });
+  });
+
   group('territorial intelligence models', () {
     test('parses dashboard counts', () {
       final d = TerritorialDashboard.fromJson({
@@ -54,6 +70,18 @@ void main() {
       expect(d.kpisTotal, 12);
       expect(d.demandsOpen, 4);
       expect(d.neighborhoods, 9);
+    });
+
+    test('parses territorial item from neighborhoods key', () {
+      final list = asTiMapList({
+        'neighborhoods': [
+          {'id': '1', 'name': 'Centro', 'value': 10},
+        ],
+      });
+      expect(list, hasLength(1));
+      final item = TerritorialItem.fromJson(list.first);
+      expect(item.title, 'Centro');
+      expect(item.value, 10);
     });
 
     test('parses territorial item', () {

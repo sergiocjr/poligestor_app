@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 12 — sync LIVE Inteligência Territorial] — 2026-07-20
+
+### Changed
+
+- Probe VPS: 7 paths LIVE (`dashboard`, `kpis`, `charts`, `neighborhoods`, `regions`, `trends`, `projections` → HTTP 401 sem token)
+- Hub com chips **Ativo** / **Em preparação** alinhados ao probe
+- Parsing de listas ampliado (`neighborhoods`, `regions`, `charts`, `trends`, …)
+- Painel BI com atalhos clicáveis, refresh e estados de cache
+- Docs `CONTINUAR_PROJETO`, `STATUS_PROJETO`, `FASE_12`, `CHANGELOG` atualizados
+
+### Notes
+
+- Paths 404 permanecem em `EndpointPendingState`
+- Fechamento formal pelos 15 critérios ainda pendente (backend incompleto)
+
 ## [Revisão UX/UI Gabinete] — 2026-07-20
 
 ### Fixed / Improved

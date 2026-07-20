@@ -20,12 +20,12 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Fase | **Fase 12 — Inteligência Territorial** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; fechamento pelos 15 critérios pendente) |
-| Qualidade Gabinete | **Revisão UX/UI 2026-07-20** concluída (antes de nova Fase) |
+| Status formal | **EM ANDAMENTO** (Flutter sincronizado com probe; backend incompleto → não fecha pelos 15 critérios) |
 | Hub | Mais → Inteligência Territorial (`/home/territorial-intelligence`) |
 | Namespace oficial | `/api/v1/intelligence/*` (sem aliases) |
 | Doc da fase | [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md) |
-| Fase 11 | Flutter entregue; fechamento formal ainda pendente (A10 / backend eventos / HTTP 500) |
+| Fase 11 | Flutter entregue; fechamento formal ainda pendente |
+| Fase 13 | **Bloqueada** |
 
 ---
 
@@ -34,22 +34,18 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `59c53f4` — revisão UX/UI Gabinete |
-| Push | Pendente (local) |
+| Working tree | Commit + push desta entrega Fase 12 |
+| Dispositivo | SM-A105M `RX8M70CLXKP` |
 
-### Navegação Gabinete (2026-07-20)
+### Navegação Gabinete
 
 - Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Status bar: sem faixa branca (AppBar + `SystemUiOverlayStyle` transparente; sem SafeArea no body do shell)
-- Agenda (aba): `GET /v1/mandate/agenda` (LIVE; 401 sem token) — não usa `/v1/events`
-- Validado no SM-A105M (`RX8M70CLXKP`) — APK debug instalado
+- Inteligência Territorial: Mais → hub `/home/territorial-intelligence`
 
 ---
 
-## Telas concluídas (Fase 12 — UI pronta)
-
-Rotas sob `/home/territorial-intelligence` — **todas Em preparação** (probe 404):
+## Telas (Fase 12)
 
 Painel BI · Painel Analítico · Indicadores-chave · Indicadores · Gráficos · Mapas de calor · Mapa territorial · Bairros · Regiões · Zonas eleitorais · Lideranças · Demandas · Obras · Protocolos · Atendimentos · Comparativos · Evolução · Tendências · Projeções · Filtros · Exportações.
 
@@ -59,17 +55,24 @@ Material 3 · Android · Tablet · Web · PT-BR · responsivo (1 coluna no A10).
 
 ## Contratos LIVE consumidos (Fase 12)
 
-| Método | Path | Status VPS |
-|--------|------|------------|
-| — | `/v1/intelligence/*` | **Nenhum LIVE** (todos 404 em 2026-07-20) |
+Probe 2026-07-20 **sem token** (401 = rota publicada; 404 = pendente):
 
-Quando a VPS publicar HTTP 200, remover `EndpointPendingState` e marcar chips **Ativo**.
+| Path | Status VPS | App |
+|------|------------|-----|
+| `/v1/intelligence/dashboard` | **401 LIVE** | Consome |
+| `/v1/intelligence/kpis` | **401 LIVE** | Consome |
+| `/v1/intelligence/charts` | **401 LIVE** | Consome |
+| `/v1/intelligence/neighborhoods` | **401 LIVE** | Consome |
+| `/v1/intelligence/regions` | **401 LIVE** | Consome |
+| `/v1/intelligence/trends` | **401 LIVE** | Consome |
+| `/v1/intelligence/projections` | **401 LIVE** | Consome |
+| Demais paths do namespace | **404** | `EndpointPendingState` |
 
 ---
 
 ## EndpointPendingState
 
-Todos os paths `/v1/intelligence/{dashboard,bi,kpis,indicators,charts,heatmap,map,neighborhoods,regions,electoral-zones,leaderships,demands,works,protocols,attendances,comparatives,evolution,trends,projections,filters,exports}`.
+`bi`, `indicators`, `heatmap`, `map`, `electoral-zones`, `leaderships`, `demands`, `works`, `protocols`, `attendances`, `comparatives`, `evolution`, `filters`, `exports`.
 
 ---
 
@@ -100,67 +103,17 @@ poligestor://painel-inteligencia-territorial/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 12 | APK instalado no A10 (RX8M70CLXKP); navegação Gabinete validada 2026-07-20 |
+| Validação APK Fase 12 | APK debug instalado nesta entrega |
 
 ---
 
-## Material 3
+## Pendências reais (fechamento formal)
 
-Hub grid responsivo, chips **Em preparação**, listas e painel Material 3.
-
----
-
-## Pendências reais
-
-1. Backend publicar `/v1/intelligence/*` (hoje 100% 404).
-2. Validar APK no A10.
-3. PHPUnit do domínio no backend.
-4. Auditoria Backend ↔ Flutter após publicação LIVE.
-5. Fechamento formal da Fase 11 (critérios restantes).
-
----
+1. Backend publicar paths ainda em 404 e completar domínio.
+2. PHPUnit do domínio no backend.
+3. Auditoria Backend ↔ Flutter após payloads 200 autenticados.
+4. Fechamento formal da Fase 11.
 
 ## Próxima Fase
 
-| Campo | Valor |
-|-------|--------|
-| Fase 13 | **Bloqueada** até Fase 12 formalmente concluída (15 critérios) |
-
----
-
-## Regras permanentes
-
-- Fases completas: `.cursor/rules/fases-completas.mdc`
-- LIVE-only: `.cursor/rules/live-only-apis.mdc`
-- PT-BR: `.cursor/rules/pt-br-ui.mdc`
-- A10 + limpeza: `.cursor/rules/flutter-device-a10.mdc`
-- Gradle/Java: `.cursor/rules/gradle-memory-cleanup.mdc`
-
----
-
-## Checklist de retomada
-
-```text
-[ ] Ler docs/CONTINUAR_PROJETO.md
-[ ] Ler docs/STATUS_PROJETO.md
-[ ] Ler docs/CHANGELOG.md
-[ ] git log -5 --oneline && git status -sb
-[ ] Probe VPS /v1/intelligence/*
-[ ] adb devices — somente A10
-[ ] analyze + test + apk + web
-[ ] Instalar no A10
-[ ] Limpeza gradlew + flutter_cleanup.ps1
-[ ] Atualizar CONTINUAR_PROJETO.md + STATUS + CHANGELOG
-[ ] Commit + push
-[ ] Relatório dos 15 critérios
-```
-
----
-
-## Links
-
-- [STATUS_PROJETO.md](STATUS_PROJETO.md)
-- [CHANGELOG.md](CHANGELOG.md)
-- [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md)
-- [FASE_11_EVENTOS.md](FASE_11_EVENTOS.md)
-- Repo: https://github.com/sergiocjr/poligestor_app
+**Fase 13 — bloqueada** até os 15 critérios da Fase 12.

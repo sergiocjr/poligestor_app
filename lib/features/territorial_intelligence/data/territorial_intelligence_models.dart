@@ -20,7 +20,15 @@ List<Map<String, dynamic>> asTiMapList(dynamic raw) {
         raw['items'] ??
         raw['results'] ??
         raw['indicators'] ??
-        raw['kpis'];
+        raw['kpis'] ??
+        raw['charts'] ??
+        raw['series'] ??
+        raw['neighborhoods'] ??
+        raw['regions'] ??
+        raw['trends'] ??
+        raw['projections'] ??
+        raw['rows'] ??
+        raw['entries'];
     if (v is List) {
       return v
           .whereType<Map>()

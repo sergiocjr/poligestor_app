@@ -8,6 +8,7 @@ import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
+import '../data/territorial_intelligence_contracts.dart';
 import '../data/territorial_intelligence_models.dart';
 import '../data/territorial_intelligence_repository.dart';
 
@@ -39,197 +40,246 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
       'Painel BI',
       'Visão executiva territorial',
       Icons.dashboard_outlined,
+      'dashboard',
       '/home/territorial-intelligence/dashboard',
     ),
     _Entry(
       'Painel Analítico',
       'Visão analítica do território',
       Icons.analytics_outlined,
+      'bi',
       '/home/territorial-intelligence/bi',
     ),
     _Entry(
       'Indicadores-chave',
       'KPIs do território',
       Icons.speed_outlined,
+      'kpis',
       '/home/territorial-intelligence/kpis',
     ),
     _Entry(
       'Indicadores',
       'Métricas detalhadas',
       Icons.insights_outlined,
+      'indicators',
       '/home/territorial-intelligence/indicators',
     ),
     _Entry(
       'Gráficos',
       'Séries e visualizações',
       Icons.bar_chart_outlined,
+      'charts',
       '/home/territorial-intelligence/charts',
     ),
     _Entry(
       'Mapas de calor',
       'Concentração geográfica',
       Icons.bubble_chart_outlined,
+      'heatmap',
       '/home/territorial-intelligence/heatmap',
     ),
     _Entry(
       'Mapa territorial',
       'Território e localidades',
       Icons.map_outlined,
+      'map',
       '/home/territorial-intelligence/map',
     ),
     _Entry(
       'Bairros',
       'Análise por bairro',
       Icons.location_city_outlined,
+      'neighborhoods',
       '/home/territorial-intelligence/neighborhoods',
     ),
     _Entry(
       'Regiões',
       'Análise regional',
       Icons.public_outlined,
+      'regions',
       '/home/territorial-intelligence/regions',
     ),
     _Entry(
       'Zonas eleitorais',
       'Recorte eleitoral',
       Icons.how_to_vote_outlined,
+      'electoral-zones',
       '/home/territorial-intelligence/electoral-zones',
     ),
     _Entry(
       'Lideranças',
       'Lideranças territoriais',
       Icons.groups_outlined,
+      'leaderships',
       '/home/territorial-intelligence/leaderships',
     ),
     _Entry(
       'Demandas',
       'Demandas do território',
       Icons.inbox_outlined,
+      'demands',
       '/home/territorial-intelligence/demands',
     ),
     _Entry(
       'Obras',
       'Obras no território',
       Icons.construction_outlined,
+      'works',
       '/home/territorial-intelligence/works',
     ),
     _Entry(
       'Protocolos',
       'Protocolos territoriais',
       Icons.assignment_outlined,
+      'protocols',
       '/home/territorial-intelligence/protocols',
     ),
     _Entry(
       'Atendimentos',
       'Atendimentos no território',
       Icons.support_agent_outlined,
+      'attendances',
       '/home/territorial-intelligence/attendances',
     ),
     _Entry(
       'Comparativos',
       'Comparação de períodos',
       Icons.compare_arrows,
+      'comparatives',
       '/home/territorial-intelligence/comparatives',
     ),
     _Entry(
       'Evolução',
       'Evolução temporal',
       Icons.show_chart,
+      'evolution',
       '/home/territorial-intelligence/evolution',
     ),
     _Entry(
       'Tendências',
       'Tendências detectadas',
       Icons.trending_up,
+      'trends',
       '/home/territorial-intelligence/trends',
     ),
     _Entry(
       'Projeções',
       'Projeções e cenários',
       Icons.timeline,
+      'projections',
       '/home/territorial-intelligence/projections',
     ),
     _Entry(
       'Filtros',
       'Filtros territoriais',
       Icons.filter_list,
+      'filters',
       '/home/territorial-intelligence/filters',
     ),
     _Entry(
       'Exportações',
       'Exportar relatórios',
       Icons.file_download_outlined,
+      'exports',
       '/home/territorial-intelligence/exports',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(title: const Text('Inteligência Territorial')),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 840;
           final cross = wide ? (constraints.maxWidth >= 1100 ? 3 : 2) : 1;
-          final grid = GridView.builder(
-            padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: cross,
-              mainAxisExtent: cross == 1 ? 96 : 112,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-            ),
-            itemCount: _entries.length,
-            itemBuilder: (context, i) {
-              final e = _entries[i];
-              return Card(
-                clipBehavior: Clip.antiAlias,
-                child: InkWell(
-                  onTap: () => context.push(e.route),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
-                    ),
-                    child: Row(
-                      children: [
-                        CircleAvatar(child: Icon(e.icon)),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                e.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              Text(
-                                e.subtitle,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Chip(
-                          label: Text(uiContractChip(available: false)),
-                          visualDensity: VisualDensity.compact,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      ],
-                    ),
-                  ),
+          final grid = ListView(
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+            children: [
+              SoftNotice(
+                message:
+                    'Consome somente /v1/intelligence/*. Chip Ativo = contrato '
+                    'LIVE na VPS; Em preparação = EndpointPendingState.',
+              ),
+              const SizedBox(height: 12),
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: cross,
+                  mainAxisExtent: cross == 1 ? 96 : 112,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
                 ),
-              );
-            },
+                itemCount: _entries.length,
+                itemBuilder: (context, i) {
+                  final e = _entries[i];
+                  final live = territorialIntelligencePathLive(e.slug);
+                  return Card(
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () => context.push(e.route),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: live
+                                  ? scheme.primary.withValues(alpha: 0.12)
+                                  : scheme.surfaceContainerHighest,
+                              child: Icon(
+                                e.icon,
+                                color: live
+                                    ? scheme.primary
+                                    : scheme.onSurfaceVariant,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    e.title,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                  Text(
+                                    e.subtitle,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Chip(
+                              label: Text(
+                                uiContractChip(available: live),
+                              ),
+                              visualDensity: VisualDensity.compact,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
           );
           if (!wide) return grid;
           return Align(
@@ -246,10 +296,17 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
 }
 
 class _Entry {
-  const _Entry(this.title, this.subtitle, this.icon, this.route);
+  const _Entry(
+    this.title,
+    this.subtitle,
+    this.icon,
+    this.slug,
+    this.route,
+  );
   final String title;
   final String subtitle;
   final IconData icon;
+  final String slug;
   final String route;
 }
 
@@ -296,14 +353,15 @@ class _TerritorialIntelligenceListPageState
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.title, maxLines: 1, overflow: TextOverflow.ellipsis),
         actions: [
           IconButton(
             tooltip: 'Atualizar',
             onPressed: () => setState(() => _future = _load()),
-            icon: const Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh_rounded),
           ),
         ],
       ),
@@ -318,9 +376,13 @@ class _TerritorialIntelligenceListPageState
             if (snap.connectionState != ConnectionState.done) {
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
                 children: const [
-                  SizedBox(height: 120),
-                  Center(child: CircularProgressIndicator()),
+                  SkeletonBox(height: 72, radius: 16),
+                  SizedBox(height: 10),
+                  SkeletonBox(height: 72, radius: 16),
+                  SizedBox(height: 10),
+                  SkeletonBox(height: 72, radius: 16),
                 ],
               );
             }
@@ -351,7 +413,9 @@ class _TerritorialIntelligenceListPageState
                   .toList();
             }
             return ListView(
-              physics: const AlwaysScrollableScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
               padding: const EdgeInsets.all(12),
               children: [
                 TextField(
@@ -376,6 +440,8 @@ class _TerritorialIntelligenceListPageState
                         child: ListTile(
                           title: Text(
                             item.title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                           subtitle: Text(
@@ -388,7 +454,15 @@ class _TerritorialIntelligenceListPageState
                                 item.neighborhood!,
                               if (item.value != null)
                                 item.value!.toStringAsFixed(0),
+                              if (item.summary != null) item.summary!,
                             ].join(' · '),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Text(
+                            'Informativo',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(color: scheme.outline),
                           ),
                         ),
                       ),
@@ -427,99 +501,191 @@ class _TerritorialIntelligenceDashboardPageState
       .read<TerritorialIntelligenceRepository>()
       .dashboard(tenantSlug: _tenantOf(context));
 
+  Future<void> _reload() async {
+    final next = _load();
+    setState(() => _future = next);
+    await next;
+  }
+
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     return Scaffold(
-      appBar: AppBar(title: const Text('Painel BI territorial')),
-      body: FutureBuilder<TerritorialDashboard>(
-        future: _future,
-        builder: (context, snap) {
-          if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Painel BI preparado. Aguardando /v1/intelligence/dashboard.',
-            );
-          }
-          if (snap.hasError) {
-            return AppErrorState(
-              error: snap.error,
-              onRetry: () => setState(() => _future = _load()),
-            );
-          }
-          final d = snap.data!;
-          final items = <(String, String, IconData)>[
-            ('Indicadores-chave', '${d.kpisTotal}', Icons.speed_outlined),
-            ('Demandas abertas', '${d.demandsOpen}', Icons.inbox_outlined),
-            ('Obras ativas', '${d.worksActive}', Icons.construction_outlined),
-            (
-              'Protocolos abertos',
-              '${d.protocolsOpen}',
-              Icons.assignment_outlined,
-            ),
-            (
-              'Atendimentos',
-              '${d.attendancesPeriod}',
-              Icons.support_agent_outlined,
-            ),
-            ('Bairros', '${d.neighborhoods}', Icons.location_city_outlined),
-            ('Regiões', '${d.regions}', Icons.public_outlined),
-            ('Lideranças', '${d.leaderships}', Icons.groups_outlined),
-          ];
-          return ListView(
-            padding: const EdgeInsets.all(12),
-            children: [
-              if (d.fromCache)
-                Text(
-                  'Dados salvos ${d.cacheAgeLabel ?? ''}',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              LayoutBuilder(
-                builder: (context, box) {
-                  final cols = box.maxWidth >= 600 ? 3 : 2;
-                  return GridView.count(
-                    crossAxisCount: cols,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                    childAspectRatio: 1.35,
-                    children: [
-                      for (final (label, value, icon) in items)
-                        Card(
-                          child: Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Icon(icon, size: 20),
-                                const Spacer(),
-                                Text(
-                                  value,
-                                  style: Theme.of(context).textTheme.titleLarge
-                                      ?.copyWith(fontWeight: FontWeight.w800),
+      appBar: AppBar(
+        title: const Text('Painel BI'),
+        actions: [
+          IconButton(
+            tooltip: 'Atualizar',
+            onPressed: _reload,
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ],
+      ),
+      body: RefreshIndicator(
+        onRefresh: _reload,
+        child: FutureBuilder<TerritorialDashboard>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState != ConnectionState.done && !snap.hasData) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16),
+                children: const [
+                  SkeletonBox(height: 88, radius: 16),
+                  SizedBox(height: 12),
+                  SkeletonBox(height: 88, radius: 16),
+                ],
+              );
+            }
+            if (snap.error is EndpointUnavailableException) {
+              final err = snap.error! as EndpointUnavailableException;
+              return EndpointPendingState(
+                path: err.path,
+                message:
+                    'Painel BI preparado. Aguardando /v1/intelligence/dashboard.',
+              );
+            }
+            if (snap.hasError) {
+              return AppErrorState(
+                error: snap.error,
+                onRetry: _reload,
+              );
+            }
+            final d = snap.data!;
+            final items = <(String, String, IconData, String?)>[
+              (
+                'Indicadores-chave',
+                '${d.kpisTotal}',
+                Icons.speed_outlined,
+                '/home/territorial-intelligence/kpis',
+              ),
+              (
+                'Demandas abertas',
+                '${d.demandsOpen}',
+                Icons.inbox_outlined,
+                '/home/territorial-intelligence/demands',
+              ),
+              (
+                'Obras ativas',
+                '${d.worksActive}',
+                Icons.construction_outlined,
+                '/home/territorial-intelligence/works',
+              ),
+              (
+                'Protocolos abertos',
+                '${d.protocolsOpen}',
+                Icons.assignment_outlined,
+                '/home/territorial-intelligence/protocols',
+              ),
+              (
+                'Atendimentos',
+                '${d.attendancesPeriod}',
+                Icons.support_agent_outlined,
+                '/home/territorial-intelligence/attendances',
+              ),
+              (
+                'Bairros',
+                '${d.neighborhoods}',
+                Icons.location_city_outlined,
+                '/home/territorial-intelligence/neighborhoods',
+              ),
+              (
+                'Regiões',
+                '${d.regions}',
+                Icons.public_outlined,
+                '/home/territorial-intelligence/regions',
+              ),
+              (
+                'Lideranças',
+                '${d.leaderships}',
+                Icons.groups_outlined,
+                '/home/territorial-intelligence/leaderships',
+              ),
+            ];
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(
+                parent: BouncingScrollPhysics(),
+              ),
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
+              children: [
+                if (d.fromCache)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: SoftNotice(
+                      message:
+                          'Dados salvos ${d.cacheAgeLabel ?? ''}. Puxe para atualizar.',
+                    ),
+                  ),
+                LayoutBuilder(
+                  builder: (context, box) {
+                    final cols = box.maxWidth >= 600 ? 3 : 2;
+                    return GridView.count(
+                      crossAxisCount: cols,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: box.maxWidth < 380 ? 1.2 : 1.35,
+                      children: [
+                        for (final (label, value, icon, route) in items)
+                          Card(
+                            clipBehavior: Clip.antiAlias,
+                            child: InkWell(
+                              onTap: route == null
+                                  ? null
+                                  : () => context.push(route),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(icon, size: 20, color: scheme.primary),
+                                        const Spacer(),
+                                        Icon(
+                                          Icons.chevron_right_rounded,
+                                          size: 18,
+                                          color: scheme.primary,
+                                        ),
+                                      ],
+                                    ),
+                                    const Spacer(),
+                                    FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        value,
+                                        maxLines: 1,
+                                        style: theme.textTheme.titleLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                    ),
+                                    Text(
+                                      label,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: theme.textTheme.labelMedium
+                                          ?.copyWith(
+                                            color: scheme.onSurfaceVariant,
+                                          ),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  label,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.labelMedium,
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          );
-        },
+                      ],
+                    );
+                  },
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

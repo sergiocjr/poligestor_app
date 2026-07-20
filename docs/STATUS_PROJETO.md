@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 12 — Inteligência Territorial entregue no Flutter; **fechamento formal pendente**)
+Atualizado: 2026-07-20 (Fase 12 — Flutter sincronizado com LIVE parciais; **fechamento formal pendente**)
 
 ## Resumo
 
@@ -23,18 +23,17 @@ Atualizado: 2026-07-20 (Fase 12 — Inteligência Territorial entregue no Flutte
 | Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
 | Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** |
 | Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (Flutter entregue; fechamento pendente) |
-| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (Flutter entregue; `/v1/intelligence/*` 404) |
+| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 paths LIVE 401; restante 404 → Pending) |
 | Fase 13 | **Bloqueada** |
 
-> Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).
+> Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
+> Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
 
 ## Fase 12 — Inteligência Territorial
 
 Hub **Mais → Inteligência Territorial** (`/home/territorial-intelligence`).
 
-Namespace oficial `/v1/intelligence/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`. PT-BR.
-
-Cache: `pg_ti_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://inteligencia-territorial|territorial-intelligence/...`.
+Namespace `/v1/intelligence/*`. **LIVE (401 sem token):** `dashboard`, `kpis`, `charts`, `neighborhoods`, `regions`, `trends`, `projections`. Demais → `EndpointPendingState`. PT-BR · Material 3 · cache `pg_ti_*` · realtime `MandateRefreshController`.
 
 Doc: [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md).
 
@@ -83,19 +82,19 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 
 | # | Critério | Status |
 |---|----------|--------|
-| 1 | Backend domínio completo | Pendente (`/v1/intelligence/*` 404) |
-| 2 | Flutter consome LIVE disponíveis | OK (nenhum LIVE ainda; namespace preparado) |
+| 1 | Backend domínio completo | Pendente (14 paths ainda 404) |
+| 2 | Flutter consome LIVE disponíveis | OK (7 paths LIVE) |
 | 3 | Não publicados → `EndpointPendingState` | OK |
-| 4 | APK no Samsung Galaxy A10 | Verificar na entrega |
-| 5 | Web validada | Verificar na entrega |
+| 4 | APK no Samsung Galaxy A10 | OK nesta entrega |
+| 5 | Web validada | OK (`flutter build web` nesta entrega) |
 | 6 | `flutter analyze` | OK |
 | 7 | `flutter test` | OK (suite Fase 12) |
-| 8 | PHPUnit | Pendente / N/A neste repo |
-| 9 | Nenhum HTTP 500 | OK no probe (404, não 500) |
+| 8 | PHPUnit | N/A neste repo Flutter (domínio backend incompleto) |
+| 9 | Nenhum HTTP 500 | OK no probe (401/404) |
 | 10 | Documentação | OK |
-| 11–12 | Commit / Push | Na entrega |
-| 13–14 | Limpeza / sem emulador | Na entrega |
-| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+| 11–12 | Commit / Push | Nesta entrega |
+| 13–14 | Limpeza / sem emulador | Nesta entrega |
+| 15 | Auditoria Backend ↔ Flutter | Pendente (payloads 200 autenticados + paths faltantes) |
 
 Fase 13 **bloqueada** até os 15 itens da Fase 12 estarem OK.
 
