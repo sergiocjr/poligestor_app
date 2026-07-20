@@ -45,7 +45,7 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
     } catch (e) {
       if (!mounted) return;
       setState(
-        () => _prefsError = 'Usando preferências locais (sync pendente).',
+        () => _prefsError = 'Usando preferências locais (sincronização pendente).',
       );
     }
   }
@@ -251,7 +251,7 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                           ? Icons.notifications_active_outlined
                           : Icons.notifications_off_outlined,
                     ),
-                    title: const Text('Push (FCM)'),
+                    title: const Text('Notificações push'),
                     subtitle: Text(
                       push.firebaseReady
                           ? 'Firebase ativo${push.maskedFcmToken != null ? ' · ${push.maskedFcmToken}' : ''}'

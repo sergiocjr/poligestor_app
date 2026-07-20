@@ -518,7 +518,7 @@ class IntegrationsRepository {
     required AuthMode mode,
     required Map<String, dynamic> body,
   }) {
-    // Contrato LIVE: PUT /v1/integrations/settings com campo `settings`.
+    // contrato publicado: PUT /v1/integrations/settings com campo `settings`.
     final settings = body['settings'] is Map
         ? Map<String, dynamic>.from(body['settings'] as Map)
         : Map<String, dynamic>.from(body);

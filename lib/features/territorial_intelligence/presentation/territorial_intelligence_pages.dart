@@ -200,7 +200,7 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
               SoftNotice(
                 message:
                     'Consome somente /v1/intelligence/*. Chip Ativo = contrato '
-                    'LIVE na VPS; Em preparação = EndpointPendingState.',
+                    'publicado na VPS; Em preparação = aguardando publicação.',
               ),
               const SizedBox(height: 12),
               GridView.builder(
@@ -208,7 +208,7 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: cross == 1 ? 96 : 112,
+                  mainAxisExtent: cross == 1 ? 104 : 112,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),

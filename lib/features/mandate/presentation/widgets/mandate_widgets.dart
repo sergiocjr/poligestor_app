@@ -32,6 +32,7 @@ class MandateIndicatorCard extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Row(
                 children: [
@@ -58,7 +59,7 @@ class MandateIndicatorCard extends StatelessWidget {
                     ),
                 ],
               ),
-              const Spacer(),
+              const SizedBox(height: 8),
               FittedBox(
                 fit: BoxFit.scaleDown,
                 alignment: Alignment.centerLeft,

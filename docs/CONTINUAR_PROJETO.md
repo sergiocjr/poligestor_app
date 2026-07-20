@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
+Atualizado: 2026-07-20 (Fase 23 — Homologação Final CONCLUÍDA · **1.0.0+2**)
 
 ---
 
@@ -23,17 +23,14 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 22 — Integrações** |
-| Status formal | **CONCLUÍDA** (LIVE sync; Pending só search/filters) |
-| Hub | Mais → Central de Integrações (`/home/integrations`) |
-| Namespace oficial | `/api/v1/integrations/*` |
-| Doc da fase | [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md) |
-| Fase 21 | **EM ANDAMENTO** (`/v1/security/*` 404) |
-| Fase 20 | **EM ANDAMENTO** (`/v1/platform/*` 404) |
-| Fase 19 | **EM ANDAMENTO** (`/v1/admin/*` 404) |
-| Fase 18 | **EM ANDAMENTO** (`/v1/ai/*` sync parcial) |
-| Fase 17 | **CONCLUÍDA** (pendência A10 física) |
-| Fase 23 | **Não iniciar** sem pedido explícito |
+| Fase | **Fase 23 — Homologação Final** |
+| Status formal | **CONCLUÍDA** |
+| Versão | **1.0.0+2** |
+| Doc da fase | [FASE_23_HOMOLOGACAO_FINAL.md](FASE_23_HOMOLOGACAO_FINAL.md) |
+| Release | [RELEASE_NOTES.md](RELEASE_NOTES.md) |
+| Checklist | [CHECKLIST_HOMOLOGACAO.md](CHECKLIST_HOMOLOGACAO.md) |
+| Fase 22 | **CONCLUÍDA** |
+| Novos módulos | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -42,63 +39,38 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `e6aa198` — sync LIVE Fase 22 |
+| Último commit | (atualizar após push Fase 23) |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação
 
-- Integrações: Mais → `/home/integrations` (staff)
-- Segurança e Privacidade: Mais → `/home/security` (staff e portal)
-- Sessões de conta (legado LIVE auth): Mais → Sessões → `/account/sessions` (`/v1/auth/sessions`)
-- Portal Web: `/platform`
-- Administração app: `/home/system-admin`
+- Integrações: Mais → `/home/integrations`
+- Segurança: Mais → `/home/security`
+- Portal Web: `/platform` (Web)
+- Cidadão: `/citizen/*`
 
 ---
 
-## Contratos LIVE (Fase 22)
+## Validação 1.0
 
-| Método | Path | Status VPS |
-|--------|------|------------|
-| GET | `/v1/integrations/dashboard` | **LIVE 200** |
-| GET | `/v1/integrations/catalog` | **LIVE 200** |
-| GET | `/v1/integrations/health` | **LIVE 200** (Status UI) |
-| GET | `/v1/integrations/providers` | **LIVE 200** |
-| GET/PUT | `/v1/integrations/settings` | **LIVE 200** (Config UI) |
-| GET/POST | `/v1/integrations/sync` | **LIVE 200/202** |
-| GET | `/v1/integrations/history` · `/logs` | **LIVE 200** |
-| GET | provedores (govbr, senado, esic, outlook, …) | **LIVE 200** |
-| GET | `/v1/integrations/webhooks` | **LIVE 200** |
-| GET | `/v1/integrations/search` · `/filters` | **404 Pending** |
+| Item | Resultado |
+|------|-----------|
+| `flutter analyze` | Sem errors/warnings (infos de estilo) |
+| `flutter test` | 333/333 |
+| APK release | OK (`app-release.apk` ~62 MB) |
+| Web release | OK (`build/web`) |
+| A10 | install + deep links OK |
+| Emulador | Não iniciado |
 
 ---
 
-## Deep Links
+## Pendências reais (pós-1.0)
 
-```
-poligestor://integrations/...
-poligestor://integracoes/...
-poligestor://integracao/...
-poligestor://central-integracoes/...
-```
+1. Aceite funcional do produto / publicação loja e hospedagem Web.
+2. Backend publicar contratos ainda 404 (security, admin, platform, search/filters de integrações, etc.).
+3. Fechamento formal opcional das fases EM ANDAMENTO quando a VPS sincronizar.
 
----
+## Próximo passo
 
-## Samsung Galaxy A10
-
-| Campo | Valor |
-|-------|--------|
-| Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
-| Emulador | **Proibido** |
-| Validação APK Fase 22 LIVE | OK (hub + telas LIVE) |
-
----
-
-## Pendências reais
-
-1. Backend publicar `/v1/integrations/search` e `/filters` (opcional).
-2. Fechamento formal das Fases 11–12, 15–16, 18–21 (quando solicitado).
-
-## Próxima Fase
-
-**Fase 23 — não iniciar** sem pedido explícito.
+Manutenção e sync LIVE sob demanda. **Sem nova fase de módulos** sem pedido explícito.

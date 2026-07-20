@@ -65,7 +65,7 @@ class TenantOrganization {
   final Map<String, dynamic> raw;
 
   factory TenantOrganization.fromJson(Map<String, dynamic> json) {
-    // Contrato LIVE: { method, organization: {...}, config, features }
+    // Contrato publicado: { method, organization: {...}, config, features }
     final org = json['organization'] is Map
         ? idAsMap(json['organization'])
         : (json['tenant'] is Map ? idAsMap(json['tenant']) : json);

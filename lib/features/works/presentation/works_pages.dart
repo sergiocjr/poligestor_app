@@ -101,7 +101,7 @@ class WorksHubPage extends StatelessWidget {
       false,
     ),
     _Entry(
-      'Checklist',
+      'Lista de verificação',
       'Itens de verificação',
       Icons.checklist_outlined,
       '/home/works/checklist',
@@ -143,7 +143,7 @@ class WorksHubPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: cross,
-              mainAxisExtent: cross == 1 ? 96 : 112,
+              mainAxisExtent: cross == 1 ? 104 : 112,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),
@@ -519,7 +519,7 @@ class _WorksDashboardPageState extends State<WorksDashboardPage>
               '${d.scheduleUpcoming}',
               Icons.calendar_month_outlined,
             ),
-            ('Checklist', '${d.checklistOpen}', Icons.checklist_outlined),
+            ('Lista de verificação', '${d.checklistOpen}', Icons.checklist_outlined),
             ('Fotos', '${d.photosCount}', Icons.photo_library_outlined),
           ];
           return ListView(
@@ -670,7 +670,7 @@ class _WorksDetailPageState extends State<WorksDetailPage> {
                   ),
                   FilledButton.tonal(
                     onPressed: () => context.push('/home/works/checklist'),
-                    child: const Text('Checklist'),
+                    child: const Text('Lista de verificação'),
                   ),
                   FilledButton.tonal(
                     onPressed: () => context.push('/home/works/map'),

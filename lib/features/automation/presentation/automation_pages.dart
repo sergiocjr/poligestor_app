@@ -1007,7 +1007,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('OK'),
+              child: const Text('Entendi'),
             ),
           ],
         ),

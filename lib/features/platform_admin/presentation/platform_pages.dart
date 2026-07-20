@@ -45,7 +45,7 @@ const platformSlugTitles = <String, String>{
   'tickets': 'Chamados',
   'knowledge-base': 'Base de conhecimento',
   'announcements': 'Comunicados',
-  'releases': 'Releases',
+  'releases': 'Versões',
   'maintenances': 'Manutenções',
   'reports': 'Relatórios',
   'exports': 'Exportações',
@@ -275,7 +275,7 @@ const _hubEntries = <_HubEntry>[
     '/platform/announcements',
   ),
   _HubEntry(
-    'Releases',
+    'Versões',
     'Versões publicadas',
     Icons.new_releases_outlined,
     'releases',
@@ -1015,7 +1015,7 @@ List<RouteBase> buildPlatformChildRoutes() => [
   GoRoute(
     path: 'releases',
     builder: (_, _) => PlatformListPage(
-      title: 'Releases',
+      title: 'Versões',
       emptyMessage: 'Nenhuma release encontrada.',
       loader: (repo, tenant) => repo.releases(tenantSlug: tenant),
     ),

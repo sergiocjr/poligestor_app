@@ -123,14 +123,14 @@ class DocumentsHubPage extends StatelessWidget {
       '/home/documents/templates',
     ),
     _Entry(
-      'Download',
+      'Baixar',
       'Baixar arquivos',
       Icons.download_outlined,
       'download',
       '/home/documents/download',
     ),
     _Entry(
-      'Upload',
+      'Enviar',
       'Enviar arquivos',
       Icons.upload_file_outlined,
       'upload',
@@ -160,7 +160,7 @@ class DocumentsHubPage extends StatelessWidget {
               SoftNotice(
                 message:
                     'Namespace /v1/documents/* publicado na VPS. Todos os '
-                    'módulos abaixo estão Ativos e consomem o contrato LIVE.',
+                    'módulos abaixo estão Ativos e consomem o contrato publicado.',
               ),
               const SizedBox(height: 12),
               GridView.builder(
@@ -168,7 +168,7 @@ class DocumentsHubPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: cross == 1 ? 96 : 112,
+                  mainAxisExtent: cross == 1 ? 104 : 112,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),

@@ -466,7 +466,7 @@ class _StrategyKpisPageState extends State<StrategyKpisPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('KPIs')),
+      appBar: AppBar(title: const Text('Indicadores')),
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() => _future = _load());

@@ -220,7 +220,7 @@ class EventsHubPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: cross,
-              mainAxisExtent: cross == 1 ? 96 : 112,
+              mainAxisExtent: cross == 1 ? 104 : 112,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),

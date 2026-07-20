@@ -154,7 +154,7 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
                         if (s.ip != null) 'IP ${s.ip}',
                         if (s.location != null) s.location!,
                         'Último acesso: ${_fmt(s.lastUsedAt)}',
-                        if (s.hasRefresh) 'Refresh ativo',
+                        if (s.hasRefresh) 'Atualização ativa',
                       ].join('\n'),
                     ),
                     isThreeLine: true,

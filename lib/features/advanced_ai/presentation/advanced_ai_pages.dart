@@ -589,7 +589,7 @@ class _AdvancedAiChatPageState extends State<AdvancedAiChatPage> {
                 dense: true,
                 leading: const Icon(Icons.smart_toy_outlined),
                 title: Text('Agente: ${widget.agentSlug}'),
-                subtitle: const Text('Via POST /v1/ai/chat'),
+                subtitle: const Text('Conversa com o agente inteligente'),
               ),
             ),
           Expanded(

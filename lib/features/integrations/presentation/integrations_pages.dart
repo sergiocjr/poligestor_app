@@ -105,7 +105,7 @@ const _hubEntries = <_HubEntry>[
   ),
   _HubEntry(
     'Sincronizações',
-    'Filas e disparos de sync',
+    'Filas e disparos de sincronização',
     Icons.sync_outlined,
     'sync',
     '/home/integrations/sync',
@@ -278,7 +278,7 @@ class IntegrationsHubPage extends StatelessWidget {
               const SoftNotice(
                 message:
                     'Namespace /v1/integrations/* sincronizado com a VPS. '
-                    'Chip Ativo = contrato LIVE; Em preparação = ainda 404 '
+                    'Chip Ativo = contrato publicado; Em preparação = ainda 404 '
                     '(pesquisa e filtros).',
               ),
               const SizedBox(height: 12),
@@ -832,7 +832,7 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
               children: [
                 SoftNotice(
                   message:
-                      'Contrato LIVE: ${_pathForSlug(slug)} (GET/PUT).',
+                      'Configuração publicada: ${_pathForSlug(slug)}.',
                 ),
                 const SizedBox(height: 12),
                 SwitchListTile(
@@ -1072,7 +1072,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       liveSlug: 'dashboard',
       emptyMessage: 'Nenhum indicador de integração.',
       extraNotice:
-          'Painel + catálogo LIVE (/v1/integrations/dashboard e /catalog).',
+          'Painel e catálogo publicados (/v1/integrations/dashboard e /catalog).',
       loader: (repo, tenant, mode) =>
           repo.dashboard(tenantSlug: tenant, mode: mode),
     ),
@@ -1084,7 +1084,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       liveSlug: 'status',
       emptyMessage: 'Nenhum status disponível.',
       extraNotice:
-          'Status LIVE via /v1/integrations/health e /providers.',
+          'Status via /v1/integrations/health e /providers.',
       loader: (repo, tenant, mode) =>
           repo.status(tenantSlug: tenant, mode: mode),
     ),

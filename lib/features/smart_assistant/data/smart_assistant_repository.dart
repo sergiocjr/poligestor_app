@@ -148,7 +148,7 @@ class SmartAssistantRepository {
     }
   }
 
-  /// Paths ainda sem contrato LIVE — UI usa pending após esta chamada.
+  /// Paths ainda sem contrato publicado — UI usa pending após esta chamada.
   Future<void> assertPending(String path) async {
     try {
       await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);

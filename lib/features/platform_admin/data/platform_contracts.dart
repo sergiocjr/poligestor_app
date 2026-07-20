@@ -3,7 +3,7 @@
 /// EndpointPendingState somente se a VPS responder 404/405/501/503.
 library;
 
-/// Slugs do hub com contrato LIVE na VPS (HTTP 200 autenticado).
+/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
 const kPlatformLiveSlugs = <String>{};
 
 bool platformPathLive(String slug) => kPlatformLiveSlugs.contains(slug);

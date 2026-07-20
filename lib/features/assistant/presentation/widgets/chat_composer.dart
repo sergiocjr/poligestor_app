@@ -117,27 +117,25 @@ class ChatComposer extends StatelessWidget {
                   leading: const Icon(Icons.image_outlined),
                   title: const Text('Imagem'),
                   subtitle: const Text('Em breve'),
-                  onTap: () => Navigator.pop(context, ChatAttachmentKind.image),
+                  enabled: false,
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: const Text('Documento'),
                   subtitle: const Text('Em breve'),
-                  onTap: () =>
-                      Navigator.pop(context, ChatAttachmentKind.document),
+                  enabled: false,
                 ),
                 ListTile(
                   leading: const Icon(Icons.location_on_outlined),
                   title: const Text('Localização'),
                   subtitle: const Text('Em breve'),
-                  onTap: () =>
-                      Navigator.pop(context, ChatAttachmentKind.location),
+                  enabled: false,
                 ),
                 ListTile(
                   leading: const Icon(Icons.mic_none_rounded),
                   title: const Text('Áudio'),
                   subtitle: const Text('Em breve'),
-                  onTap: () => Navigator.pop(context, ChatAttachmentKind.audio),
+                  enabled: false,
                 ),
               ],
             ),

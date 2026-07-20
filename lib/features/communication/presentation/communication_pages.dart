@@ -481,7 +481,7 @@ class _CommunicationTemplatesPageState extends State<CommunicationTemplatesPage>
             },
             decoration: const InputDecoration(
               isDense: true,
-              hintText: 'Pesquisar templates',
+              hintText: 'Pesquisar modelos',
               prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(),
             ),
@@ -550,7 +550,7 @@ class _CommunicationTemplatesPageState extends State<CommunicationTemplatesPage>
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: const [
                       SizedBox(height: 80),
-                      AppEmptyState(message: 'Nenhum template encontrado.'),
+                      AppEmptyState(message: 'Nenhum modelo encontrado.'),
                     ],
                   );
                 }

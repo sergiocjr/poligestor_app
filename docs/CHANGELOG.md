@@ -1,5 +1,26 @@
 # Changelog — PoliGestor Flutter
 
+## [1.0.0+2 — Fase 23 Homologação Final] — 2026-07-20
+
+### Changed
+
+- Homologação completa para produção (sem novos módulos)
+- Correção `MandateIndicatorCard` (layout com altura ilimitada)
+- Auditoria PT-BR e hubs mais altos no A10
+- Remoção de código morto e anexos “Em breve” desabilitados
+- Versão `1.0.0+2`
+
+### Added
+
+- `docs/RELEASE_NOTES.md`
+- `docs/CHECKLIST_HOMOLOGACAO.md`
+- `docs/FASE_23_HOMOLOGACAO_FINAL.md`
+
+### Notes
+
+- Fase 23 **CONCLUÍDA**; app pronto para aceite de produção 1.0
+- Pendências de backend (404) permanecem com `EndpointPendingState`
+
 ## [Fase 22 — Integrações LIVE sync] — 2026-07-20
 
 ### Changed
