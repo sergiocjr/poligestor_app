@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (encerramento do dia — Fase 14 **CONCLUÍDA**; Fase 15 **não iniciada**)
+Atualizado: 2026-07-20 (Fase 15 — Comunicação Institucional entregue no Flutter; **fechamento formal pendente**)
 
 ## Resumo
 
@@ -26,7 +26,8 @@ Atualizado: 2026-07-20 (encerramento do dia — Fase 14 **CONCLUÍDA**; Fase 15 
 | **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 paths LIVE 401; restante 404 → Pending) |
 | **Fase 13 — Gestão Documental** | **CONCLUÍDA** (namespace `/v1/documents/*` LIVE; Flutter sincronizado) |
 | **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
-| Fase 15 — Comunicação Institucional | **Não iniciada** |
+| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
+| Fase 16 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -41,7 +42,15 @@ Cache: `pg_fin_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor
 
 Validação A10 (`RX8M70CLXKP`): OK. Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md).
 
-**Fase 15 — Comunicação Institucional: não iniciada.**
+**Fase 15 — Comunicação Institucional: EM ANDAMENTO** (Flutter entregue).
+
+## Fase 15 — Comunicação Institucional
+
+Hub **Mais → Comunicação Institucional** (`/home/institutional-communication`).
+
+Namespace `/v1/communication/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_ic_*`. Realtime: `MandateRefreshController`.
+
+Independente da Central de Comunicação (Sprint 10.4). Doc: [FASE_15_COMUNICACAO_INSTITUCIONAL.md](FASE_15_COMUNICACAO_INSTITUCIONAL.md).
 
 ## Encerramento do dia (2026-07-20)
 
@@ -114,6 +123,26 @@ Hub **Mais → Painel de Convênios** (`/home/agreements`). Namespace LIVE `/v1/
 ## Idioma (regra permanente)
 
 Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`.
+
+## Qualidade / checklist de encerramento (Fase 15)
+
+| # | Critério | Status |
+|---|----------|--------|
+| 1 | Backend domínio completo | Pendente (`/v1/communication/*` 404) |
+| 2 | Flutter consome LIVE disponíveis | OK (nenhum LIVE; namespace preparado) |
+| 3 | Não publicados → `EndpointPendingState` | OK |
+| 4 | APK no Samsung Galaxy A10 | OK (install `-r` Success); UI hub pendente de revalidação (ADB offline pós-reboot) |
+| 5 | Web validada | OK (`flutter build web --release`) |
+| 6 | `flutter analyze` | OK (feature Fase 15 sem issues) |
+| 7 | `flutter test` | OK (suite Fase 15, 6/6) |
+| 8 | PHPUnit | N/A neste repo Flutter |
+| 9 | Nenhum HTTP 500 | OK no probe (404) |
+| 10 | Documentação | OK |
+| 11–12 | Commit / Push | Nesta entrega |
+| 13–14 | Limpeza / sem emulador | Nesta entrega |
+| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+
+Fase 16 **não iniciada**.
 
 ## Qualidade / checklist de encerramento (Fase 14)
 

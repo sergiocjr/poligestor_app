@@ -155,6 +155,32 @@ enum AuthMode {
   /// LIVE VPS: `GET /v1/finance/payments`
   String get financePaymentsPath => '/v1/finance/payments';
 
+  // --- Fase 15: Comunicação Institucional (staff) — `/v1/communication/*` ---
+  String get institutionalCommunicationRootPath => '/v1/communication';
+  String get institutionalCommunicationFeedPath => '/v1/communication/feed';
+  String get institutionalCommunicationAnnouncementsPath =>
+      '/v1/communication/announcements';
+  String get institutionalCommunicationCampaignsPath =>
+      '/v1/communication/campaigns';
+  String get institutionalCommunicationMediaPath => '/v1/communication/media';
+  String get institutionalCommunicationPublicationsPath =>
+      '/v1/communication/publications';
+  String get institutionalCommunicationSchedulePath =>
+      '/v1/communication/schedule';
+  String get institutionalCommunicationPushPath => '/v1/communication/push';
+  String get institutionalCommunicationEmailPath => '/v1/communication/email';
+  String get institutionalCommunicationWhatsappPath =>
+      '/v1/communication/whatsapp';
+  String get institutionalCommunicationHistoryPath =>
+      '/v1/communication/history';
+  String get institutionalCommunicationSearchPath =>
+      '/v1/communication/search';
+  String get institutionalCommunicationFiltersPath =>
+      '/v1/communication/filters';
+  String get institutionalCommunicationSharePath => '/v1/communication/share';
+  String get institutionalCommunicationReportsPath =>
+      '/v1/communication/reports';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

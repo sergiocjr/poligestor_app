@@ -132,6 +132,16 @@ class NotificationRouter {
               : '/home/finance/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 15 — Comunicação Institucional
+        if (uri.host == 'institutional-communication' ||
+            uri.host == 'comunicacao-institucional' ||
+            uri.host == 'comunicacao_institucional') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/institutional-communication'
+              : '/home/institutional-communication/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

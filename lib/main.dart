@@ -24,6 +24,7 @@ import 'features/agreements/data/agreements_repository.dart';
 import 'features/events/data/events_repository.dart';
 import 'features/documents/data/documents_repository.dart';
 import 'features/finance/data/finance_repository.dart';
+import 'features/institutional_communication/data/institutional_communication_repository.dart';
 import 'features/territorial_intelligence/data/territorial_intelligence_repository.dart';
 import 'features/identity/data/identity_cache.dart';
 import 'features/identity/data/identity_repository.dart';
@@ -85,6 +86,8 @@ Future<void> main() async {
   final eventsRepo = EventsRepository(api);
   final documentsRepo = DocumentsRepository(api);
   final financeRepo = FinanceRepository(api);
+  final institutionalCommunicationRepo =
+      InstitutionalCommunicationRepository(api);
   final territorialIntelRepo = TerritorialIntelligenceRepository(api);
   final communicationRepo = CommunicationRepository(api);
   final smartAssistantRepo = SmartAssistantRepository(api);
@@ -141,6 +144,7 @@ Future<void> main() async {
         Provider.value(value: eventsRepo),
         Provider.value(value: documentsRepo),
         Provider.value(value: financeRepo),
+        Provider.value(value: institutionalCommunicationRepo),
         Provider.value(value: territorialIntelRepo),
         Provider.value(value: communicationRepo),
         Provider.value(value: smartAssistantRepo),

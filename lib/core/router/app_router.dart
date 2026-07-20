@@ -18,6 +18,7 @@ import '../../features/agreements/presentation/agreements_pages.dart';
 import '../../features/events/presentation/events_pages.dart';
 import '../../features/documents/presentation/documents_pages.dart';
 import '../../features/finance/presentation/finance_pages.dart';
+import '../../features/institutional_communication/presentation/institutional_communication_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -120,6 +121,9 @@ GoRouter createAppRouter({
       );
       final isDocumentsPath = loc.startsWith('/home/documents');
       final isFinancePath = loc.startsWith('/home/finance');
+      final isInstitutionalCommunicationPath = loc.startsWith(
+        '/home/institutional-communication',
+      );
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -146,7 +150,8 @@ GoRouter createAppRouter({
               isEventsPath ||
               isTerritorialIntelPath ||
               isDocumentsPath ||
-              isFinancePath) &&
+              isFinancePath ||
+              isInstitutionalCommunicationPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -1546,6 +1551,123 @@ GoRouter createAppRouter({
               title: 'Exportação',
               emptyMessage: 'Nenhuma exportação disponível.',
               loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
+            ),
+          ),
+        ],
+      ),
+
+      // Fase 15 — Comunicação Institucional — staff only.
+      GoRoute(
+        path: '/home/institutional-communication',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const InstitutionalCommunicationHubPage(),
+        routes: [
+          GoRoute(
+            path: 'feed',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Feed de notícias',
+              emptyMessage: 'Nenhuma notícia encontrada.',
+              loader: (repo, tenant) => repo.feed(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'announcements',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Comunicados',
+              emptyMessage: 'Nenhum comunicado encontrado.',
+              loader: (repo, tenant) => repo.announcements(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'campaigns',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Campanhas',
+              emptyMessage: 'Nenhuma campanha encontrada.',
+              loader: (repo, tenant) => repo.campaigns(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'media',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Biblioteca de mídia',
+              emptyMessage: 'Nenhum arquivo de mídia encontrado.',
+              loader: (repo, tenant) => repo.media(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'publications',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Publicações',
+              emptyMessage: 'Nenhuma publicação encontrada.',
+              loader: (repo, tenant) => repo.publications(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'schedule',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Agenda de publicações',
+              emptyMessage: 'Nenhum item na agenda.',
+              loader: (repo, tenant) => repo.schedule(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'push',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Notificação push',
+              emptyMessage: 'Nenhum envio push encontrado.',
+              loader: (repo, tenant) => repo.push(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'email',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'E-mail',
+              emptyMessage: 'Nenhum e-mail encontrado.',
+              loader: (repo, tenant) => repo.email(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'whatsapp',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'WhatsApp',
+              emptyMessage: 'Nenhuma mensagem WhatsApp encontrada.',
+              loader: (repo, tenant) => repo.whatsapp(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Histórico',
+              emptyMessage: 'Nenhum histórico encontrado.',
+              loader: (repo, tenant) => repo.history(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const InstitutionalCommunicationSearchPage(),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'share',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Compartilhamento',
+              emptyMessage: 'Nenhum compartilhamento encontrado.',
+              loader: (repo, tenant) => repo.share(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Relatórios',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
             ),
           ),
         ],

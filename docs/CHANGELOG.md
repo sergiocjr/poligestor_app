@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 15 — Comunicação Institucional] — 2026-07-20
+
+### Added
+
+- Hub `/home/institutional-communication` (feed, comunicados, campanhas, biblioteca de mídia, publicações, agenda, notificação push, e-mail, WhatsApp, histórico, pesquisa, filtros, compartilhamento, relatórios)
+- Namespace oficial `/v1/communication/*` com `EndpointPendingState` (probe VPS 404)
+- Cache `pg_ic_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://institutional-communication|comunicacao-institucional|comunicacao_institucional/...`
+- Testes `test/fase15_institutional_communication_test.dart`
+- Documentação `docs/FASE_15_COMUNICACAO_INSTITUCIONAL.md`
+
+### Notes
+
+- Central de Comunicação (Sprint 10.4) permanece em `/home/communication` com namespaces distintos
+- Fechamento formal pelos 15 critérios pendente (backend 404)
+- Fase 16 não iniciada
+
 ## [Encerramento do dia — continuidade Fase 14] — 2026-07-20
 
 ### Docs

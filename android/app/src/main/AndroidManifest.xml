@@ -70,6 +70,9 @@
                 <data android:scheme="poligestor" android:host="inteligencia-territorial"/>
                 <data android:scheme="poligestor" android:host="intelligence-territorial"/>
                 <data android:scheme="poligestor" android:host="painel-inteligencia-territorial"/>
+                <data android:scheme="poligestor" android:host="institutional-communication"/>
+                <data android:scheme="poligestor" android:host="comunicacao-institucional"/>
+                <data android:scheme="poligestor" android:host="comunicacao_institucional"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

@@ -124,6 +124,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/events'),
           ),
           ListTile(
+            leading: const Icon(Icons.campaign_outlined),
+            title: const Text('Comunicação Institucional'),
+            subtitle: const Text(
+              'Notícias, comunicados, campanhas, mídia e canais',
+            ),
+            onTap: () => context.push('/home/institutional-communication'),
+          ),
+          ListTile(
             leading: const Icon(Icons.account_balance_wallet_outlined),
             title: const Text('Gestão Financeira'),
             subtitle: const Text(
