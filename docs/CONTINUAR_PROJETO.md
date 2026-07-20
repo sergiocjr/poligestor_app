@@ -40,8 +40,8 @@ Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamen
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (pendente — entrega Fase 20) |
-| Push | Pendente |
+| Último commit | `092e333` — feat Fase 20 Portal Administrativo Web |
+| Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` (não exigido nesta fase Web) |
 
 ### Navegação
