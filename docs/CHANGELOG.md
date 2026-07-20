@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 18 — IA Avançada] — 2026-07-20
+
+### Added
+
+- Hub `/home/advanced-ai` (conversa, conversas, secretária, assessores, analistas, planejamento, resumos, sugestões, histórico, biblioteca de prompts, avaliação, configurações, pesquisa)
+- Namespace oficial `/v1/ai/*` — endpoints LIVE + papéis via `/v1/ai/agents`
+- Cache `pg_aai_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://advanced-ai|ia-avancada|ia_avancada/...`
+- Testes `test/fase18_advanced_ai_test.dart`
+- Documentação `docs/FASE_18_IA_AVANCADA.md`
+
+### Notes
+
+- Independente do Sprint 10.5 Assistente Inteligente (`/home/chat`)
+- Pending: `financial-analyst`, `settings`, `search`
+- Validação A10 (`RX8M70CLXKP`) OK; Fase 19 não iniciada
+
 ## [Fase 17 — Gestão Eleitoral] — 2026-07-20
 
 ### Added

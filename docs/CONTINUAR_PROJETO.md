@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência: validação física A10)
+Atualizado: 2026-07-20 (Fase 18 — IA Avançada entregue no Flutter; fechamento formal pendente)
 
 ---
 
@@ -23,18 +23,16 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 17 — Gestão Eleitoral** |
-| Status formal | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending 404) |
-| Pendência permitida | **Validação física no Samsung Galaxy A10** |
-| Hub | Mais → Gestão Eleitoral (`/home/elections`) |
-| Namespace oficial | `/api/v1/elections/*` |
-| Doc da fase | [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md) |
-| Fase 16 | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
-| Fase 15 | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
+| Fase | **Fase 18 — IA Avançada** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; sync `/v1/ai/*` parcial) |
+| Hub | Mais → IA Avançada (`/home/advanced-ai`) |
+| Namespace oficial | `/api/v1/ai/*` |
+| Doc da fase | [FASE_18_IA_AVANCADA.md](FASE_18_IA_AVANCADA.md) |
+| Fase 17 | **CONCLUÍDA** (pendência A10 física) |
+| Fase 16 | **EM ANDAMENTO** (`/v1/crm/*` 404) |
+| Fase 15 | **EM ANDAMENTO** (`/v1/communication/*` 404) |
 | Fase 14 | **CONCLUÍDA** |
-| Fase 13 | **CONCLUÍDA** |
-| Fases 11–12 | Flutter entregue; fechamento formal ainda pendente |
-| Fase 18 | **Não iniciar** sem pedido explícito |
+| Fase 19 | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -43,63 +41,57 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `e196d22` — sync LIVE Fase 17 CONCLUÍDA |
-| Push | origin/master |
+| Último commit | (pendente — entrega Fase 18) |
+| Push | Pendente |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
 
 - Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Gestão Eleitoral: Mais → hub `/home/elections`
-- CRM Político: Mais → hub `/home/crm`
-- Comunicação Institucional: Mais → hub `/home/institutional-communication`
-- Central de Comunicação (Sprint 10.4): Mais → `/home/communication` (namespace distinto)
+- IA Avançada: Mais → hub `/home/advanced-ai`
+- Assistente Inteligente (Sprint 10.5): Mais → `/home/chat` (namespace `/v1/ai/*` compartilhado, hub distinto)
 
 ---
 
-## Telas (Fase 17)
+## Telas (Fase 18)
 
-Painel eleitoral · Pré-campanha · Campanhas · Candidatos · Coordenação · Equipes · Cabos eleitorais · Voluntários · Lideranças · Apoiadores · Metas eleitorais · Regiões · Bairros · Zonas eleitorais · Seções eleitorais · Colégios eleitorais · Mapa eleitoral · Agenda de campanha · Eventos · Caminhadas · Reuniões · Visitas · Comícios · Mobilizações · Materiais de campanha · Estoque · Distribuição · Solicitações de material · Pesquisas eleitorais · Cenários · Intenção de voto · Rejeição · Comparativos · Projeções · Desempenho por região · Prestação de contas · Receitas · Despesas · Doações · Fornecedores · Comprovantes · Relatórios · Exportações · Pesquisa · Filtros.
+Conversa com IA · Conversas · Secretária Virtual · Assessor Parlamentar · Analista Político · Analista Financeiro · Assessor de Comunicação · Assessor Jurídico · Planejamento estratégico · Resumos do dia · Resumos · Sugestões inteligentes · Histórico · Biblioteca de prompts · Avaliação · Configurações · Pesquisa.
 
-Material 3 · cards clicáveis · PT-BR · responsivo (1 coluna no A10) · cache `pg_elec_*` · offline · realtime (`MandateRefreshController`).
+Material 3 · cards clicáveis · PT-BR · responsivo · cache `pg_aai_*` · offline · realtime (`MandateRefreshController`).
 
 ---
 
-## Contratos LIVE consumidos (Fase 17) — HTTP 200 autenticado
+## Contratos LIVE consumidos (Fase 18)
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| GET | `/v1/elections/dashboard` | LIVE (200) |
-| GET | `/v1/elections/campaigns` | LIVE (200) |
-| GET | `/v1/elections/candidates` | LIVE (200) |
-| GET | `/v1/elections/teams` | LIVE (200) |
-| GET | `/v1/elections/goals` | LIVE (200) |
-| GET | `/v1/elections/regions` | LIVE (200) |
-| GET | `/v1/elections/neighborhoods` | LIVE (200) |
-| GET | `/v1/elections/map` | LIVE (200) |
-| GET | `/v1/elections/events` | LIVE (200) |
-| GET | `/v1/elections/material-requests` | LIVE (200) |
-| GET | `/v1/elections/projections` | LIVE (200) |
-| GET | `/v1/elections/accountability` | LIVE (200) |
-| GET | `/v1/elections/receipts` | LIVE (200) |
-| GET | `/v1/elections/reports` | LIVE (200) |
+| POST | `/v1/ai/chat` | LIVE (201) |
+| GET | `/v1/ai/conversations` | LIVE (200) |
+| GET | `/v1/ai/history` | LIVE (200) |
+| GET | `/v1/ai/briefings` | LIVE (200) |
+| GET | `/v1/ai/prompts` | LIVE (200) |
+| GET | `/v1/ai/agents` | LIVE (200) |
+| POST | `/v1/ai/summary` | LIVE (rota ativa) |
+| POST | `/v1/ai/suggestions` | LIVE (rota ativa) |
+| POST | `/v1/ai/feedback` | LIVE (201) |
+
+Papéis Ativo via agentes: secretary, parliamentary_advisor, analyst, communication, legal, strategy.
 
 ---
 
-## EndpointPendingState (31 — HTTP 404)
+## EndpointPendingState
 
-`pre-campaign`, `coordination`, `canvassers`, `volunteers`, `leaders`, `supporters`, `electoral-zones`, `electoral-sections`, `polling-stations`, `campaign-agenda`, `walks`, `meetings`, `visits`, `rallies`, `mobilizations`, `campaign-materials`, `inventory`, `distribution`, `polls`, `scenarios`, `vote-intention`, `rejection`, `comparatives`, `regional-performance`, `revenues`, `expenses`, `donations`, `suppliers`, `exports`, `search`, `filters`.
+`financial-analyst`, `settings`, `search` (+ paths dedicados de papéis 404 — UI consome `/v1/ai/agents`).
 
 ---
 
 ## Deep Links
 
 ```
-poligestor://elections/...
-poligestor://gestao-eleitoral/...
-poligestor://gestao_eleitoral/...
-poligestor://eleitoral/...
+poligestor://advanced-ai/...
+poligestor://ia-avancada/...
+poligestor://ia_avancada/...
 ```
 
 ---
@@ -110,16 +102,16 @@ poligestor://eleitoral/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação física Fase 17 | **Pendente** (única pendência após CONCLUÍDA) |
+| Validação APK Fase 18 | OK (hub + Conversa; chips Ativo) |
 
 ---
 
-## Pendências reais
+## Pendências reais (fechamento formal)
 
-1. Validação física no A10 (Fase 17).
-2. Backend publicar os 31 paths restantes de `/v1/elections/*` (quando houver) → sync chips Ativo.
-3. Fechamento formal das Fases 11, 12, 15 e 16 (quando solicitado).
+1. Backend publicar `financial-analyst`, `settings`, `search` (quando houver).
+2. Fechamento formal das Fases 11, 12, 15 e 16 (quando solicitado).
+3. Validação física A10 da Fase 17 (se ainda pendente).
 
 ## Próxima Fase
 
-**Fase 18 — não iniciar** sem pedido explícito.
+**Fase 19 — não iniciar** sem pedido explícito.

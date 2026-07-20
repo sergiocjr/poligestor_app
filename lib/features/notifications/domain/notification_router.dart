@@ -160,6 +160,16 @@ class NotificationRouter {
               rest.isEmpty ? '/home/elections' : '/home/elections/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 18 — IA Avançada
+        if (uri.host == 'advanced-ai' ||
+            uri.host == 'ia-avancada' ||
+            uri.host == 'ia_avancada') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/advanced-ai'
+              : '/home/advanced-ai/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

@@ -273,6 +273,32 @@ enum AuthMode {
   String get electionsSearchPath => '/v1/elections/search';
   String get electionsFiltersPath => '/v1/elections/filters';
 
+  // --- Fase 18: IA Avançada (staff) — namespace oficial `/v1/ai/*` ---
+  String get advancedAiRootPath => '/v1/ai';
+  String get advancedAiBriefingsPath => '/v1/ai/briefings';
+  String get advancedAiPromptsPath => '/v1/ai/prompts';
+  String get advancedAiSummaryPath => '/v1/ai/summary';
+  String get advancedAiSuggestionsPath => '/v1/ai/suggestions';
+  String get advancedAiFeedbackPath => '/v1/ai/feedback';
+  String get advancedAiSecretaryPath => '/v1/ai/secretary';
+  String get advancedAiVirtualSecretaryPath => '/v1/ai/virtual-secretary';
+  String get advancedAiParliamentaryAdvisorPath =>
+      '/v1/ai/parliamentary-advisor';
+  String get advancedAiPoliticalAnalystPath => '/v1/ai/political-analyst';
+  String get advancedAiFinancialAnalystPath => '/v1/ai/financial-analyst';
+  String get advancedAiCommunicationAdvisorPath =>
+      '/v1/ai/communication-advisor';
+  String get advancedAiLegalAdvisorPath => '/v1/ai/legal-advisor';
+  String get advancedAiStrategicPlanningPath => '/v1/ai/strategic-planning';
+  String get advancedAiDashboardPath => '/v1/ai/dashboard';
+  String get advancedAiHubPath => '/v1/ai/hub';
+  String get advancedAiSearchPath => '/v1/ai/search';
+  String get advancedAiSettingsPath => '/v1/ai/settings';
+  String get advancedAiPromptLibraryPath => '/v1/ai/prompt-library';
+  String get advancedAiSummariesPath => '/v1/ai/summaries';
+  String get advancedAiBriefingSingularPath => '/v1/ai/briefing';
+  String get advancedAiInsightsPath => '/v1/ai/insights';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

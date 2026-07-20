@@ -80,6 +80,9 @@
                 <data android:scheme="poligestor" android:host="gestao-eleitoral"/>
                 <data android:scheme="poligestor" android:host="gestao_eleitoral"/>
                 <data android:scheme="poligestor" android:host="eleitoral"/>
+                <data android:scheme="poligestor" android:host="advanced-ai"/>
+                <data android:scheme="poligestor" android:host="ia-avancada"/>
+                <data android:scheme="poligestor" android:host="ia_avancada"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

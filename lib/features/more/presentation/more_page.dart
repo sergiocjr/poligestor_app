@@ -72,6 +72,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/chat'),
           ),
           ListTile(
+            leading: const Icon(Icons.psychology_outlined),
+            title: const Text('IA Avançada'),
+            subtitle: const Text(
+              'Agentes especializados, resumos, prompts e avaliação',
+            ),
+            onTap: () => context.push('/home/advanced-ai'),
+          ),
+          ListTile(
             leading: const Icon(Icons.groups_outlined),
             title: const Text('Equipe Virtual'),
             subtitle: const Text('Agentes, tarefas e operação'),

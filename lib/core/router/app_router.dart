@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 import '../auth/auth_controller.dart';
 import '../auth/auth_mode.dart';
+import '../../features/advanced_ai/data/advanced_ai_repository.dart';
 import '../../features/account/presentation/account_profile_page.dart';
 import '../../features/account/presentation/account_sessions_page.dart';
 import '../../features/agenda/presentation/agenda_page.dart';
@@ -20,6 +22,7 @@ import '../../features/documents/presentation/documents_pages.dart';
 import '../../features/finance/presentation/finance_pages.dart';
 import '../../features/institutional_communication/presentation/institutional_communication_pages.dart';
 import '../../features/political_crm/presentation/crm_pages.dart';
+import '../../features/advanced_ai/presentation/advanced_ai_pages.dart';
 import '../../features/electoral_management/presentation/elections_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
@@ -128,6 +131,7 @@ GoRouter createAppRouter({
       );
       final isCrmPath = loc.startsWith('/home/crm');
       final isElectionsPath = loc.startsWith('/home/elections');
+      final isAdvancedAiPath = loc.startsWith('/home/advanced-ai');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -157,7 +161,8 @@ GoRouter createAppRouter({
               isFinancePath ||
               isInstitutionalCommunicationPath ||
               isCrmPath ||
-              isElectionsPath) &&
+              isElectionsPath ||
+              isAdvancedAiPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -2358,6 +2363,160 @@ GoRouter createAppRouter({
               emptyMessage: 'Nenhum filtro disponível.',
               loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
             ),
+          ),
+        ],
+      ),
+
+      // Fase 18 — IA Avançada — staff only.
+      GoRoute(
+        path: '/home/advanced-ai',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AdvancedAiHubPage(),
+        routes: [
+          GoRoute(
+            path: 'chat',
+            builder: (context, state) {
+              final extra = state.extra;
+              String? agentSlug;
+              String? title;
+              if (extra is Map) {
+                agentSlug = extra['agentSlug']?.toString();
+                title = extra['title']?.toString();
+              }
+              return AdvancedAiChatPage(agentSlug: agentSlug, title: title);
+            },
+          ),
+          GoRoute(
+            path: 'conversations',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Conversas',
+              emptyMessage: 'Nenhuma conversa encontrada.',
+              loader: (repo, tenant) =>
+                  repo.conversations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'secretary',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Secretária Virtual',
+              hubSlug: 'secretary',
+              pendingPath: '/v1/ai/secretary',
+            ),
+          ),
+          GoRoute(
+            path: 'parliamentary-advisor',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Assessor Parlamentar',
+              hubSlug: 'parliamentary-advisor',
+              pendingPath: '/v1/ai/parliamentary-advisor',
+            ),
+          ),
+          GoRoute(
+            path: 'political-analyst',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Analista Político',
+              hubSlug: 'political-analyst',
+              pendingPath: '/v1/ai/political-analyst',
+            ),
+          ),
+          GoRoute(
+            path: 'financial-analyst',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Analista Financeiro',
+              emptyMessage: 'Nenhum item do analista financeiro.',
+              pendingPath: AuthMode.staff.advancedAiFinancialAnalystPath,
+              loader: (repo, tenant) =>
+                  repo.financialAnalyst(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'communication-advisor',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Assessor de Comunicação',
+              hubSlug: 'communication-advisor',
+              pendingPath: '/v1/ai/communication-advisor',
+            ),
+          ),
+          GoRoute(
+            path: 'legal-advisor',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Assessor Jurídico',
+              hubSlug: 'legal-advisor',
+              pendingPath: '/v1/ai/legal-advisor',
+            ),
+          ),
+          GoRoute(
+            path: 'strategic-planning',
+            builder: (_, _) => const AdvancedAiAgentRolePage(
+              title: 'Planejamento estratégico',
+              hubSlug: 'strategic-planning',
+              pendingPath: '/v1/ai/strategic-planning',
+            ),
+          ),
+          GoRoute(
+            path: 'briefings',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Resumos do dia',
+              emptyMessage: 'Nenhum resumo encontrado.',
+              loader: (repo, tenant) => repo.briefings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'summary',
+            builder: (context, _) => AdvancedAiPostFormPage(
+              title: 'Resumos',
+              path: AuthMode.staff.advancedAiSummaryPath,
+              hint: 'Descreva o conteúdo ou contexto para resumir…',
+              submitLabel: 'Gerar resumo',
+              onSubmit: (text) => context.read<AdvancedAiRepository>().postSummary(
+                body: {'text': text, 'content': text},
+              ),
+            ),
+          ),
+          GoRoute(
+            path: 'suggestions',
+            builder: (context, _) => AdvancedAiPostFormPage(
+              title: 'Sugestões inteligentes',
+              path: AuthMode.staff.advancedAiSuggestionsPath,
+              hint: 'Informe o contexto para obter sugestões…',
+              submitLabel: 'Obter sugestões',
+              onSubmit: (text) =>
+                  context.read<AdvancedAiRepository>().postSuggestions(
+                    body: {'context': text, 'text': text},
+                  ),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Histórico',
+              emptyMessage: 'Nenhum registro no histórico.',
+              loader: (repo, tenant) => repo.history(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'prompts',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Biblioteca de prompts',
+              emptyMessage: 'Nenhum prompt encontrado.',
+              loader: (repo, tenant) => repo.prompts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'feedback',
+            builder: (_, _) => const AdvancedAiFeedbackPage(),
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (_, _) => AdvancedAiListPage(
+              title: 'Configurações',
+              emptyMessage: 'Nenhuma configuração disponível.',
+              loader: (repo, tenant) => repo.settings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const AdvancedAiSearchPage(),
           ),
         ],
       ),

@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência: validação física A10)
+Atualizado: 2026-07-20 (Fase 18 — IA Avançada entregue no Flutter; fechamento formal pendente)
 
 ## Resumo
 
@@ -29,7 +29,8 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência
 | **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
 | **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
 | **Fase 17 — Gestão Eleitoral** | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending; pendência A10) |
-| Fase 18 | **Não iniciada** |
+| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (Flutter entregue; `/v1/ai/*` sync parcial) |
+| Fase 19 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -44,7 +45,15 @@ Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 
-**Fase 18 — não iniciada.**
+## Fase 18 — IA Avançada
+
+Hub **Mais → IA Avançada** (`/home/advanced-ai`), separado do Assistente Inteligente (`/home/chat`).
+
+Namespace `/v1/ai/*` — LIVE: chat (POST), conversations, history, briefings, prompts, agents, summary, suggestions, feedback. Papéis Ativo via catálogo `/v1/ai/agents`. Pending: financial-analyst, settings, search. Cache `pg_aai_*`. Deep links: `poligestor://advanced-ai|ia-avancada|ia_avancada/...`.
+
+Doc: [FASE_18_IA_AVANCADA.md](FASE_18_IA_AVANCADA.md).
+
+**Fase 19 — não iniciada.**
 
 ## Fase 16 — CRM Político
 
