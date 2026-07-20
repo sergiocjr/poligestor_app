@@ -39,7 +39,7 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (atualizar após push Fase 24) |
+| Último commit | `a14a023` — feat Fase 24 Notícias Regionais |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
