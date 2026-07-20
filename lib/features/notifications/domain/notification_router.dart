@@ -150,6 +150,16 @@ class NotificationRouter {
           final location = rest.isEmpty ? '/home/crm' : '/home/crm/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 17 — Gestão Eleitoral
+        if (uri.host == 'elections' ||
+            uri.host == 'gestao-eleitoral' ||
+            uri.host == 'gestao_eleitoral' ||
+            uri.host == 'eleitoral') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location =
+              rest.isEmpty ? '/home/elections' : '/home/elections/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

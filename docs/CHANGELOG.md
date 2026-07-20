@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 17 — Gestão Eleitoral] — 2026-07-20
+
+### Added
+
+- Hub `/home/elections` (painel eleitoral, pré-campanha, campanhas, candidatos, coordenação, equipes, cabos eleitorais, voluntários, lideranças, apoiadores, metas, regiões, bairros, zonas/seções/colégios eleitorais, mapa, agenda, eventos, caminhadas, reuniões, visitas, comícios, mobilizações, materiais, estoque, distribuição, solicitações, pesquisas, cenários, intenção de voto, rejeição, comparativos, projeções, desempenho regional, prestação de contas, receitas, despesas, doações, fornecedores, comprovantes, relatórios, exportações, pesquisa, filtros)
+- Namespace oficial `/v1/elections/*` — 14 LIVE (401) + 31 Pending (404)
+- Cache `pg_elec_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://elections|gestao-eleitoral|gestao_eleitoral|eleitoral/...`
+- Testes `test/fase17_elections_test.dart`
+- Documentação `docs/FASE_17_GESTAO_ELEITORAL.md`
+
+### Notes
+
+- LIVE: `dashboard`, `campaigns`, `candidates`, `teams`, `goals`, `regions`, `neighborhoods`, `map`, `events`, `material-requests`, `projections`, `accountability`, `receipts`, `reports`
+- Fechamento formal pelos 15 critérios pendente (31 paths ainda 404)
+- Validação A10 (`RX8M70CLXKP`) OK; Fase 18 não iniciada
+
 ## [Fase 16 — CRM Político] — 2026-07-20
 
 ### Added
@@ -15,7 +32,7 @@
 
 - `kCrmLiveSlugs` vazio até a VPS publicar contratos
 - Fechamento formal pelos 15 critérios pendente (backend 404)
-- Fase 17 não iniciada
+- Fase 17 entregue no Flutter (ver entrada acima)
 
 ## [Fase 15 — Comunicação Institucional] — 2026-07-20
 

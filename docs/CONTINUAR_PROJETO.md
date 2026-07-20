@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; fechamento formal pendente)
 
 ---
 
@@ -23,16 +23,17 @@ Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; fechament
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 16 — CRM Político** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 100% 404 → Pending) |
-| Hub | Mais → CRM Político (`/home/crm`) |
-| Namespace oficial | `/api/v1/crm/*` |
-| Doc da fase | [FASE_16_CRM_POLITICO.md](FASE_16_CRM_POLITICO.md) |
+| Fase | **Fase 17 — Gestão Eleitoral** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; 14 LIVE / 31 Pending) |
+| Hub | Mais → Gestão Eleitoral (`/home/elections`) |
+| Namespace oficial | `/api/v1/elections/*` |
+| Doc da fase | [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md) |
+| Fase 16 | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
 | Fase 15 | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
 | Fase 14 | **CONCLUÍDA** |
 | Fase 13 | **CONCLUÍDA** |
 | Fases 11–12 | Flutter entregue; fechamento formal ainda pendente |
-| Fase 17 | **Não iniciar** sem pedido explícito |
+| Fase 18 | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -41,7 +42,7 @@ Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; fechament
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `cf7cae9` — Fase 16 CRM Político |
+| Último commit | (pendente — entrega Fase 17) |
 | Push | Pendente |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
@@ -49,40 +50,55 @@ Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; fechament
 
 - Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
+- Gestão Eleitoral: Mais → hub `/home/elections`
 - CRM Político: Mais → hub `/home/crm`
 - Comunicação Institucional: Mais → hub `/home/institutional-communication`
 - Central de Comunicação (Sprint 10.4): Mais → `/home/communication` (namespace distinto)
 
 ---
 
-## Telas (Fase 16)
+## Telas (Fase 17)
 
-Painel · Líderes · Apoiadores · Eleitores · Voluntários · Equipe · Entidades · Associações · Igrejas · Empresas · Influenciadores · Segmentação · Etiquetas · Grupos · Regiões · Bairros · Zonas eleitorais · Histórico de relacionamento · Interações · Visitas · Ligações · Mensagens · Reuniões · Demandas vinculadas · Protocolos vinculados · Campanhas · Tarefas · Lembretes · Nível de apoio · Potencial de influência · Relacionamentos · Importação · Exportação · Pesquisa · Filtros · Indicadores · Relatórios.
+Painel eleitoral · Pré-campanha · Campanhas · Candidatos · Coordenação · Equipes · Cabos eleitorais · Voluntários · Lideranças · Apoiadores · Metas eleitorais · Regiões · Bairros · Zonas eleitorais · Seções eleitorais · Colégios eleitorais · Mapa eleitoral · Agenda de campanha · Eventos · Caminhadas · Reuniões · Visitas · Comícios · Mobilizações · Materiais de campanha · Estoque · Distribuição · Solicitações de material · Pesquisas eleitorais · Cenários · Intenção de voto · Rejeição · Comparativos · Projeções · Desempenho por região · Prestação de contas · Receitas · Despesas · Doações · Fornecedores · Comprovantes · Relatórios · Exportações · Pesquisa · Filtros.
 
-Material 3 · cards clicáveis · PT-BR · responsivo (1 coluna no A10) · cache `pg_crm_*` · offline · realtime (`MandateRefreshController`).
+Material 3 · cards clicáveis · PT-BR · responsivo (1 coluna no A10) · cache `pg_elec_*` · offline · realtime (`MandateRefreshController`).
 
 ---
 
-## Contratos LIVE consumidos (Fase 16)
+## Contratos LIVE consumidos (Fase 17)
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| — | `/v1/crm/*` | **Nenhum LIVE** (todos 404 em 2026-07-20) |
+| GET | `/v1/elections/dashboard` | LIVE (401) |
+| GET | `/v1/elections/campaigns` | LIVE (401) |
+| GET | `/v1/elections/candidates` | LIVE (401) |
+| GET | `/v1/elections/teams` | LIVE (401) |
+| GET | `/v1/elections/goals` | LIVE (401) |
+| GET | `/v1/elections/regions` | LIVE (401) |
+| GET | `/v1/elections/neighborhoods` | LIVE (401) |
+| GET | `/v1/elections/map` | LIVE (401) |
+| GET | `/v1/elections/events` | LIVE (401) |
+| GET | `/v1/elections/material-requests` | LIVE (401) |
+| GET | `/v1/elections/projections` | LIVE (401) |
+| GET | `/v1/elections/accountability` | LIVE (401) |
+| GET | `/v1/elections/receipts` | LIVE (401) |
+| GET | `/v1/elections/reports` | LIVE (401) |
 
 ---
 
-## EndpointPendingState
+## EndpointPendingState (31)
 
-Todos os paths do hub: `dashboard`, `leaders`, `supporters`, `voters`, `volunteers`, `team`, `entities`, `associations`, `churches`, `companies`, `influencers`, `segmentation`, `tags`, `groups`, `regions`, `neighborhoods`, `electoral-zones`, `relationship-history`, `interactions`, `visits`, `calls`, `messages`, `meetings`, `linked-demands`, `linked-protocols`, `campaigns`, `tasks`, `reminders`, `support-level`, `influence-potential`, `relationships`, `import`, `export`, `search`, `filters`, `indicators`, `reports`.
+`pre-campaign`, `coordination`, `canvassers`, `volunteers`, `leaders`, `supporters`, `electoral-zones`, `electoral-sections`, `polling-stations`, `campaign-agenda`, `walks`, `meetings`, `visits`, `rallies`, `mobilizations`, `campaign-materials`, `inventory`, `distribution`, `polls`, `scenarios`, `vote-intention`, `rejection`, `comparatives`, `regional-performance`, `revenues`, `expenses`, `donations`, `suppliers`, `exports`, `search`, `filters`.
 
 ---
 
 ## Deep Links
 
 ```
-poligestor://crm/...
-poligestor://crm-politico/...
-poligestor://crm_politico/...
+poligestor://elections/...
+poligestor://gestao-eleitoral/...
+poligestor://gestao_eleitoral/...
+poligestor://eleitoral/...
 ```
 
 ---
@@ -93,16 +109,16 @@ poligestor://crm_politico/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 16 | Pendente nesta entrega de wiring |
+| Validação APK Fase 17 | OK (hub + Painel LIVE + deep link) |
 
 ---
 
 ## Pendências reais (fechamento formal)
 
-1. Backend publicar `/v1/crm/*`.
+1. Backend publicar os 31 paths restantes de `/v1/elections/*`.
 2. Sync LIVE (chips Ativo) + auditoria payloads 200.
-3. Fechamento formal das Fases 11, 12 e 15 (quando solicitado).
+3. Fechamento formal das Fases 11, 12, 15 e 16 (quando solicitado).
 
 ## Próxima Fase
 
-**Fase 17 — não iniciar** sem pedido explícito.
+**Fase 18 — não iniciar** sem pedido explícito.

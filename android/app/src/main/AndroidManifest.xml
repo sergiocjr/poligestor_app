@@ -76,6 +76,10 @@
                 <data android:scheme="poligestor" android:host="crm"/>
                 <data android:scheme="poligestor" android:host="crm-politico"/>
                 <data android:scheme="poligestor" android:host="crm_politico"/>
+                <data android:scheme="poligestor" android:host="elections"/>
+                <data android:scheme="poligestor" android:host="gestao-eleitoral"/>
+                <data android:scheme="poligestor" android:host="gestao_eleitoral"/>
+                <data android:scheme="poligestor" android:host="eleitoral"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

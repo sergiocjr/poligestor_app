@@ -221,6 +221,58 @@ enum AuthMode {
   String get crmIndicatorsPath => '/v1/crm/indicators';
   String get crmReportsPath => '/v1/crm/reports';
 
+  // --- Fase 17: Gestão Eleitoral (staff) — `/v1/elections/*` ---
+  String get electionsRootPath => '/v1/elections';
+  String get electionsDashboardPath => '/v1/elections/dashboard';
+  String get electionsPreCampaignPath => '/v1/elections/pre-campaign';
+  String get electionsCampaignsPath => '/v1/elections/campaigns';
+  String get electionsCandidatesPath => '/v1/elections/candidates';
+  String get electionsCoordinationPath => '/v1/elections/coordination';
+  String get electionsTeamsPath => '/v1/elections/teams';
+  String get electionsCanvassersPath => '/v1/elections/canvassers';
+  String get electionsVolunteersPath => '/v1/elections/volunteers';
+  String get electionsLeadersPath => '/v1/elections/leaders';
+  String get electionsSupportersPath => '/v1/elections/supporters';
+  String get electionsGoalsPath => '/v1/elections/goals';
+  String get electionsRegionsPath => '/v1/elections/regions';
+  String get electionsNeighborhoodsPath => '/v1/elections/neighborhoods';
+  String get electionsElectoralZonesPath => '/v1/elections/electoral-zones';
+  String get electionsElectoralSectionsPath =>
+      '/v1/elections/electoral-sections';
+  String get electionsPollingStationsPath => '/v1/elections/polling-stations';
+  String get electionsMapPath => '/v1/elections/map';
+  String get electionsCampaignAgendaPath => '/v1/elections/campaign-agenda';
+  String get electionsEventsPath => '/v1/elections/events';
+  String get electionsWalksPath => '/v1/elections/walks';
+  String get electionsMeetingsPath => '/v1/elections/meetings';
+  String get electionsVisitsPath => '/v1/elections/visits';
+  String get electionsRalliesPath => '/v1/elections/rallies';
+  String get electionsMobilizationsPath => '/v1/elections/mobilizations';
+  String get electionsCampaignMaterialsPath =>
+      '/v1/elections/campaign-materials';
+  String get electionsInventoryPath => '/v1/elections/inventory';
+  String get electionsDistributionPath => '/v1/elections/distribution';
+  String get electionsMaterialRequestsPath =>
+      '/v1/elections/material-requests';
+  String get electionsPollsPath => '/v1/elections/polls';
+  String get electionsScenariosPath => '/v1/elections/scenarios';
+  String get electionsVoteIntentionPath => '/v1/elections/vote-intention';
+  String get electionsRejectionPath => '/v1/elections/rejection';
+  String get electionsComparativesPath => '/v1/elections/comparatives';
+  String get electionsProjectionsPath => '/v1/elections/projections';
+  String get electionsRegionalPerformancePath =>
+      '/v1/elections/regional-performance';
+  String get electionsAccountabilityPath => '/v1/elections/accountability';
+  String get electionsRevenuesPath => '/v1/elections/revenues';
+  String get electionsExpensesPath => '/v1/elections/expenses';
+  String get electionsDonationsPath => '/v1/elections/donations';
+  String get electionsSuppliersPath => '/v1/elections/suppliers';
+  String get electionsReceiptsPath => '/v1/elections/receipts';
+  String get electionsReportsPath => '/v1/elections/reports';
+  String get electionsExportsPath => '/v1/elections/exports';
+  String get electionsSearchPath => '/v1/elections/search';
+  String get electionsFiltersPath => '/v1/elections/filters';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

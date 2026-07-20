@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; **fechamento formal pendente**)
+Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; **fechamento formal pendente**)
 
 ## Resumo
 
@@ -28,10 +28,21 @@ Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; **fechame
 | **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
 | **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
 | **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
-| Fase 17 | **Não iniciada** |
+| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (Flutter entregue; 14 LIVE / 31 Pending) |
+| Fase 18 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
+
+## Fase 17 — Gestão Eleitoral
+
+Hub **Mais → Gestão Eleitoral** (`/home/elections`).
+
+Namespace `/v1/elections/*` — **14 LIVE** (401): dashboard, campaigns, candidates, teams, goals, regions, neighborhoods, map, events, material-requests, projections, accountability, receipts, reports. **31** ainda 404 → `EndpointPendingState`. Cache `pg_elec_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://elections|gestao-eleitoral|gestao_eleitoral|eleitoral/...`. Validação A10 OK.
+
+Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
+
+**Fase 18 — não iniciada.**
 
 ## Fase 16 — CRM Político
 
@@ -40,8 +51,6 @@ Hub **Mais → CRM Político** (`/home/crm`).
 Namespace `/v1/crm/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_crm_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://crm|crm-politico|crm_politico/...`.
 
 Doc: [FASE_16_CRM_POLITICO.md](FASE_16_CRM_POLITICO.md).
-
-**Fase 17 — não iniciada.**
 
 ## Fase 15 — Comunicação Institucional
 
@@ -72,7 +81,7 @@ Validação A10 (`RX8M70CLXKP`): OK. Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14
 | APK debug | OK — instalado e validado no A10 |
 | A10 `RX8M70CLXKP` | OK — login + hub financeiro + chips Ativo |
 | Push | `origin/master` |
-| Próxima | Fase 17 (**não iniciar** sem pedido) |
+| Próxima | Fase 18 (**não iniciar** sem pedido) |
 
 ## Fase 13 — Gestão Documental
 

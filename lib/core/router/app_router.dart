@@ -20,6 +20,7 @@ import '../../features/documents/presentation/documents_pages.dart';
 import '../../features/finance/presentation/finance_pages.dart';
 import '../../features/institutional_communication/presentation/institutional_communication_pages.dart';
 import '../../features/political_crm/presentation/crm_pages.dart';
+import '../../features/electoral_management/presentation/elections_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -126,6 +127,7 @@ GoRouter createAppRouter({
         '/home/institutional-communication',
       );
       final isCrmPath = loc.startsWith('/home/crm');
+      final isElectionsPath = loc.startsWith('/home/elections');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -154,7 +156,8 @@ GoRouter createAppRouter({
               isDocumentsPath ||
               isFinancePath ||
               isInstitutionalCommunicationPath ||
-              isCrmPath) &&
+              isCrmPath ||
+              isElectionsPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -1979,6 +1982,381 @@ GoRouter createAppRouter({
               title: 'Relatórios',
               emptyMessage: 'Nenhum relatório encontrado.',
               loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+        ],
+      ),
+
+      // Fase 17 — Gestão Eleitoral — staff only.
+      GoRoute(
+        path: '/home/elections',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const ElectionsHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Painel eleitoral',
+              emptyMessage: 'Nenhum indicador no painel.',
+              loader: (repo, tenant) => repo.dashboard(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'pre-campaign',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Pré-campanha',
+              emptyMessage: 'Nenhum item de pré-campanha encontrado.',
+              loader: (repo, tenant) => repo.preCampaign(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'campaigns',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Campanhas',
+              emptyMessage: 'Nenhuma campanha encontrada.',
+              loader: (repo, tenant) => repo.campaigns(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'candidates',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Candidatos',
+              emptyMessage: 'Nenhum candidato encontrado.',
+              loader: (repo, tenant) => repo.candidates(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'coordination',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Coordenação',
+              emptyMessage: 'Nenhum item de coordenação encontrado.',
+              loader: (repo, tenant) => repo.coordination(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'teams',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Equipes',
+              emptyMessage: 'Nenhuma equipe encontrada.',
+              loader: (repo, tenant) => repo.teams(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'canvassers',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Cabos eleitorais',
+              emptyMessage: 'Nenhum cabo eleitoral encontrado.',
+              loader: (repo, tenant) => repo.canvassers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'volunteers',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Voluntários',
+              emptyMessage: 'Nenhum voluntário encontrado.',
+              loader: (repo, tenant) => repo.volunteers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'leaders',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Lideranças',
+              emptyMessage: 'Nenhuma liderança encontrada.',
+              loader: (repo, tenant) => repo.leaders(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'supporters',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Apoiadores',
+              emptyMessage: 'Nenhum apoiador encontrado.',
+              loader: (repo, tenant) => repo.supporters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'goals',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Metas eleitorais',
+              emptyMessage: 'Nenhuma meta encontrada.',
+              loader: (repo, tenant) => repo.goals(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'regions',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Regiões',
+              emptyMessage: 'Nenhuma região encontrada.',
+              loader: (repo, tenant) => repo.regions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'neighborhoods',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Bairros',
+              emptyMessage: 'Nenhum bairro encontrado.',
+              loader: (repo, tenant) => repo.neighborhoods(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'electoral-zones',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Zonas eleitorais',
+              emptyMessage: 'Nenhuma zona eleitoral encontrada.',
+              loader: (repo, tenant) =>
+                  repo.electoralZones(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'electoral-sections',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Seções eleitorais',
+              emptyMessage: 'Nenhuma seção eleitoral encontrada.',
+              loader: (repo, tenant) =>
+                  repo.electoralSections(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'polling-stations',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Colégios eleitorais',
+              emptyMessage: 'Nenhum colégio eleitoral encontrado.',
+              loader: (repo, tenant) =>
+                  repo.pollingStations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'map',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Mapa eleitoral',
+              emptyMessage: 'Nenhum dado no mapa.',
+              loader: (repo, tenant) => repo.map(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'campaign-agenda',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Agenda de campanha',
+              emptyMessage: 'Nenhum compromisso na agenda.',
+              loader: (repo, tenant) =>
+                  repo.campaignAgenda(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'events',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Eventos',
+              emptyMessage: 'Nenhum evento encontrado.',
+              loader: (repo, tenant) => repo.events(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'walks',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Caminhadas',
+              emptyMessage: 'Nenhuma caminhada encontrada.',
+              loader: (repo, tenant) => repo.walks(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'meetings',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Reuniões',
+              emptyMessage: 'Nenhuma reunião encontrada.',
+              loader: (repo, tenant) => repo.meetings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'visits',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Visitas',
+              emptyMessage: 'Nenhuma visita encontrada.',
+              loader: (repo, tenant) => repo.visits(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'rallies',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Comícios',
+              emptyMessage: 'Nenhum comício encontrado.',
+              loader: (repo, tenant) => repo.rallies(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'mobilizations',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Mobilizações',
+              emptyMessage: 'Nenhuma mobilização encontrada.',
+              loader: (repo, tenant) =>
+                  repo.mobilizations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'campaign-materials',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Materiais de campanha',
+              emptyMessage: 'Nenhum material encontrado.',
+              loader: (repo, tenant) =>
+                  repo.campaignMaterials(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'inventory',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Estoque',
+              emptyMessage: 'Nenhum item no estoque.',
+              loader: (repo, tenant) => repo.inventory(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'distribution',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Distribuição',
+              emptyMessage: 'Nenhuma distribuição encontrada.',
+              loader: (repo, tenant) => repo.distribution(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'material-requests',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Solicitações de material',
+              emptyMessage: 'Nenhuma solicitação encontrada.',
+              loader: (repo, tenant) =>
+                  repo.materialRequests(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'polls',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Pesquisas eleitorais',
+              emptyMessage: 'Nenhuma pesquisa encontrada.',
+              loader: (repo, tenant) => repo.polls(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'scenarios',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Cenários',
+              emptyMessage: 'Nenhum cenário encontrado.',
+              loader: (repo, tenant) => repo.scenarios(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'vote-intention',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Intenção de voto',
+              emptyMessage: 'Nenhum dado de intenção de voto.',
+              loader: (repo, tenant) =>
+                  repo.voteIntention(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'rejection',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Rejeição',
+              emptyMessage: 'Nenhum dado de rejeição.',
+              loader: (repo, tenant) => repo.rejection(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'comparatives',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Comparativos',
+              emptyMessage: 'Nenhum comparativo encontrado.',
+              loader: (repo, tenant) => repo.comparatives(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'projections',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Projeções',
+              emptyMessage: 'Nenhuma projeção encontrada.',
+              loader: (repo, tenant) => repo.projections(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'regional-performance',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Desempenho por região',
+              emptyMessage: 'Nenhum desempenho regional encontrado.',
+              loader: (repo, tenant) =>
+                  repo.regionalPerformance(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'accountability',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Prestação de contas',
+              emptyMessage: 'Nenhuma prestação de contas encontrada.',
+              loader: (repo, tenant) =>
+                  repo.accountability(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'revenues',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Receitas',
+              emptyMessage: 'Nenhuma receita encontrada.',
+              loader: (repo, tenant) => repo.revenues(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'expenses',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Despesas',
+              emptyMessage: 'Nenhuma despesa encontrada.',
+              loader: (repo, tenant) => repo.expenses(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'donations',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Doações',
+              emptyMessage: 'Nenhuma doação encontrada.',
+              loader: (repo, tenant) => repo.donations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'suppliers',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Fornecedores',
+              emptyMessage: 'Nenhum fornecedor encontrado.',
+              loader: (repo, tenant) => repo.suppliers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'receipts',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Comprovantes',
+              emptyMessage: 'Nenhum comprovante encontrado.',
+              loader: (repo, tenant) => repo.receipts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Relatórios',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'exports',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Exportações',
+              emptyMessage: 'Nenhuma exportação encontrada.',
+              loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const ElectionsSearchPage(),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => ElectionsListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
             ),
           ),
         ],
