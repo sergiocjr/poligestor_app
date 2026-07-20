@@ -1,5 +1,14 @@
 # Changelog — PoliGestor Flutter
 
+## [Sprint 11.0 — sync VPS `/v1/grants/*`] — 2026-07-19
+
+### Changed
+
+- Sincronização do namespace oficial `/v1/grants/*` (substitui paths legados `/v1/agreements/*` e `/v1/convenios/*`)
+- `EndpointPendingState` removido dos domínios com HTTP 200 (painel, convênios, projetos, execução, prestação de contas, linha do tempo, documentos, relatórios)
+- Hub com chips **Ativo** / **Em preparação** conforme probe LIVE
+- Parsers ajustados para payload `kpis`/`summary` do painel e campos LIVE de convênios/linha do tempo
+
 ## [Sprint 11.0 — Painel de Convênios] — 2026-07-19
 
 ### Added

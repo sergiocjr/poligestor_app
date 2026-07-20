@@ -28,29 +28,29 @@ Atualizado: 2026-07-19 (Sprint 11.0 — Painel de Convênios CONCLUÍDA)
 
 Hub próprio em **Mais → Painel de Convênios** (`/home/agreements`).
 
-Namespace preparado `/v1/agreements/*` (ainda não publicado na VPS — probe 404). Interface em PT-BR.
+Namespace oficial `/v1/grants/*` (probe 200 nos domínios principais; 404 em recursos, cronograma, anexos, indicadores e pesquisa). Interface em PT-BR.
 
 ### Telas
 
 Painel · Lista · Detalhes · Pesquisa · Filtros (locais) · Linha do tempo · Anexos · Indicadores · Relatórios · Documentos · Recursos · Projetos · Execução · Prestação de Contas · Cronograma.
 
-### Domínios (UI + Models + Repo + Cache + EndpointPending)
+### Domínios (UI + Models + Repo + Cache)
 
-| Recurso | Contrato preparado | Rota |
-|---------|--------------------|------|
-| Painel / Indicadores | `/v1/agreements/dashboard` | `/home/agreements/dashboard` |
-| Convênios | `/v1/agreements/agreements` (+ `/{id}`) | `/home/agreements/list` |
-| Recursos | `/v1/agreements/resources` | `/home/agreements/resources` |
-| Projetos | `/v1/agreements/projects` | `/home/agreements/projects` |
-| Execução | `/v1/agreements/execution` | `/home/agreements/execution` |
-| Prestação de Contas | `/v1/agreements/accountability` | `/home/agreements/accountability` |
-| Cronograma | `/v1/agreements/schedule` | `/home/agreements/schedule` |
-| Linha do tempo | `/v1/agreements/timeline` | `/home/agreements/timeline` |
-| Documentos | `/v1/agreements/documents` | `/home/agreements/documents` |
-| Anexos | `/v1/agreements/attachments` | `/home/agreements/attachments` |
-| Indicadores | `/v1/agreements/indicators` | `/home/agreements/indicators` |
-| Relatórios | `/v1/agreements/reports` | `/home/agreements/reports` |
-| Pesquisa | `/v1/agreements/search` | `/home/agreements/search` |
+| Recurso | Contrato LIVE | Rota | App |
+|---------|---------------|------|-----|
+| Painel / Indicadores | `/v1/grants/dashboard` | `/home/agreements/dashboard` | Ativo |
+| Convênios | `/v1/grants/agreements` (+ `/{id}`) | `/home/agreements/list` | Ativo |
+| Recursos | `/v1/grants/resources` | `/home/agreements/resources` | Pending |
+| Projetos | `/v1/grants/projects` | `/home/agreements/projects` | Ativo |
+| Execução | `/v1/grants/execution` | `/home/agreements/execution` | Ativo |
+| Prestação de Contas | `/v1/grants/accountability` | `/home/agreements/accountability` | Ativo |
+| Cronograma | `/v1/grants/schedule` | `/home/agreements/schedule` | Pending |
+| Linha do tempo | `/v1/grants/timeline` | `/home/agreements/timeline` | Ativo |
+| Documentos | `/v1/grants/documents` | `/home/agreements/documents` | Ativo |
+| Anexos | `/v1/grants/attachments` | `/home/agreements/attachments` | Pending |
+| Indicadores | `/v1/grants/indicators` | `/home/agreements/indicators` | Pending |
+| Relatórios | `/v1/grants/reports` | `/home/agreements/reports` | Ativo |
+| Pesquisa | `/v1/grants/search` | `/home/agreements/search` | Pending |
 
 Cache: `pg_agree_{tenant}_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://agreements|convenios|painel-convenios/...`.
 

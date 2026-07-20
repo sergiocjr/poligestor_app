@@ -63,7 +63,7 @@ Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
 ## Sprint 11.0 — Painel de Convênios
 
-Staff — **Mais → Painel de Convênios** (`/home/agreements`): painel, convênios, recursos, projetos, execução, prestação de contas, cronograma, documentos e indicadores. Namespace `/v1/agreements/*` preparado (EndpointPending).
+Staff — **Mais → Painel de Convênios** (`/home/agreements`): painel, convênios, recursos, projetos, execução, prestação de contas, cronograma, documentos e indicadores. Namespace LIVE `/v1/grants/*` (pending em recursos, cronograma, anexos, indicadores e pesquisa).
 
 ## Sprint 10.9 — Painel Obras
 

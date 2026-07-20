@@ -7,24 +7,24 @@ import 'package:poligestor_app/features/notifications/domain/notification_router
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  group('AuthMode sprint 11.0 agreements paths', () {
-    test('exposes prepared agreements namespace', () {
+  group('AuthMode sprint 11.0 grants paths', () {
+    test('exposes LIVE grants namespace', () {
       const m = AuthMode.staff;
-      expect(m.agreementsRootPath, '/v1/agreements');
-      expect(m.agreementsDashboardPath, '/v1/agreements/dashboard');
-      expect(m.agreementsListPath, '/v1/agreements/agreements');
-      expect(m.agreementsItemPath('x'), '/v1/agreements/agreements/x');
-      expect(m.agreementsResourcesPath, '/v1/agreements/resources');
-      expect(m.agreementsProjectsPath, '/v1/agreements/projects');
-      expect(m.agreementsExecutionPath, '/v1/agreements/execution');
-      expect(m.agreementsAccountabilityPath, '/v1/agreements/accountability');
-      expect(m.agreementsSchedulePath, '/v1/agreements/schedule');
-      expect(m.agreementsTimelinePath, '/v1/agreements/timeline');
-      expect(m.agreementsDocumentsPath, '/v1/agreements/documents');
-      expect(m.agreementsAttachmentsPath, '/v1/agreements/attachments');
-      expect(m.agreementsIndicatorsPath, '/v1/agreements/indicators');
-      expect(m.agreementsReportsPath, '/v1/agreements/reports');
-      expect(m.agreementsSearchPath, '/v1/agreements/search');
+      expect(m.agreementsRootPath, '/v1/grants');
+      expect(m.agreementsDashboardPath, '/v1/grants/dashboard');
+      expect(m.agreementsListPath, '/v1/grants/agreements');
+      expect(m.agreementsItemPath('x'), '/v1/grants/agreements/x');
+      expect(m.agreementsResourcesPath, '/v1/grants/resources');
+      expect(m.agreementsProjectsPath, '/v1/grants/projects');
+      expect(m.agreementsExecutionPath, '/v1/grants/execution');
+      expect(m.agreementsAccountabilityPath, '/v1/grants/accountability');
+      expect(m.agreementsSchedulePath, '/v1/grants/schedule');
+      expect(m.agreementsTimelinePath, '/v1/grants/timeline');
+      expect(m.agreementsDocumentsPath, '/v1/grants/documents');
+      expect(m.agreementsAttachmentsPath, '/v1/grants/attachments');
+      expect(m.agreementsIndicatorsPath, '/v1/grants/indicators');
+      expect(m.agreementsReportsPath, '/v1/grants/reports');
+      expect(m.agreementsSearchPath, '/v1/grants/search');
     });
   });
 
@@ -51,6 +51,24 @@ void main() {
       expect(d.documentsCount, 8);
     });
 
+    test('parses LIVE dashboard kpis', () {
+      final d = AgreementsDashboard.fromJson({
+        'data': {
+          'summary': {'committed': 10, 'balance': 3},
+          'kpis': {
+            'agreements_active': 2,
+            'projects_active': 1,
+            'accountability_open': 4,
+          },
+        },
+      });
+      expect(d.agreementsOpen, 2);
+      expect(d.agreementsInProgress, 1);
+      expect(d.resourcesActive, 10);
+      expect(d.executionPending, 3);
+      expect(d.accountabilityOpen, 4);
+    });
+
     test('parses agreement item', () {
       final item = AgreementsItem.fromJson({
         'id': '9',
@@ -65,6 +83,32 @@ void main() {
       expect(item.code, 'CV-01');
       expect(item.partner, 'Ministério');
       expect(item.amount, 150000.5);
+    });
+
+    test('parses LIVE agreement and timeline fields', () {
+      final agreement = AgreementsItem.fromJson({
+        'id': '74ff5f79',
+        'number': 'SM-1',
+        'title': 'Smoke convênio',
+        'agency': 'Órgão X',
+        'amount': 1000,
+        'status': 'active',
+        'starts_on': '2026-01-01',
+        'ends_on': '2026-12-31',
+      });
+      expect(agreement.code, 'SM-1');
+      expect(agreement.partner, 'Órgão X');
+      expect(agreement.startedAt, isNotNull);
+      expect(agreement.dueAt, isNotNull);
+
+      final event = AgreementsItem.fromJson({
+        'id': 'evt-1',
+        'event': 'created',
+        'body': 'Convênio cadastrado',
+        'occurred_at': '2026-07-19T23:16:14.000000Z',
+      });
+      expect(event.title, 'Convênio cadastrado');
+      expect(event.startedAt, isNotNull);
     });
   });
 

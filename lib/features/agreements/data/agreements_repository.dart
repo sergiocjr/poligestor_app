@@ -5,7 +5,7 @@ import '../../identity/data/identity_models.dart';
 import 'agreements_cache.dart';
 import 'agreements_models.dart';
 
-/// Painel de Convênios — namespace `/v1/agreements*` preparado (pending VPS).
+/// Painel de Convênios — namespace LIVE `/v1/grants/*`.
 class AgreementsRepository {
   AgreementsRepository(this._api, {AgreementsCache? cache})
     : _cache = cache ?? AgreementsCache();
@@ -70,10 +70,59 @@ class AgreementsRepository {
 
   List<AgreementsItem> _itemsOf(Map<String, dynamic> root) {
     final data = root['data'];
+    if (data is Map && data is! List) {
+      final map = asAgreementsMap(data);
+      if (map.containsKey('agreements_by_status') ||
+          map.containsKey('execution_totals')) {
+        return _reportsOf(map);
+      }
+    }
     final list = data is List
         ? asAgreementsMapList(data)
         : asAgreementsMapList(asAgreementsMap(data));
     return list.map(AgreementsItem.fromJson).toList(growable: false);
+  }
+
+  List<AgreementsItem> _reportsOf(Map<String, dynamic> data) {
+    final items = <AgreementsItem>[];
+    final byStatus = asAgreementsMap(data['agreements_by_status']);
+    for (final entry in byStatus.entries) {
+      items.add(
+        AgreementsItem(
+          id: 'status-${entry.key}',
+          title: 'Convênios — ${entry.key}',
+          status: entry.key.toString(),
+          amount: asAgreementsDouble(entry.value),
+        ),
+      );
+    }
+    final exec = asAgreementsMap(data['execution_totals']);
+    if (exec.isNotEmpty) {
+      items.add(
+        AgreementsItem(
+          id: 'execution-totals',
+          title: 'Totais de execução',
+          summary:
+              'Empenhado: ${exec['committed'] ?? 0} · '
+              'Pago: ${exec['paid'] ?? 0} · '
+              'Executado: ${exec['executed'] ?? 0} · '
+              'Saldo: ${exec['balance'] ?? 0}',
+        ),
+      );
+    }
+    final avgPhysical = data['avg_physical_percent'];
+    final avgFinancial = data['avg_financial_percent'];
+    if (avgPhysical != null || avgFinancial != null) {
+      items.add(
+        AgreementsItem(
+          id: 'averages',
+          title: 'Médias de avanço',
+          summary:
+              'Físico: ${avgPhysical ?? 0}% · Financeiro: ${avgFinancial ?? 0}%',
+        ),
+      );
+    }
+    return items;
   }
 
   Future<AgreementsDashboard> dashboard({

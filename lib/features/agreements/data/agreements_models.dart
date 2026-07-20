@@ -1,4 +1,4 @@
-/// Sprint 11.0 — modelos do Painel de Convênios (contratos preparados `/v1/agreements/*`).
+/// Sprint 11.0 — modelos do Painel de Convênios (contratos LIVE `/v1/grants/*`).
 library;
 
 Map<String, dynamic> asAgreementsMap(dynamic raw) {
@@ -74,28 +74,42 @@ class AgreementsDashboard {
     String? cacheAgeLabel,
   }) {
     final data = asAgreementsMap(root['data'] ?? root);
-    final counts = asAgreementsMap(data['counts'] ?? data['summary'] ?? data);
+    final counts = asAgreementsMap(data['counts'] ?? data);
+    final kpis = asAgreementsMap(data['kpis']);
+    final summary = asAgreementsMap(data['summary']);
     return AgreementsDashboard(
       agreementsOpen: asAgreementsInt(
-        counts['agreements_open'] ?? counts['open'],
+        counts['agreements_open'] ??
+            counts['open'] ??
+            kpis['agreements_active'] ??
+            kpis['agreements_total'],
       ),
       agreementsInProgress: asAgreementsInt(
-        counts['agreements_in_progress'] ?? counts['in_progress'],
+        counts['agreements_in_progress'] ??
+            counts['in_progress'] ??
+            kpis['projects_active'],
       ),
       agreementsCompleted: asAgreementsInt(
         counts['agreements_completed'] ?? counts['completed'],
       ),
       resourcesActive: asAgreementsInt(
-        counts['resources_active'] ?? counts['resources'],
+        counts['resources_active'] ??
+            counts['resources'] ??
+            summary['committed'] ??
+            kpis['funds_received'],
       ),
       projectsOpen: asAgreementsInt(
-        counts['projects_open'] ?? counts['projects'],
+        counts['projects_open'] ?? counts['projects'] ?? kpis['projects_active'],
       ),
       executionPending: asAgreementsInt(
-        counts['execution_pending'] ?? counts['execution'],
+        counts['execution_pending'] ??
+            counts['execution'] ??
+            summary['balance'],
       ),
       accountabilityOpen: asAgreementsInt(
-        counts['accountability_open'] ?? counts['accountability'],
+        counts['accountability_open'] ??
+            counts['accountability'] ??
+            kpis['accountability_open'],
       ),
       scheduleUpcoming: asAgreementsInt(
         counts['schedule_upcoming'] ?? counts['schedule'],
@@ -147,7 +161,13 @@ class AgreementsItem {
     return AgreementsItem(
       id: asAgreementsString(json['id'] ?? json['uuid']) ?? '',
       title:
-          asAgreementsString(json['title'] ?? json['name'] ?? json['label']) ??
+          asAgreementsString(
+            json['title'] ??
+                json['name'] ??
+                json['label'] ??
+                json['body'] ??
+                json['event'],
+          ) ??
           'Convênio',
       code: asAgreementsString(json['code'] ?? json['number']),
       status: asAgreementsString(json['status']),
@@ -155,7 +175,7 @@ class AgreementsItem {
         json['kind'] ?? json['type'] ?? json['category'],
       ),
       summary: asAgreementsString(
-        json['summary'] ?? json['description'] ?? json['body'],
+        json['summary'] ?? json['description'] ?? json['object'],
       ),
       partner: asAgreementsString(
         json['partner'] ?? json['grantor'] ?? json['agency'],
@@ -167,9 +187,14 @@ class AgreementsItem {
           ? null
           : asAgreementsDouble(json['progress_pct'] ?? json['progress']),
       startedAt: dt(
-        json['started_at'] ?? json['start_at'] ?? json['signed_at'],
+        json['started_at'] ??
+            json['start_at'] ??
+            json['signed_at'] ??
+            json['signed_on'] ??
+            json['starts_on'] ??
+            json['occurred_at'],
       ),
-      dueAt: dt(json['due_at'] ?? json['deadline'] ?? json['ends_at']),
+      dueAt: dt(json['due_at'] ?? json['deadline'] ?? json['ends_at'] ?? json['ends_on']),
       raw: Map<String, dynamic>.from(json),
     );
   }

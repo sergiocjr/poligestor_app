@@ -6,25 +6,27 @@ Base API: `https://poligestor.onnexis.com.br/api`
 
 Regra permanente: consumir somente contratos publicados pela VPS. Sem mocks na entrega final. Sem backend local. Ausência → `EndpointPendingState`.
 
-## Sprint 11.0 — `/v1/agreements/*`
+## Sprint 11.0 — `/v1/grants/*`
 
-Namespace dedicado **ainda não publicado** na VPS (probe 404 em todos os paths abaixo). App preparado com Models/Repo/UI/Cache e `EndpointPendingState`.
+Namespace oficial publicado na VPS. App sincronizado; `EndpointPendingState` apenas onde o path ainda retorna 404.
 
 | Método | Path | Status app |
 |--------|------|------------|
-| GET | `/v1/agreements/dashboard` | Preparado (404) |
-| GET | `/v1/agreements/agreements` (+ `/{id}`) | Preparado (404) |
-| GET | `/v1/agreements/resources` | Preparado (404) |
-| GET | `/v1/agreements/projects` | Preparado (404) |
-| GET | `/v1/agreements/execution` | Preparado (404) |
-| GET | `/v1/agreements/accountability` | Preparado (404) |
-| GET | `/v1/agreements/schedule` | Preparado (404) |
-| GET | `/v1/agreements/timeline` | Preparado (404) |
-| GET | `/v1/agreements/documents` | Preparado (404) |
-| GET | `/v1/agreements/attachments` | Preparado (404) |
-| GET | `/v1/agreements/indicators` | Preparado (404) |
-| GET | `/v1/agreements/reports` | Preparado (404) |
-| GET | `/v1/agreements/search` | Preparado (404) — filtros locais nas listas |
+| GET | `/v1/grants/dashboard` | **LIVE** (200) |
+| GET | `/v1/grants/agreements` (+ `/{id}`) | **LIVE** (200) |
+| GET | `/v1/grants/resources` | Preparado (404) |
+| GET | `/v1/grants/projects` | **LIVE** (200) |
+| GET | `/v1/grants/execution` | **LIVE** (200) |
+| GET | `/v1/grants/accountability` | **LIVE** (200) |
+| GET | `/v1/grants/schedule` | Preparado (404) |
+| GET | `/v1/grants/timeline` | **LIVE** (200) |
+| GET | `/v1/grants/documents` | **LIVE** (200) |
+| GET | `/v1/grants/attachments` | Preparado (404) |
+| GET | `/v1/grants/indicators` | Preparado (404) |
+| GET | `/v1/grants/reports` | **LIVE** (200) |
+| GET | `/v1/grants/search` | Preparado (404) — filtros locais nas listas |
+
+> Paths legados `/v1/agreements/*` e `/v1/convenios/*` retornam 404 — não utilizar.
 
 ## Sprint 10.9 — `/v1/works/*`
 

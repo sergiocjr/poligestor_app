@@ -42,78 +42,91 @@ class AgreementsHubPage extends StatelessWidget {
       'Indicadores de convênios',
       Icons.dashboard_outlined,
       '/home/agreements/dashboard',
+      true,
     ),
     _Entry(
       'Convênios',
       'Lista e trâmite',
       Icons.handshake_outlined,
       '/home/agreements/list',
+      true,
     ),
     _Entry(
       'Recursos',
       'Fontes e valores',
       Icons.account_balance_wallet_outlined,
       '/home/agreements/resources',
+      false,
     ),
     _Entry(
       'Projetos',
       'Projetos vinculados',
       Icons.folder_outlined,
       '/home/agreements/projects',
+      true,
     ),
     _Entry(
       'Execução',
       'Acompanhamento da execução',
       Icons.play_circle_outline,
       '/home/agreements/execution',
+      true,
     ),
     _Entry(
       'Prestação de Contas',
       'Relatórios e prestações',
       Icons.receipt_long_outlined,
       '/home/agreements/accountability',
+      true,
     ),
     _Entry(
       'Cronograma',
       'Marcos e prazos',
       Icons.calendar_month_outlined,
       '/home/agreements/schedule',
+      false,
     ),
     _Entry(
       'Linha do Tempo',
       'Eventos do convênio',
       Icons.timeline,
       '/home/agreements/timeline',
+      true,
     ),
     _Entry(
       'Documentos',
       'Documentação oficial',
       Icons.description_outlined,
       '/home/agreements/documents',
+      true,
     ),
     _Entry(
       'Anexos',
       'Arquivos anexos',
       Icons.attach_file,
       '/home/agreements/attachments',
+      false,
     ),
     _Entry(
       'Indicadores',
       'Métricas de desempenho',
       Icons.analytics_outlined,
       '/home/agreements/indicators',
+      false,
     ),
     _Entry(
       'Relatórios',
       'Exportações',
       Icons.summarize_outlined,
       '/home/agreements/reports',
+      true,
     ),
     _Entry(
       'Pesquisa',
       'Busca de convênios',
       Icons.search,
       '/home/agreements/search',
+      false,
     ),
   ];
 
@@ -173,7 +186,7 @@ class AgreementsHubPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Chip(
-                          label: Text(uiContractChip(available: false)),
+                          label: Text(uiContractChip(available: e.live)),
                           visualDensity: VisualDensity.compact,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
@@ -200,11 +213,12 @@ class AgreementsHubPage extends StatelessWidget {
 }
 
 class _Entry {
-  const _Entry(this.title, this.subtitle, this.icon, this.route);
+  const _Entry(this.title, this.subtitle, this.icon, this.route, this.live);
   final String title;
   final String subtitle;
   final IconData icon;
   final String route;
+  final bool live;
 }
 
 typedef AgreementsListLoader =
@@ -429,7 +443,7 @@ class _AgreementsDashboardPageState extends State<AgreementsDashboardPage>
             return EndpointPendingState(
               path: err.path,
               message:
-                  'Painel de convênios preparado. Aguardando /v1/agreements/dashboard.',
+                  'Painel de convênios preparado. Aguardando /v1/grants/dashboard.',
             );
           }
           if (snap.hasError) {
@@ -679,7 +693,7 @@ class _AgreementsSearchPageState extends State<AgreementsSearchPage> {
             return EndpointPendingState(
               path: err.path,
               message:
-                  'Pesquisa dedicada preparada. Aguardando /v1/agreements/search.',
+                  'Pesquisa dedicada preparada. Aguardando /v1/grants/search.',
             );
           }
           if (snap.hasError) {
