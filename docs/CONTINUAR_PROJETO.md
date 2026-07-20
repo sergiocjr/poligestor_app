@@ -43,8 +43,8 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (pendente — auditoria LIVE Fase 17) |
-| Push | Pendente |
+| Último commit | `e196d22` — sync LIVE Fase 17 CONCLUÍDA |
+| Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
