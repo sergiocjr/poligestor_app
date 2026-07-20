@@ -34,8 +34,8 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Working tree | Commit + push desta entrega Fase 12 |
-| Dispositivo | SM-A105M `RX8M70CLXKP` |
+| Último commit | `9ebba50` — Fase 12 sync LIVE Inteligência Territorial |
+| Push | Sim (`origin/master`) |
 
 ### Navegação Gabinete
 
