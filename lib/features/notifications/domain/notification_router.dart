@@ -111,6 +111,16 @@ class NotificationRouter {
               : '/home/territorial-intelligence/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 13 — Gestão Documental
+        if (uri.host == 'documents' ||
+            uri.host == 'documentos' ||
+            uri.host == 'gestao-documental') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/documents'
+              : '/home/documents/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

@@ -19,13 +19,14 @@ Atualizado: 2026-07-20
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 12 — Inteligência Territorial** |
-| Status formal | **EM ANDAMENTO** (Flutter sincronizado com probe; backend incompleto → não fecha pelos 15 critérios) |
-| Hub | Mais → Inteligência Territorial (`/home/territorial-intelligence`) |
-| Namespace oficial | `/api/v1/intelligence/*` (sem aliases) |
-| Doc da fase | [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md) |
+| Fase | **Fase 13 — Gestão Documental** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/documents/*` 100% 404 → Pending; fechamento pelos 15 critérios pendente) |
+| Hub | Mais → Gestão Documental (`/home/documents`) |
+| Namespace oficial | `/api/v1/documents/*` (sem aliases) |
+| Doc da fase | [FASE_13_GESTAO_DOCUMENTAL.md](FASE_13_GESTAO_DOCUMENTAL.md) |
+| Fase 12 | Flutter entregue (LIVE parcial); fechamento formal ainda pendente |
 | Fase 11 | Flutter entregue; fechamento formal ainda pendente |
-| Fase 13 | **Bloqueada** |
+| Fase 14 | **Bloqueada** |
 
 ---
 
@@ -34,45 +35,36 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `9ebba50` — Fase 12 sync LIVE Inteligência Territorial |
-| Push | Sim (`origin/master`) |
+| Working tree | Commit + push desta entrega Fase 13 |
+| Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
 
 - Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Inteligência Territorial: Mais → hub `/home/territorial-intelligence`
+- Gestão Documental: Mais → hub `/home/documents`
 
 ---
 
-## Telas (Fase 12)
+## Telas (Fase 13)
 
-Painel BI · Painel Analítico · Indicadores-chave · Indicadores · Gráficos · Mapas de calor · Mapa territorial · Bairros · Regiões · Zonas eleitorais · Lideranças · Demandas · Obras · Protocolos · Atendimentos · Comparativos · Evolução · Tendências · Projeções · Filtros · Exportações.
+Documentos · Pesquisa · Filtros · Categorias · Favoritos · Histórico · Linha do tempo · Visualizador PDF · Assinaturas · Aprovações · Compartilhamento · Modelos · Download · Upload · Anexos.
 
-Material 3 · Android · Tablet · Web · PT-BR · responsivo (1 coluna no A10).
+Material 3 · cards clicáveis · Android · Tablet · Web · PT-BR · responsivo (1 coluna no A10).
 
 ---
 
-## Contratos LIVE consumidos (Fase 12)
+## Contratos LIVE consumidos (Fase 13)
 
-Probe 2026-07-20 **sem token** (401 = rota publicada; 404 = pendente):
-
-| Path | Status VPS | App |
-|------|------------|-----|
-| `/v1/intelligence/dashboard` | **401 LIVE** | Consome |
-| `/v1/intelligence/kpis` | **401 LIVE** | Consome |
-| `/v1/intelligence/charts` | **401 LIVE** | Consome |
-| `/v1/intelligence/neighborhoods` | **401 LIVE** | Consome |
-| `/v1/intelligence/regions` | **401 LIVE** | Consome |
-| `/v1/intelligence/trends` | **401 LIVE** | Consome |
-| `/v1/intelligence/projections` | **401 LIVE** | Consome |
-| Demais paths do namespace | **404** | `EndpointPendingState` |
+| Método | Path | Status VPS |
+|--------|------|------------|
+| — | `/v1/documents/*` | **Nenhum LIVE** (todos 404 em 2026-07-20) |
 
 ---
 
 ## EndpointPendingState
 
-`bi`, `indicators`, `heatmap`, `map`, `electoral-zones`, `leaderships`, `demands`, `works`, `protocols`, `attendances`, `comparatives`, `evolution`, `filters`, `exports`.
+Todos: `list` (`/v1/documents`), `search`, `filters`, `categories`, `favorites`, `history`, `timeline`, `viewer`, `signatures`, `approvals`, `share`, `templates`, `download`, `upload`, `attachments`.
 
 ---
 
@@ -80,7 +72,7 @@ Probe 2026-07-20 **sem token** (401 = rota publicada; 404 = pendente):
 
 | Camada | Implementação |
 |--------|----------------|
-| Cache | `pg_ti_{tenant}_*` |
+| Cache | `pg_docs_{tenant}_*` |
 | Offline | Cache em falha de rede (quando houver payload) |
 | Realtime | `MandateRefreshController` |
 
@@ -89,10 +81,9 @@ Probe 2026-07-20 **sem token** (401 = rota publicada; 404 = pendente):
 ## Deep Links
 
 ```
-poligestor://territorial-intelligence/...
-poligestor://inteligencia-territorial/...
-poligestor://intelligence-territorial/...
-poligestor://painel-inteligencia-territorial/...
+poligestor://documents/...
+poligestor://documentos/...
+poligestor://gestao-documental/...
 ```
 
 ---
@@ -103,17 +94,17 @@ poligestor://painel-inteligencia-territorial/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 12 | APK debug instalado nesta entrega |
+| Validação APK Fase 13 | APK debug instalado nesta entrega |
 
 ---
 
 ## Pendências reais (fechamento formal)
 
-1. Backend publicar paths ainda em 404 e completar domínio.
+1. Backend publicar `/v1/documents/*`.
 2. PHPUnit do domínio no backend.
-3. Auditoria Backend ↔ Flutter após payloads 200 autenticados.
-4. Fechamento formal da Fase 11.
+3. Auditoria Backend ↔ Flutter após HTTP 200.
+4. Fechamento formal das Fases 11 e 12.
 
 ## Próxima Fase
 
-**Fase 13 — bloqueada** até os 15 critérios da Fase 12.
+**Fase 14 — bloqueada** até os 15 critérios da Fase 13.

@@ -117,6 +117,25 @@ enum AuthMode {
   String get strategyIndicatorsPath => '/v1/strategy/indicators';
   String get strategyPredictionsPath => '/v1/strategy/predictions';
 
+  // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
+  String get documentsRootPath => '/v1/documents';
+  String get documentsListPath => '/v1/documents';
+  String documentsItemPath(String id) => '/v1/documents/$id';
+  String get documentsSearchPath => '/v1/documents/search';
+  String get documentsFiltersPath => '/v1/documents/filters';
+  String get documentsCategoriesPath => '/v1/documents/categories';
+  String get documentsFavoritesPath => '/v1/documents/favorites';
+  String get documentsHistoryPath => '/v1/documents/history';
+  String get documentsTimelinePath => '/v1/documents/timeline';
+  String get documentsViewerPath => '/v1/documents/viewer';
+  String get documentsSignaturesPath => '/v1/documents/signatures';
+  String get documentsApprovalsPath => '/v1/documents/approvals';
+  String get documentsSharePath => '/v1/documents/share';
+  String get documentsTemplatesPath => '/v1/documents/templates';
+  String get documentsDownloadPath => '/v1/documents/download';
+  String get documentsUploadPath => '/v1/documents/upload';
+  String get documentsAttachmentsPath => '/v1/documents/attachments';
+
   // --- Fase 12: Inteligência Territorial (staff) — namespace oficial `/v1/intelligence/*` ---
   String get intelligenceRootPath => '/v1/intelligence';
   String get intelligenceDashboardPath => '/v1/intelligence/dashboard';

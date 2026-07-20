@@ -17,6 +17,7 @@ import '../../features/works/presentation/works_pages.dart';
 import '../../features/agreements/presentation/agreements_pages.dart';
 import '../../features/events/presentation/events_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
+import '../../features/documents/presentation/documents_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -116,6 +117,7 @@ GoRouter createAppRouter({
       final isTerritorialIntelPath = loc.startsWith(
         '/home/territorial-intelligence',
       );
+      final isDocumentsPath = loc.startsWith('/home/documents');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -140,7 +142,8 @@ GoRouter createAppRouter({
               isWorksPath ||
               isAgreementsPath ||
               isEventsPath ||
-              isTerritorialIntelPath) &&
+              isTerritorialIntelPath ||
+              isDocumentsPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -1163,6 +1166,131 @@ GoRouter createAppRouter({
               title: 'Exportações',
               emptyMessage: 'Nenhuma exportação disponível.',
               loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
+            ),
+          ),
+        ],
+      ),
+
+      // Fase 13 — Gestão Documental — staff only.
+      GoRoute(
+        path: '/home/documents',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const DocumentsHubPage(),
+        routes: [
+          GoRoute(
+            path: 'list',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Documentos',
+              emptyMessage: 'Nenhum documento encontrado.',
+              loader: (repo, tenant) => repo.list(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const DocumentsSearchPage(),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'categories',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Categorias',
+              emptyMessage: 'Nenhuma categoria encontrada.',
+              loader: (repo, tenant) => repo.categories(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'favorites',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Favoritos',
+              emptyMessage: 'Nenhum favorito encontrado.',
+              loader: (repo, tenant) => repo.favorites(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Histórico',
+              emptyMessage: 'Nenhum histórico disponível.',
+              loader: (repo, tenant) => repo.history(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'timeline',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Linha do tempo',
+              emptyMessage: 'Nenhum evento na linha do tempo.',
+              loader: (repo, tenant) => repo.timeline(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'viewer',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Visualizador PDF',
+              emptyMessage: 'Nenhum PDF disponível para visualização.',
+              loader: (repo, tenant) => repo.viewer(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'signatures',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Assinaturas',
+              emptyMessage: 'Nenhuma assinatura encontrada.',
+              loader: (repo, tenant) => repo.signatures(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'approvals',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Aprovações',
+              emptyMessage: 'Nenhuma aprovação pendente.',
+              loader: (repo, tenant) => repo.approvals(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'share',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Compartilhamento',
+              emptyMessage: 'Nenhum compartilhamento encontrado.',
+              loader: (repo, tenant) => repo.share(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'templates',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Modelos',
+              emptyMessage: 'Nenhum modelo encontrado.',
+              loader: (repo, tenant) => repo.templates(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'download',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Download',
+              emptyMessage: 'Nenhum download disponível.',
+              loader: (repo, tenant) => repo.download(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'upload',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Upload',
+              emptyMessage: 'Upload preparado. Aguardando contrato LIVE.',
+              loader: (repo, tenant) => repo.upload(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attachments',
+            builder: (_, _) => DocumentsListPage(
+              title: 'Anexos',
+              emptyMessage: 'Nenhum anexo encontrado.',
+              loader: (repo, tenant) => repo.attachments(tenantSlug: tenant),
             ),
           ),
         ],

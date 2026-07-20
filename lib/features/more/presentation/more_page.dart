@@ -124,6 +124,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/events'),
           ),
           ListTile(
+            leading: const Icon(Icons.folder_outlined),
+            title: const Text('Gestão Documental'),
+            subtitle: const Text(
+              'Documentos, PDF, assinaturas, aprovações e anexos',
+            ),
+            onTap: () => context.push('/home/documents'),
+          ),
+          ListTile(
             leading: const Icon(Icons.travel_explore_outlined),
             title: const Text('Inteligência Territorial'),
             subtitle: const Text(
@@ -157,7 +165,6 @@ class MorePage extends StatelessWidget {
             icon: Icons.notifications_outlined,
             title: 'Notificações',
           ),
-          const _SoonTile(icon: Icons.folder_outlined, title: 'Documentos'),
           const _SoonTile(
             icon: Icons.badge_outlined,
             title: 'Carteira Digital',

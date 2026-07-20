@@ -1,5 +1,21 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 13 — Gestão Documental] — 2026-07-20
+
+### Added
+
+- Hub `/home/documents` (lista, pesquisa, filtros, categorias, favoritos, histórico, linha do tempo, visualizador PDF, assinaturas, aprovações, compartilhamento, modelos, download, upload, anexos)
+- Namespace oficial `/v1/documents/*` com `EndpointPendingState` (probe VPS 404 em todos os paths)
+- Cache `pg_docs_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://documents|documentos|gestao-documental/...`
+- Testes `test/fase13_documents_test.dart`
+- Documentação `docs/FASE_13_GESTAO_DOCUMENTAL.md`
+
+### Notes
+
+- Mais → Gestão Documental (substitui stub “Documentos / Em breve”)
+- Fechamento formal pelos 15 critérios pendente (backend 404)
+
 ## [Fase 12 — sync LIVE Inteligência Territorial] — 2026-07-20
 
 ### Changed
