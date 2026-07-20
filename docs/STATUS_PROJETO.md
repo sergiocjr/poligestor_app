@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutter; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamento formal pendente)
 
 ## Resumo
 
@@ -31,7 +31,8 @@ Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutt
 | **Fase 17 — Gestão Eleitoral** | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending; pendência A10) |
 | **Fase 18 — IA Avançada** | **EM ANDAMENTO** (Flutter entregue; `/v1/ai/*` sync parcial) |
 | **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 404) |
-| Fase 20 | **Não iniciada** |
+| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 404) |
+| Fase 21 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -45,6 +46,14 @@ Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 Única pendência: **validação física no Samsung Galaxy A10**.
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
+
+## Fase 20 — Portal Administrativo Web
+
+Rota dedicada **`/platform`** (shell Web com NavigationRail/gaveta). Namespace `/v1/platform/*` — probe autenticado **404 em todos**. Entrada em Mais somente na Web. Gabinete e Cidadão inalterados. Cache `pg_plat_*`. Deep links: `poligestor://platform|portal-admin|portal-administrativo|admin-web/...`.
+
+Doc: [FASE_20_PORTAL_ADMINISTRATIVO_WEB.md](FASE_20_PORTAL_ADMINISTRATIVO_WEB.md).
+
+**Fase 21 — não iniciada.**
 
 ## Fase 19 — Administração do Sistema
 

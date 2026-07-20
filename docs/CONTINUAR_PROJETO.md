@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutter; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamento formal pendente)
 
 ---
 
@@ -23,17 +23,15 @@ Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutt
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 19 — Administração do Sistema** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 100% 404 → Pending) |
-| Hub | Mais → Administração do Sistema (`/home/system-admin`) |
-| Namespace oficial | `/api/v1/admin/*` |
-| Doc da fase | [FASE_19_ADMINISTRACAO_SISTEMA.md](FASE_19_ADMINISTRACAO_SISTEMA.md) |
+| Fase | **Fase 20 — Portal Administrativo Web** |
+| Status formal | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 100% 404 → Pending) |
+| Entrada | Rota `/platform` (shell Web); Mais somente `kIsWeb` |
+| Namespace oficial | `/api/v1/platform/*` |
+| Doc da fase | [FASE_20_PORTAL_ADMINISTRATIVO_WEB.md](FASE_20_PORTAL_ADMINISTRATIVO_WEB.md) |
+| Fase 19 | **EM ANDAMENTO** (`/v1/admin/*` 404) |
 | Fase 18 | **EM ANDAMENTO** (`/v1/ai/*` sync parcial) |
 | Fase 17 | **CONCLUÍDA** (pendência A10 física) |
-| Fase 16 | **EM ANDAMENTO** (`/v1/crm/*` 404) |
-| Fase 15 | **EM ANDAMENTO** (`/v1/communication/*` 404) |
-| Fase 14 | **CONCLUÍDA** |
-| Fase 20 | **Não iniciar** sem pedido explícito |
+| Fase 21 | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -42,70 +40,52 @@ Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutt
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `a78ceec` — feat Fase 19 Administração do Sistema |
-| Push | origin/master |
-| Dispositivo | SM-A105M `RX8M70CLXKP` |
+| Último commit | (pendente — entrega Fase 20) |
+| Push | Pendente |
+| Dispositivo | SM-A105M `RX8M70CLXKP` (não exigido nesta fase Web) |
 
-### Navegação Gabinete
+### Navegação
 
-- Inicial: `/home/dashboard` (Gabinete)
-- Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Administração do Sistema: Mais → hub `/home/system-admin`
-- IA Avançada: Mais → `/home/advanced-ai`
-- Assistente Inteligente (Sprint 10.5): Mais → `/home/chat`
-
----
-
-## Telas (Fase 19)
-
-Painel administrativo · Empresas · Gabinetes · Usuários · Perfis · Papéis · Permissões · Equipes · Departamentos · Configurações · Licenciamento · Assinaturas · Registros · Auditoria · Sessões · Chaves de API · Integrações · Webhooks · Cópia de segurança · Monitoramento · Saúde do sistema · Configuração de e-mail · Configuração de notificações · Configuração de armazenamento · Relatórios · Exportações · Pesquisa · Filtros.
-
-Material 3 · cards clicáveis · PT-BR · responsivo · cache `pg_adm_*` · offline · realtime (`MandateRefreshController`).
+- Gabinete staff: `/home/dashboard` (inalterado)
+- Portal do Cidadão: `/citizen/*` (inalterado)
+- Portal administrativo Web: `/platform`
+- Fase 19 Administração (app): `/home/system-admin` (`/v1/admin/*`)
 
 ---
 
-## Contratos LIVE consumidos (Fase 19)
+## Telas (Fase 20)
+
+Painel geral · Empresas · Gabinetes · Usuários · Perfis e permissões · Planos · Licenciamento · Assinaturas · Cobranças · Faturas · Pagamentos · Consumo por gabinete · Limites dos planos · Métricas · Monitoramento · Saúde dos serviços · Registros · Auditoria · Sessões · Integrações · Webhooks · Configurações globais · Configurações por tenant · Suporte · Chamados · Base de conhecimento · Comunicados · Releases · Manutenções · Relatórios · Exportações · Busca · Filtros.
+
+Material 3 · rail/gaveta responsiva · PT-BR · cache `pg_plat_*` · realtime (`MandateRefreshController`).
+
+---
+
+## Contratos LIVE consumidos (Fase 20)
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| — | `/v1/admin/*` | **Nenhum LIVE** (todos 404; `kAdminLiveSlugs` vazio) |
-
----
-
-## EndpointPendingState (28)
-
-`dashboard`, `companies`, `offices`, `users`, `profiles`, `roles`, `permissions`, `teams`, `departments`, `settings`, `licensing`, `subscriptions`, `logs`, `audit`, `sessions`, `api-keys`, `integrations`, `webhooks`, `backup`, `monitoring`, `health`, `email-settings`, `notification-settings`, `storage-settings`, `reports`, `exports`, `search`, `filters`.
+| — | `/v1/platform/*` | **Nenhum LIVE** (todos 404; `kPlatformLiveSlugs` vazio) |
 
 ---
 
 ## Deep Links
 
 ```
-poligestor://system-admin/...
-poligestor://administracao/...
-poligestor://administracao-sistema/...
-poligestor://admin-sistema/...
+poligestor://platform/...
+poligestor://portal-admin/...
+poligestor://portal-administrativo/...
+poligestor://admin-web/...
 ```
-
----
-
-## Samsung Galaxy A10
-
-| Campo | Valor |
-|-------|--------|
-| Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
-| Emulador | **Proibido** |
-| Validação APK Fase 19 | OK (hub + EndpointPendingState) |
 
 ---
 
 ## Pendências reais (fechamento formal)
 
-1. Backend publicar `/v1/admin/*`.
-2. Sync LIVE (chips Ativo) + auditoria payloads 200.
-3. Fechamento formal das Fases 11, 12, 15, 16 e 18 (quando solicitado).
-4. Validação física A10 da Fase 17 (se ainda pendente).
+1. Backend publicar `/v1/platform/*`.
+2. Sync LIVE (chips Ativo) + auditoria payloads 200/201/202.
+3. Fechamento formal das Fases 11, 12, 15, 16, 18 e 19 (quando solicitado).
 
 ## Próxima Fase
 
-**Fase 20 — não iniciar** sem pedido explícito.
+**Fase 21 — não iniciar** sem pedido explícito.

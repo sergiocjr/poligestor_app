@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -87,6 +88,15 @@ class MorePage extends StatelessWidget {
             ),
             onTap: () => context.push('/home/system-admin'),
           ),
+          if (kIsWeb)
+            ListTile(
+              leading: const Icon(Icons.public_outlined),
+              title: const Text('Portal administrativo'),
+              subtitle: const Text(
+                'Gestão da plataforma, cobrança, operação e suporte',
+              ),
+              onTap: () => context.push('/platform'),
+            ),
           ListTile(
             leading: const Icon(Icons.groups_outlined),
             title: const Text('Equipe Virtual'),

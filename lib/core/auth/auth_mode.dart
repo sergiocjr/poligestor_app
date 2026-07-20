@@ -331,6 +331,43 @@ enum AuthMode {
   String get adminSearchPath => '/v1/admin/search';
   String get adminFiltersPath => '/v1/admin/filters';
 
+  // --- Fase 20: Portal Administrativo Web (staff) — `/v1/platform/*` ---
+  String get platformRootPath => '/v1/platform';
+  String get platformDashboardPath => '/v1/platform/dashboard';
+  String get platformCompaniesPath => '/v1/platform/companies';
+  String get platformOfficesPath => '/v1/platform/offices';
+  String get platformUsersPath => '/v1/platform/users';
+  String get platformProfilesPath => '/v1/platform/profiles';
+  String get platformPermissionsPath => '/v1/platform/permissions';
+  String get platformPlansPath => '/v1/platform/plans';
+  String get platformLicensingPath => '/v1/platform/licensing';
+  String get platformSubscriptionsPath => '/v1/platform/subscriptions';
+  String get platformChargesPath => '/v1/platform/charges';
+  String get platformInvoicesPath => '/v1/platform/invoices';
+  String get platformPaymentsPath => '/v1/platform/payments';
+  String get platformConsumptionPath => '/v1/platform/consumption';
+  String get platformPlanLimitsPath => '/v1/platform/plan-limits';
+  String get platformMetricsPath => '/v1/platform/metrics';
+  String get platformMonitoringPath => '/v1/platform/monitoring';
+  String get platformHealthPath => '/v1/platform/health';
+  String get platformLogsPath => '/v1/platform/logs';
+  String get platformAuditPath => '/v1/platform/audit';
+  String get platformSessionsPath => '/v1/platform/sessions';
+  String get platformIntegrationsPath => '/v1/platform/integrations';
+  String get platformWebhooksPath => '/v1/platform/webhooks';
+  String get platformGlobalSettingsPath => '/v1/platform/global-settings';
+  String get platformTenantSettingsPath => '/v1/platform/tenant-settings';
+  String get platformSupportPath => '/v1/platform/support';
+  String get platformTicketsPath => '/v1/platform/tickets';
+  String get platformKnowledgeBasePath => '/v1/platform/knowledge-base';
+  String get platformAnnouncementsPath => '/v1/platform/announcements';
+  String get platformReleasesPath => '/v1/platform/releases';
+  String get platformMaintenancesPath => '/v1/platform/maintenances';
+  String get platformReportsPath => '/v1/platform/reports';
+  String get platformExportsPath => '/v1/platform/exports';
+  String get platformSearchPath => '/v1/platform/search';
+  String get platformFiltersPath => '/v1/platform/filters';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

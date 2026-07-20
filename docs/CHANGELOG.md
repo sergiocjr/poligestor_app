@@ -1,5 +1,23 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 20 — Portal Administrativo Web] — 2026-07-20
+
+### Added
+
+- Portal Web em `/platform` (painel geral, empresas, gabinetes, usuários, perfis/permissões, planos, licenciamento, assinaturas, cobranças, faturas, pagamentos, consumo, limites, métricas, monitoramento, saúde, registros, auditoria, sessões, integrações, webhooks, configurações globais/tenant, suporte, chamados, base de conhecimento, comunicados, releases, manutenções, relatórios, exportações, busca, filtros)
+- Namespace oficial `/v1/platform/*` com `EndpointPendingState` (probe VPS 404 em todos)
+- Shell responsivo (NavigationRail desktop / gaveta tablet), cache `pg_plat_*`, realtime
+- Deep links `poligestor://platform|portal-admin|portal-administrativo|admin-web/...`
+- Entrada em Mais somente na Web (`kIsWeb`) — Gabinete mobile e Cidadão inalterados
+- Testes `test/fase20_platform_admin_test.dart`
+- Documentação `docs/FASE_20_PORTAL_ADMINISTRATIVO_WEB.md`
+
+### Notes
+
+- Independente da Fase 19 (`/v1/admin/*`)
+- `kPlatformLiveSlugs` vazio até a VPS publicar contratos
+- Fase 21 não iniciada
+
 ## [Fase 19 — Administração do Sistema] — 2026-07-20
 
 ### Added

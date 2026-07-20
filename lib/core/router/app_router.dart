@@ -25,6 +25,8 @@ import '../../features/political_crm/presentation/crm_pages.dart';
 import '../../features/advanced_ai/presentation/advanced_ai_pages.dart';
 import '../../features/electoral_management/presentation/elections_pages.dart';
 import '../../features/system_admin/presentation/admin_pages.dart';
+import '../../features/platform_admin/presentation/platform_pages.dart';
+import '../../features/platform_admin/presentation/platform_shell.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -134,6 +136,7 @@ GoRouter createAppRouter({
       final isElectionsPath = loc.startsWith('/home/elections');
       final isAdvancedAiPath = loc.startsWith('/home/advanced-ai');
       final isSystemAdminPath = loc.startsWith('/home/system-admin');
+      final isPlatformPath = loc.startsWith('/platform');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -146,6 +149,11 @@ GoRouter createAppRouter({
       }
       if (auth.mode == AuthMode.staff && isCitizenPath) {
         return '/home/dashboard';
+      }
+      if (isPlatformPath && auth.mode != AuthMode.staff) {
+        return auth.mode == AuthMode.portal
+            ? '/citizen/home'
+            : '/home/dashboard';
       }
       // Mandato / Inteligência / Equipe Virtual / Comunicação / Automação / Estratégia exclusivos de staff.
       if ((isMandatePath ||
@@ -2754,6 +2762,18 @@ GoRouter createAppRouter({
               emptyMessage: 'Nenhum filtro disponível.',
               loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
             ),
+          ),
+        ],
+      ),
+
+      // Fase 20 — Portal Administrativo Web — staff only (shell separado).
+      ShellRoute(
+        builder: (context, state, child) => PlatformShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/platform',
+            builder: (_, _) => const PlatformHubPage(),
+            routes: buildPlatformChildRoutes(),
           ),
         ],
       ),

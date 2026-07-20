@@ -181,6 +181,16 @@ class NotificationRouter {
               : '/home/system-admin/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 20 — Portal Administrativo Web
+        if (uri.host == 'platform' ||
+            uri.host == 'portal-admin' ||
+            uri.host == 'portal-administrativo' ||
+            uri.host == 'admin-web') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location =
+              rest.isEmpty ? '/platform' : '/platform/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||
