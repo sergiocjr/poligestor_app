@@ -48,4 +48,4 @@ Ativação de autenticação em duas etapas · Confirmação de autenticação e
 
 Validação A10 (`RX8M70CLXKP`): hub + Pending OK; emulador não iniciado.
 
-**Fase 22 — não iniciada.**
+**Fase 22 — entregue** (ver [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md)).

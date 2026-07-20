@@ -192,6 +192,17 @@ class NotificationRouter {
               : '/home/security/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 22 — Integrações
+        if (uri.host == 'integrations' ||
+            uri.host == 'integracoes' ||
+            uri.host == 'integracao' ||
+            uri.host == 'central-integracoes') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/integrations'
+              : '/home/integrations/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Fase 20 — Portal Administrativo Web
         if (uri.host == 'platform' ||
             uri.host == 'portal-admin' ||

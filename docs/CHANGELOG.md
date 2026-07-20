@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 22 — Integrações] — 2026-07-20
+
+### Added
+
+- Hub `/home/integrations` (painel, status, configuração, sincronizações, histórico, registros, Gov.br, Câmara Municipal, Assembleia Legislativa, Câmara dos Deputados, Senado Federal, Diário Oficial, Portal da Transparência, e-SIC, Ouvidoria, Google Calendar, Outlook Calendar, Gmail, WhatsApp, Telegram, Firebase Push, APIs externas, webhooks, pesquisa, filtros)
+- Namespace oficial `/v1/integrations/*` com `EndpointPendingState` (probe VPS 404 em todos)
+- Cache `pg_int_*` (strip de segredos), realtime, Material 3, responsivo
+- Deep links `poligestor://integrations|integracoes|integracao|central-integracoes/...`
+- Testes `test/fase22_integrations_test.dart`
+- Documentação `docs/FASE_22_INTEGRACOES.md`
+
+### Notes
+
+- `kIntegrationsLiveSlugs` vazio até a VPS publicar
+- Independente de `/v1/admin/*` e `/v1/platform/*`
+- Fase 23 não iniciada
+
 ## [Fase 21 — Segurança e Privacidade] — 2026-07-20
 
 ### Added

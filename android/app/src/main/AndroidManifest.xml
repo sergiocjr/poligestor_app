@@ -91,6 +91,10 @@
                 <data android:scheme="poligestor" android:host="seguranca"/>
                 <data android:scheme="poligestor" android:host="privacidade"/>
                 <data android:scheme="poligestor" android:host="security-privacy"/>
+                <data android:scheme="poligestor" android:host="integrations"/>
+                <data android:scheme="poligestor" android:host="integracoes"/>
+                <data android:scheme="poligestor" android:host="integracao"/>
+                <data android:scheme="poligestor" android:host="central-integracoes"/>
                 <data android:scheme="poligestor" android:host="platform"/>
                 <data android:scheme="poligestor" android:host="portal-admin"/>
                 <data android:scheme="poligestor" android:host="portal-administrativo"/>

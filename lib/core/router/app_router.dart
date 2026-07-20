@@ -28,6 +28,7 @@ import '../../features/system_admin/presentation/admin_pages.dart';
 import '../../features/platform_admin/presentation/platform_pages.dart';
 import '../../features/platform_admin/presentation/platform_shell.dart';
 import '../../features/security_privacy/presentation/security_pages.dart';
+import '../../features/integrations/presentation/integrations_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -2774,6 +2775,14 @@ GoRouter createAppRouter({
         parentNavigatorKey: rootNavigatorKey,
         builder: (_, _) => const SecurityHubPage(),
         routes: buildSecurityChildRoutes(),
+      ),
+
+      // Fase 22 — Integrações — staff (autenticado).
+      GoRoute(
+        path: '/home/integrations',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const IntegrationsHubPage(),
+        routes: buildIntegrationsChildRoutes(),
       ),
 
       // Fase 20 — Portal Administrativo Web — staff only (shell separado).

@@ -1,6 +1,6 @@
 # Integrações LIVE — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 17)
+Atualizado: 2026-07-20 (Fase 22)
 
 Base API: `https://poligestor.onnexis.com.br/api`
 
@@ -153,6 +153,40 @@ Namespace dedicado **ainda não publicado** na VPS (probe 404 em todos os paths 
 Auditoria autenticada 2026-07-20: **14 LIVE (HTTP 200)**; **31** ainda 404 → `EndpointPendingState`.
 
 LIVE: `dashboard`, `campaigns`, `candidates`, `teams`, `goals`, `regions`, `neighborhoods`, `map`, `events`, `material-requests`, `projections`, `accountability`, `receipts`, `reports`.
+
+## Fase 22 — `/v1/integrations/*`
+
+Namespace oficial da Central de Integrações. Probe autenticado 2026-07-20: **404 em todos os paths**. App preparado (`kIntegrationsLiveSlugs` vazio).
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/integrations/dashboard` | Preparado (404) |
+| GET | `/v1/integrations/status` | Preparado (404) |
+| GET/POST | `/v1/integrations/config` | Preparado (404) |
+| GET/POST | `/v1/integrations/sync` | Preparado (404) |
+| GET | `/v1/integrations/history` | Preparado (404) |
+| GET | `/v1/integrations/logs` | Preparado (404) |
+| GET | `/v1/integrations/govbr` | Preparado (404) |
+| GET | `/v1/integrations/camara-municipal` | Preparado (404) |
+| GET | `/v1/integrations/assembleia-legislativa` | Preparado (404) |
+| GET | `/v1/integrations/camara-deputados` | Preparado (404) |
+| GET | `/v1/integrations/senado-federal` | Preparado (404) |
+| GET | `/v1/integrations/diario-oficial` | Preparado (404) |
+| GET | `/v1/integrations/portal-transparencia` | Preparado (404) |
+| GET | `/v1/integrations/e-sic` | Preparado (404) |
+| GET | `/v1/integrations/ouvidoria` | Preparado (404) |
+| GET | `/v1/integrations/google-calendar` | Preparado (404) |
+| GET | `/v1/integrations/outlook-calendar` | Preparado (404) |
+| GET | `/v1/integrations/gmail` | Preparado (404) |
+| GET | `/v1/integrations/whatsapp` | Preparado (404) |
+| GET | `/v1/integrations/telegram` | Preparado (404) |
+| GET | `/v1/integrations/firebase-push` | Preparado (404) |
+| GET | `/v1/integrations/external-apis` | Preparado (404) |
+| GET | `/v1/integrations/webhooks` | Preparado (404) |
+| GET | `/v1/integrations/search` | Preparado (404) |
+| GET | `/v1/integrations/filters` | Preparado (404) |
+
+Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 
 ## Reuso mandato / inteligência
 

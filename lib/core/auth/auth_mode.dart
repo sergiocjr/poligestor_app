@@ -396,6 +396,44 @@ enum AuthMode {
   String get securityConsentHistoryPath => '/v1/security/consent-history';
   String get securityIncidentsPath => '/v1/security/incidents';
 
+  // --- Fase 22: Integrações — `/v1/integrations/*` (staff) ---
+  String get integrationsRootPath => '/v1/integrations';
+  String get integrationsDashboardPath => '/v1/integrations/dashboard';
+  String get integrationsStatusPath => '/v1/integrations/status';
+  String get integrationsConfigPath => '/v1/integrations/config';
+  String get integrationsSyncPath => '/v1/integrations/sync';
+  String get integrationsHistoryPath => '/v1/integrations/history';
+  String get integrationsLogsPath => '/v1/integrations/logs';
+  String get integrationsGovbrPath => '/v1/integrations/govbr';
+  String get integrationsCamaraMunicipalPath =>
+      '/v1/integrations/camara-municipal';
+  String get integrationsAssembleiaLegislativaPath =>
+      '/v1/integrations/assembleia-legislativa';
+  String get integrationsCamaraDeputadosPath =>
+      '/v1/integrations/camara-deputados';
+  String get integrationsSenadoFederalPath =>
+      '/v1/integrations/senado-federal';
+  String get integrationsDiarioOficialPath =>
+      '/v1/integrations/diario-oficial';
+  String get integrationsPortalTransparenciaPath =>
+      '/v1/integrations/portal-transparencia';
+  String get integrationsESicPath => '/v1/integrations/e-sic';
+  String get integrationsOuvidoriaPath => '/v1/integrations/ouvidoria';
+  String get integrationsGoogleCalendarPath =>
+      '/v1/integrations/google-calendar';
+  String get integrationsOutlookCalendarPath =>
+      '/v1/integrations/outlook-calendar';
+  String get integrationsGmailPath => '/v1/integrations/gmail';
+  String get integrationsWhatsappPath => '/v1/integrations/whatsapp';
+  String get integrationsTelegramPath => '/v1/integrations/telegram';
+  String get integrationsFirebasePushPath =>
+      '/v1/integrations/firebase-push';
+  String get integrationsExternalApisPath =>
+      '/v1/integrations/external-apis';
+  String get integrationsWebhooksPath => '/v1/integrations/webhooks';
+  String get integrationsSearchPath => '/v1/integrations/search';
+  String get integrationsFiltersPath => '/v1/integrations/filters';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).
