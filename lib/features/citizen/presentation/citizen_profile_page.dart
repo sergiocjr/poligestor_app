@@ -171,6 +171,13 @@ class _CitizenProfilePageState extends State<CitizenProfilePage> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/account/sessions'),
                 ),
+                const Divider(height: 1),
+                ListTile(
+                  leading: const Icon(Icons.shield_outlined),
+                  title: const Text('Segurança e Privacidade'),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => context.push('/home/security'),
+                ),
               ],
             ),
           ),

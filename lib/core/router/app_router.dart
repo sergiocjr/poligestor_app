@@ -27,6 +27,7 @@ import '../../features/electoral_management/presentation/elections_pages.dart';
 import '../../features/system_admin/presentation/admin_pages.dart';
 import '../../features/platform_admin/presentation/platform_pages.dart';
 import '../../features/platform_admin/presentation/platform_shell.dart';
+import '../../features/security_privacy/presentation/security_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -136,6 +137,7 @@ GoRouter createAppRouter({
       final isElectionsPath = loc.startsWith('/home/elections');
       final isAdvancedAiPath = loc.startsWith('/home/advanced-ai');
       final isSystemAdminPath = loc.startsWith('/home/system-admin');
+      final isSecurityPath = loc.startsWith('/home/security');
       final isPlatformPath = loc.startsWith('/platform');
 
       if (isSplash || isLoginFlow || isOrg) {
@@ -144,7 +146,7 @@ GoRouter createAppRouter({
             : '/home/dashboard';
       }
 
-      if (auth.mode == AuthMode.portal && isStaffPath) {
+      if (auth.mode == AuthMode.portal && isStaffPath && !isSecurityPath) {
         return '/citizen/home';
       }
       if (auth.mode == AuthMode.staff && isCitizenPath) {
@@ -178,8 +180,8 @@ GoRouter createAppRouter({
         return '/citizen/home';
       }
 
-      // Conta compartilhada staff/portal.
-      if (isAccountPath) return null;
+      // Conta e segurança compartilhados staff/portal.
+      if (isAccountPath || isSecurityPath) return null;
 
       return null;
     },
@@ -2764,6 +2766,14 @@ GoRouter createAppRouter({
             ),
           ),
         ],
+      ),
+
+      // Fase 21 — Segurança e Privacidade — staff e portal (autenticado).
+      GoRoute(
+        path: '/home/security',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const SecurityHubPage(),
+        routes: buildSecurityChildRoutes(),
       ),
 
       // Fase 20 — Portal Administrativo Web — staff only (shell separado).

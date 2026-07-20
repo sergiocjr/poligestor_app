@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 21 — Segurança e Privacidade entregue; fechamento formal pendente)
 
 ---
 
@@ -23,15 +23,16 @@ Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamen
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 20 — Portal Administrativo Web** |
-| Status formal | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 100% 404 → Pending) |
-| Entrada | Rota `/platform` (shell Web); Mais somente `kIsWeb` |
-| Namespace oficial | `/api/v1/platform/*` |
-| Doc da fase | [FASE_20_PORTAL_ADMINISTRATIVO_WEB.md](FASE_20_PORTAL_ADMINISTRATIVO_WEB.md) |
+| Fase | **Fase 21 — Segurança e Privacidade** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/security/*` 100% 404 → Pending) |
+| Hub | Mais → Segurança e Privacidade (`/home/security`) |
+| Namespace oficial | `/api/v1/security/*` |
+| Doc da fase | [FASE_21_SEGURANCA_PRIVACIDADE.md](FASE_21_SEGURANCA_PRIVACIDADE.md) |
+| Fase 20 | **EM ANDAMENTO** (`/v1/platform/*` 404) |
 | Fase 19 | **EM ANDAMENTO** (`/v1/admin/*` 404) |
 | Fase 18 | **EM ANDAMENTO** (`/v1/ai/*` sync parcial) |
 | Fase 17 | **CONCLUÍDA** (pendência A10 física) |
-| Fase 21 | **Não iniciar** sem pedido explícito |
+| Fase 22 | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -40,52 +41,56 @@ Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamen
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `092e333` — feat Fase 20 Portal Administrativo Web |
-| Push | origin/master |
-| Dispositivo | SM-A105M `RX8M70CLXKP` (não exigido nesta fase Web) |
+| Último commit | (pendente — entrega Fase 21) |
+| Push | Pendente |
+| Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação
 
-- Gabinete staff: `/home/dashboard` (inalterado)
-- Portal do Cidadão: `/citizen/*` (inalterado)
-- Portal administrativo Web: `/platform`
-- Fase 19 Administração (app): `/home/system-admin` (`/v1/admin/*`)
+- Segurança e Privacidade: Mais → `/home/security` (staff e portal)
+- Sessões de conta (legado LIVE auth): Mais → Sessões → `/account/sessions` (`/v1/auth/sessions`)
+- Portal Web: `/platform`
+- Administração app: `/home/system-admin`
 
 ---
 
-## Telas (Fase 20)
-
-Painel geral · Empresas · Gabinetes · Usuários · Perfis e permissões · Planos · Licenciamento · Assinaturas · Cobranças · Faturas · Pagamentos · Consumo por gabinete · Limites dos planos · Métricas · Monitoramento · Saúde dos serviços · Registros · Auditoria · Sessões · Integrações · Webhooks · Configurações globais · Configurações por tenant · Suporte · Chamados · Base de conhecimento · Comunicados · Releases · Manutenções · Relatórios · Exportações · Busca · Filtros.
-
-Material 3 · rail/gaveta responsiva · PT-BR · cache `pg_plat_*` · realtime (`MandateRefreshController`).
-
----
-
-## Contratos LIVE consumidos (Fase 20)
+## Contratos LIVE (Fase 21)
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| — | `/v1/platform/*` | **Nenhum LIVE** (todos 404; `kPlatformLiveSlugs` vazio) |
+| — | `/v1/security/*` | **Nenhum LIVE** (todos 404; `kSecurityLiveSlugs` vazio) |
+
+Tokens de sessão: `FlutterSecureStorage` (já existente).
 
 ---
 
 ## Deep Links
 
 ```
-poligestor://platform/...
-poligestor://portal-admin/...
-poligestor://portal-administrativo/...
-poligestor://admin-web/...
+poligestor://security/...
+poligestor://seguranca/...
+poligestor://privacidade/...
+poligestor://security-privacy/...
 ```
+
+---
+
+## Samsung Galaxy A10
+
+| Campo | Valor |
+|-------|--------|
+| Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
+| Emulador | **Proibido** |
+| Validação APK Fase 21 | OK (hub + EndpointPendingState; sem tokens em logcat) |
 
 ---
 
 ## Pendências reais (fechamento formal)
 
-1. Backend publicar `/v1/platform/*`.
-2. Sync LIVE (chips Ativo) + auditoria payloads 200/201/202.
-3. Fechamento formal das Fases 11, 12, 15, 16, 18 e 19 (quando solicitado).
+1. Backend publicar `/v1/security/*`.
+2. Sync LIVE + auditoria MFA/sessões/privacidade com HTTP 200/201/202.
+3. Fechamento formal das Fases 11–12, 15–16, 18–20 (quando solicitado).
 
 ## Próxima Fase
 
-**Fase 21 — não iniciar** sem pedido explícito.
+**Fase 22 — não iniciar** sem pedido explícito.

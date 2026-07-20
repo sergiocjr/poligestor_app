@@ -87,6 +87,10 @@
                 <data android:scheme="poligestor" android:host="administracao"/>
                 <data android:scheme="poligestor" android:host="administracao-sistema"/>
                 <data android:scheme="poligestor" android:host="admin-sistema"/>
+                <data android:scheme="poligestor" android:host="security"/>
+                <data android:scheme="poligestor" android:host="seguranca"/>
+                <data android:scheme="poligestor" android:host="privacidade"/>
+                <data android:scheme="poligestor" android:host="security-privacy"/>
                 <data android:scheme="poligestor" android:host="platform"/>
                 <data android:scheme="poligestor" android:host="portal-admin"/>
                 <data android:scheme="poligestor" android:host="portal-administrativo"/>

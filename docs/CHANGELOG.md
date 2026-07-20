@@ -1,5 +1,23 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 21 — Segurança e Privacidade] — 2026-07-20
+
+### Added
+
+- Hub `/home/security` (MFA ativação/confirmação, recuperação de conta, sessões, encerramento remoto, histórico de acessos, dispositivos, alteração/políticas de senha, tokens/chaves de API, alertas, privacidade, consentimentos, termos, política de privacidade, solicitação/exportação/correção de dados, exclusão de conta, preferências, histórico de consentimentos, incidentes)
+- Namespace oficial `/v1/security/*` com `EndpointPendingState` (probe VPS 404 em todos)
+- Cache seguro `pg_sec_*` (strip de segredos), mascaramento de e-mail/CPF, realtime
+- Deep links `poligestor://security|seguranca|privacidade|security-privacy/...`
+- Testes `test/fase21_security_privacy_test.dart`
+- Documentação `docs/FASE_21_SEGURANCA_PRIVACIDADE.md`
+
+### Notes
+
+- Tokens já em `FlutterSecureStorage` (`token_storage.dart`) — sem texto puro
+- Independente de `/account/sessions` (`/v1/auth/sessions`)
+- `kSecurityLiveSlugs` vazio até a VPS publicar
+- Fase 22 não iniciada
+
 ## [Fase 20 — Portal Administrativo Web] — 2026-07-20
 
 ### Added

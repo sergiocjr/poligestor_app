@@ -48,6 +48,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/account/sessions'),
           ),
           ListTile(
+            leading: const Icon(Icons.shield_outlined),
+            title: const Text('Segurança e Privacidade'),
+            subtitle: const Text(
+              'Autenticação, privacidade, dados e alertas',
+            ),
+            onTap: () => context.push('/home/security'),
+          ),
+          ListTile(
             leading: const Icon(Icons.swap_horiz),
             title: const Text('Trocar organização'),
             onTap: () async {

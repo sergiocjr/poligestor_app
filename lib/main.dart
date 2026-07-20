@@ -30,6 +30,7 @@ import 'features/electoral_management/data/elections_repository.dart';
 import 'features/advanced_ai/data/advanced_ai_repository.dart';
 import 'features/system_admin/data/admin_repository.dart';
 import 'features/platform_admin/data/platform_repository.dart';
+import 'features/security_privacy/data/security_repository.dart';
 import 'features/territorial_intelligence/data/territorial_intelligence_repository.dart';
 import 'features/identity/data/identity_cache.dart';
 import 'features/identity/data/identity_repository.dart';
@@ -98,6 +99,7 @@ Future<void> main() async {
   final advancedAiRepo = AdvancedAiRepository(api);
   final adminRepo = AdminRepository(api);
   final platformRepo = PlatformRepository(api);
+  final securityRepo = SecurityRepository(api);
   final territorialIntelRepo = TerritorialIntelligenceRepository(api);
   final communicationRepo = CommunicationRepository(api);
   final smartAssistantRepo = SmartAssistantRepository(api);
@@ -160,6 +162,7 @@ Future<void> main() async {
         Provider.value(value: advancedAiRepo),
         Provider.value(value: adminRepo),
         Provider.value(value: platformRepo),
+        Provider.value(value: securityRepo),
         Provider.value(value: territorialIntelRepo),
         Provider.value(value: communicationRepo),
         Provider.value(value: smartAssistantRepo),

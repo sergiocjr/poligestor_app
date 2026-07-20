@@ -368,6 +368,34 @@ enum AuthMode {
   String get platformSearchPath => '/v1/platform/search';
   String get platformFiltersPath => '/v1/platform/filters';
 
+  // --- Fase 21: Segurança e Privacidade — `/v1/security/*` (staff e portal) ---
+  String get securityRootPath => '/v1/security';
+  String get securityMfaEnablePath => '/v1/security/mfa/enable';
+  String get securityMfaConfirmPath => '/v1/security/mfa/confirm';
+  String get securityAccountRecoveryPath => '/v1/security/account-recovery';
+  String get securitySessionsPath => '/v1/security/sessions';
+  String get securitySessionsRevokeAllPath =>
+      '/v1/security/sessions/revoke-all';
+  String get securityAccessHistoryPath => '/v1/security/access-history';
+  String get securityDevicesPath => '/v1/security/devices';
+  String get securityPasswordChangePath => '/v1/security/password-change';
+  String get securityPasswordPoliciesPath => '/v1/security/password-policies';
+  String get securityTokensPath => '/v1/security/tokens';
+  String get securityApiKeysPath => '/v1/security/api-keys';
+  String get securityAlertsPath => '/v1/security/alerts';
+  String get securityPrivacyPath => '/v1/security/privacy';
+  String get securityConsentsPath => '/v1/security/consents';
+  String get securityTermsPath => '/v1/security/terms';
+  String get securityPrivacyPolicyPath => '/v1/security/privacy-policy';
+  String get securityDataRequestPath => '/v1/security/data-request';
+  String get securityDataExportPath => '/v1/security/data-export';
+  String get securityDataCorrectionPath => '/v1/security/data-correction';
+  String get securityAccountDeletionPath => '/v1/security/account-deletion';
+  String get securityPrivacyPreferencesPath =>
+      '/v1/security/privacy-preferences';
+  String get securityConsentHistoryPath => '/v1/security/consent-history';
+  String get securityIncidentsPath => '/v1/security/incidents';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

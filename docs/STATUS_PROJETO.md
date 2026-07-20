@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 21 — Segurança e Privacidade entregue; fechamento formal pendente)
 
 ## Resumo
 
@@ -32,7 +32,8 @@ Atualizado: 2026-07-20 (Fase 20 — Portal Administrativo Web entregue; fechamen
 | **Fase 18 — IA Avançada** | **EM ANDAMENTO** (Flutter entregue; `/v1/ai/*` sync parcial) |
 | **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 404) |
 | **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 404) |
-| Fase 21 | **Não iniciada** |
+| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (Flutter entregue; `/v1/security/*` 404) |
+| Fase 22 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -46,6 +47,14 @@ Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 Única pendência: **validação física no Samsung Galaxy A10**.
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
+
+## Fase 21 — Segurança e Privacidade
+
+Hub **Mais → Segurança e Privacidade** (`/home/security`). Namespace `/v1/security/*` — probe autenticado **404 em todos**. Tokens em `FlutterSecureStorage`; cache `pg_sec_*` sem segredos. Staff e portal. Deep links: `poligestor://security|seguranca|privacidade|security-privacy/...`.
+
+Doc: [FASE_21_SEGURANCA_PRIVACIDADE.md](FASE_21_SEGURANCA_PRIVACIDADE.md).
+
+**Fase 22 — não iniciada.**
 
 ## Fase 20 — Portal Administrativo Web
 

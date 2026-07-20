@@ -181,6 +181,17 @@ class NotificationRouter {
               : '/home/system-admin/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 21 — Segurança e Privacidade
+        if (uri.host == 'security' ||
+            uri.host == 'seguranca' ||
+            uri.host == 'privacidade' ||
+            uri.host == 'security-privacy') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/security'
+              : '/home/security/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Fase 20 — Portal Administrativo Web
         if (uri.host == 'platform' ||
             uri.host == 'portal-admin' ||
