@@ -30,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
     if (!mounted) return;
     if (auth.isAuthenticated) {
       context.go(
-        auth.mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
+        auth.mode == AuthMode.portal ? '/citizen/home' : '/home/dashboard',
       );
     } else if (tenant.hasOrganization) {
       context.go('/login');

@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (!mounted) return;
       context.go(
-        _mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
+        _mode == AuthMode.portal ? '/citizen/home' : '/home/dashboard',
       );
     } catch (e) {
       if (!mounted) return;
@@ -141,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
       await auth.applyTokenSession(mode: _mode, tenantSlug: slug, data: tokens);
       if (!mounted) return;
       context.go(
-        _mode == AuthMode.portal ? '/citizen/home' : '/home/protocols',
+        _mode == AuthMode.portal ? '/citizen/home' : '/home/dashboard',
       );
     } on EndpointUnavailableException catch (e) {
       if (!mounted) return;

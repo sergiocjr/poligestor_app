@@ -16,6 +16,7 @@ import '../../features/parliament/presentation/parliament_pages.dart';
 import '../../features/works/presentation/works_pages.dart';
 import '../../features/agreements/presentation/agreements_pages.dart';
 import '../../features/events/presentation/events_pages.dart';
+import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -27,6 +28,7 @@ import '../../features/citizen/presentation/citizen_requests_page.dart';
 import '../../features/citizen/presentation/citizen_shell.dart';
 import '../../features/citizen/presentation/new_request_page.dart';
 import '../../features/citizen/presentation/request_detail_page.dart';
+import '../../features/home/presentation/gabinete_dashboard_page.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/identity/domain/tenant_controller.dart';
 import '../../features/identity/presentation/organization_select_page.dart';
@@ -111,18 +113,21 @@ GoRouter createAppRouter({
       final isWorksPath = loc.startsWith('/home/works');
       final isAgreementsPath = loc.startsWith('/home/agreements');
       final isEventsPath = loc.startsWith('/home/events');
+      final isTerritorialIntelPath = loc.startsWith(
+        '/home/territorial-intelligence',
+      );
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
             ? '/citizen/home'
-            : '/home/protocols';
+            : '/home/dashboard';
       }
 
       if (auth.mode == AuthMode.portal && isStaffPath) {
         return '/citizen/home';
       }
       if (auth.mode == AuthMode.staff && isCitizenPath) {
-        return '/home/protocols';
+        return '/home/dashboard';
       }
       // Mandato / Inteligência / Equipe Virtual / Comunicação / Automação / Estratégia exclusivos de staff.
       if ((isMandatePath ||
@@ -134,7 +139,8 @@ GoRouter createAppRouter({
               isParliamentPath ||
               isWorksPath ||
               isAgreementsPath ||
-              isEventsPath) &&
+              isEventsPath ||
+              isTerritorialIntelPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -175,6 +181,14 @@ GoRouter createAppRouter({
           return HomeShell(navigationShell: navigationShell);
         },
         branches: [
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: '/home/dashboard',
+                builder: (_, _) => const GabineteDashboardPage(),
+              ),
+            ],
+          ),
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -239,63 +253,62 @@ GoRouter createAppRouter({
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(
-                path: '/home/intelligence',
-                builder: (_, _) => const IntelligenceDashboardPage(),
-                routes: [
-                  GoRoute(
-                    path: 'briefing',
-                    builder: (_, _) => const IntelligenceBriefingPage(),
-                  ),
-                  GoRoute(
-                    path: 'insights',
-                    builder: (_, _) => const IntelligenceInsightsPage(),
-                  ),
-                  GoRoute(
-                    path: 'opportunities',
-                    builder: (_, _) =>
-                        const IntelligenceInsightsPage(opportunitiesOnly: true),
-                  ),
-                  GoRoute(
-                    path: 'trends',
-                    builder: (_, _) => const IntelligenceTrendsPage(),
-                  ),
-                  GoRoute(
-                    path: 'summaries',
-                    builder: (_, _) => const IntelligenceSummariesPage(),
-                  ),
-                  GoRoute(
-                    path: 'analytics/neighborhoods',
-                    builder: (_, _) => const IntelligenceAnalyticsPage(
-                      focus: AnalyticsFocus.neighborhoods,
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'analytics/subjects',
-                    builder: (_, _) => const IntelligenceAnalyticsPage(
-                      focus: AnalyticsFocus.subjects,
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'analytics/team',
-                    builder: (_, _) => const IntelligenceAnalyticsPage(
-                      focus: AnalyticsFocus.team,
-                    ),
-                  ),
-                  GoRoute(
-                    path: 'analytics/productivity',
-                    builder: (_, _) => const IntelligenceAnalyticsPage(
-                      focus: AnalyticsFocus.productivity,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
               GoRoute(path: '/home/more', builder: (_, _) => const MorePage()),
             ],
+          ),
+        ],
+      ),
+
+      // Inteligência (Fase 9) — fora do shell; acessível por Mais / atalhos.
+      GoRoute(
+        path: '/home/intelligence',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const IntelligenceDashboardPage(),
+        routes: [
+          GoRoute(
+            path: 'briefing',
+            builder: (_, _) => const IntelligenceBriefingPage(),
+          ),
+          GoRoute(
+            path: 'insights',
+            builder: (_, _) => const IntelligenceInsightsPage(),
+          ),
+          GoRoute(
+            path: 'opportunities',
+            builder: (_, _) =>
+                const IntelligenceInsightsPage(opportunitiesOnly: true),
+          ),
+          GoRoute(
+            path: 'trends',
+            builder: (_, _) => const IntelligenceTrendsPage(),
+          ),
+          GoRoute(
+            path: 'summaries',
+            builder: (_, _) => const IntelligenceSummariesPage(),
+          ),
+          GoRoute(
+            path: 'analytics/neighborhoods',
+            builder: (_, _) => const IntelligenceAnalyticsPage(
+              focus: AnalyticsFocus.neighborhoods,
+            ),
+          ),
+          GoRoute(
+            path: 'analytics/subjects',
+            builder: (_, _) => const IntelligenceAnalyticsPage(
+              focus: AnalyticsFocus.subjects,
+            ),
+          ),
+          GoRoute(
+            path: 'analytics/team',
+            builder: (_, _) => const IntelligenceAnalyticsPage(
+              focus: AnalyticsFocus.team,
+            ),
+          ),
+          GoRoute(
+            path: 'analytics/productivity',
+            builder: (_, _) => const IntelligenceAnalyticsPage(
+              focus: AnalyticsFocus.productivity,
+            ),
           ),
         ],
       ),
@@ -977,6 +990,180 @@ GoRouter createAppRouter({
           GoRoute(
             path: 'search',
             builder: (_, _) => const EventsSearchPage(),
+          ),
+        ],
+      ),
+
+      // Fase 12 — Inteligência Territorial — staff only.
+      GoRoute(
+        path: '/home/territorial-intelligence',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const TerritorialIntelligenceHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const TerritorialIntelligenceDashboardPage(),
+          ),
+          GoRoute(
+            path: 'bi',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Painel Analítico',
+              emptyMessage: 'Nenhum dado analítico encontrado.',
+              loader: (repo, tenant) => repo.bi(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'kpis',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Indicadores-chave',
+              emptyMessage: 'Nenhum indicador-chave encontrado.',
+              loader: (repo, tenant) => repo.kpis(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Indicadores',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'charts',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Gráficos',
+              emptyMessage: 'Nenhum gráfico disponível.',
+              loader: (repo, tenant) => repo.charts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'heatmap',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Mapas de calor',
+              emptyMessage: 'Mapa de calor indisponível.',
+              loader: (repo, tenant) => repo.heatmap(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'map',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Mapa territorial',
+              emptyMessage: 'Mapa territorial indisponível.',
+              loader: (repo, tenant) => repo.map(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'neighborhoods',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Bairros',
+              emptyMessage: 'Nenhum bairro encontrado.',
+              loader: (repo, tenant) => repo.neighborhoods(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'regions',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Regiões',
+              emptyMessage: 'Nenhuma região encontrada.',
+              loader: (repo, tenant) => repo.regions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'electoral-zones',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Zonas eleitorais',
+              emptyMessage: 'Nenhuma zona eleitoral encontrada.',
+              loader: (repo, tenant) =>
+                  repo.electoralZones(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'leaderships',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Lideranças',
+              emptyMessage: 'Nenhuma liderança encontrada.',
+              loader: (repo, tenant) => repo.leaderships(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'demands',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Demandas',
+              emptyMessage: 'Nenhuma demanda encontrada.',
+              loader: (repo, tenant) => repo.demands(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'works',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Obras',
+              emptyMessage: 'Nenhuma obra encontrada.',
+              loader: (repo, tenant) => repo.works(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'protocols',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Protocolos',
+              emptyMessage: 'Nenhum protocolo encontrado.',
+              loader: (repo, tenant) => repo.protocols(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attendances',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Atendimentos',
+              emptyMessage: 'Nenhum atendimento encontrado.',
+              loader: (repo, tenant) => repo.attendances(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'comparatives',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Comparativos',
+              emptyMessage: 'Nenhum comparativo disponível.',
+              loader: (repo, tenant) => repo.comparatives(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'evolution',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Evolução',
+              emptyMessage: 'Nenhuma evolução disponível.',
+              loader: (repo, tenant) => repo.evolution(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'trends',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Tendências',
+              emptyMessage: 'Nenhuma tendência disponível.',
+              loader: (repo, tenant) => repo.trends(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'projections',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Projeções',
+              emptyMessage: 'Nenhuma projeção disponível.',
+              loader: (repo, tenant) => repo.projections(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro publicado.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'exports',
+            builder: (_, _) => TerritorialIntelligenceListPage(
+              title: 'Exportações',
+              emptyMessage: 'Nenhuma exportação disponível.',
+              loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
+            ),
           ),
         ],
       ),

@@ -75,7 +75,11 @@ class _ProtocolsPageState extends State<ProtocolsPage> {
               itemBuilder: (context, index) {
                 final item = items[index];
                 return ListTile(
-                  title: Text(item.title),
+                  title: Text(
+                    item.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   subtitle: Text(
                     [
                       if (item.number != null) '#${item.number}',
@@ -83,6 +87,8 @@ class _ProtocolsPageState extends State<ProtocolsPage> {
                       if (item.createdAt != null)
                         dateFmt.format(item.createdAt!.toLocal()),
                     ].join(' · '),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: () => context.push('/home/protocols/${item.id}'),
