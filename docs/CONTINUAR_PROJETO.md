@@ -33,19 +33,25 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit (pré-Fase 12) | `d0bfbef` — Fase 11 Eventos |
-| Push | Atualizar após commit da Fase 12 |
-| Working tree | Inclui entrega Fase 12 + docs de continuidade |
+| Último commit | `bf86325` — Fase 12 Inteligência Territorial |
+| Push | Sim (`origin/master`) |
+| Working tree | Limpa após push 2026-07-20 |
 
-### Últimos commits (antes desta entrega)
+### Últimos commits
 
 ```
+bf86325 feat: Fase 12 Inteligência Territorial com namespace /v1/intelligence/*
+935bfc0 fix: Gabinete como tela inicial e barra inferior sem overflow no A10
 d0bfbef feat: Fase 11 Painel de Eventos com namespace LIVE /v1/events
 42999c9 sync: Sprint 11.0 Painel de Convênios para namespace LIVE /v1/grants/*
 948ac2b feat: add Sprint 11.0 Agreements Panel with prepared /v1/agreements APIs
-c5cfc09 feat: add Sprint 10.9 Works Panel with prepared /v1/works APIs
-d0b1d6b feat: add Sprint 10.8 Parliamentary Panel with LIVE parliament APIs
 ```
+
+### Navegação Gabinete (2026-07-20)
+
+- Inicial: `/home/dashboard` (Painel do Gabinete)
+- Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
+- Validado no SM-A105M (`RX8M70CLXKP`) — APK debug instalado; sem overflow no logcat
 
 ---
 
