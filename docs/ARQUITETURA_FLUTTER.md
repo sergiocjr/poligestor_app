@@ -43,6 +43,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **works** (Sprint 10.9) — Painel Obras (`/home/works`)
 - **agreements** (Sprint 11.0) — Painel de Convênios (`/home/agreements`)
 - **events** (Fase 11) — Painel de Eventos (`/home/events`)
+- **territorial_intelligence** (Fase 12) — Inteligência Territorial (`/home/territorial-intelligence`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**

@@ -61,6 +61,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
+## Fase 12 — Inteligência Territorial
+
+Staff — **Mais → Inteligência Territorial** (`/home/territorial-intelligence`): painel BI, mapas, bairros, regiões, tendências e projeções. Namespace `/v1/intelligence/*` preparado (EndpointPending). Ver [docs/FASE_12_INTELIGENCIA_TERRITORIAL.md](docs/FASE_12_INTELIGENCIA_TERRITORIAL.md).
+
 ## Fase 11 — Painel de Eventos
 
 Staff — **Mais → Painel de Eventos** (`/home/events`): painel, eventos, agenda, calendário, audiências, reuniões, presença, galeria e demais domínios. Namespace oficial `/v1/events` (lista/detalhe LIVE; demais preparados). Ver [docs/FASE_11_EVENTOS.md](docs/FASE_11_EVENTOS.md).
@@ -163,6 +167,7 @@ lib/
     works/          # Sprint 10.9 — Painel Obras
     agreements/     # Sprint 11.0 — Painel de Convênios
     events/         # Fase 11 — Painel de Eventos
+    territorial_intelligence/ # Fase 12 — Inteligência Territorial
     home/
     more/
     assistant/

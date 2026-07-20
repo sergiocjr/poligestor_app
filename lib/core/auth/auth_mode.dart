@@ -117,6 +117,30 @@ enum AuthMode {
   String get strategyIndicatorsPath => '/v1/strategy/indicators';
   String get strategyPredictionsPath => '/v1/strategy/predictions';
 
+  // --- Fase 12: Inteligência Territorial (staff) — namespace oficial `/v1/intelligence/*` ---
+  String get intelligenceRootPath => '/v1/intelligence';
+  String get intelligenceDashboardPath => '/v1/intelligence/dashboard';
+  String get intelligenceBiPath => '/v1/intelligence/bi';
+  String get intelligenceKpisPath => '/v1/intelligence/kpis';
+  String get intelligenceIndicatorsPath => '/v1/intelligence/indicators';
+  String get intelligenceChartsPath => '/v1/intelligence/charts';
+  String get intelligenceHeatmapPath => '/v1/intelligence/heatmap';
+  String get intelligenceMapPath => '/v1/intelligence/map';
+  String get intelligenceNeighborhoodsPath => '/v1/intelligence/neighborhoods';
+  String get intelligenceRegionsPath => '/v1/intelligence/regions';
+  String get intelligenceElectoralZonesPath => '/v1/intelligence/electoral-zones';
+  String get intelligenceLeadershipsPath => '/v1/intelligence/leaderships';
+  String get intelligenceDemandsPath => '/v1/intelligence/demands';
+  String get intelligenceWorksPath => '/v1/intelligence/works';
+  String get intelligenceProtocolsPath => '/v1/intelligence/protocols';
+  String get intelligenceAttendancesPath => '/v1/intelligence/attendances';
+  String get intelligenceComparativesPath => '/v1/intelligence/comparatives';
+  String get intelligenceEvolutionPath => '/v1/intelligence/evolution';
+  String get intelligenceTrendsPath => '/v1/intelligence/trends';
+  String get intelligenceProjectionsPath => '/v1/intelligence/projections';
+  String get intelligenceFiltersPath => '/v1/intelligence/filters';
+  String get intelligenceExportsPath => '/v1/intelligence/exports';
+
   // --- Sprint 10.8: Painel Parlamentar (staff) ---
   String get parliamentRootPath => '/v1/parliament';
   String get parliamentDashboardPath => '/v1/parliament/dashboard';

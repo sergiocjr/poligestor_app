@@ -1,5 +1,21 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 12 — Inteligência Territorial] — 2026-07-20
+
+### Added
+
+- Hub `/home/territorial-intelligence` (painel BI, painel analítico, KPIs, indicadores, gráficos, mapas de calor, mapa, bairros, regiões, zonas eleitorais, lideranças, demandas, obras, protocolos, atendimentos, comparativos, evolução, tendências, projeções, filtros, exportações)
+- Namespace oficial `/v1/intelligence/*` com `EndpointPendingState` (probe VPS 404 em todos os paths)
+- Cache `pg_ti_*`, realtime via `MandateRefreshController`, filtros locais
+- Deep links `poligestor://territorial-intelligence|inteligencia-territorial|...`
+- Testes `test/fase12_territorial_intelligence_test.dart`
+- Documentação `docs/FASE_12_INTELIGENCIA_TERRITORIAL.md` + `docs/CONTINUAR_PROJETO.md`
+
+### Notes
+
+- Aba Inteligência (Fase 9) em `/home/intelligence` permanece em `/v1/mandate/*`
+- Fase 13 não iniciada; fechamento formal da Fase 12 pendente dos 15 critérios
+
 ## [Fase 11 — Gestão Institucional / Painel de Eventos] — 2026-07-20
 
 ### Added

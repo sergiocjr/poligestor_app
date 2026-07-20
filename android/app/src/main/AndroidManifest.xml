@@ -66,6 +66,10 @@
                 <data android:scheme="poligestor" android:host="events"/>
                 <data android:scheme="poligestor" android:host="eventos"/>
                 <data android:scheme="poligestor" android:host="painel-eventos"/>
+                <data android:scheme="poligestor" android:host="territorial-intelligence"/>
+                <data android:scheme="poligestor" android:host="inteligencia-territorial"/>
+                <data android:scheme="poligestor" android:host="intelligence-territorial"/>
+                <data android:scheme="poligestor" android:host="painel-inteligencia-territorial"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

@@ -57,9 +57,22 @@ O Painel de Eventos é o hub institucional completo; não remove a Agenda.
 
 ## Critério de encerramento
 
-- Flutter do domínio concluído
-- APIs LIVE sincronizadas onde publicadas
-- Pending honesto nos demais paths
-- Samsung Galaxy A10 validado
-- Sem emulador / sem órfãos
-- Docs + commit + push
+A Fase **somente** fecha quando os **15 critérios** de `.cursor/rules/fases-completas.mdc` estiverem OK, incluindo:
+
+1. Backend domínio completo
+2. Flutter consome todos os LIVE
+3. Não publicados → `EndpointPendingState`
+4. APK no A10
+5. Web validada
+6. `flutter analyze`
+7. `flutter test`
+8. PHPUnit (backend)
+9. Nenhum HTTP 500
+10. Documentação
+11. Commit
+12. Push
+13. Limpeza de processos
+14. Sem emulador
+15. Auditoria Backend ↔ Flutter
+
+Estado atual: ver checklist em `docs/STATUS_PROJETO.md`.

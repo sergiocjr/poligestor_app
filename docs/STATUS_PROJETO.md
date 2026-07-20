@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 11 — Gestão Institucional / Painel de Eventos CONCLUÍDA)
+Atualizado: 2026-07-20 (Fase 12 — Inteligência Territorial entregue no Flutter; **fechamento formal pendente**)
 
 ## Resumo
 
@@ -22,16 +22,25 @@ Atualizado: 2026-07-20 (Fase 11 — Gestão Institucional / Painel de Eventos CO
 | Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
 | Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
 | Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** |
-| **Fase 11 — Gestão Institucional (Eventos)** | **CONCLUÍDA** |
-| Fase 12 | **Não iniciada** |
+| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (Flutter entregue; fechamento pendente) |
+| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (Flutter entregue; `/v1/intelligence/*` 404) |
+| Fase 13 | **Bloqueada** |
 
-> A partir da Fase 11, o desenvolvimento passa a ser por **Fases completas** (domínio inteiro), sem subdivisão artificial em sprints 11.1 / 11.2 / …
+> Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).
+
+## Fase 12 — Inteligência Territorial
+
+Hub **Mais → Inteligência Territorial** (`/home/territorial-intelligence`).
+
+Namespace oficial `/v1/intelligence/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`. PT-BR.
+
+Cache: `pg_ti_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://inteligencia-territorial|territorial-intelligence/...`.
+
+Doc: [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md).
 
 ## Fase 11 — Painel de Eventos
 
-Hub próprio em **Mais → Painel de Eventos** (`/home/events`).
-
-Namespace oficial `/v1/events` (lista e detalhe LIVE; demais subdomínios preparados com `EndpointPendingState` ou fallback local sobre a lista). Interface em PT-BR.
+Hub **Mais → Painel de Eventos** (`/home/events`). LIVE: `/v1/events` + `/{uuid}`. Fechamento formal pendente.
 
 ### Telas
 
@@ -70,13 +79,27 @@ Hub **Mais → Painel de Convênios** (`/home/agreements`). Namespace LIVE `/v1/
 
 Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`.
 
-## Qualidade
+## Qualidade / checklist de encerramento (Fase 12)
 
-- `flutter analyze` / `flutter test` / APK debug + web OK
-- Instalação no SM-A105M: requer aparelho conectado via USB (ADB)
-- Nenhum emulador
-- Fase 12 não iniciada
+| # | Critério | Status |
+|---|----------|--------|
+| 1 | Backend domínio completo | Pendente (`/v1/intelligence/*` 404) |
+| 2 | Flutter consome LIVE disponíveis | OK (nenhum LIVE ainda; namespace preparado) |
+| 3 | Não publicados → `EndpointPendingState` | OK |
+| 4 | APK no Samsung Galaxy A10 | Verificar na entrega |
+| 5 | Web validada | Verificar na entrega |
+| 6 | `flutter analyze` | OK |
+| 7 | `flutter test` | OK (suite Fase 12) |
+| 8 | PHPUnit | Pendente / N/A neste repo |
+| 9 | Nenhum HTTP 500 | OK no probe (404, não 500) |
+| 10 | Documentação | OK |
+| 11–12 | Commit / Push | Na entrega |
+| 13–14 | Limpeza / sem emulador | Na entrega |
+| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+
+Fase 13 **bloqueada** até os 15 itens da Fase 12 estarem OK.
 
 ## Repositório
 
 - https://github.com/sergiocjr/poligestor_app
+- Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md)

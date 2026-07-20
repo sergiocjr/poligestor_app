@@ -17,8 +17,9 @@
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
 | **10.9** | Painel Obras | **CONCLUÍDA** |
 | **11.0** | Painel de Convênios | **CONCLUÍDA** |
-| **Fase 11** | Gestão Institucional — Painel de Eventos | **CONCLUÍDA** |
-| Fase 12 | — | **Não iniciada** |
+| **Fase 11** | Gestão Institucional — Painel de Eventos | **EM ANDAMENTO** |
+| **Fase 12** | Inteligência Territorial | **EM ANDAMENTO** (Flutter; API 404) |
+| Fase 13 | — | **Bloqueada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
@@ -30,9 +31,9 @@
 
 Desenvolvimento por **Fases completas** (domínio inteiro). Não subdividir artificialmente em Sprint 11.1 / 11.2 / …
 
-## Fase 11 (CONCLUÍDA)
+## Fase 11 (EM ANDAMENTO)
 
-Painel de Eventos em `/home/events`. Namespace oficial `/v1/events` (lista/detalhe LIVE). Ver [FASE_11_EVENTOS.md](FASE_11_EVENTOS.md).
+Painel de Eventos em `/home/events`. Namespace oficial `/v1/events` (lista/detalhe LIVE). Flutter entregue; fechamento formal pelos 15 critérios ainda pendente. Ver [FASE_11_EVENTOS.md](FASE_11_EVENTOS.md) e `.cursor/rules/fases-completas.mdc`.
 
 ## Sprint 11.0 (CONCLUÍDA)
 

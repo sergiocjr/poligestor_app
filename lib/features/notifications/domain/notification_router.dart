@@ -100,6 +100,17 @@ class NotificationRouter {
               : '/home/events/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 12 — Inteligência Territorial
+        if (uri.host == 'territorial-intelligence' ||
+            uri.host == 'inteligencia-territorial' ||
+            uri.host == 'intelligence-territorial' ||
+            uri.host == 'painel-inteligencia-territorial') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/territorial-intelligence'
+              : '/home/territorial-intelligence/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

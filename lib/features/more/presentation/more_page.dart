@@ -124,6 +124,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/events'),
           ),
           ListTile(
+            leading: const Icon(Icons.travel_explore_outlined),
+            title: const Text('Inteligência Territorial'),
+            subtitle: const Text(
+              'Painel BI, mapas, bairros, tendências e projeções',
+            ),
+            onTap: () => context.push('/home/territorial-intelligence'),
+          ),
+          ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
             subtitle: const Text('Canais, modelos e campanhas'),
