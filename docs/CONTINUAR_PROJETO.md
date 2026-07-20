@@ -40,7 +40,7 @@ Atualizado: 2026-07-20 (Fase 15 — Comunicação Institucional entregue no Flut
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `94d677c` — Fase 15 Comunicação Institucional |
+| Último commit | `77a792c` — Fase 15 Comunicação Institucional |
 | Push | Sim (`origin/master`) |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
