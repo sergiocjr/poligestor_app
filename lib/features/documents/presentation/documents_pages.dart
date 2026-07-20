@@ -159,8 +159,8 @@ class DocumentsHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Consome somente /v1/documents/*. Chip Ativo = contrato '
-                    'LIVE na VPS; Em preparação = EndpointPendingState.',
+                    'Namespace /v1/documents/* publicado na VPS. Todos os '
+                    'módulos abaixo estão Ativos e consomem o contrato LIVE.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

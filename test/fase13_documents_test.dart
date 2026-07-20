@@ -12,7 +12,7 @@ void main() {
     test('exposes official /v1/documents namespace', () {
       const m = AuthMode.staff;
       expect(m.documentsRootPath, '/v1/documents');
-      expect(m.documentsListPath, '/v1/documents');
+      expect(m.documentsListPath, '/v1/documents/list');
       expect(m.documentsSearchPath, '/v1/documents/search');
       expect(m.documentsFiltersPath, '/v1/documents/filters');
       expect(m.documentsCategoriesPath, '/v1/documents/categories');
@@ -32,10 +32,14 @@ void main() {
   });
 
   group('documents LIVE contracts', () {
-    test('no live slugs until VPS publishes', () {
-      expect(kDocumentsLiveSlugs, isEmpty);
-      expect(documentsPathLive('list'), isFalse);
-      expect(documentsPathLive('viewer'), isFalse);
+    test('marks all published hub slugs as live', () {
+      expect(kDocumentsLiveSlugs, isNotEmpty);
+      expect(documentsPathLive('list'), isTrue);
+      expect(documentsPathLive('search'), isTrue);
+      expect(documentsPathLive('viewer'), isTrue);
+      expect(documentsPathLive('upload'), isTrue);
+      expect(documentsPathLive('attachments'), isTrue);
+      expect(documentsPathLive('unknown'), isFalse);
     });
   });
 

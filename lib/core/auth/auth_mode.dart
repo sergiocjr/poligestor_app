@@ -119,7 +119,8 @@ enum AuthMode {
 
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
-  String get documentsListPath => '/v1/documents';
+  /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).
+  String get documentsListPath => '/v1/documents/list';
   String documentsItemPath(String id) => '/v1/documents/$id';
   String get documentsSearchPath => '/v1/documents/search';
   String get documentsFiltersPath => '/v1/documents/filters';

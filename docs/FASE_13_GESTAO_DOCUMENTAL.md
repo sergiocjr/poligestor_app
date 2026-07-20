@@ -1,6 +1,6 @@
 # Fase 13 — Gestão Documental
 
-Atualizado: 2026-07-20
+Atualizado: 2026-07-20 (sync LIVE — contratos publicados)
 
 ## Escopo
 
@@ -16,25 +16,29 @@ Sem aliases. Sem mocks. Sem alteração de backend. Sem inventar APIs.
 
 ## Probe VPS (2026-07-20, sem token)
 
-Todos os paths retornaram **404**. UI completa com `EndpointPendingState`.
+| Path | HTTP | App |
+|------|------|-----|
+| `/v1/documents` | **401** LIVE | Root / detalhe por id |
+| `/v1/documents/list` | **401** LIVE | Lista (chip **Ativo**) |
+| `/v1/documents/search` | **401** LIVE | Ativo |
+| `/v1/documents/filters` | **401** LIVE | Ativo |
+| `/v1/documents/categories` | **401** LIVE | Ativo |
+| `/v1/documents/favorites` | **401** LIVE | Ativo |
+| `/v1/documents/history` | **401** LIVE | Ativo |
+| `/v1/documents/timeline` | **401** LIVE | Ativo |
+| `/v1/documents/viewer` | **401** LIVE | Ativo |
+| `/v1/documents/signatures` | **401** LIVE | Ativo |
+| `/v1/documents/approvals` | **401** LIVE | Ativo |
+| `/v1/documents/share` | **401** LIVE | Ativo |
+| `/v1/documents/templates` | **401** LIVE | Ativo |
+| `/v1/documents/download` | **401** LIVE | Ativo |
+| `/v1/documents/upload` | **401** LIVE | Ativo |
+| `/v1/documents/attachments` | **401** LIVE | Ativo |
+| `/v1/documents/dashboard` | **401** LIVE | Publicado (sem tela dedicada no hub) |
 
-| Path | Status |
-|------|--------|
-| `/v1/documents` | Preparado (404) |
-| `/v1/documents/search` | Preparado (404) |
-| `/v1/documents/filters` | Preparado (404) |
-| `/v1/documents/categories` | Preparado (404) |
-| `/v1/documents/favorites` | Preparado (404) |
-| `/v1/documents/history` | Preparado (404) |
-| `/v1/documents/timeline` | Preparado (404) |
-| `/v1/documents/viewer` | Preparado (404) |
-| `/v1/documents/signatures` | Preparado (404) |
-| `/v1/documents/approvals` | Preparado (404) |
-| `/v1/documents/share` | Preparado (404) |
-| `/v1/documents/templates` | Preparado (404) |
-| `/v1/documents/download` | Preparado (404) |
-| `/v1/documents/upload` | Preparado (404) |
-| `/v1/documents/attachments` | Preparado (404) |
+**401** = rota publicada (exige autenticação). Com sessão staff válida espera-se **HTTP 200**.
+
+`EndpointPendingState` **não** é exibido para estes paths (só voltaria em 404/405/501/503).
 
 ## Flutter
 
@@ -42,12 +46,8 @@ Todos os paths retornaram **404**. UI completa com `EndpointPendingState`.
 - Cache: `pg_docs_{tenant}_*`
 - Realtime: `MandateRefreshController`
 - Deep links: `poligestor://documents|documentos|gestao-documental/...`
-- UI 100% PT-BR, Material 3, cards clicáveis, responsivo (A10 1 coluna)
+- UI 100% PT-BR, Material 3, cards clicáveis, responsivo (A10)
 
-## Telas
+## Sincronização Backend ↔ Flutter
 
-Documentos · Pesquisa · Filtros · Categorias · Favoritos · Histórico · Linha do tempo · Visualizador PDF · Assinaturas · Aprovações · Compartilhamento · Modelos · Download · Upload · Anexos.
-
-## Critério de encerramento
-
-Ver 15 critérios em `.cursor/rules/fases-completas.mdc`. Backend ainda não publicou o namespace → Fase **não fechada formalmente**.
+Contratos do namespace `/v1/documents/*` publicados na VPS e consumidos pelo app. Chips **Ativo** no hub.

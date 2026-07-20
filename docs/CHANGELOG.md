@@ -1,5 +1,14 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 13 — sync LIVE `/v1/documents/*`] — 2026-07-20
+
+### Changed
+
+- Probe VPS: todos os paths do hub `/v1/documents/*` → **HTTP 401** (LIVE)
+- Chips do hub **Ativo**; `EndpointPendingState` fora do fluxo normal
+- Lista oficial: `GET /v1/documents/list`
+- Docs e STATUS: Fase 13 sincronizada Backend ↔ Flutter
+
 ## [Fase 13 — Gestão Documental] — 2026-07-20
 
 ### Added
@@ -14,7 +23,7 @@
 ### Notes
 
 - Mais → Gestão Documental (substitui stub “Documentos / Em breve”)
-- Fechamento formal pelos 15 critérios pendente (backend 404)
+- Sync LIVE posterior: ver entrada `[Fase 13 — sync LIVE /v1/documents/*]`
 
 ## [Fase 12 — sync LIVE Inteligência Territorial] — 2026-07-20
 
