@@ -100,10 +100,91 @@ class _MandateNeighborhoodsPageState extends State<MandateNeighborhoodsPage> {
                                 : 'Tendência: $trend vs período anterior',
                         ].join('\n'),
                         onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute<void>(
-                              builder: (_) => _DistrictDetailPage(stat: d),
-                            ),
+                          showModalBottomSheet<void>(
+                            context: context,
+                            showDragHandle: true,
+                            isScrollControlled: true,
+                            builder: (ctx) {
+                              return SafeArea(
+                                child: SingleChildScrollView(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    20,
+                                    8,
+                                    20,
+                                    24,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        d.district,
+                                        style: Theme.of(ctx)
+                                            .textTheme
+                                            .titleLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Wrap(
+                                        spacing: 8,
+                                        runSpacing: 8,
+                                        children: [
+                                          Chip(
+                                            label: Text('Total ${d.total}'),
+                                          ),
+                                          Chip(
+                                            label: Text('Abertas ${d.open}'),
+                                          ),
+                                          Chip(
+                                            label: Text(
+                                              'Resolvidas ${d.resolved}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'Principais assuntos',
+                                        style: Theme.of(ctx)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      if (d.topCategories.isEmpty)
+                                        const Text(
+                                          'Sem categorias destacadas.',
+                                        )
+                                      else
+                                        ...d.topCategories.map(
+                                          (c) => ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            leading: const Icon(
+                                              Icons.category_outlined,
+                                            ),
+                                            title: Text(c.name),
+                                            trailing: Text('${c.count}'),
+                                          ),
+                                        ),
+                                      const SizedBox(height: 8),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: FilledButton(
+                                          onPressed: () =>
+                                              Navigator.pop(ctx),
+                                          child: const Text('Fechar'),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
                       );
@@ -113,51 +194,6 @@ class _MandateNeighborhoodsPageState extends State<MandateNeighborhoodsPage> {
               },
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _DistrictDetailPage extends StatelessWidget {
-  const _DistrictDetailPage({required this.stat});
-
-  final MandateDistrictStat stat;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(stat.district)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              Chip(label: Text('Total ${stat.total}')),
-              Chip(label: Text('Abertas ${stat.open}')),
-              Chip(label: Text('Resolvidas ${stat.resolved}')),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Principais assuntos',
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-          ),
-          const SizedBox(height: 8),
-          if (stat.topCategories.isEmpty)
-            const Text('Sem categorias destacadas.')
-          else
-            ...stat.topCategories.map(
-              (c) => ListTile(
-                leading: const Icon(Icons.category_outlined),
-                title: Text(c.name),
-                trailing: Text('${c.count}'),
-              ),
-            ),
         ],
       ),
     );

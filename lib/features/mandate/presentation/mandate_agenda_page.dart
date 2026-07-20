@@ -35,6 +35,50 @@ class _MandateAgendaPageState extends State<MandateAgendaPage> {
     await _future;
   }
 
+  void _openDetail(MandateAgendaEvent e, DateFormat df) {
+    final when = e.startsAt != null
+        ? df.format(e.startsAt!.toLocal())
+        : 'Sem horário';
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  e.title,
+                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text('Quando: $when'),
+                if (e.typeLabel != null) Text('Tipo: ${e.typeLabel}'),
+                if (e.location != null) Text('Local: ${e.location}'),
+                if (e.assigneeName != null)
+                  Text('Responsável: ${e.assigneeName}'),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('Fechar'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final df = DateFormat('dd/MM HH:mm');
@@ -115,25 +159,43 @@ class _MandateAgendaPageState extends State<MandateAgendaPage> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           padding: const EdgeInsets.fromLTRB(12, 0, 12, 24),
                           itemCount: data.events.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 8),
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 8),
                           itemBuilder: (context, i) {
                             final e = data.events[i];
                             final when = e.startsAt != null
                                 ? df.format(e.startsAt!.toLocal())
                                 : 'Sem horário';
                             return Card(
+                              clipBehavior: Clip.antiAlias,
                               child: ListTile(
-                                leading: const Icon(Icons.event_outlined),
-                                title: Text(e.title),
+                                leading: Icon(
+                                  Icons.event_outlined,
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                                title: Text(
+                                  e.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                                 subtitle: Text(
                                   [
                                     if (e.typeLabel != null) e.typeLabel!,
                                     when,
                                     if (e.location != null) e.location!,
-                                    if (e.assigneeName != null) e.assigneeName!,
+                                    if (e.assigneeName != null)
+                                      e.assigneeName!,
                                   ].join(' · '),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                isThreeLine: true,
+                                trailing: const Icon(
+                                  Icons.chevron_right_rounded,
+                                ),
+                                onTap: () => _openDetail(e, df),
                               ),
                             );
                           },

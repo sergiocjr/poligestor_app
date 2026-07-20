@@ -72,9 +72,20 @@ class _MandateSearchPageState extends State<MandateSearchPage> {
         return;
       }
     }
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text('Abrindo: ${hit.title}')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Este resultado é apenas informativo.'),
+      ),
+    );
+  }
+
+  bool _hitOpenable(MandateSearchHit hit) {
+    if (hit.type == 'protocol' && hit.id.isNotEmpty) return true;
+    if (hit.url != null && hit.url!.contains('/protocolos/')) {
+      final id = hit.url!.split('/protocolos/').last.split('/').first;
+      return id.isNotEmpty;
+    }
+    return false;
   }
 
   @override
@@ -156,14 +167,37 @@ class _MandateSearchPageState extends State<MandateSearchPage> {
                 ),
               ),
               ...g.value.map(
-                (hit) => Card(
-                  child: ListTile(
-                    title: Text(hit.title),
-                    subtitle: hit.subtitle == null ? null : Text(hit.subtitle!),
-                    trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: () => _openHit(hit),
-                  ),
-                ),
+                (hit) {
+                  final openable = _hitOpenable(hit);
+                  return Card(
+                    child: ListTile(
+                      title: Text(
+                        hit.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      subtitle: hit.subtitle == null
+                          ? null
+                          : Text(
+                              hit.subtitle!,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                      trailing: openable
+                          ? const Icon(Icons.chevron_right_rounded)
+                          : Text(
+                              'Informativo',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .outline,
+                                  ),
+                            ),
+                      onTap: openable ? () => _openHit(hit) : null,
+                    ),
+                  );
+                },
               ),
             ],
           ],

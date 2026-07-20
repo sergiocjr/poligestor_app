@@ -162,27 +162,32 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
                             label: 'Abertas',
                             value: '${d.open}',
                             icon: Icons.inbox_outlined,
+                            onTap: () => context.go('/home/protocols'),
                           ),
                           MandateIndicatorCard(
                             label: 'Novas hoje',
                             value: '${d.newToday}',
                             icon: Icons.fiber_new_rounded,
+                            onTap: () => context.go('/home/protocols'),
                           ),
                           MandateIndicatorCard(
                             label: 'Resolvidas hoje',
                             value: '${d.resolvedToday}',
                             icon: Icons.check_circle_outline,
+                            onTap: () => context.go('/home/protocols'),
                           ),
                           MandateIndicatorCard(
                             label: 'Em atraso',
                             value: '${d.overdue}',
                             icon: Icons.schedule_rounded,
                             emphasis: d.overdue > 0,
+                            onTap: () => context.go('/home/protocols'),
                           ),
                           MandateIndicatorCard(
                             label: 'Aguardando cidadão',
                             value: '${d.waitingCitizen}',
                             icon: Icons.person_outline,
+                            onTap: () => context.go('/home/protocols'),
                           ),
                           MandateIndicatorCard(
                             label: 'Tempo médio',

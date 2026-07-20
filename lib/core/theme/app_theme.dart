@@ -67,7 +67,14 @@ class AppTheme {
         foregroundColor: secondary,
         elevation: 0,
         scrolledUnderElevation: 0.5,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        surfaceTintColor: Colors.transparent,
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.white,
+          systemNavigationBarIconBrightness: Brightness.dark,
+        ),
         titleTextStyle: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w800,

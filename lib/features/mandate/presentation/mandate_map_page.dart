@@ -36,7 +36,7 @@ class _MandateMapPageState extends State<MandateMapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mapa do mandato')),
+      appBar: AppBar(title: const Text('Concentração por bairro')),
       body: Column(
         children: [
           MandatePeriodFilterBar(
@@ -50,8 +50,9 @@ class _MandateMapPageState extends State<MandateMapPage> {
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: SoftNotice(
               message:
-                  'Concentração por bairro (dados da API). Mapa cartográfico '
-                  'depende de coordenadas quando o backend enviar.',
+                  'Lista informativa com a concentração de solicitações por '
+                  'bairro. Mapa cartográfico aparece quando o backend enviar '
+                  'coordenadas.',
             ),
           ),
           Expanded(
@@ -94,9 +95,10 @@ class _MandateMapPageState extends State<MandateMapPage> {
                       return Card(
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor: Theme.of(
-                              context,
-                            ).colorScheme.primary.withValues(alpha: intensity),
+                            backgroundColor: Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withValues(alpha: intensity),
                             child: Text(
                               '${n.total}',
                               style: const TextStyle(
@@ -106,10 +108,25 @@ class _MandateMapPageState extends State<MandateMapPage> {
                               ),
                             ),
                           ),
-                          title: Text(n.district),
+                          title: Text(
+                            n.district,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                           subtitle: Text(
                             '${n.open} abertas · ${n.resolved} resolvidas'
                             '${n.topCategories.isEmpty ? '' : ' · ${n.topCategories.first.name}'}',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          trailing: Text(
+                            'Informativo',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .outline,
+                                ),
                           ),
                         ),
                       );

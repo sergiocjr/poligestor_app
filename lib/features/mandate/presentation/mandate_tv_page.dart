@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/ux/user_messages.dart';
@@ -54,6 +55,7 @@ class _MandateTvPageState extends State<MandateTvPage> {
   @override
   Widget build(BuildContext context) {
     final wide = MediaQuery.sizeOf(context).width >= 700;
+    final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Painel do mandato'),
@@ -101,6 +103,7 @@ class _MandateTvPageState extends State<MandateTvPage> {
             MandateIndicatorCard(
               label: 'Tempo médio',
               value: '${k.avgResolutionHours.toStringAsFixed(1)} h',
+              hint: 'Prazo de atendimento',
             ),
           ];
 
@@ -110,6 +113,12 @@ class _MandateTvPageState extends State<MandateTvPage> {
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
               children: [
+                SoftNotice(
+                  message:
+                      'Painel informativo para acompanhamento. Os cartões '
+                      'abaixo são apenas indicadores.',
+                ),
+                const SizedBox(height: 12),
                 GridView.count(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -121,7 +130,10 @@ class _MandateTvPageState extends State<MandateTvPage> {
                 ),
                 const MandateSectionSeeAll(title: 'Fila prioritária'),
                 if (data.queueTop.isEmpty)
-                  const Text('Fila vazia.')
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text('Fila vazia.'),
+                  )
                 else
                   ...data.queueTop.take(8).map((q) {
                     final title =
@@ -131,27 +143,69 @@ class _MandateTvPageState extends State<MandateTvPage> {
                       if (q['status_label'] != null) q['status_label'],
                       if (q['district'] != null) q['district'],
                     ].join(' · ');
+                    final id = (q['id'] ?? q['uuid'])?.toString();
+                    final openable = id != null && id.isNotEmpty;
                     return Card(
                       child: ListTile(
-                        title: Text(title),
-                        subtitle: sub.isEmpty ? null : Text(sub),
+                        title: Text(
+                          title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: sub.isEmpty
+                            ? null
+                            : Text(
+                                sub,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                        trailing: openable
+                            ? Icon(
+                                Icons.chevron_right_rounded,
+                                color: scheme.primary,
+                              )
+                            : Text(
+                                'Informativo',
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(color: scheme.outline),
+                              ),
+                        onTap: openable
+                            ? () => context.push('/home/protocols/$id')
+                            : null,
                       ),
                     );
                   }),
                 const MandateSectionSeeAll(title: 'Agenda de hoje'),
                 if (data.agendaToday.isEmpty)
-                  const Text('Sem compromissos hoje.')
+                  const Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Text('Sem compromissos hoje.'),
+                  )
                 else
                   ...data.agendaToday.take(6).map((e) {
                     return Card(
                       child: ListTile(
-                        leading: const Icon(Icons.event_outlined),
-                        title: Text((e['title'] ?? 'Compromisso').toString()),
+                        leading: Icon(
+                          Icons.event_outlined,
+                          color: scheme.primary,
+                        ),
+                        title: Text(
+                          (e['title'] ?? 'Compromisso').toString(),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                         subtitle: Text(
                           [
                             if (e['starts_at'] != null) e['starts_at'],
                             if (e['location'] != null) e['location'],
                           ].join(' · '),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        trailing: Text(
+                          'Informativo',
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(color: scheme.outline),
                         ),
                       ),
                     );

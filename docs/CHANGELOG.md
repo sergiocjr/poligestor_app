@@ -1,5 +1,16 @@
 # Changelog — PoliGestor Flutter
 
+## [Revisão UX/UI Gabinete] — 2026-07-20
+
+### Fixed / Improved
+
+- Faixa branca sob status bar removida (shell sem SafeArea no body; AppBar + `SystemUiOverlayStyle`)
+- Dashboard Gabinete com hierarquia, tipografia e cards clicáveis no padrão do Início Cidadão
+- Agenda staff: `GET /v1/mandate/agenda` (LIVE); 404 → `EndpointPendingState`; detalhe em sheet
+- Protocolos: `AppErrorState`/`AppEmptyState`; detalhe com mensagens, histórico e anexos
+- Cards informativos vs acionáveis; bairros sem `Navigator.push` (sheet); bottom bar A10
+- APK debug no SM-A105M (`RX8M70CLXKP`)
+
 ## [Fase 12 — Inteligência Territorial] — 2026-07-20
 
 ### Added

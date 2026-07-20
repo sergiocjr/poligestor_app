@@ -20,7 +20,8 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Fase | **Fase 12 — Inteligência Territorial** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue com namespace preparado; fechamento pelos 15 critérios pendente) |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; fechamento pelos 15 critérios pendente) |
+| Qualidade Gabinete | **Revisão UX/UI 2026-07-20** concluída (antes de nova Fase) |
 | Hub | Mais → Inteligência Territorial (`/home/territorial-intelligence`) |
 | Namespace oficial | `/api/v1/intelligence/*` (sem aliases) |
 | Doc da fase | [FASE_12_INTELIGENCIA_TERRITORIAL.md](FASE_12_INTELIGENCIA_TERRITORIAL.md) |
@@ -33,25 +34,16 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `bf86325` — Fase 12 Inteligência Territorial |
-| Push | Sim (`origin/master`) |
-| Working tree | Limpa após push 2026-07-20 |
-
-### Últimos commits
-
-```
-bf86325 feat: Fase 12 Inteligência Territorial com namespace /v1/intelligence/*
-935bfc0 fix: Gabinete como tela inicial e barra inferior sem overflow no A10
-d0bfbef feat: Fase 11 Painel de Eventos com namespace LIVE /v1/events
-42999c9 sync: Sprint 11.0 Painel de Convênios para namespace LIVE /v1/grants/*
-948ac2b feat: add Sprint 11.0 Agreements Panel with prepared /v1/agreements APIs
-```
+| Working tree | Ver commit da revisão UX/UI Gabinete |
+| Push | Após commit da revisão |
 
 ### Navegação Gabinete (2026-07-20)
 
-- Inicial: `/home/dashboard` (Painel do Gabinete)
+- Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Validado no SM-A105M (`RX8M70CLXKP`) — APK debug instalado; sem overflow no logcat
+- Status bar: sem faixa branca (AppBar + `SystemUiOverlayStyle` transparente; sem SafeArea no body do shell)
+- Agenda (aba): `GET /v1/mandate/agenda` (LIVE; 401 sem token) — não usa `/v1/events`
+- Validado no SM-A105M (`RX8M70CLXKP`) — APK debug instalado
 
 ---
 

@@ -103,8 +103,22 @@ class _MandateReportsPageState extends State<MandateReportsPage> {
                               if (r.themeLabel != null) r.themeLabel!,
                               if (r.assigneeName != null) r.assigneeName!,
                             ].join(' · '),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          trailing: const Icon(Icons.chevron_right_rounded),
+                          trailing: r.id.isEmpty
+                              ? Text(
+                                  'Informativo',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                      ),
+                                )
+                              : const Icon(Icons.chevron_right_rounded),
                           onTap: r.id.isEmpty
                               ? null
                               : () => context.push('/home/protocols/${r.id}'),

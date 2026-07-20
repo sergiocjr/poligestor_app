@@ -143,6 +143,16 @@ class MorePage extends StatelessWidget {
             onTap: () => context.go('/home/intelligence'),
           ),
           const Divider(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+            child: Text(
+              'Em preparação',
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
           const _SoonTile(
             icon: Icons.notifications_outlined,
             title: 'Notificações',
@@ -153,9 +163,11 @@ class MorePage extends StatelessWidget {
             title: 'Carteira Digital',
           ),
           const _SoonTile(icon: Icons.qr_code_scanner, title: 'Scanner QR'),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.map_outlined),
-            title: const Text('Mapa do mandato'),
+            title: const Text('Concentração por bairro'),
+            subtitle: const Text('Mapa do mandato'),
             onTap: () => context.push('/home/mandate/map'),
           ),
           const Divider(),
@@ -195,11 +207,15 @@ class _SoonTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return ListTile(
       enabled: false,
-      leading: Icon(icon),
-      title: Text(title),
-      subtitle: const Text('Em breve'),
+      leading: Icon(icon, color: scheme.outline),
+      title: Text(title, style: TextStyle(color: scheme.onSurfaceVariant)),
+      subtitle: Text(
+        'Em breve — ainda sem ação',
+        style: TextStyle(color: scheme.outline),
+      ),
     );
   }
 }
