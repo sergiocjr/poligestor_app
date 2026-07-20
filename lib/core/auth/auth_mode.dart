@@ -181,6 +181,46 @@ enum AuthMode {
   String get institutionalCommunicationReportsPath =>
       '/v1/communication/reports';
 
+  // --- Fase 16: CRM Político (staff) — `/v1/crm/*` ---
+  String get crmRootPath => '/v1/crm';
+  String get crmDashboardPath => '/v1/crm/dashboard';
+  String get crmLeadersPath => '/v1/crm/leaders';
+  String get crmSupportersPath => '/v1/crm/supporters';
+  String get crmVotersPath => '/v1/crm/voters';
+  String get crmVolunteersPath => '/v1/crm/volunteers';
+  String get crmTeamPath => '/v1/crm/team';
+  String get crmEntitiesPath => '/v1/crm/entities';
+  String get crmAssociationsPath => '/v1/crm/associations';
+  String get crmChurchesPath => '/v1/crm/churches';
+  String get crmCompaniesPath => '/v1/crm/companies';
+  String get crmInfluencersPath => '/v1/crm/influencers';
+  String get crmSegmentationPath => '/v1/crm/segmentation';
+  String get crmTagsPath => '/v1/crm/tags';
+  String get crmGroupsPath => '/v1/crm/groups';
+  String get crmRegionsPath => '/v1/crm/regions';
+  String get crmNeighborhoodsPath => '/v1/crm/neighborhoods';
+  String get crmElectoralZonesPath => '/v1/crm/electoral-zones';
+  String get crmRelationshipHistoryPath => '/v1/crm/relationship-history';
+  String get crmInteractionsPath => '/v1/crm/interactions';
+  String get crmVisitsPath => '/v1/crm/visits';
+  String get crmCallsPath => '/v1/crm/calls';
+  String get crmMessagesPath => '/v1/crm/messages';
+  String get crmMeetingsPath => '/v1/crm/meetings';
+  String get crmLinkedDemandsPath => '/v1/crm/linked-demands';
+  String get crmLinkedProtocolsPath => '/v1/crm/linked-protocols';
+  String get crmCampaignsPath => '/v1/crm/campaigns';
+  String get crmTasksPath => '/v1/crm/tasks';
+  String get crmRemindersPath => '/v1/crm/reminders';
+  String get crmSupportLevelPath => '/v1/crm/support-level';
+  String get crmInfluencePotentialPath => '/v1/crm/influence-potential';
+  String get crmRelationshipsPath => '/v1/crm/relationships';
+  String get crmImportPath => '/v1/crm/import';
+  String get crmExportPath => '/v1/crm/export';
+  String get crmSearchPath => '/v1/crm/search';
+  String get crmFiltersPath => '/v1/crm/filters';
+  String get crmIndicatorsPath => '/v1/crm/indicators';
+  String get crmReportsPath => '/v1/crm/reports';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

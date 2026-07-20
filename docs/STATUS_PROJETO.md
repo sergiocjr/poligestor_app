@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 15 — Comunicação Institucional entregue no Flutter; **fechamento formal pendente**)
+Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; **fechamento formal pendente**)
 
 ## Resumo
 
@@ -27,10 +27,29 @@ Atualizado: 2026-07-20 (Fase 15 — Comunicação Institucional entregue no Flut
 | **Fase 13 — Gestão Documental** | **CONCLUÍDA** (namespace `/v1/documents/*` LIVE; Flutter sincronizado) |
 | **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
 | **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
-| Fase 16 | **Não iniciada** |
+| **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
+| Fase 17 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
+
+## Fase 16 — CRM Político
+
+Hub **Mais → CRM Político** (`/home/crm`).
+
+Namespace `/v1/crm/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_crm_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://crm|crm-politico|crm_politico/...`.
+
+Doc: [FASE_16_CRM_POLITICO.md](FASE_16_CRM_POLITICO.md).
+
+**Fase 17 — não iniciada.**
+
+## Fase 15 — Comunicação Institucional
+
+Hub **Mais → Comunicação Institucional** (`/home/institutional-communication`).
+
+Namespace `/v1/communication/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_ic_*`. Realtime: `MandateRefreshController`.
+
+Independente da Central de Comunicação (Sprint 10.4). Doc: [FASE_15_COMUNICACAO_INSTITUCIONAL.md](FASE_15_COMUNICACAO_INSTITUCIONAL.md).
 
 ## Fase 14 — Gestão Financeira do Mandato
 
@@ -41,16 +60,6 @@ Namespace `/v1/finance/*` — **CONCLUÍDA**. LIVE sincronizados: `dashboard`, `
 Cache: `pg_fin_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://finance|financeiro|gestao-financeira|financas/...`.
 
 Validação A10 (`RX8M70CLXKP`): OK. Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md).
-
-**Fase 15 — Comunicação Institucional: EM ANDAMENTO** (Flutter entregue).
-
-## Fase 15 — Comunicação Institucional
-
-Hub **Mais → Comunicação Institucional** (`/home/institutional-communication`).
-
-Namespace `/v1/communication/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_ic_*`. Realtime: `MandateRefreshController`.
-
-Independente da Central de Comunicação (Sprint 10.4). Doc: [FASE_15_COMUNICACAO_INSTITUCIONAL.md](FASE_15_COMUNICACAO_INSTITUCIONAL.md).
 
 ## Encerramento do dia (2026-07-20)
 
@@ -63,7 +72,7 @@ Independente da Central de Comunicação (Sprint 10.4). Doc: [FASE_15_COMUNICACA
 | APK debug | OK — instalado e validado no A10 |
 | A10 `RX8M70CLXKP` | OK — login + hub financeiro + chips Ativo |
 | Push | `origin/master` |
-| Próxima | Fase 15 — Comunicação Institucional (**não iniciar** sem pedido) |
+| Próxima | Fase 17 (**não iniciar** sem pedido) |
 
 ## Fase 13 — Gestão Documental
 
@@ -124,6 +133,26 @@ Hub **Mais → Painel de Convênios** (`/home/agreements`). Namespace LIVE `/v1/
 
 Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-ui.mdc`.
 
+## Qualidade / checklist de encerramento (Fase 16)
+
+| # | Critério | Status |
+|---|----------|--------|
+| 1 | Backend domínio completo | Pendente (`/v1/crm/*` 404) |
+| 2 | Flutter consome LIVE disponíveis | OK (nenhum LIVE; namespace preparado) |
+| 3 | Não publicados → `EndpointPendingState` | OK |
+| 4 | APK no Samsung Galaxy A10 | Pendente nesta entrega de wiring |
+| 5 | Web validada | Pendente nesta entrega de wiring |
+| 6 | `flutter analyze` | Nesta entrega |
+| 7 | `flutter test` | Nesta entrega (suite Fase 16) |
+| 8 | PHPUnit | N/A neste repo Flutter |
+| 9 | Nenhum HTTP 500 | OK no probe (404) |
+| 10 | Documentação | OK |
+| 11–12 | Commit / Push | Pendente (só sob pedido) |
+| 13–14 | Limpeza / sem emulador | Nesta entrega |
+| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+
+Fase 17 **não iniciada**.
+
 ## Qualidade / checklist de encerramento (Fase 15)
 
 | # | Critério | Status |
@@ -142,8 +171,6 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 | 13–14 | Limpeza / sem emulador | Nesta entrega |
 | 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
 
-Fase 16 **não iniciada**.
-
 ## Qualidade / checklist de encerramento (Fase 14)
 
 | # | Critério | Status |
@@ -158,53 +185,6 @@ Fase 16 **não iniciada**.
 | 8 | PHPUnit | N/A neste repo Flutter (domínio no backend) |
 | 9 | Nenhum HTTP 500 | OK no probe (401/404) |
 | 10 | Documentação | OK |
-| 11–12 | Commit / Push | Nesta entrega |
-| 13–14 | Limpeza / sem emulador | Nesta entrega |
-| 15 | Auditoria Backend ↔ Flutter | OK (paths LIVE sincronizados; Pending no restante) |
-
-**Fase 14 concluída.** Fase 15 **não iniciada**.
-
-## Qualidade / checklist de encerramento (Fase 13)
-
-| # | Critério | Status |
-|---|----------|--------|
-| 1 | Backend domínio completo | OK (rotas `/v1/documents/*` publicadas — probe 401) |
-| 2 | Flutter consome LIVE disponíveis | OK (15 telas do hub) |
-| 3 | Não publicados → `EndpointPendingState` | OK (nenhum path do hub pendente) |
-| 4 | APK no Samsung Galaxy A10 | OK nesta entrega |
-| 5 | Web validada | OK (`flutter build web`) |
-| 6 | `flutter analyze` | OK |
-| 7 | `flutter test` | OK (suite Fase 13) |
-| 8 | PHPUnit | N/A neste repo Flutter (domínio no backend) |
-| 9 | Nenhum HTTP 500 | OK no probe (401, sem 500) |
-| 10 | Documentação | OK |
-| 11–12 | Commit / Push | Nesta entrega |
-| 13–14 | Limpeza / sem emulador | Nesta entrega |
-| 15 | Auditoria Backend ↔ Flutter | OK (contratos sincronizados; 401→LIVE; parsing flexível) |
-
-**Fase 13 concluída** neste repositório Flutter com contratos LIVE sincronizados.
-
-## Qualidade / checklist de encerramento (Fase 12)
-
-| # | Critério | Status |
-|---|----------|--------|
-| 1 | Backend domínio completo | Pendente (14 paths ainda 404) |
-| 2 | Flutter consome LIVE disponíveis | OK (7 paths LIVE) |
-| 3 | Não publicados → `EndpointPendingState` | OK |
-| 4 | APK no Samsung Galaxy A10 | OK nesta entrega |
-| 5 | Web validada | OK (`flutter build web` nesta entrega) |
-| 6 | `flutter analyze` | OK |
-| 7 | `flutter test` | OK (suite Fase 12) |
-| 8 | PHPUnit | N/A neste repo Flutter (domínio backend incompleto) |
-| 9 | Nenhum HTTP 500 | OK no probe (401/404) |
-| 10 | Documentação | OK |
-| 11–12 | Commit / Push | Nesta entrega |
-| 13–14 | Limpeza / sem emulador | Nesta entrega |
-| 15 | Auditoria Backend ↔ Flutter | Pendente (payloads 200 autenticados + paths faltantes) |
-
-Fase 13 **iniciada a pedido**; fechamento formal da Fase 12 ainda pendente.
-
-## Repositório
-
-- https://github.com/sergiocjr/poligestor_app
-- Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md)
+| 11–12 | Commit / Push | OK |
+| 13–14 | Limpeza / sem emulador | OK |
+| 15 | Auditoria Backend ↔ Flutter | OK |

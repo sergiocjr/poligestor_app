@@ -19,6 +19,7 @@ import '../../features/events/presentation/events_pages.dart';
 import '../../features/documents/presentation/documents_pages.dart';
 import '../../features/finance/presentation/finance_pages.dart';
 import '../../features/institutional_communication/presentation/institutional_communication_pages.dart';
+import '../../features/political_crm/presentation/crm_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -124,6 +125,7 @@ GoRouter createAppRouter({
       final isInstitutionalCommunicationPath = loc.startsWith(
         '/home/institutional-communication',
       );
+      final isCrmPath = loc.startsWith('/home/crm');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -151,7 +153,8 @@ GoRouter createAppRouter({
               isTerritorialIntelPath ||
               isDocumentsPath ||
               isFinancePath ||
-              isInstitutionalCommunicationPath) &&
+              isInstitutionalCommunicationPath ||
+              isCrmPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -1665,6 +1668,314 @@ GoRouter createAppRouter({
           GoRoute(
             path: 'reports',
             builder: (_, _) => InstitutionalCommunicationListPage(
+              title: 'Relatórios',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+        ],
+      ),
+
+      // Fase 16 — CRM Político — staff only.
+      GoRoute(
+        path: '/home/crm',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const CrmHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => CrmListPage(
+              title: 'Painel',
+              emptyMessage: 'Nenhum indicador no painel.',
+              loader: (repo, tenant) => repo.dashboard(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'leaders',
+            builder: (_, _) => CrmListPage(
+              title: 'Líderes',
+              emptyMessage: 'Nenhum líder encontrado.',
+              loader: (repo, tenant) => repo.leaders(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'supporters',
+            builder: (_, _) => CrmListPage(
+              title: 'Apoiadores',
+              emptyMessage: 'Nenhum apoiador encontrado.',
+              loader: (repo, tenant) => repo.supporters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'voters',
+            builder: (_, _) => CrmListPage(
+              title: 'Eleitores',
+              emptyMessage: 'Nenhum eleitor encontrado.',
+              loader: (repo, tenant) => repo.voters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'volunteers',
+            builder: (_, _) => CrmListPage(
+              title: 'Voluntários',
+              emptyMessage: 'Nenhum voluntário encontrado.',
+              loader: (repo, tenant) => repo.volunteers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'team',
+            builder: (_, _) => CrmListPage(
+              title: 'Equipe',
+              emptyMessage: 'Nenhum membro da equipe encontrado.',
+              loader: (repo, tenant) => repo.team(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'entities',
+            builder: (_, _) => CrmListPage(
+              title: 'Entidades',
+              emptyMessage: 'Nenhuma entidade encontrada.',
+              loader: (repo, tenant) => repo.entities(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'associations',
+            builder: (_, _) => CrmListPage(
+              title: 'Associações',
+              emptyMessage: 'Nenhuma associação encontrada.',
+              loader: (repo, tenant) => repo.associations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'churches',
+            builder: (_, _) => CrmListPage(
+              title: 'Igrejas',
+              emptyMessage: 'Nenhuma igreja encontrada.',
+              loader: (repo, tenant) => repo.churches(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'companies',
+            builder: (_, _) => CrmListPage(
+              title: 'Empresas',
+              emptyMessage: 'Nenhuma empresa encontrada.',
+              loader: (repo, tenant) => repo.companies(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'influencers',
+            builder: (_, _) => CrmListPage(
+              title: 'Influenciadores',
+              emptyMessage: 'Nenhum influenciador encontrado.',
+              loader: (repo, tenant) => repo.influencers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'segmentation',
+            builder: (_, _) => CrmListPage(
+              title: 'Segmentação',
+              emptyMessage: 'Nenhum segmento encontrado.',
+              loader: (repo, tenant) => repo.segmentation(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'tags',
+            builder: (_, _) => CrmListPage(
+              title: 'Etiquetas',
+              emptyMessage: 'Nenhuma etiqueta encontrada.',
+              loader: (repo, tenant) => repo.tags(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'groups',
+            builder: (_, _) => CrmListPage(
+              title: 'Grupos',
+              emptyMessage: 'Nenhum grupo encontrado.',
+              loader: (repo, tenant) => repo.groups(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'regions',
+            builder: (_, _) => CrmListPage(
+              title: 'Regiões',
+              emptyMessage: 'Nenhuma região encontrada.',
+              loader: (repo, tenant) => repo.regions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'neighborhoods',
+            builder: (_, _) => CrmListPage(
+              title: 'Bairros',
+              emptyMessage: 'Nenhum bairro encontrado.',
+              loader: (repo, tenant) => repo.neighborhoods(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'electoral-zones',
+            builder: (_, _) => CrmListPage(
+              title: 'Zonas eleitorais',
+              emptyMessage: 'Nenhuma zona eleitoral encontrada.',
+              loader: (repo, tenant) =>
+                  repo.electoralZones(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'relationship-history',
+            builder: (_, _) => CrmListPage(
+              title: 'Histórico de relacionamento',
+              emptyMessage: 'Nenhum histórico encontrado.',
+              loader: (repo, tenant) =>
+                  repo.relationshipHistory(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'interactions',
+            builder: (_, _) => CrmListPage(
+              title: 'Interações',
+              emptyMessage: 'Nenhuma interação encontrada.',
+              loader: (repo, tenant) => repo.interactions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'visits',
+            builder: (_, _) => CrmListPage(
+              title: 'Visitas',
+              emptyMessage: 'Nenhuma visita encontrada.',
+              loader: (repo, tenant) => repo.visits(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'calls',
+            builder: (_, _) => CrmListPage(
+              title: 'Ligações',
+              emptyMessage: 'Nenhuma ligação encontrada.',
+              loader: (repo, tenant) => repo.calls(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'messages',
+            builder: (_, _) => CrmListPage(
+              title: 'Mensagens',
+              emptyMessage: 'Nenhuma mensagem encontrada.',
+              loader: (repo, tenant) => repo.messages(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'meetings',
+            builder: (_, _) => CrmListPage(
+              title: 'Reuniões',
+              emptyMessage: 'Nenhuma reunião encontrada.',
+              loader: (repo, tenant) => repo.meetings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'linked-demands',
+            builder: (_, _) => CrmListPage(
+              title: 'Demandas vinculadas',
+              emptyMessage: 'Nenhuma demanda vinculada.',
+              loader: (repo, tenant) =>
+                  repo.linkedDemands(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'linked-protocols',
+            builder: (_, _) => CrmListPage(
+              title: 'Protocolos vinculados',
+              emptyMessage: 'Nenhum protocolo vinculado.',
+              loader: (repo, tenant) =>
+                  repo.linkedProtocols(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'campaigns',
+            builder: (_, _) => CrmListPage(
+              title: 'Campanhas',
+              emptyMessage: 'Nenhuma campanha encontrada.',
+              loader: (repo, tenant) => repo.campaigns(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'tasks',
+            builder: (_, _) => CrmListPage(
+              title: 'Tarefas',
+              emptyMessage: 'Nenhuma tarefa encontrada.',
+              loader: (repo, tenant) => repo.tasks(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reminders',
+            builder: (_, _) => CrmListPage(
+              title: 'Lembretes',
+              emptyMessage: 'Nenhum lembrete encontrado.',
+              loader: (repo, tenant) => repo.reminders(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'support-level',
+            builder: (_, _) => CrmListPage(
+              title: 'Nível de apoio',
+              emptyMessage: 'Nenhum nível de apoio encontrado.',
+              loader: (repo, tenant) =>
+                  repo.supportLevel(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'influence-potential',
+            builder: (_, _) => CrmListPage(
+              title: 'Potencial de influência',
+              emptyMessage: 'Nenhum potencial de influência encontrado.',
+              loader: (repo, tenant) =>
+                  repo.influencePotential(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'relationships',
+            builder: (_, _) => CrmListPage(
+              title: 'Relacionamentos',
+              emptyMessage: 'Nenhum relacionamento encontrado.',
+              loader: (repo, tenant) =>
+                  repo.relationships(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'import',
+            builder: (_, _) => CrmListPage(
+              title: 'Importação',
+              emptyMessage: 'Nenhuma importação encontrada.',
+              loader: (repo, tenant) => repo.importData(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'export',
+            builder: (_, _) => CrmListPage(
+              title: 'Exportação',
+              emptyMessage: 'Nenhuma exportação encontrada.',
+              loader: (repo, tenant) => repo.exportData(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const CrmSearchPage(),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => CrmListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => CrmListPage(
+              title: 'Indicadores',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => CrmListPage(
               title: 'Relatórios',
               emptyMessage: 'Nenhum relatório encontrado.',
               loader: (repo, tenant) => repo.reports(tenantSlug: tenant),

@@ -73,6 +73,9 @@
                 <data android:scheme="poligestor" android:host="institutional-communication"/>
                 <data android:scheme="poligestor" android:host="comunicacao-institucional"/>
                 <data android:scheme="poligestor" android:host="comunicacao_institucional"/>
+                <data android:scheme="poligestor" android:host="crm"/>
+                <data android:scheme="poligestor" android:host="crm-politico"/>
+                <data android:scheme="poligestor" android:host="crm_politico"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

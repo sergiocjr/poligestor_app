@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 16 — CRM Político] — 2026-07-20
+
+### Added
+
+- Hub `/home/crm` (painel, líderes, apoiadores, eleitores, voluntários, equipe, entidades, associações, igrejas, empresas, influenciadores, segmentação, etiquetas, grupos, regiões, bairros, zonas eleitorais, histórico de relacionamento, interações, visitas, ligações, mensagens, reuniões, demandas/protocolos vinculados, campanhas, tarefas, lembretes, nível de apoio, potencial de influência, relacionamentos, importação, exportação, pesquisa, filtros, indicadores, relatórios)
+- Namespace oficial `/v1/crm/*` com `EndpointPendingState` (probe VPS 404)
+- Cache `pg_crm_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://crm|crm-politico|crm_politico/...`
+- Testes `test/fase16_crm_test.dart`
+- Documentação `docs/FASE_16_CRM_POLITICO.md`
+
+### Notes
+
+- `kCrmLiveSlugs` vazio até a VPS publicar contratos
+- Fechamento formal pelos 15 critérios pendente (backend 404)
+- Fase 17 não iniciada
+
 ## [Fase 15 — Comunicação Institucional] — 2026-07-20
 
 ### Added

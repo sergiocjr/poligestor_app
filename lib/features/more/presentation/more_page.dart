@@ -124,6 +124,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/events'),
           ),
           ListTile(
+            leading: const Icon(Icons.people_outline),
+            title: const Text('CRM Político'),
+            subtitle: const Text(
+              'Líderes, apoiadores, eleitores, visitas e relacionamento',
+            ),
+            onTap: () => context.push('/home/crm'),
+          ),
+          ListTile(
             leading: const Icon(Icons.campaign_outlined),
             title: const Text('Comunicação Institucional'),
             subtitle: const Text(
