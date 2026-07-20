@@ -1,6 +1,6 @@
 # Integrações LIVE — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 12)
+Atualizado: 2026-07-20 (Fase 17)
 
 Base API: `https://poligestor.onnexis.com.br/api`
 
@@ -147,6 +147,12 @@ Namespace dedicado **ainda não publicado** na VPS (probe 404 em todos os paths 
 | GET | `/v1/strategy/map` | Preparado → reuse `/v1/mandate/map` |
 | GET | `/v1/strategy/indicators` | Preparado (404) |
 | GET | `/v1/strategy/predictions` | Preparado (404) |
+
+## Fase 17 — `/v1/elections/*`
+
+Auditoria autenticada 2026-07-20: **14 LIVE (HTTP 200)**; **31** ainda 404 → `EndpointPendingState`.
+
+LIVE: `dashboard`, `campaigns`, `candidates`, `teams`, `goals`, `regions`, `neighborhoods`, `map`, `events`, `material-requests`, `projections`, `accountability`, `receipts`, `reports`.
 
 ## Reuso mandato / inteligência
 

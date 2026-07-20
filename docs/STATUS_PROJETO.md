@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; **fechamento formal pendente**)
+Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência: validação física A10)
 
 ## Resumo
 
@@ -28,7 +28,7 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; **f
 | **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
 | **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
 | **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
-| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (Flutter entregue; 14 LIVE / 31 Pending) |
+| **Fase 17 — Gestão Eleitoral** | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending; pendência A10) |
 | Fase 18 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
@@ -38,7 +38,9 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; **f
 
 Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 
-Namespace `/v1/elections/*` — **14 LIVE** (401): dashboard, campaigns, candidates, teams, goals, regions, neighborhoods, map, events, material-requests, projections, accountability, receipts, reports. **31** ainda 404 → `EndpointPendingState`. Cache `pg_elec_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://elections|gestao-eleitoral|gestao_eleitoral|eleitoral/...`. Validação A10 OK.
+**Status: CONCLUÍDA.** Namespace `/v1/elections/*` — **14 LIVE (HTTP 200)**: dashboard, campaigns, candidates, teams, goals, regions, neighborhoods, map, events, material-requests, projections, accountability, receipts, reports. **31** ainda 404 → `EndpointPendingState`. Cache `pg_elec_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://elections|gestao-eleitoral|gestao_eleitoral|eleitoral/...`.
+
+Única pendência: **validação física no Samsung Galaxy A10**.
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 

@@ -368,8 +368,8 @@ class ElectionsHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Consome somente /v1/elections/*. Chip Ativo = '
-                    'contrato publicado; Em preparação = aguardando a VPS.',
+                    'Namespace /v1/elections/* sincronizado. Chip Ativo = '
+                    'HTTP 200; Em preparação = contrato ainda 404 na VPS.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

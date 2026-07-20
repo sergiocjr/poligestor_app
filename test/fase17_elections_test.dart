@@ -73,11 +73,12 @@ void main() {
   });
 
   group('Elections LIVE contracts', () {
-    test('marks published VPS routes as live', () {
+    test('marks HTTP 200 VPS routes as live', () {
       expect(kElectionsLiveSlugs.length, 14);
       expect(electionsPathLive('dashboard'), isTrue);
       expect(electionsPathLive('candidates'), isTrue);
       expect(electionsPathLive('campaigns'), isTrue);
+      expect(electionsPathLive('reports'), isTrue);
       expect(electionsPathLive('pre-campaign'), isFalse);
       expect(electionsPathLive('coordination'), isFalse);
     });
@@ -95,6 +96,20 @@ void main() {
       expect(item.title, 'Candidato Centro');
       expect(item.region, 'Centro');
       expect(item.supportLevel, 'alto');
+    });
+
+    test('flattens dashboard summary into indicator rows', () {
+      final rows = asElectionsMapList({
+        'product': 'poligestor',
+        'summary': {
+          'campaigns': 1,
+          'active_campaigns': 1,
+          'candidates': 0,
+        },
+      });
+      expect(rows.length, 3);
+      expect(rows.first['title'], 'Campanhas');
+      expect(rows.first['summary'], '1');
     });
   });
 

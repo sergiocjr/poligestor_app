@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral **CONCLUÍDA**; pendência: validação física A10)
 
 ---
 
@@ -24,7 +24,8 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; fec
 | Campo | Valor |
 |-------|--------|
 | Fase | **Fase 17 — Gestão Eleitoral** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; 14 LIVE / 31 Pending) |
+| Status formal | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending 404) |
+| Pendência permitida | **Validação física no Samsung Galaxy A10** |
 | Hub | Mais → Gestão Eleitoral (`/home/elections`) |
 | Namespace oficial | `/api/v1/elections/*` |
 | Doc da fase | [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md) |
@@ -42,8 +43,8 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; fec
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `8dca86a` — feat Fase 17 Gestão Eleitoral |
-| Push | origin/master |
+| Último commit | (pendente — auditoria LIVE Fase 17) |
+| Push | Pendente |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
@@ -65,28 +66,28 @@ Material 3 · cards clicáveis · PT-BR · responsivo (1 coluna no A10) · cache
 
 ---
 
-## Contratos LIVE consumidos (Fase 17)
+## Contratos LIVE consumidos (Fase 17) — HTTP 200 autenticado
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| GET | `/v1/elections/dashboard` | LIVE (401) |
-| GET | `/v1/elections/campaigns` | LIVE (401) |
-| GET | `/v1/elections/candidates` | LIVE (401) |
-| GET | `/v1/elections/teams` | LIVE (401) |
-| GET | `/v1/elections/goals` | LIVE (401) |
-| GET | `/v1/elections/regions` | LIVE (401) |
-| GET | `/v1/elections/neighborhoods` | LIVE (401) |
-| GET | `/v1/elections/map` | LIVE (401) |
-| GET | `/v1/elections/events` | LIVE (401) |
-| GET | `/v1/elections/material-requests` | LIVE (401) |
-| GET | `/v1/elections/projections` | LIVE (401) |
-| GET | `/v1/elections/accountability` | LIVE (401) |
-| GET | `/v1/elections/receipts` | LIVE (401) |
-| GET | `/v1/elections/reports` | LIVE (401) |
+| GET | `/v1/elections/dashboard` | LIVE (200) |
+| GET | `/v1/elections/campaigns` | LIVE (200) |
+| GET | `/v1/elections/candidates` | LIVE (200) |
+| GET | `/v1/elections/teams` | LIVE (200) |
+| GET | `/v1/elections/goals` | LIVE (200) |
+| GET | `/v1/elections/regions` | LIVE (200) |
+| GET | `/v1/elections/neighborhoods` | LIVE (200) |
+| GET | `/v1/elections/map` | LIVE (200) |
+| GET | `/v1/elections/events` | LIVE (200) |
+| GET | `/v1/elections/material-requests` | LIVE (200) |
+| GET | `/v1/elections/projections` | LIVE (200) |
+| GET | `/v1/elections/accountability` | LIVE (200) |
+| GET | `/v1/elections/receipts` | LIVE (200) |
+| GET | `/v1/elections/reports` | LIVE (200) |
 
 ---
 
-## EndpointPendingState (31)
+## EndpointPendingState (31 — HTTP 404)
 
 `pre-campaign`, `coordination`, `canvassers`, `volunteers`, `leaders`, `supporters`, `electoral-zones`, `electoral-sections`, `polling-stations`, `campaign-agenda`, `walks`, `meetings`, `visits`, `rallies`, `mobilizations`, `campaign-materials`, `inventory`, `distribution`, `polls`, `scenarios`, `vote-intention`, `rejection`, `comparatives`, `regional-performance`, `revenues`, `expenses`, `donations`, `suppliers`, `exports`, `search`, `filters`.
 
@@ -109,14 +110,14 @@ poligestor://eleitoral/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 17 | OK (hub + Painel LIVE + deep link) |
+| Validação física Fase 17 | **Pendente** (única pendência após CONCLUÍDA) |
 
 ---
 
-## Pendências reais (fechamento formal)
+## Pendências reais
 
-1. Backend publicar os 31 paths restantes de `/v1/elections/*`.
-2. Sync LIVE (chips Ativo) + auditoria payloads 200.
+1. Validação física no A10 (Fase 17).
+2. Backend publicar os 31 paths restantes de `/v1/elections/*` (quando houver) → sync chips Ativo.
 3. Fechamento formal das Fases 11, 12, 15 e 16 (quando solicitado).
 
 ## Próxima Fase
