@@ -29,7 +29,7 @@ Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 | Campo | Valor |
 |-------|--------|
 | Doc | [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md) |
-| Tag pós-sync | ver `git log -1` após commit auditoria |
+| Tag pós-sync | `9d51d25` (pós-auditoria) |
 | Fases CONCLUÍDAS (100%) | 1–9, 13, 14, 22, 23 (+ base auth/cidadão) |
 | Fases EM ANDAMENTO | 11, 12, 15–21, 24, Sprints 10.5–10.9, 11.0 |
 
@@ -65,7 +65,7 @@ Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `a20587f` — docs pós-sync Fase 24 |
+| Último commit | `9d51d25` — auditoria final Fases 1–24 |
 | Tag restauração | `v1.0-final-pre-auditoria` → commit `a20587f` |
 | Versão APK / Web | **1.0.0+2** |
 | Push | origin/master |
