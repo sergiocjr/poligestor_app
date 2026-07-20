@@ -39,7 +39,7 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | *(após sync LIVE Fase 24)* |
+| Último commit | `048c211` — sync LIVE Fase 24 Notícias Regionais |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
