@@ -34,8 +34,8 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Working tree | Ver commit da revisão UX/UI Gabinete |
-| Push | Após commit da revisão |
+| Último commit | `59c53f4` — revisão UX/UI Gabinete |
+| Push | Pendente (local) |
 
 ### Navegação Gabinete (2026-07-20)
 
