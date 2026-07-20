@@ -19,13 +19,15 @@ Atualizado: 2026-07-20
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 13 ? Gestão Documental** |
-| Status formal | **SINCRONIZADA (Flutter ? contratos LIVE)** ? fechamento pelos 15 critérios conforme checklist em STATUS |
-| Hub | Mais ? Gestão Documental (`/home/documents`) |
-| Namespace oficial | `/api/v1/documents/*` (sem aliases) |
-| Doc da fase | [FASE_13_GESTAO_DOCUMENTAL.md](FASE_13_GESTAO_DOCUMENTAL.md) |
+| Fase | **Fase 14 ? Gestão Financeira do Mandato** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/finance/*` 100% 404 ? Pending) |
+| Hub | Mais ? Gestão Financeira (`/home/finance`) |
+| Namespace oficial | `/api/v1/finance/*` (sem aliases) |
+| Doc da fase | [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md) |
+| Fase 13 | **CONCLUÍDA** (documentos LIVE sincronizados) |
 | Fase 12 | Flutter entregue (LIVE parcial); fechamento formal ainda pendente |
 | Fase 11 | Flutter entregue; fechamento formal ainda pendente |
+| Fase 15 | **Bloqueada** |
 
 ---
 
@@ -34,7 +36,7 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `066c38a` ? sync LIVE Fase 13 `/v1/documents/*` |
+| Último commit | ver `git log` (Fase 14) |
 | Push | Sim (`origin/master`) |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
@@ -42,33 +44,29 @@ Atualizado: 2026-07-20
 
 - Inicial: `/home/dashboard` (Gabinete)
 - Abas: Gabinete · Protocolos · Agenda · Mandato · Mais
-- Gestão Documental: Mais ? hub `/home/documents`
+- Gestão Financeira: Mais ? hub `/home/finance`
 
 ---
 
-## Telas (Fase 13)
+## Telas (Fase 14)
 
-Documentos · Pesquisa · Filtros · Categorias · Favoritos · Histórico · Linha do tempo · Visualizador PDF · Assinaturas · Aprovações · Compartilhamento · Modelos · Download · Upload · Anexos.
+Painel financeiro · Indicadores · Saldo · Receitas · Despesas · Contas bancárias · Categorias · Centros de custo · Fornecedores · Contratos · Reembolsos · Adiantamentos · Verbas · Orçamento · Execução orçamentária · Prestação de contas · Comprovantes · Anexos · Aprovações · Conciliação · Fluxo de caixa · Contas a pagar · Contas a receber · Alertas · Histórico · Filtros · Pesquisa · Relatórios · Exportação.
 
-Material 3 · cards clicáveis · Android · Tablet · Web · PT-BR · responsivo (1 coluna no A10).
+Material 3 · cards clicáveis · PT-BR · responsivo (1 coluna no A10).
 
 ---
 
-## Contratos LIVE consumidos (Fase 13)
+## Contratos LIVE consumidos (Fase 14)
 
-Probe 2026-07-20 **sem token** ? **HTTP 401** (rota publicada) em:
-
-`/v1/documents`, `/list`, `/search`, `/filters`, `/categories`, `/favorites`, `/history`, `/timeline`, `/viewer`, `/signatures`, `/approvals`, `/share`, `/templates`, `/download`, `/upload`, `/attachments` (+ `/dashboard` publicado).
-
-Lista do app: `GET /v1/documents/list`.
-
-Com token staff: esperado **HTTP 200**. Nenhum path do hub em `EndpointPendingState`.
+| Método | Path | Status VPS |
+|--------|------|------------|
+| ? | `/v1/finance/*` | **Nenhum LIVE** (todos 404 em 2026-07-20) |
 
 ---
 
 ## EndpointPendingState
 
-Nenhum path do hub Fase 13 (todos LIVE). Fallback de código permanece só para 404/405/501/503 futuros.
+Todos os paths do hub `/v1/finance/{dashboard,indicators,balance,revenues,expenses,bank-accounts,categories,cost-centers,suppliers,contracts,refunds,advances,funds,budget,budget-execution,accountability,receipts,attachments,approvals,reconciliation,cash-flow,payables,receivables,alerts,history,filters,search,reports,exports}`.
 
 ---
 
@@ -76,7 +74,7 @@ Nenhum path do hub Fase 13 (todos LIVE). Fallback de código permanece só para 40
 
 | Camada | Implementação |
 |--------|----------------|
-| Cache | `pg_docs_{tenant}_*` |
+| Cache | `pg_fin_{tenant}_*` |
 | Offline | Cache em falha de rede (quando houver payload) |
 | Realtime | `MandateRefreshController` |
 
@@ -85,9 +83,10 @@ Nenhum path do hub Fase 13 (todos LIVE). Fallback de código permanece só para 40
 ## Deep Links
 
 ```
-poligestor://documents/...
-poligestor://documentos/...
-poligestor://gestao-documental/...
+poligestor://finance/...
+poligestor://financeiro/...
+poligestor://gestao-financeira/...
+poligestor://financas/...
 ```
 
 ---
@@ -98,10 +97,17 @@ poligestor://gestao-documental/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M ? `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK sync LIVE | APK debug instalado nesta entrega |
+| Validação APK Fase 14 | APK debug instalado nesta entrega |
 
 ---
 
+## Pendências reais (fechamento formal)
+
+1. Backend publicar `/v1/finance/*`.
+2. PHPUnit do domínio no backend.
+3. Auditoria Backend ? Flutter após HTTP 200.
+4. Fechamento formal das Fases 11 e 12.
+
 ## Próxima Fase
 
-Ver checklist dos 15 critérios em `STATUS_PROJETO.md`. Fase 14 só após fechamento formal completo.
+**Fase 15 ? bloqueada** até os 15 critérios da Fase 14.

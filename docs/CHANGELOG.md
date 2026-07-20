@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 14 — Gestão Financeira do Mandato] — 2026-07-20
+
+### Added
+
+- Hub `/home/finance` (painel, indicadores, saldo, receitas, despesas, contas bancárias, categorias, centros de custo, fornecedores, contratos, reembolsos, adiantamentos, verbas, orçamento, execução, prestação de contas, comprovantes, anexos, aprovações, conciliação, fluxo de caixa, contas a pagar/receber, alertas, histórico, filtros, pesquisa, relatórios, exportação)
+- Namespace oficial `/v1/finance/*` com `EndpointPendingState` (probe VPS 404)
+- Cache `pg_fin_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://finance|financeiro|gestao-financeira|financas/...`
+- Testes `test/fase14_finance_test.dart`
+- Documentação `docs/FASE_14_GESTAO_FINANCEIRA.md`
+
+### Notes
+
+- Fechamento formal pelos 15 critérios pendente (backend 404)
+
 ## [Fase 13 — sync LIVE `/v1/documents/*`] — 2026-07-20
 
 ### Changed

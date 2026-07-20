@@ -121,6 +121,17 @@ class NotificationRouter {
               : '/home/documents/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 14 — Gestão Financeira
+        if (uri.host == 'finance' ||
+            uri.host == 'financeiro' ||
+            uri.host == 'gestao-financeira' ||
+            uri.host == 'financas') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/finance'
+              : '/home/finance/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

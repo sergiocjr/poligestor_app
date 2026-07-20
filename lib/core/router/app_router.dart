@@ -16,8 +16,9 @@ import '../../features/parliament/presentation/parliament_pages.dart';
 import '../../features/works/presentation/works_pages.dart';
 import '../../features/agreements/presentation/agreements_pages.dart';
 import '../../features/events/presentation/events_pages.dart';
-import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/documents/presentation/documents_pages.dart';
+import '../../features/finance/presentation/finance_pages.dart';
+import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -118,6 +119,7 @@ GoRouter createAppRouter({
         '/home/territorial-intelligence',
       );
       final isDocumentsPath = loc.startsWith('/home/documents');
+      final isFinancePath = loc.startsWith('/home/finance');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -143,7 +145,8 @@ GoRouter createAppRouter({
               isAgreementsPath ||
               isEventsPath ||
               isTerritorialIntelPath ||
-              isDocumentsPath) &&
+              isDocumentsPath ||
+              isFinancePath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -1291,6 +1294,242 @@ GoRouter createAppRouter({
               title: 'Anexos',
               emptyMessage: 'Nenhum anexo encontrado.',
               loader: (repo, tenant) => repo.attachments(tenantSlug: tenant),
+            ),
+          ),
+        ],
+      ),
+
+      // Fase 14 — Gestão Financeira do Mandato — staff only.
+      GoRoute(
+        path: '/home/finance',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const FinanceHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const FinanceDashboardPage(),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => FinanceListPage(
+              title: 'Indicadores',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'balance',
+            builder: (_, _) => FinanceListPage(
+              title: 'Saldo',
+              emptyMessage: 'Nenhum saldo disponível.',
+              loader: (repo, tenant) => repo.balance(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'revenues',
+            builder: (_, _) => FinanceListPage(
+              title: 'Receitas',
+              emptyMessage: 'Nenhuma receita encontrada.',
+              loader: (repo, tenant) => repo.revenues(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'expenses',
+            builder: (_, _) => FinanceListPage(
+              title: 'Despesas',
+              emptyMessage: 'Nenhuma despesa encontrada.',
+              loader: (repo, tenant) => repo.expenses(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'bank-accounts',
+            builder: (_, _) => FinanceListPage(
+              title: 'Contas bancárias',
+              emptyMessage: 'Nenhuma conta bancária encontrada.',
+              loader: (repo, tenant) => repo.bankAccounts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'categories',
+            builder: (_, _) => FinanceListPage(
+              title: 'Categorias',
+              emptyMessage: 'Nenhuma categoria encontrada.',
+              loader: (repo, tenant) => repo.categories(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'cost-centers',
+            builder: (_, _) => FinanceListPage(
+              title: 'Centros de custo',
+              emptyMessage: 'Nenhum centro de custo encontrado.',
+              loader: (repo, tenant) => repo.costCenters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'suppliers',
+            builder: (_, _) => FinanceListPage(
+              title: 'Fornecedores',
+              emptyMessage: 'Nenhum fornecedor encontrado.',
+              loader: (repo, tenant) => repo.suppliers(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'contracts',
+            builder: (_, _) => FinanceListPage(
+              title: 'Contratos',
+              emptyMessage: 'Nenhum contrato encontrado.',
+              loader: (repo, tenant) => repo.contracts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'refunds',
+            builder: (_, _) => FinanceListPage(
+              title: 'Reembolsos',
+              emptyMessage: 'Nenhum reembolso encontrado.',
+              loader: (repo, tenant) => repo.refunds(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'advances',
+            builder: (_, _) => FinanceListPage(
+              title: 'Adiantamentos',
+              emptyMessage: 'Nenhum adiantamento encontrado.',
+              loader: (repo, tenant) => repo.advances(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'funds',
+            builder: (_, _) => FinanceListPage(
+              title: 'Verbas',
+              emptyMessage: 'Nenhuma verba encontrada.',
+              loader: (repo, tenant) => repo.funds(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'budget',
+            builder: (_, _) => FinanceListPage(
+              title: 'Orçamento',
+              emptyMessage: 'Nenhum orçamento encontrado.',
+              loader: (repo, tenant) => repo.budget(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'budget-execution',
+            builder: (_, _) => FinanceListPage(
+              title: 'Execução orçamentária',
+              emptyMessage: 'Nenhuma execução encontrada.',
+              loader: (repo, tenant) =>
+                  repo.budgetExecution(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'accountability',
+            builder: (_, _) => FinanceListPage(
+              title: 'Prestação de contas',
+              emptyMessage: 'Nenhuma prestação de contas encontrada.',
+              loader: (repo, tenant) =>
+                  repo.accountability(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'receipts',
+            builder: (_, _) => FinanceListPage(
+              title: 'Comprovantes',
+              emptyMessage: 'Nenhum comprovante encontrado.',
+              loader: (repo, tenant) => repo.receipts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attachments',
+            builder: (_, _) => FinanceListPage(
+              title: 'Anexos',
+              emptyMessage: 'Nenhum anexo encontrado.',
+              loader: (repo, tenant) => repo.attachments(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'approvals',
+            builder: (_, _) => FinanceListPage(
+              title: 'Aprovações',
+              emptyMessage: 'Nenhuma aprovação encontrada.',
+              loader: (repo, tenant) => repo.approvals(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reconciliation',
+            builder: (_, _) => FinanceListPage(
+              title: 'Conciliação',
+              emptyMessage: 'Nenhuma conciliação encontrada.',
+              loader: (repo, tenant) =>
+                  repo.reconciliation(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'cash-flow',
+            builder: (_, _) => FinanceListPage(
+              title: 'Fluxo de caixa',
+              emptyMessage: 'Nenhum fluxo de caixa encontrado.',
+              loader: (repo, tenant) => repo.cashFlow(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'payables',
+            builder: (_, _) => FinanceListPage(
+              title: 'Contas a pagar',
+              emptyMessage: 'Nenhuma conta a pagar encontrada.',
+              loader: (repo, tenant) => repo.payables(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'receivables',
+            builder: (_, _) => FinanceListPage(
+              title: 'Contas a receber',
+              emptyMessage: 'Nenhuma conta a receber encontrada.',
+              loader: (repo, tenant) => repo.receivables(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'alerts',
+            builder: (_, _) => FinanceListPage(
+              title: 'Alertas',
+              emptyMessage: 'Nenhum alerta encontrado.',
+              loader: (repo, tenant) => repo.alerts(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'history',
+            builder: (_, _) => FinanceListPage(
+              title: 'Histórico',
+              emptyMessage: 'Nenhum histórico encontrado.',
+              loader: (repo, tenant) => repo.history(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => FinanceListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const FinanceSearchPage(),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => FinanceListPage(
+              title: 'Relatórios',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'exports',
+            builder: (_, _) => FinanceListPage(
+              title: 'Exportação',
+              emptyMessage: 'Nenhuma exportação disponível.',
+              loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
             ),
           ),
         ],

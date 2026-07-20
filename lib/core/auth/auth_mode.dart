@@ -117,6 +117,38 @@ enum AuthMode {
   String get strategyIndicatorsPath => '/v1/strategy/indicators';
   String get strategyPredictionsPath => '/v1/strategy/predictions';
 
+  // --- Fase 14: Gestão Financeira do Mandato (staff) — `/v1/finance/*` ---
+  String get financeRootPath => '/v1/finance';
+  String get financeDashboardPath => '/v1/finance/dashboard';
+  String get financeIndicatorsPath => '/v1/finance/indicators';
+  String get financeBalancePath => '/v1/finance/balance';
+  String get financeRevenuesPath => '/v1/finance/revenues';
+  String get financeExpensesPath => '/v1/finance/expenses';
+  String get financeBankAccountsPath => '/v1/finance/bank-accounts';
+  String get financeCategoriesPath => '/v1/finance/categories';
+  String get financeCostCentersPath => '/v1/finance/cost-centers';
+  String get financeSuppliersPath => '/v1/finance/suppliers';
+  String get financeContractsPath => '/v1/finance/contracts';
+  String get financeRefundsPath => '/v1/finance/refunds';
+  String get financeAdvancesPath => '/v1/finance/advances';
+  String get financeFundsPath => '/v1/finance/funds';
+  String get financeBudgetPath => '/v1/finance/budget';
+  String get financeBudgetExecutionPath => '/v1/finance/budget-execution';
+  String get financeAccountabilityPath => '/v1/finance/accountability';
+  String get financeReceiptsPath => '/v1/finance/receipts';
+  String get financeAttachmentsPath => '/v1/finance/attachments';
+  String get financeApprovalsPath => '/v1/finance/approvals';
+  String get financeReconciliationPath => '/v1/finance/reconciliation';
+  String get financeCashFlowPath => '/v1/finance/cash-flow';
+  String get financePayablesPath => '/v1/finance/payables';
+  String get financeReceivablesPath => '/v1/finance/receivables';
+  String get financeAlertsPath => '/v1/finance/alerts';
+  String get financeHistoryPath => '/v1/finance/history';
+  String get financeFiltersPath => '/v1/finance/filters';
+  String get financeSearchPath => '/v1/finance/search';
+  String get financeReportsPath => '/v1/finance/reports';
+  String get financeExportsPath => '/v1/finance/exports';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).
