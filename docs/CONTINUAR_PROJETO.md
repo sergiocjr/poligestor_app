@@ -173,5 +173,5 @@ Deep links: `poligestor://finance|financeiro|gestao-financeira|financas/...`
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| HEAD (antes deste commit de docs) | `1483c10` |
-| Push | Sim — atualizar hash após o commit de continuidade de hoje |
+| HEAD | `8100a21` — continuidade do dia |
+| Push | Sim (`origin/master`) |
