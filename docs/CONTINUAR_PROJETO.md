@@ -41,8 +41,8 @@ Atualizado: 2026-07-20 (Fase 21 — Segurança e Privacidade entregue; fechament
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (pendente — entrega Fase 21) |
-| Push | Pendente |
+| Último commit | `eb49785` — feat Fase 21 Segurança e Privacidade |
+| Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação
