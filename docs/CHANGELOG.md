@@ -1,5 +1,30 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 14 — CONCLUÍDA / sync LIVE `/v1/finance/*`] — 2026-07-20
+
+### Changed
+
+- Fase 14 marcada **CONCLUÍDA** (backend sincronizado; A10 validado)
+- LIVE: `dashboard`, `categories`, `cost-centers`, `alerts`, `reports`, `accounts`, `cashflow`, `transactions`, `payments`
+- Paths publicados: contas → `/v1/finance/accounts`; fluxo → `/v1/finance/cashflow`
+- Hub: Transações e Pagamentos; chips **Ativo** nos LIVE
+- Docs `STATUS_PROJETO`, `CONTINUAR_PROJETO`, `FASE_14`, `CHANGELOG` atualizados
+- Fase 15 **não iniciada**
+
+## [Fase 14 — sync LIVE parcial `/v1/finance/*`] — 2026-07-20
+
+### Changed
+
+- Probe VPS: 5 paths LIVE (`dashboard`, `categories`, `cost-centers`, `alerts`, `reports` → HTTP 401 sem token)
+- Hub com chips **Ativo** / **Em preparação** alinhados ao probe
+- `kFinanceLiveSlugs` atualizado; `EndpointPendingState` só no restante 404
+- Docs `CONTINUAR_PROJETO`, `STATUS_PROJETO`, `FASE_14`, `CHANGELOG` atualizados
+
+### Notes
+
+- Paths 404 permanecem em `EndpointPendingState`
+- Fechamento formal pelos 15 critérios ainda pendente (backend incompleto)
+
 ## [Fase 14 — Gestão Financeira do Mandato] — 2026-07-20
 
 ### Added

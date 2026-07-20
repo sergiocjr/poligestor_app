@@ -42,6 +42,8 @@ class FinanceHubPage extends StatelessWidget {
     _Entry('Saldo', 'Saldo atual', Icons.savings_outlined, 'balance', '/home/finance/balance'),
     _Entry('Receitas', 'Entradas', Icons.trending_up, 'revenues', '/home/finance/revenues'),
     _Entry('Despesas', 'Saídas', Icons.trending_down, 'expenses', '/home/finance/expenses'),
+    _Entry('Transações', 'Lançamentos financeiros', Icons.swap_horiz_rounded, 'transactions', '/home/finance/transactions'),
+    _Entry('Pagamentos', 'Pagamentos realizados', Icons.payment_outlined, 'payments', '/home/finance/payments'),
     _Entry('Contas bancárias', 'Contas e bancos', Icons.account_balance_outlined, 'bank-accounts', '/home/finance/bank-accounts'),
     _Entry('Categorias', 'Classificação', Icons.category_outlined, 'categories', '/home/finance/categories'),
     _Entry('Centros de custo', 'Rateio de custos', Icons.hub_outlined, 'cost-centers', '/home/finance/cost-centers'),
@@ -82,8 +84,8 @@ class FinanceHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Consome somente /v1/finance/*. Chip Ativo = contrato LIVE; '
-                    'Em preparação = EndpointPendingState.',
+                    'Consome somente /v1/finance/*. Chip Ativo = contrato '
+                    'publicado; Em preparação = aguardando a VPS.',
               ),
               const SizedBox(height: 12),
               GridView.builder(
@@ -91,7 +93,7 @@ class FinanceHubPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: cross == 1 ? 96 : 112,
+                  mainAxisExtent: cross == 1 ? 104 : 112,
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -129,7 +131,7 @@ class FinanceHubPage extends StatelessWidget {
                                 children: [
                                   Text(
                                     e.title,
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
@@ -144,12 +146,19 @@ class FinanceHubPage extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Chip(
-                              label: Text(uiContractChip(available: live)),
+                              label: Text(
+                                uiContractChip(available: live),
+                                style: const TextStyle(fontSize: 11),
+                              ),
                               visualDensity: VisualDensity.compact,
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
+                              padding: EdgeInsets.zero,
+                              labelPadding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                              ),
                             ),
                           ],
                         ),

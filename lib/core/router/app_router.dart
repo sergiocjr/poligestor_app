@@ -1342,6 +1342,22 @@ GoRouter createAppRouter({
             ),
           ),
           GoRoute(
+            path: 'transactions',
+            builder: (_, _) => FinanceListPage(
+              title: 'Transações',
+              emptyMessage: 'Nenhuma transação encontrada.',
+              loader: (repo, tenant) => repo.transactions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'payments',
+            builder: (_, _) => FinanceListPage(
+              title: 'Pagamentos',
+              emptyMessage: 'Nenhum pagamento encontrado.',
+              loader: (repo, tenant) => repo.payments(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
             path: 'bank-accounts',
             builder: (_, _) => FinanceListPage(
               title: 'Contas bancárias',

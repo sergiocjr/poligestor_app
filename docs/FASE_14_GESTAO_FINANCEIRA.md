@@ -1,6 +1,6 @@
 # Fase 14 — Gestão Financeira do Mandato
 
-Atualizado: 2026-07-20
+Atualizado: 2026-07-20 (**CONCLUÍDA**)
 
 ## Escopo
 
@@ -8,58 +8,37 @@ Módulo completo de Gestão Financeira no Flutter, consumindo **exclusivamente**
 
 `https://poligestor.onnexis.com.br/api/v1/finance/*`
 
-Sem aliases. Sem mocks. Sem alteração de backend. Sem inventar APIs.
+Sem mocks. Sem alteração de backend neste repositório. Sem inventar APIs.
 
 ## Hub
 
 **Mais → Gestão Financeira** (`/home/finance`)
 
-## Probe VPS (2026-07-20, sem token)
+## Probe VPS (2026-07-20, sem token) — sincronizado
 
-Todos os paths `/v1/finance/*` retornaram **404**. UI completa com `EndpointPendingState`.
+| Path | Status | Hub |
+|------|--------|-----|
+| `/v1/finance/dashboard` | **LIVE** (401) | Painel financeiro |
+| `/v1/finance/categories` | **LIVE** (401) | Categorias |
+| `/v1/finance/cost-centers` | **LIVE** (401) | Centros de custo |
+| `/v1/finance/alerts` | **LIVE** (401) | Alertas |
+| `/v1/finance/reports` | **LIVE** (401) | Relatórios |
+| `/v1/finance/accounts` | **LIVE** (401) | Contas bancárias |
+| `/v1/finance/cashflow` | **LIVE** (401) | Fluxo de caixa |
+| `/v1/finance/transactions` | **LIVE** (401) | Transações |
+| `/v1/finance/payments` | **LIVE** (401) | Pagamentos |
 
-| Path | Status |
-|------|--------|
-| `/v1/finance/dashboard` | Preparado (404) |
-| `/v1/finance/indicators` | Preparado (404) |
-| `/v1/finance/balance` | Preparado (404) |
-| `/v1/finance/revenues` | Preparado (404) |
-| `/v1/finance/expenses` | Preparado (404) |
-| `/v1/finance/bank-accounts` | Preparado (404) |
-| `/v1/finance/categories` | Preparado (404) |
-| `/v1/finance/cost-centers` | Preparado (404) |
-| `/v1/finance/suppliers` | Preparado (404) |
-| `/v1/finance/contracts` | Preparado (404) |
-| `/v1/finance/refunds` | Preparado (404) |
-| `/v1/finance/advances` | Preparado (404) |
-| `/v1/finance/funds` | Preparado (404) |
-| `/v1/finance/budget` | Preparado (404) |
-| `/v1/finance/budget-execution` | Preparado (404) |
-| `/v1/finance/accountability` | Preparado (404) |
-| `/v1/finance/receipts` | Preparado (404) |
-| `/v1/finance/attachments` | Preparado (404) |
-| `/v1/finance/approvals` | Preparado (404) |
-| `/v1/finance/reconciliation` | Preparado (404) |
-| `/v1/finance/cash-flow` | Preparado (404) |
-| `/v1/finance/payables` | Preparado (404) |
-| `/v1/finance/receivables` | Preparado (404) |
-| `/v1/finance/alerts` | Preparado (404) |
-| `/v1/finance/history` | Preparado (404) |
-| `/v1/finance/filters` | Preparado (404) |
-| `/v1/finance/search` | Preparado (404) |
-| `/v1/finance/reports` | Preparado (404) |
-| `/v1/finance/exports` | Preparado (404) |
-
-Quando a VPS publicar HTTP 200 (ou 401 sem token = LIVE), marcar chips **Ativo** e remover `EndpointPendingState` do fluxo.
+Demais entradas do hub (ex.: `balance`, `revenues`, `exports`, …) ainda **404** → chip Em preparação + `EndpointPendingState` (fallback também se a VPS voltar a 404/405/501/503).
 
 ## Flutter
 
 - Feature: `lib/features/finance/`
+- Contratos: `kFinanceLiveSlugs` em `finance_contracts.dart`
 - Cache: `pg_fin_{tenant}_*`
 - Realtime: `MandateRefreshController`
 - Deep links: `poligestor://finance|financeiro|gestao-financeira|financas/...`
 - UI 100% PT-BR, Material 3, cards clicáveis, responsivo (A10)
 
-## Critério de encerramento
+## Encerramento
 
-Ver 15 critérios em `.cursor/rules/fases-completas.mdc`. Backend ainda 404 → Fase **não fechada formalmente**.
+Backend domínio concluído e sincronizado · Flutter consome LIVE disponíveis · A10 validado · documentação atualizada · commit/push nesta entrega.

@@ -120,6 +120,12 @@ class FinanceRepository {
   Future<List<FinanceItem>> expenses({required String tenantSlug}) =>
       _list(tenantSlug, 'expenses', _staff.financeExpensesPath);
 
+  Future<List<FinanceItem>> transactions({required String tenantSlug}) =>
+      _list(tenantSlug, 'transactions', _staff.financeTransactionsPath);
+
+  Future<List<FinanceItem>> payments({required String tenantSlug}) =>
+      _list(tenantSlug, 'payments', _staff.financePaymentsPath);
+
   Future<List<FinanceItem>> bankAccounts({required String tenantSlug}) =>
       _list(tenantSlug, 'bank_accounts', _staff.financeBankAccountsPath);
 

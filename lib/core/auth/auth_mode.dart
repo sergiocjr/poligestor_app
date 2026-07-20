@@ -124,7 +124,8 @@ enum AuthMode {
   String get financeBalancePath => '/v1/finance/balance';
   String get financeRevenuesPath => '/v1/finance/revenues';
   String get financeExpensesPath => '/v1/finance/expenses';
-  String get financeBankAccountsPath => '/v1/finance/bank-accounts';
+  /// LIVE VPS: `GET /v1/finance/accounts`
+  String get financeBankAccountsPath => '/v1/finance/accounts';
   String get financeCategoriesPath => '/v1/finance/categories';
   String get financeCostCentersPath => '/v1/finance/cost-centers';
   String get financeSuppliersPath => '/v1/finance/suppliers';
@@ -139,7 +140,8 @@ enum AuthMode {
   String get financeAttachmentsPath => '/v1/finance/attachments';
   String get financeApprovalsPath => '/v1/finance/approvals';
   String get financeReconciliationPath => '/v1/finance/reconciliation';
-  String get financeCashFlowPath => '/v1/finance/cash-flow';
+  /// LIVE VPS: `GET /v1/finance/cashflow`
+  String get financeCashFlowPath => '/v1/finance/cashflow';
   String get financePayablesPath => '/v1/finance/payables';
   String get financeReceivablesPath => '/v1/finance/receivables';
   String get financeAlertsPath => '/v1/finance/alerts';
@@ -148,6 +150,10 @@ enum AuthMode {
   String get financeSearchPath => '/v1/finance/search';
   String get financeReportsPath => '/v1/finance/reports';
   String get financeExportsPath => '/v1/finance/exports';
+  /// LIVE VPS: `GET /v1/finance/transactions`
+  String get financeTransactionsPath => '/v1/finance/transactions';
+  /// LIVE VPS: `GET /v1/finance/payments`
+  String get financePaymentsPath => '/v1/finance/payments';
 
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';

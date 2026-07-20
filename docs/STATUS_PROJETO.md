@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira entregue no Flutter; **fechamento formal pendente**)
+Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira **CONCLUÍDA**)
 
 ## Resumo
 
@@ -25,8 +25,8 @@ Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira entregue no Flutter; **fe
 | Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (Flutter entregue; fechamento pendente) |
 | **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 paths LIVE 401; restante 404 → Pending) |
 | **Fase 13 — Gestão Documental** | **CONCLUÍDA** (namespace `/v1/documents/*` LIVE; Flutter sincronizado) |
-| **Fase 14 — Gestão Financeira** | **EM ANDAMENTO** (Flutter entregue; `/v1/finance/*` 404) |
-| Fase 15 | **Bloqueada** |
+| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
+| Fase 15 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -35,11 +35,13 @@ Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira entregue no Flutter; **fe
 
 Hub **Mais → Gestão Financeira** (`/home/finance`).
 
-Namespace `/v1/finance/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3.
+Namespace `/v1/finance/*` — **CONCLUÍDA**. LIVE sincronizados: `dashboard`, `categories`, `cost-centers`, `alerts`, `reports`, `accounts` (contas bancárias), `cashflow` (fluxo de caixa), `transactions`, `payments`. Demais entradas do hub ainda 404 → `EndpointPendingState`.
 
 Cache: `pg_fin_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://finance|financeiro|gestao-financeira|financas/...`.
 
-Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md).
+Validação A10 (`RX8M70CLXKP`): OK. Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md).
+
+**Fase 15 não iniciada.**
 
 ## Fase 13 — Gestão Documental
 
@@ -104,21 +106,21 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 
 | # | Critério | Status |
 |---|----------|--------|
-| 1 | Backend domínio completo | Pendente (`/v1/finance/*` 404) |
-| 2 | Flutter consome LIVE disponíveis | OK (nenhum LIVE; namespace preparado) |
+| 1 | Backend domínio completo | OK (domínio concluído e sincronizado) |
+| 2 | Flutter consome LIVE disponíveis | OK (9 contratos LIVE no hub) |
 | 3 | Não publicados → `EndpointPendingState` | OK |
-| 4 | APK no Samsung Galaxy A10 | OK nesta entrega |
+| 4 | APK no Samsung Galaxy A10 | OK |
 | 5 | Web validada | OK (`flutter build web`) |
 | 6 | `flutter analyze` | OK |
 | 7 | `flutter test` | OK (suite Fase 14) |
-| 8 | PHPUnit | N/A neste repo Flutter |
-| 9 | Nenhum HTTP 500 | OK no probe (404) |
+| 8 | PHPUnit | N/A neste repo Flutter (domínio no backend) |
+| 9 | Nenhum HTTP 500 | OK no probe (401/404) |
 | 10 | Documentação | OK |
 | 11–12 | Commit / Push | Nesta entrega |
 | 13–14 | Limpeza / sem emulador | Nesta entrega |
-| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+| 15 | Auditoria Backend ↔ Flutter | OK (paths LIVE sincronizados; Pending no restante) |
 
-Fase 15 **bloqueada** até os 15 itens da Fase 14 estarem OK.
+**Fase 14 concluída.** Fase 15 **não iniciada**.
 
 ## Qualidade / checklist de encerramento (Fase 13)
 
