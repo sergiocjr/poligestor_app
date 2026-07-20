@@ -1,5 +1,24 @@
 # Changelog — PoliGestor Flutter
 
+## [Auditoria Final Fases 1–24] — 2026-07-20
+
+### Added
+
+- Tag Git `v1.0-final-pre-auditoria` (baseline pré-auditoria)
+- [PONTO_RESTAURACAO_1.0.md](PONTO_RESTAURACAO_1.0.md)
+- [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md)
+
+### Changed
+
+- Sync imediato: `dashboard` LIVE em Fases 15, 16, 19, 20, 21 (`k*LiveSlugs`)
+- Status formal alinhado ao critério 100% funcional (Fases 17, 24 → EM ANDAMENTO)
+- `STATUS_PROJETO.md`, `CONTINUAR_PROJETO.md`, `ROADMAP.md` atualizados
+- Testes Fases 15–21 atualizados
+
+### Validation
+
+- `flutter test`: 340 OK · APK + Web OK · A10 install OK
+
 ## [Fase 24 — Notícias Regionais] — 2026-07-20
 
 ### Added
@@ -22,7 +41,7 @@
 
 - `kNewsLiveSlugs`: 6 slugs LIVE; Pending só em recent, feed, search, filters
 - Sem cópia integral da matéria no app
-- Fase 24 **CONCLUÍDA**
+- Fase 24 sync LIVE parcial (6 endpoints); fechamento formal pendente paths agregados
 
 ## [1.0.0+2 — Fase 23 Homologação Final] — 2026-07-20
 

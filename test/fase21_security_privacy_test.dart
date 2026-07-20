@@ -57,13 +57,10 @@ void main() {
   });
 
   group('Security LIVE contracts', () {
-    test('kSecurityLiveSlugs is empty (all VPS 404)', () {
-      expect(kSecurityLiveSlugs, isEmpty);
-      expect(securityPathLive('mfa-enable'), isFalse);
+    test('kSecurityLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+      expect(securityPathLive('dashboard'), isTrue);
       expect(securityPathLive('sessions'), isFalse);
-      expect(securityPathLive('sessions-revoke'), isFalse);
-      expect(securityPathLive('data-export'), isFalse);
-      expect(securityPathLive('privacy-policy'), isFalse);
+      expect(kSecurityLiveSlugs.length, 1);
     });
   });
 

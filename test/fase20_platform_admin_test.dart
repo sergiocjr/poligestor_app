@@ -51,12 +51,10 @@ void main() {
   });
 
   group('Platform LIVE contracts', () {
-    test('kPlatformLiveSlugs is empty (all VPS 404)', () {
-      expect(kPlatformLiveSlugs, isEmpty);
-      expect(platformPathLive('dashboard'), isFalse);
+    test('kPlatformLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+      expect(platformPathLive('dashboard'), isTrue);
       expect(platformPathLive('users'), isFalse);
-      expect(platformPathLive('plan-limits'), isFalse);
-      expect(platformPathLive('search'), isFalse);
+      expect(kPlatformLiveSlugs.length, 1);
     });
   });
 

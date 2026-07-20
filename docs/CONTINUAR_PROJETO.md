@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (ponto de restauração pré-auditoria + Fase 24 CONCLUÍDA)
+Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 
 ---
 
@@ -20,7 +20,18 @@ Atualizado: 2026-07-20 (ponto de restauração pré-auditoria + Fase 24 CONCLUÍ
 | Versão Web | **1.0.0+2** |
 | Doc | [PONTO_RESTAURACAO_1.0.md](PONTO_RESTAURACAO_1.0.md) |
 
-> Snapshot **antes** da auditoria final Fases 1–24. Restaurar com `git checkout v1.0-final-pre-auditoria`.
+> Snapshot **antes** da auditoria final. Restaurar com `git checkout v1.0-final-pre-auditoria`.
+
+---
+
+## Auditoria Final (Fases 1–24)
+
+| Campo | Valor |
+|-------|--------|
+| Doc | [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md) |
+| Tag pós-sync | ver `git log -1` após commit auditoria |
+| Fases CONCLUÍDAS (100%) | 1–9, 13, 14, 22, 23 (+ base auth/cidadão) |
+| Fases EM ANDAMENTO | 11, 12, 15–21, 24, Sprints 10.5–10.9, 11.0 |
 
 ---
 
@@ -38,8 +49,8 @@ Atualizado: 2026-07-20 (ponto de restauração pré-auditoria + Fase 24 CONCLUÍ
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 24 — Notícias Regionais** |
-| Status formal | **CONCLUÍDA** |
+| Fase | **Auditoria Final Fases 1–24** |
+| Status formal | **Auditoria concluída** — sync dashboard LIVE Fases 15–21 |
 | Hub | Mais → Notícias regionais (`/home/news`) + card no Gabinete |
 | Namespace oficial | `/api/v1/news/*` |
 | Doc da fase | [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md) |

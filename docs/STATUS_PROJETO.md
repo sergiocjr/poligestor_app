@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
+Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 
 ## Resumo
 
@@ -22,31 +22,28 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
 | Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
 | Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
 | Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** |
-| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (Flutter entregue; fechamento pendente) |
-| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 paths LIVE 401; restante 404 → Pending) |
-| **Fase 13 — Gestão Documental** | **CONCLUÍDA** (namespace `/v1/documents/*` LIVE; Flutter sincronizado) |
-| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
-| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (Flutter entregue; `/v1/communication/*` 404) |
-| **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
-| **Fase 17 — Gestão Eleitoral** | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending; pendência A10) |
-| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (Flutter entregue; `/v1/ai/*` sync parcial) |
-| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 404) |
-| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 404) |
-| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (Flutter entregue; `/v1/security/*` 404) |
-| **Fase 22 — Integrações** | **CONCLUÍDA** (LIVE sync; Pending só search/filters) |
+| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (`/v1/events/dashboard` LIVE; subpaths Pending) |
+| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 LIVE; restante 404 → Pending) |
+| **Fase 13 — Gestão Documental** | **CONCLUÍDA** (15 LIVE; Flutter sincronizado) |
+| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (9 LIVE; hub parcial Pending) |
+| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
+| **Fase 16 — CRM Político** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
+| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (14 LIVE; 31 Pending) |
+| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (sync parcial `/v1/ai/*`) |
+| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
+| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
+| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (`dashboard` VPS LIVE; hub sem rota) |
+| **Fase 22 — Integrações** | **CONCLUÍDA** (25 LIVE; Pending search/filters) |
 | **Fase 23 — Homologação Final** | **CONCLUÍDA** (versão **1.0.0+2**) |
-| **Fase 24 — Notícias Regionais** | **CONCLUÍDA** (6 LIVE HTTP 200; Pending recent/feed/search/filters) |
+| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** (6 LIVE; recent/feed/search/filters 404) |
 
-> Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
-> Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
+> Auditoria completa: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). Ponto de restauração: [PONTO_RESTAURACAO_1.0.md](PONTO_RESTAURACAO_1.0.md) · tag `v1.0-final-pre-auditoria`.
 
 ## Fase 17 — Gestão Eleitoral
 
 Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 
-**Status: CONCLUÍDA.** Namespace `/v1/elections/*` — **14 LIVE (HTTP 200)**: dashboard, campaigns, candidates, teams, goals, regions, neighborhoods, map, events, material-requests, projections, accountability, receipts, reports. **31** ainda 404 → `EndpointPendingState`. Cache `pg_elec_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://elections|gestao-eleitoral|gestao_eleitoral|eleitoral/...`.
-
-Única pendência: **validação física no Samsung Galaxy A10**.
+**Status: EM ANDAMENTO.** Namespace `/v1/elections/*` — **14 LIVE (HTTP 200)**; **31** ainda 404 → `EndpointPendingState`.
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 
@@ -54,7 +51,7 @@ Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 
 Hub **Mais → Notícias regionais** (`/home/news`) + card na home do Gabinete.
 
-**Status: CONCLUÍDA.** Namespace `/v1/news/*` — **6 LIVE (HTTP 200)**: dashboard, mentions, favorites, alerts, sources, `/{article_id}`. Recentes/feed/search/filters ainda 404 → fallback local (menções + detalhe + filtros via `sources`). Cache `pg_news_*` (sem corpo da matéria). Deep links: `poligestor://news|noticias|noticias-regionais|regional-news/...`.
+**Status: EM ANDAMENTO.** Namespace `/v1/news/*` — **6 LIVE (HTTP 200)**; recent/feed/search/filters **404** → fallback local.
 
 Doc: [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md).
 
@@ -72,31 +69,25 @@ Hub **Mais → Central de Integrações** (`/home/integrations`).
 
 Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 
-**Fase 23 — não iniciada.**
-
 ## Fase 21 — Segurança e Privacidade
 
-Hub **Mais → Segurança e Privacidade** (`/home/security`). Namespace `/v1/security/*` — probe autenticado **404 em todos**. Tokens em `FlutterSecureStorage`; cache `pg_sec_*` sem segredos. Staff e portal. Deep links: `poligestor://security|seguranca|privacidade|security-privacy/...`.
+Hub **Mais → Segurança e Privacidade** (`/home/security`). Namespace `/v1/security/*` — **`dashboard` LIVE (200)**; demais paths **404**. Tokens em `FlutterSecureStorage`; cache `pg_sec_*` sem segredos.
 
 Doc: [FASE_21_SEGURANCA_PRIVACIDADE.md](FASE_21_SEGURANCA_PRIVACIDADE.md).
 
 ## Fase 20 — Portal Administrativo Web
 
-Rota dedicada **`/platform`** (shell Web com NavigationRail/gaveta). Namespace `/v1/platform/*` — probe autenticado **404 em todos**. Entrada em Mais somente na Web. Gabinete e Cidadão inalterados. Cache `pg_plat_*`. Deep links: `poligestor://platform|portal-admin|portal-administrativo|admin-web/...`.
+Rota dedicada **`/platform`** (shell Web). Namespace `/v1/platform/*` — **`dashboard` LIVE (200)**; demais **404**.
 
 Doc: [FASE_20_PORTAL_ADMINISTRATIVO_WEB.md](FASE_20_PORTAL_ADMINISTRATIVO_WEB.md).
-
-**Fase 21 — não iniciada.**
 
 ## Fase 19 — Administração do Sistema
 
 Hub **Mais → Administração do Sistema** (`/home/system-admin`).
 
-Namespace `/v1/admin/*` — probe autenticado **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_adm_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://system-admin|administracao|administracao-sistema|admin-sistema/...`.
+Namespace `/v1/admin/*` — **`dashboard` LIVE (200)**; demais paths **404**. UI com `EndpointPendingState` nos subpaths pendentes.
 
 Doc: [FASE_19_ADMINISTRACAO_SISTEMA.md](FASE_19_ADMINISTRACAO_SISTEMA.md).
-
-**Fase 20 — não iniciada.**
 
 ## Fase 18 — IA Avançada
 
@@ -106,13 +97,11 @@ Namespace `/v1/ai/*` — LIVE: chat (POST), conversations, history, briefings, p
 
 Doc: [FASE_18_IA_AVANCADA.md](FASE_18_IA_AVANCADA.md).
 
-**Fase 19 — não iniciada.**
-
 ## Fase 16 — CRM Político
 
 Hub **Mais → CRM Político** (`/home/crm`).
 
-Namespace `/v1/crm/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_crm_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://crm|crm-politico|crm_politico/...`.
+Namespace `/v1/crm/*` — **`dashboard` LIVE (200)**; demais **404** → `EndpointPendingState`.
 
 Doc: [FASE_16_CRM_POLITICO.md](FASE_16_CRM_POLITICO.md).
 
@@ -120,7 +109,7 @@ Doc: [FASE_16_CRM_POLITICO.md](FASE_16_CRM_POLITICO.md).
 
 Hub **Mais → Comunicação Institucional** (`/home/institutional-communication`).
 
-Namespace `/v1/communication/*` — probe **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_ic_*`. Realtime: `MandateRefreshController`.
+Namespace `/v1/communication/*` — **`dashboard` LIVE (200)**; demais **404** → `EndpointPendingState`.
 
 Independente da Central de Comunicação (Sprint 10.4). Doc: [FASE_15_COMUNICACAO_INSTITUCIONAL.md](FASE_15_COMUNICACAO_INSTITUCIONAL.md).
 
@@ -222,9 +211,9 @@ Interface exclusivamente em **Português do Brasil**. Ver `.cursor/rules/pt-br-u
 | 10 | Documentação | OK |
 | 11–12 | Commit / Push | Pendente (só sob pedido) |
 | 13–14 | Limpeza / sem emulador | Nesta entrega |
-| 15 | Auditoria Backend ↔ Flutter | Pendente até VPS publicar |
+| 15 | Auditoria Backend ↔ Flutter | Pendente (domínio parcial) |
 
-Fase 17 **não iniciada**.
+Doc: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md).
 
 ## Qualidade / checklist de encerramento (Fase 15)
 

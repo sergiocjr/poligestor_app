@@ -192,7 +192,21 @@ Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 
 ## Fase 24 — `/v1/news/*`
 
-Namespace oficial de Notícias Regionais. Probe autenticado 2026-07-20: **6 LIVE (HTTP 200)**; recent/feed/search/filters ainda 404.
+Namespace oficial de Notícias Regionais. Probe autenticado 2026-07-20: **6 LIVE**; recent/feed/search/filters 404.
+
+## Fases 15–21 — dashboards LIVE (auditoria 2026-07-20)
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/communication/dashboard` | **LIVE** (200) |
+| GET | `/v1/crm/dashboard` | **LIVE** (200) |
+| GET | `/v1/admin/dashboard` | **LIVE** (200) |
+| GET | `/v1/platform/dashboard` | **LIVE** (200) |
+| GET | `/v1/security/dashboard` | **LIVE** (200) — hub sem rota dedicada |
+| GET | `/v1/events/dashboard` | **LIVE** (200) |
+| GET | `/v1/grants/dashboard` | **LIVE** (200) |
+
+Demais subpaths desses namespaces: **404** → `EndpointPendingState`.
 
 | Método | Path | Status app |
 |--------|------|------------|

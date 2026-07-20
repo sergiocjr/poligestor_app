@@ -47,11 +47,10 @@ void main() {
   });
 
   group('Admin LIVE contracts', () {
-    test('kAdminLiveSlugs is empty (all VPS 404)', () {
-      expect(kAdminLiveSlugs, isEmpty);
-      expect(adminPathLive('dashboard'), isFalse);
+    test('kAdminLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+      expect(adminPathLive('dashboard'), isTrue);
       expect(adminPathLive('users'), isFalse);
-      expect(adminPathLive('search'), isFalse);
+      expect(kAdminLiveSlugs.length, 1);
     });
   });
 

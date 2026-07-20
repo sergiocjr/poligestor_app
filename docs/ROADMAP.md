@@ -18,8 +18,8 @@
 | **10.9** | Painel Obras | **CONCLUÍDA** |
 | **11.0** | Painel de Convênios | **CONCLUÍDA** |
 | **Fase 11** | Gestão Institucional — Painel de Eventos | **EM ANDAMENTO** |
-| **Fase 12** | Inteligência Territorial | **EM ANDAMENTO** (Flutter; API 404) |
-| Fase 13 | — | **Bloqueada** |
+| Fase 12 | **Inteligência Territorial** | **EM ANDAMENTO** (Flutter; 7 LIVE) |
+| Fase 13 | Gestão Documental | **CONCLUÍDA** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada

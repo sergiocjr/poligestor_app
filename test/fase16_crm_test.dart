@@ -53,10 +53,10 @@ void main() {
   });
 
   group('CRM LIVE contracts', () {
-    test('no live slugs until VPS publishes', () {
-      expect(kCrmLiveSlugs, isEmpty);
-      expect(crmPathLive('dashboard'), isFalse);
+    test('kCrmLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+      expect(crmPathLive('dashboard'), isTrue);
       expect(crmPathLive('leaders'), isFalse);
+      expect(kCrmLiveSlugs.length, 1);
     });
   });
 

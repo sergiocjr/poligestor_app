@@ -57,10 +57,10 @@ void main() {
   });
 
   group('institutional communication LIVE contracts', () {
-    test('no live slugs until VPS publishes', () {
-      expect(kInstitutionalCommunicationLiveSlugs, isEmpty);
+    test('dashboard LIVE on VPS audit 2026-07-20', () {
+      expect(institutionalCommunicationPathLive('dashboard'), isTrue);
       expect(institutionalCommunicationPathLive('feed'), isFalse);
-      expect(institutionalCommunicationPathLive('campaigns'), isFalse);
+      expect(kInstitutionalCommunicationLiveSlugs.length, 1);
     });
   });
 
