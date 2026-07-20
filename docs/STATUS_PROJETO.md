@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira **CONCLUÍDA**)
+Atualizado: 2026-07-20 (encerramento do dia — Fase 14 **CONCLUÍDA**; Fase 15 **não iniciada**)
 
 ## Resumo
 
@@ -26,7 +26,7 @@ Atualizado: 2026-07-20 (Fase 14 — Gestão Financeira **CONCLUÍDA**)
 | **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 paths LIVE 401; restante 404 → Pending) |
 | **Fase 13 — Gestão Documental** | **CONCLUÍDA** (namespace `/v1/documents/*` LIVE; Flutter sincronizado) |
 | **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (namespace `/v1/finance/*` LIVE sincronizado; A10 OK) |
-| Fase 15 | **Não iniciada** |
+| Fase 15 — Comunicação Institucional | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -41,7 +41,20 @@ Cache: `pg_fin_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor
 
 Validação A10 (`RX8M70CLXKP`): OK. Doc: [FASE_14_GESTAO_FINANCEIRA.md](FASE_14_GESTAO_FINANCEIRA.md).
 
-**Fase 15 não iniciada.**
+**Fase 15 — Comunicação Institucional: não iniciada.**
+
+## Encerramento do dia (2026-07-20)
+
+| Item | Resultado |
+|------|-----------|
+| Continuidade | `docs/CONTINUAR_PROJETO.md` atualizado (leitura obrigatória antes de qualquer implementação) |
+| `flutter analyze` | OK — 0 errors / 0 warnings / 37 infos |
+| `flutter test` (F13+F14) | OK — 15/15 |
+| `flutter build web --release` | OK — `build/web` |
+| APK debug | OK — instalado e validado no A10 |
+| A10 `RX8M70CLXKP` | OK — login + hub financeiro + chips Ativo |
+| Push | `origin/master` |
+| Próxima | Fase 15 — Comunicação Institucional (**não iniciar** sem pedido) |
 
 ## Fase 13 — Gestão Documental
 

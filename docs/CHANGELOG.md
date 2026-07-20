@@ -1,5 +1,23 @@
 # Changelog — PoliGestor Flutter
 
+## [Encerramento do dia — continuidade Fase 14] — 2026-07-20
+
+### Docs
+
+- `CONTINUAR_PROJETO.md` reescrito (UTF-8): leitura **obrigatória** antes de qualquer implementação
+- Snapshot do dia: Fase 14 CONCLUÍDA; analyze/test/web/APK/A10; commits; push
+- Contratos LIVE F14 + `EndpointPendingState` restantes listados
+- Próxima: **Fase 15 — Comunicação Institucional** (não iniciada)
+- Checklist de retomada para amanhã
+- `STATUS_PROJETO.md` atualizado com bloco de encerramento do dia
+
+### QA (encerramento)
+
+- `flutter analyze --no-fatal-infos`: 0 errors, 0 warnings, 37 infos
+- `flutter test` Fase 13+14: 15/15 OK
+- `flutter build web --release`: OK
+- APK debug no A10: validação OK
+
 ## [Fase 14 — CONCLUÍDA / sync LIVE `/v1/finance/*`] — 2026-07-20
 
 ### Changed
