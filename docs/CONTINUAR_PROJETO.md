@@ -42,8 +42,8 @@ Atualizado: 2026-07-20 (Fase 17 — Gestão Eleitoral: 14 LIVE + 31 Pending; fec
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (pendente — entrega Fase 17) |
-| Push | Pendente |
+| Último commit | `8dca86a` — feat Fase 17 Gestão Eleitoral |
+| Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação Gabinete
