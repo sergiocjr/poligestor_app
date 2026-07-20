@@ -35,7 +35,8 @@ Atualizado: 2026-07-20
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Working tree | Commit + push desta entrega Fase 13 |
+| Último commit | `8b007e9` — Fase 13 Gestão Documental
+| Push | Sim (`origin/master`) |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### NavegaÃ§Ã£o Gabinete
