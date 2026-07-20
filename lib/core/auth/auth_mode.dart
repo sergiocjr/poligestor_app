@@ -399,8 +399,12 @@ enum AuthMode {
   // --- Fase 22: Integrações — `/v1/integrations/*` (staff) ---
   String get integrationsRootPath => '/v1/integrations';
   String get integrationsDashboardPath => '/v1/integrations/dashboard';
-  String get integrationsStatusPath => '/v1/integrations/status';
-  String get integrationsConfigPath => '/v1/integrations/config';
+  /// Status LIVE publicado como `health` (não `/status`).
+  String get integrationsStatusPath => '/v1/integrations/health';
+  /// Configuração LIVE publicada como `settings` (GET/PUT).
+  String get integrationsConfigPath => '/v1/integrations/settings';
+  String get integrationsCatalogPath => '/v1/integrations/catalog';
+  String get integrationsProvidersPath => '/v1/integrations/providers';
   String get integrationsSyncPath => '/v1/integrations/sync';
   String get integrationsHistoryPath => '/v1/integrations/history';
   String get integrationsLogsPath => '/v1/integrations/logs';
@@ -411,18 +415,19 @@ enum AuthMode {
       '/v1/integrations/assembleia-legislativa';
   String get integrationsCamaraDeputadosPath =>
       '/v1/integrations/camara-deputados';
-  String get integrationsSenadoFederalPath =>
-      '/v1/integrations/senado-federal';
+  /// Senado LIVE publicado como `senado` (não `senado-federal`).
+  String get integrationsSenadoFederalPath => '/v1/integrations/senado';
   String get integrationsDiarioOficialPath =>
       '/v1/integrations/diario-oficial';
   String get integrationsPortalTransparenciaPath =>
       '/v1/integrations/portal-transparencia';
-  String get integrationsESicPath => '/v1/integrations/e-sic';
+  /// e-SIC LIVE publicado como `esic` (não `e-sic`).
+  String get integrationsESicPath => '/v1/integrations/esic';
   String get integrationsOuvidoriaPath => '/v1/integrations/ouvidoria';
   String get integrationsGoogleCalendarPath =>
       '/v1/integrations/google-calendar';
-  String get integrationsOutlookCalendarPath =>
-      '/v1/integrations/outlook-calendar';
+  /// Outlook LIVE publicado como `outlook` (não `outlook-calendar`).
+  String get integrationsOutlookCalendarPath => '/v1/integrations/outlook';
   String get integrationsGmailPath => '/v1/integrations/gmail';
   String get integrationsWhatsappPath => '/v1/integrations/whatsapp';
   String get integrationsTelegramPath => '/v1/integrations/telegram';

@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
 
 ---
 
@@ -24,7 +24,7 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pe
 | Campo | Valor |
 |-------|--------|
 | Fase | **Fase 22 — Integrações** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/integrations/*` 100% 404 → Pending) |
+| Status formal | **CONCLUÍDA** (LIVE sync; Pending só search/filters) |
 | Hub | Mais → Central de Integrações (`/home/integrations`) |
 | Namespace oficial | `/api/v1/integrations/*` |
 | Doc da fase | [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md) |
@@ -42,7 +42,7 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pe
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `01d3b00` — feat Fase 22 Integrações |
+| Último commit | (atualizar após push do sync LIVE) |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
@@ -60,7 +60,16 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pe
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| — | `/v1/integrations/*` | **Nenhum LIVE** (todos 404; `kIntegrationsLiveSlugs` vazio) |
+| GET | `/v1/integrations/dashboard` | **LIVE 200** |
+| GET | `/v1/integrations/catalog` | **LIVE 200** |
+| GET | `/v1/integrations/health` | **LIVE 200** (Status UI) |
+| GET | `/v1/integrations/providers` | **LIVE 200** |
+| GET/PUT | `/v1/integrations/settings` | **LIVE 200** (Config UI) |
+| GET/POST | `/v1/integrations/sync` | **LIVE 200/202** |
+| GET | `/v1/integrations/history` · `/logs` | **LIVE 200** |
+| GET | provedores (govbr, senado, esic, outlook, …) | **LIVE 200** |
+| GET | `/v1/integrations/webhooks` | **LIVE 200** |
+| GET | `/v1/integrations/search` · `/filters` | **404 Pending** |
 
 ---
 
@@ -81,15 +90,14 @@ poligestor://central-integracoes/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 22 | OK (hub + EndpointPendingState) |
+| Validação APK Fase 22 LIVE | OK (hub + telas LIVE) |
 
 ---
 
-## Pendências reais (fechamento formal)
+## Pendências reais
 
-1. Backend publicar `/v1/integrations/*`.
-2. Sync LIVE + auditoria com HTTP 200/201/202.
-3. Fechamento formal das Fases 11–12, 15–16, 18–21 (quando solicitado).
+1. Backend publicar `/v1/integrations/search` e `/filters` (opcional).
+2. Fechamento formal das Fases 11–12, 15–16, 18–21 (quando solicitado).
 
 ## Próxima Fase
 

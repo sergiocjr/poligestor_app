@@ -7,8 +7,82 @@ Map<String, dynamic> asIntegrationsMap(dynamic raw) {
   return <String, dynamic>{};
 }
 
+const _integrationsNestedListKeys = <String>[
+  'data',
+  'items',
+  'results',
+  'rows',
+  'integrations',
+  'webhooks',
+  'logs',
+  'syncs',
+  'sync_runs',
+  'jobs',
+  'audits',
+  'history',
+  'providers',
+  'catalog',
+  'live_providers',
+  'recent_logs',
+  'recent_audits',
+  'capabilities',
+];
+
+const _integrationsSummaryLabels = <String, String>{
+  'providers': 'Provedores',
+  'live_contracts': 'Contratos ativos',
+  'connectors_active': 'Conectores ativos',
+  'oauth_active': 'OAuth ativos',
+  'api_keys_active': 'Chaves de API ativas',
+  'webhooks_active': 'Webhooks ativos',
+  'sync_running': 'Sincronizações em execução',
+  'jobs_failed': 'Filas com falha',
+  'legacy_connections': 'Conexões legadas',
+  'failed_jobs': 'Tarefas com falha',
+  'connectors_error': 'Conectores com erro',
+  'status': 'Situação',
+  'queue': 'Fila',
+  'engine': 'Motor',
+  'checked_at': 'Verificado em',
+  'auto_sync': 'Sincronização automática',
+  'retry_max': 'Tentativas máximas',
+  'default_mode': 'Modo padrão',
+  'cabinet_isolation': 'Isolamento por gabinete',
+};
+
+List<Map<String, dynamic>> _summaryAsRows(Map<String, dynamic> summary) {
+  final rows = <Map<String, dynamic>>[];
+  for (final e in summary.entries) {
+    if (e.value is Map || e.value is List) continue;
+    final label = _integrationsSummaryLabels[e.key] ?? e.key;
+    rows.add({
+      'id': e.key,
+      'title': label,
+      'name': label,
+      'summary': '${e.value}',
+      'status': e.key == 'status' ? '${e.value}' : null,
+      'kind': 'metric',
+    });
+  }
+  return rows;
+}
+
 List<Map<String, dynamic>> asIntegrationsMapList(dynamic raw) {
   if (raw is List) {
+    if (raw.isEmpty) return const [];
+    if (raw.every((e) => e is String || e is num || e is bool)) {
+      return raw
+          .map(
+            (e) => <String, dynamic>{
+              'id': '$e',
+              'title': '$e',
+              'name': '$e',
+              'slug': '$e',
+              'status': 'active',
+            },
+          )
+          .toList(growable: false);
+    }
     return raw
         .whereType<Map>()
         .map((e) => Map<String, dynamic>.from(e))
@@ -16,22 +90,78 @@ List<Map<String, dynamic>> asIntegrationsMapList(dynamic raw) {
   }
   if (raw is Map) {
     final map = Map<String, dynamic>.from(raw);
-    final nestedList =
-        map['data'] ??
-        map['items'] ??
-        map['results'] ??
-        map['rows'] ??
-        map['integrations'] ??
-        map['webhooks'] ??
-        map['logs'] ??
-        map['syncs'] ??
-        map['history'];
-    if (nestedList is List) {
-      final fromList = nestedList
-          .whereType<Map>()
-          .map((e) => Map<String, dynamic>.from(e))
-          .toList();
-      if (fromList.isNotEmpty) return fromList;
+
+    // Agregados: unir várias listas conhecidas (histórico).
+    final merged = <Map<String, dynamic>>[];
+    for (final key in [
+      'sync_runs',
+      'jobs',
+      'audits',
+      'logs',
+      'recent_logs',
+      'recent_audits',
+    ]) {
+      final nested = map[key];
+      if (nested is List) {
+        for (final e in nested.whereType<Map>()) {
+          final m = Map<String, dynamic>.from(e);
+          m.putIfAbsent('kind', () => key);
+          merged.add(m);
+        }
+      }
+    }
+    if (merged.isNotEmpty) return merged;
+
+    for (final key in _integrationsNestedListKeys) {
+      final nestedList = map[key];
+      if (nestedList is List && nestedList.isNotEmpty) {
+        final fromList = asIntegrationsMapList(nestedList);
+        if (fromList.isNotEmpty) return fromList;
+      }
+    }
+
+    final summary = map['summary'];
+    if (summary is Map) {
+      final rows = _summaryAsRows(Map<String, dynamic>.from(summary));
+      if (rows.isNotEmpty) return rows;
+    }
+
+    // Health / settings / provider único.
+    if (map.containsKey('name') ||
+        map.containsKey('slug') ||
+        map.containsKey('provider_code') ||
+        map.containsKey('key') ||
+        map.containsKey('status') ||
+        map.containsKey('value')) {
+      if (map['value'] is Map) {
+        final valueRows = _summaryAsRows(
+          Map<String, dynamic>.from(map['value'] as Map),
+        );
+        if (valueRows.isNotEmpty) {
+          return [
+            {
+              'id': asIntegrationsString(map['id'] ?? map['key']) ?? 'settings',
+              'title': asIntegrationsString(map['key']) ?? 'Configuração',
+              'name': asIntegrationsString(map['key']) ?? 'Configuração',
+              'status': 'active',
+              'summary': 'Parâmetros do hub de integrações',
+              'kind': 'settings',
+            },
+            ...valueRows,
+          ];
+        }
+      }
+      return [map];
+    }
+
+    final metricKeys = map.keys.where(
+      (k) =>
+          _integrationsSummaryLabels.containsKey(k) &&
+          map[k] is! Map &&
+          map[k] is! List,
+    );
+    if (metricKeys.isNotEmpty) {
+      return _summaryAsRows({for (final k in metricKeys) k: map[k]});
     }
   }
   return const [];

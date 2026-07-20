@@ -1,5 +1,20 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 22 — Integrações LIVE sync] — 2026-07-20
+
+### Changed
+
+- `kIntegrationsLiveSlugs` sincronizado com contratos LIVE da VPS (dashboard, health/status, settings/config, sync, history, logs, provedores, webhooks, catalog, providers)
+- Paths oficiais alinhados: `health`, `settings`, `senado`, `esic`, `outlook`
+- Parser de payloads (summary, live_providers, sync_runs, provider único)
+- Configuração via GET/PUT `/settings`; sync POST 202
+- Fase 22 marcada **CONCLUÍDA** (Pending apenas pesquisa/filtros)
+
+### Notes
+
+- Sem mocks; `EndpointPendingState` só em search/filters
+- Fase 23 não iniciada
+
 ## [Fase 22 — Integrações] — 2026-07-20
 
 ### Added

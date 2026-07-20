@@ -156,33 +156,35 @@ LIVE: `dashboard`, `campaigns`, `candidates`, `teams`, `goals`, `regions`, `neig
 
 ## Fase 22 — `/v1/integrations/*`
 
-Namespace oficial da Central de Integrações. Probe autenticado 2026-07-20: **404 em todos os paths**. App preparado (`kIntegrationsLiveSlugs` vazio).
+Namespace oficial da Central de Integrações. Sync autenticado 2026-07-20: **LIVE** na maioria dos paths; `search`/`filters` ainda 404.
 
 | Método | Path | Status app |
 |--------|------|------------|
-| GET | `/v1/integrations/dashboard` | Preparado (404) |
-| GET | `/v1/integrations/status` | Preparado (404) |
-| GET/POST | `/v1/integrations/config` | Preparado (404) |
-| GET/POST | `/v1/integrations/sync` | Preparado (404) |
-| GET | `/v1/integrations/history` | Preparado (404) |
-| GET | `/v1/integrations/logs` | Preparado (404) |
-| GET | `/v1/integrations/govbr` | Preparado (404) |
-| GET | `/v1/integrations/camara-municipal` | Preparado (404) |
-| GET | `/v1/integrations/assembleia-legislativa` | Preparado (404) |
-| GET | `/v1/integrations/camara-deputados` | Preparado (404) |
-| GET | `/v1/integrations/senado-federal` | Preparado (404) |
-| GET | `/v1/integrations/diario-oficial` | Preparado (404) |
-| GET | `/v1/integrations/portal-transparencia` | Preparado (404) |
-| GET | `/v1/integrations/e-sic` | Preparado (404) |
-| GET | `/v1/integrations/ouvidoria` | Preparado (404) |
-| GET | `/v1/integrations/google-calendar` | Preparado (404) |
-| GET | `/v1/integrations/outlook-calendar` | Preparado (404) |
-| GET | `/v1/integrations/gmail` | Preparado (404) |
-| GET | `/v1/integrations/whatsapp` | Preparado (404) |
-| GET | `/v1/integrations/telegram` | Preparado (404) |
-| GET | `/v1/integrations/firebase-push` | Preparado (404) |
-| GET | `/v1/integrations/external-apis` | Preparado (404) |
-| GET | `/v1/integrations/webhooks` | Preparado (404) |
+| GET | `/v1/integrations/dashboard` | **LIVE** (200) |
+| GET | `/v1/integrations/catalog` | **LIVE** (200) |
+| GET | `/v1/integrations/health` | **LIVE** (200) — Status na UI |
+| GET | `/v1/integrations/providers` | **LIVE** (200) |
+| GET/PUT | `/v1/integrations/settings` | **LIVE** (200) — Configuração na UI |
+| GET/POST | `/v1/integrations/sync` | **LIVE** (200/202) |
+| GET | `/v1/integrations/history` | **LIVE** (200) |
+| GET | `/v1/integrations/logs` | **LIVE** (200) |
+| GET | `/v1/integrations/govbr` | **LIVE** (200) |
+| GET | `/v1/integrations/camara-municipal` | **LIVE** (200) |
+| GET | `/v1/integrations/assembleia-legislativa` | **LIVE** (200) |
+| GET | `/v1/integrations/camara-deputados` | **LIVE** (200) |
+| GET | `/v1/integrations/senado` | **LIVE** (200) — Senado na UI |
+| GET | `/v1/integrations/diario-oficial` | **LIVE** (200) |
+| GET | `/v1/integrations/portal-transparencia` | **LIVE** (200) |
+| GET | `/v1/integrations/esic` | **LIVE** (200) — e-SIC na UI |
+| GET | `/v1/integrations/ouvidoria` | **LIVE** (200) |
+| GET | `/v1/integrations/google-calendar` | **LIVE** (200) |
+| GET | `/v1/integrations/outlook` | **LIVE** (200) — Outlook na UI |
+| GET | `/v1/integrations/gmail` | **LIVE** (200) |
+| GET | `/v1/integrations/whatsapp` | **LIVE** (200) |
+| GET | `/v1/integrations/telegram` | **LIVE** (200) |
+| GET | `/v1/integrations/firebase-push` | **LIVE** (200) |
+| GET | `/v1/integrations/external-apis` | **LIVE** (200) |
+| GET | `/v1/integrations/webhooks` | **LIVE** (200) |
 | GET | `/v1/integrations/search` | Preparado (404) |
 | GET | `/v1/integrations/filters` | Preparado (404) |
 

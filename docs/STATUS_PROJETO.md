@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
 
 ## Resumo
 
@@ -33,7 +33,7 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pe
 | **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 404) |
 | **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (Flutter/Web entregue; `/v1/platform/*` 404) |
 | **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (Flutter entregue; `/v1/security/*` 404) |
-| **Fase 22 — Integrações** | **EM ANDAMENTO** (Flutter entregue; `/v1/integrations/*` 404) |
+| **Fase 22 — Integrações** | **CONCLUÍDA** (LIVE sync; Pending só search/filters) |
 | Fase 23 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
@@ -51,7 +51,9 @@ Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 
 ## Fase 22 — Integrações
 
-Hub **Mais → Central de Integrações** (`/home/integrations`). Namespace `/v1/integrations/*` — probe autenticado **404 em todos**. Cache `pg_int_*` sem segredos. Staff. Deep links: `poligestor://integrations|integracoes|integracao|central-integracoes/...`.
+Hub **Mais → Central de Integrações** (`/home/integrations`).
+
+**Status: CONCLUÍDA.** Namespace `/v1/integrations/*` sincronizado — dashboard, catalog, health, providers, settings, sync (POST 202), history, logs, provedores gov/calendário/comms, webhooks **LIVE**. Paths UI mapeados aos publicados (`health`, `settings`, `senado`, `esic`, `outlook`). **Pending:** search, filters (404). Cache `pg_int_*`. Deep links: `poligestor://integrations|integracoes|integracao|central-integracoes/...`.
 
 Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 

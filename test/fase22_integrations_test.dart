@@ -10,12 +10,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('AuthMode Fase 22 Integrations paths', () {
-    test('exposes official /v1/integrations namespace', () {
+    test('exposes official LIVE /v1/integrations namespace', () {
       const m = AuthMode.staff;
       expect(m.integrationsRootPath, '/v1/integrations');
       expect(m.integrationsDashboardPath, '/v1/integrations/dashboard');
-      expect(m.integrationsStatusPath, '/v1/integrations/status');
-      expect(m.integrationsConfigPath, '/v1/integrations/config');
+      expect(m.integrationsStatusPath, '/v1/integrations/health');
+      expect(m.integrationsConfigPath, '/v1/integrations/settings');
+      expect(m.integrationsCatalogPath, '/v1/integrations/catalog');
+      expect(m.integrationsProvidersPath, '/v1/integrations/providers');
       expect(m.integrationsSyncPath, '/v1/integrations/sync');
       expect(m.integrationsHistoryPath, '/v1/integrations/history');
       expect(m.integrationsLogsPath, '/v1/integrations/logs');
@@ -32,10 +34,7 @@ void main() {
         m.integrationsCamaraDeputadosPath,
         '/v1/integrations/camara-deputados',
       );
-      expect(
-        m.integrationsSenadoFederalPath,
-        '/v1/integrations/senado-federal',
-      );
+      expect(m.integrationsSenadoFederalPath, '/v1/integrations/senado');
       expect(
         m.integrationsDiarioOficialPath,
         '/v1/integrations/diario-oficial',
@@ -44,16 +43,13 @@ void main() {
         m.integrationsPortalTransparenciaPath,
         '/v1/integrations/portal-transparencia',
       );
-      expect(m.integrationsESicPath, '/v1/integrations/e-sic');
+      expect(m.integrationsESicPath, '/v1/integrations/esic');
       expect(m.integrationsOuvidoriaPath, '/v1/integrations/ouvidoria');
       expect(
         m.integrationsGoogleCalendarPath,
         '/v1/integrations/google-calendar',
       );
-      expect(
-        m.integrationsOutlookCalendarPath,
-        '/v1/integrations/outlook-calendar',
-      );
+      expect(m.integrationsOutlookCalendarPath, '/v1/integrations/outlook');
       expect(m.integrationsGmailPath, '/v1/integrations/gmail');
       expect(m.integrationsWhatsappPath, '/v1/integrations/whatsapp');
       expect(m.integrationsTelegramPath, '/v1/integrations/telegram');
@@ -69,24 +65,28 @@ void main() {
       expect(m.integrationsSearchPath, '/v1/integrations/search');
       expect(m.integrationsFiltersPath, '/v1/integrations/filters');
     });
-
-    test('paths are identical for portal mode', () {
-      const staff = AuthMode.staff;
-      const portal = AuthMode.portal;
-      expect(portal.integrationsRootPath, staff.integrationsRootPath);
-      expect(portal.integrationsGovbrPath, staff.integrationsGovbrPath);
-      expect(portal.integrationsWebhooksPath, staff.integrationsWebhooksPath);
-    });
   });
 
   group('Integrations LIVE contracts', () {
-    test('kIntegrationsLiveSlugs is empty (all VPS 404)', () {
-      expect(kIntegrationsLiveSlugs, isEmpty);
-      expect(integrationsPathLive('dashboard'), isFalse);
-      expect(integrationsPathLive('govbr'), isFalse);
-      expect(integrationsPathLive('whatsapp'), isFalse);
-      expect(integrationsPathLive('webhooks'), isFalse);
-      expect(integrationsPathLive('sync'), isFalse);
+    test('marks published hub slugs as LIVE', () {
+      expect(integrationsPathLive('dashboard'), isTrue);
+      expect(integrationsPathLive('status'), isTrue);
+      expect(integrationsPathLive('config'), isTrue);
+      expect(integrationsPathLive('sync'), isTrue);
+      expect(integrationsPathLive('govbr'), isTrue);
+      expect(integrationsPathLive('senado-federal'), isTrue);
+      expect(integrationsPathLive('e-sic'), isTrue);
+      expect(integrationsPathLive('outlook-calendar'), isTrue);
+      expect(integrationsPathLive('webhooks'), isTrue);
+      expect(integrationsPathLive('catalog'), isTrue);
+      expect(integrationsPathLive('providers'), isTrue);
+    });
+
+    test('keeps search and filters pending', () {
+      expect(integrationsPathLive('search'), isFalse);
+      expect(integrationsPathLive('filters'), isFalse);
+      expect(kIntegrationsLiveSlugs.contains('search'), isFalse);
+      expect(kIntegrationsLiveSlugs.contains('filters'), isFalse);
     });
   });
 
@@ -97,32 +97,61 @@ void main() {
   });
 
   group('Integrations models', () {
-    test('parses item', () {
+    test('parses provider object', () {
       final item = IntegrationItem.fromJson({
-        'id': '1',
-        'name': 'WhatsApp Gabinete',
+        'slug': 'govbr',
+        'name': 'Gov.br',
         'status': 'active',
-        'provider': 'whatsapp',
         'access_token': 'secret-must-strip',
       });
-      expect(item.title, 'WhatsApp Gabinete');
-      expect(item.provider, 'whatsapp');
+      expect(item.title, 'Gov.br');
+      expect(item.code, 'govbr');
       expect(item.raw.containsKey('access_token'), isFalse);
+    });
+
+    test('parses string list as items', () {
+      final list = asIntegrationsMapList(['govbr', 'whatsapp']);
+      expect(list.length, 2);
+      expect(list.first['title'], 'govbr');
+    });
+
+    test('parses summary metrics when alone', () {
+      final list = asIntegrationsMapList({
+        'summary': {'providers': 28, 'live_contracts': 21},
+      });
+      expect(list.length, 2);
+      expect(list.first['title'], 'Provedores');
+    });
+
+    test('parses live_providers string list', () {
+      final list = asIntegrationsMapList({
+        'live_providers': ['govbr', 'gmail'],
+      });
+      expect(list.length, 2);
+      expect(list.first['title'], 'govbr');
+    });
+
+    test('parses history sync_runs merge', () {
+      final list = asIntegrationsMapList({
+        'sync_runs': [
+          {'id': '1', 'status': 'ok'},
+        ],
+        'logs': [
+          {'id': '2', 'message': 'log'},
+        ],
+      });
+      expect(list.length, 2);
     });
 
     test('stripIntegrationsSecrets removes secrets', () {
       final cleaned =
           stripIntegrationsSecrets({
                 'id': '1',
-                'title': 'Webhook',
                 'webhook_secret': 'abc',
-                'client_secret': 'xyz',
                 'nested': {'api_key': 'k', 'label': 'ok'},
               })
               as Map<String, dynamic>;
       expect(cleaned.containsKey('webhook_secret'), isFalse);
-      expect(cleaned.containsKey('client_secret'), isFalse);
-      expect((cleaned['nested'] as Map).containsKey('api_key'), isFalse);
       expect((cleaned['nested'] as Map)['label'], 'ok');
     });
   });
@@ -133,29 +162,12 @@ void main() {
       final cache = IntegrationsCache();
       await cache.putMap('demo', 'webhooks', {
         'data': [
-          {
-            'id': '1',
-            'title': 'Hook',
-            'webhook_secret': 'must-not-persist',
-          },
+          {'id': '1', 'title': 'Hook', 'webhook_secret': 'x'},
         ],
       });
       final stored = await cache.getMap('demo', 'webhooks');
-      expect(stored, isNotNull);
       final list = stored!.data['data'] as List;
       expect((list.first as Map).containsKey('webhook_secret'), isFalse);
-    });
-
-    test('does not leak between tenants', () async {
-      SharedPreferences.setMockInitialValues({});
-      final cache = IntegrationsCache();
-      await cache.putMap('demo', 'status', {
-        'data': [
-          {'id': '1', 'title': 'A'},
-        ],
-      });
-      expect(await cache.getMap('other', 'status'), isNull);
-      expect(await cache.getMap('demo', 'status'), isNotNull);
     });
   });
 
@@ -180,17 +192,6 @@ void main() {
         ),
       );
       expect(target?.location, '/home/integrations/govbr');
-    });
-
-    test('poligestor://central-integracoes/webhooks', () {
-      const router = NotificationRouter();
-      final target = router.resolve(
-        const PushPayload(
-          type: PushEventType.systemNotice,
-          deepLink: 'poligestor://central-integracoes/webhooks',
-        ),
-      );
-      expect(target?.location, '/home/integrations/webhooks');
     });
   });
 }

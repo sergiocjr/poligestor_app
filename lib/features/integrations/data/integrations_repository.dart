@@ -105,6 +105,29 @@ class IntegrationsRepository {
     return list.map(IntegrationItem.fromJson).toList(growable: false);
   }
 
+  List<IntegrationItem> _dashboardItemsOf(Map<String, dynamic> root) {
+    final data = asIntegrationsMap(root['data']);
+    final items = <IntegrationItem>[];
+    final summary = data['summary'];
+    if (summary is Map) {
+      items.addAll(
+        asIntegrationsMapList({
+          'summary': summary,
+        }).map(IntegrationItem.fromJson),
+      );
+    }
+    final health = data['health'];
+    if (health is Map) {
+      items.addAll(asIntegrationsMapList(health).map(IntegrationItem.fromJson));
+    }
+    final live = data['live_providers'];
+    if (live is List && live.isNotEmpty) {
+      items.addAll(asIntegrationsMapList(live).map(IntegrationItem.fromJson));
+    }
+    if (items.isEmpty) return _itemsOf(root);
+    return items;
+  }
+
   Future<List<IntegrationItem>> _list(
     String tenantSlug,
     AuthMode mode,
@@ -127,24 +150,60 @@ class IntegrationsRepository {
   Future<List<IntegrationItem>> dashboard({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _list(
-    tenantSlug,
-    mode,
-    'dashboard',
-    _paths.integrationsDashboardPath,
-    liveSlug: 'dashboard',
-  );
+  }) async {
+    final hub = await _cachedGet<List<IntegrationItem>>(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      cacheKey: 'dashboard',
+      path: _paths.integrationsDashboardPath,
+      liveSlug: 'dashboard',
+      parse: (root, {fromCache = false, age}) => _dashboardItemsOf(root),
+    );
+    try {
+      final catalogItems = await _list(
+        tenantSlug,
+        mode,
+        'catalog',
+        _paths.integrationsCatalogPath,
+        liveSlug: 'catalog',
+      );
+      final seen = <String>{};
+      final merged = <IntegrationItem>[];
+      for (final item in [...hub, ...catalogItems]) {
+        if (seen.add('${item.kind}:${item.id}:${item.title}')) {
+          merged.add(item);
+        }
+      }
+      return merged;
+    } catch (_) {
+      return hub;
+    }
+  }
 
   Future<List<IntegrationItem>> status({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _list(
-    tenantSlug,
-    mode,
-    'status',
-    _paths.integrationsStatusPath,
-    liveSlug: 'status',
-  );
+  }) async {
+    final health = await _list(
+      tenantSlug,
+      mode,
+      'status',
+      _paths.integrationsStatusPath,
+      liveSlug: 'status',
+    );
+    try {
+      final providers = await _list(
+        tenantSlug,
+        mode,
+        'providers',
+        _paths.integrationsProvidersPath,
+        liveSlug: 'providers',
+      );
+      return [...health, ...providers];
+    } catch (_) {
+      return health;
+    }
+  }
 
   Future<List<IntegrationItem>> config({
     required String tenantSlug,
@@ -155,6 +214,28 @@ class IntegrationsRepository {
     'config',
     _paths.integrationsConfigPath,
     liveSlug: 'config',
+  );
+
+  Future<List<IntegrationItem>> catalog({
+    required String tenantSlug,
+    required AuthMode mode,
+  }) => _list(
+    tenantSlug,
+    mode,
+    'catalog',
+    _paths.integrationsCatalogPath,
+    liveSlug: 'catalog',
+  );
+
+  Future<List<IntegrationItem>> providers({
+    required String tenantSlug,
+    required AuthMode mode,
+  }) => _list(
+    tenantSlug,
+    mode,
+    'providers',
+    _paths.integrationsProvidersPath,
+    liveSlug: 'providers',
   );
 
   Future<List<IntegrationItem>> sync({
@@ -401,6 +482,23 @@ class IntegrationsRepository {
     liveSlug: 'filters',
   );
 
+  Future<Map<String, dynamic>> _put({
+    required String tenantSlug,
+    required AuthMode mode,
+    required String path,
+    required String liveSlug,
+    required Map<String, dynamic> body,
+  }) async {
+    _requireLive(liveSlug, path);
+    final envelope = await _api.putEnvelope<Map<String, dynamic>>(
+      path,
+      mode: mode,
+      data: stripIntegrationsSecrets(body) as Map<String, dynamic>,
+      parse: (raw) => asIntegrationsMap(raw),
+    );
+    return asIntegrationsMap(envelope.data);
+  }
+
   Future<Map<String, dynamic>> triggerSync({
     required String tenantSlug,
     required AuthMode mode,
@@ -419,11 +517,17 @@ class IntegrationsRepository {
     required String tenantSlug,
     required AuthMode mode,
     required Map<String, dynamic> body,
-  }) => _post(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    path: _paths.integrationsConfigPath,
-    liveSlug: 'config',
-    body: body,
-  );
+  }) {
+    // Contrato LIVE: PUT /v1/integrations/settings com campo `settings`.
+    final settings = body['settings'] is Map
+        ? Map<String, dynamic>.from(body['settings'] as Map)
+        : Map<String, dynamic>.from(body);
+    return _put(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      path: _paths.integrationsConfigPath,
+      liveSlug: 'config',
+      body: {'settings': settings},
+    );
+  }
 }

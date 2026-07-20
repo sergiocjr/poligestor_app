@@ -277,8 +277,9 @@ class IntegrationsHubPage extends StatelessWidget {
             children: [
               const SoftNotice(
                 message:
-                    'Namespace /v1/integrations/* sincronizado. Chip Ativo = '
-                    'contrato publicado; Em preparação = ainda 404 na VPS.',
+                    'Namespace /v1/integrations/* sincronizado com a VPS. '
+                    'Chip Ativo = contrato LIVE; Em preparação = ainda 404 '
+                    '(pesquisa e filtros).',
               ),
               const SizedBox(height: 12),
               GridView.builder(
@@ -709,16 +710,38 @@ class IntegrationsConfigPage extends StatefulWidget {
   State<IntegrationsConfigPage> createState() => _IntegrationsConfigPageState();
 }
 
-class _IntegrationsConfigPageState extends State<IntegrationsConfigPage> {
-  final _notesCtrl = TextEditingController();
+class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
+    with _IntegrationsRefresh {
+  Future<List<IntegrationItem>>? _future;
+  bool _autoSync = true;
+  int _retryMax = 3;
+  bool _cabinetIsolation = true;
   bool _sending = false;
   String? _error;
-  Map<String, dynamic>? _result;
+  String? _success;
 
   @override
-  void dispose() {
-    _notesCtrl.dispose();
-    super.dispose();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bindIntegrationsRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
+  }
+
+  Future<List<IntegrationItem>> _load() async {
+    final items = await context.read<IntegrationsRepository>().config(
+      tenantSlug: _tenantOf(context),
+      mode: _modeOf(context),
+    );
+    for (final item in items) {
+      if (item.id == 'auto_sync') {
+        _autoSync = item.summary?.toLowerCase() == 'true';
+      } else if (item.id == 'retry_max') {
+        _retryMax = int.tryParse(item.summary ?? '') ?? _retryMax;
+      } else if (item.id == 'cabinet_isolation') {
+        _cabinetIsolation = item.summary?.toLowerCase() != 'false';
+      }
+    }
+    return items;
   }
 
   Future<void> _submit() async {
@@ -726,18 +749,24 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage> {
     setState(() {
       _sending = true;
       _error = null;
-      _result = null;
+      _success = null;
     });
     try {
-      final data = await context.read<IntegrationsRepository>().saveConfig(
+      await context.read<IntegrationsRepository>().saveConfig(
         tenantSlug: _tenantOf(context),
         mode: _modeOf(context),
         body: {
-          if (_notesCtrl.text.trim().isNotEmpty) 'notes': _notesCtrl.text.trim(),
+          'auto_sync': _autoSync,
+          'retry_max': _retryMax,
+          'default_mode': 'prepared',
+          'cabinet_isolation': _cabinetIsolation,
         },
       );
       if (!mounted) return;
-      setState(() => _result = data);
+      setState(() {
+        _success = 'Configuração salva com sucesso.';
+        _future = _load();
+      });
     } on EndpointUnavailableException {
       if (!mounted) return;
     } catch (_) {
@@ -759,55 +788,143 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage> {
     }
     return Scaffold(
       appBar: AppBar(title: const Text('Configuração')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const SoftNotice(
-            message:
-                'Configuração das integrações conforme contrato '
-                '/v1/integrations/config.',
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _notesCtrl,
-            maxLines: 3,
-            decoration: const InputDecoration(
-              labelText: 'Observações',
-              border: OutlineInputBorder(),
-            ),
-          ),
-          const SizedBox(height: 12),
-          FilledButton.icon(
-            onPressed: _sending ? null : _submit,
-            icon: _sending
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save_outlined),
-            label: const Text('Salvar configuração'),
-          ),
-          if (_error != null) ...[
-            const SizedBox(height: 12),
-            Text(
-              _error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ],
-          if (_result != null) ...[
-            const SizedBox(height: 16),
-            Card(
-              child: Padding(
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() => _future = _load());
+          await _future;
+        },
+        child: FutureBuilder<List<IntegrationItem>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState != ConnectionState.done) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.all(16),
-                child: Text(
-                  _result!['message']?.toString() ??
-                      'Configuração enviada com sucesso.',
+                children: const [
+                  SkeletonBox(height: 72, radius: 16),
+                  SizedBox(height: 10),
+                  SkeletonBox(height: 72, radius: 16),
+                ],
+              );
+            }
+            if (snap.error is EndpointUnavailableException) {
+              final err = snap.error! as EndpointUnavailableException;
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [EndpointPendingState(path: err.path)],
+              );
+            }
+            if (snap.hasError) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  AppErrorState(
+                    message: 'Não foi possível carregar a configuração.',
+                    onRetry: () => setState(() => _future = _load()),
+                  ),
+                ],
+              );
+            }
+            final items = snap.data ?? const <IntegrationItem>[];
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(16),
+              children: [
+                SoftNotice(
+                  message:
+                      'Contrato LIVE: ${_pathForSlug(slug)} (GET/PUT).',
                 ),
-              ),
-            ),
-          ],
-        ],
+                const SizedBox(height: 12),
+                SwitchListTile(
+                  title: const Text('Sincronização automática'),
+                  value: _autoSync,
+                  onChanged: (v) => setState(() => _autoSync = v),
+                ),
+                SwitchListTile(
+                  title: const Text('Isolamento por gabinete'),
+                  value: _cabinetIsolation,
+                  onChanged: (v) => setState(() => _cabinetIsolation = v),
+                ),
+                ListTile(
+                  title: const Text('Tentativas máximas'),
+                  subtitle: Text('$_retryMax'),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: _retryMax <= 1
+                            ? null
+                            : () => setState(() => _retryMax--),
+                        icon: const Icon(Icons.remove),
+                      ),
+                      IconButton(
+                        onPressed: _retryMax >= 10
+                            ? null
+                            : () => setState(() => _retryMax++),
+                        icon: const Icon(Icons.add),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                FilledButton.icon(
+                  onPressed: _sending ? null : _submit,
+                  icon: _sending
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.save_outlined),
+                  label: const Text('Salvar configuração'),
+                ),
+                if (_error != null) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ],
+                if (_success != null) ...[
+                  const SizedBox(height: 12),
+                  Text(_success!),
+                ],
+                const SizedBox(height: 16),
+                Text(
+                  'Parâmetros atuais',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                if (items.isEmpty)
+                  const AppEmptyState(message: 'Nenhuma configuração.')
+                else
+                  ...items.map(
+                    (item) => Card(
+                      margin: const EdgeInsets.only(bottom: 8),
+                      child: ListTile(
+                        title: Text(
+                          item.title,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: item.summary == null
+                            ? null
+                            : Text(
+                                item.summary!,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -954,6 +1071,8 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'Painel',
       liveSlug: 'dashboard',
       emptyMessage: 'Nenhum indicador de integração.',
+      extraNotice:
+          'Painel + catálogo LIVE (/v1/integrations/dashboard e /catalog).',
       loader: (repo, tenant, mode) =>
           repo.dashboard(tenantSlug: tenant, mode: mode),
     ),
@@ -964,6 +1083,8 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'Status das integrações',
       liveSlug: 'status',
       emptyMessage: 'Nenhum status disponível.',
+      extraNotice:
+          'Status LIVE via /v1/integrations/health e /providers.',
       loader: (repo, tenant, mode) =>
           repo.status(tenantSlug: tenant, mode: mode),
     ),
