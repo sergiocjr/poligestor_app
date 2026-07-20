@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
+Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
 
 ## Resumo
 
@@ -35,7 +35,7 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 | **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (Flutter entregue; `/v1/security/*` 404) |
 | **Fase 22 — Integrações** | **CONCLUÍDA** (LIVE sync; Pending só search/filters) |
 | **Fase 23 — Homologação Final** | **CONCLUÍDA** (versão **1.0.0+2**) |
-| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** (Flutter entregue; `/v1/news/*` 404) |
+| **Fase 24 — Notícias Regionais** | **CONCLUÍDA** (6 LIVE HTTP 200; Pending recent/feed/search/filters) |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -52,7 +52,9 @@ Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
 
 ## Fase 24 — Notícias Regionais
 
-Hub **Mais → Notícias regionais** (`/home/news`) + card na home do Gabinete. Namespace `/v1/news/*` — probe autenticado **404 em todos**. Cache `pg_news_*` (sem corpo da matéria). Deep links: `poligestor://news|noticias|noticias-regionais|regional-news/...`.
+Hub **Mais → Notícias regionais** (`/home/news`) + card na home do Gabinete.
+
+**Status: CONCLUÍDA.** Namespace `/v1/news/*` — **6 LIVE (HTTP 200)**: dashboard, mentions, favorites, alerts, sources, `/{article_id}`. Recentes/feed/search/filters ainda 404 → fallback local (menções + detalhe + filtros via `sources`). Cache `pg_news_*` (sem corpo da matéria). Deep links: `poligestor://news|noticias|noticias-regionais|regional-news/...`.
 
 Doc: [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md).
 

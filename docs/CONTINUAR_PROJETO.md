@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
+Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
 
 ---
 
@@ -24,7 +24,7 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 | Campo | Valor |
 |-------|--------|
 | Fase | **Fase 24 — Notícias Regionais** |
-| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/news/*` 100% 404 → Pending) |
+| Status formal | **CONCLUÍDA** |
 | Hub | Mais → Notícias regionais (`/home/news`) + card no Gabinete |
 | Namespace oficial | `/api/v1/news/*` |
 | Doc da fase | [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md) |
@@ -39,7 +39,7 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `a14a023` — feat Fase 24 Notícias Regionais |
+| Último commit | *(após sync LIVE Fase 24)* |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
@@ -55,7 +55,16 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 
 | Método | Path | Status VPS |
 |--------|------|------------|
-| — | `/v1/news/*` | **Nenhum LIVE** (todos 404; `kNewsLiveSlugs` vazio) |
+| GET | `/v1/news/dashboard` | **LIVE** (200) |
+| GET | `/v1/news/mentions` | **LIVE** (200) |
+| GET | `/v1/news/favorites` | **LIVE** (200) |
+| GET | `/v1/news/alerts` | **LIVE** (200) |
+| GET | `/v1/news/sources` | **LIVE** (200) |
+| GET | `/v1/news/{article_id}` | **LIVE** (200) |
+| GET | `/v1/news/recent` | 404 → fallback menções |
+| GET | `/v1/news/feed` | 404 → fallback menções |
+| GET | `/v1/news/search` | 404 → busca local |
+| GET | `/v1/news/filters` | 404 → filtros via `sources` |
 
 ---
 
@@ -76,15 +85,14 @@ poligestor://regional-news/...
 |-------|--------|
 | Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
 | Emulador | **Proibido** |
-| Validação APK Fase 24 | OK (hub + EndpointPendingState) |
+| Validação APK Fase 24 | OK (hub + card + detalhe LIVE) |
 
 ---
 
 ## Pendências reais
 
-1. Backend publicar `/v1/news/*`.
-2. Sync LIVE + auditoria HTTP 200/201/202.
-3. Aceite de produção / publicação loja (pós-1.0).
+1. Paths agregados `/v1/news/recent|feed|search|filters` (404) — app usa fallback local.
+2. Aceite de produção / publicação loja (pós-1.0).
 
 ## Próxima Fase
 

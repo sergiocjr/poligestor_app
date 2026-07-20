@@ -398,13 +398,18 @@ enum AuthMode {
 
   // --- Fase 24: Notícias Regionais — `/v1/news/*` (staff) ---
   String get newsRootPath => '/v1/news';
+  String get newsDashboardPath => '/v1/news/dashboard';
+  /// Lista curta ainda não publicada; app usa menções + detalhe.
   String get newsRecentPath => '/v1/news/recent';
+  /// Feed agregado ainda não publicado; app usa menções + filtros locais.
   String get newsFeedPath => '/v1/news/feed';
   String get newsSearchPath => '/v1/news/search';
+  /// Opções de filtro agregadas ainda não publicadas; app usa `sources`.
   String get newsFiltersPath => '/v1/news/filters';
   String get newsMentionsPath => '/v1/news/mentions';
   String get newsFavoritesPath => '/v1/news/favorites';
   String get newsAlertsPath => '/v1/news/alerts';
+  String get newsSourcesPath => '/v1/news/sources';
   String newsItemPath(String id) => '/v1/news/$id';
 
   // --- Fase 22: Integrações — `/v1/integrations/*` (staff) ---

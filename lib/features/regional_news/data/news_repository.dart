@@ -110,28 +110,196 @@ class NewsRepository {
     return asNewsMap(envelope.data);
   }
 
-  List<RegionalNewsItem> _itemsOf(Map<String, dynamic> root) {
+  List<Map<String, dynamic>> _rowsOf(Map<String, dynamic> root) {
     final data = root['data'];
-    final list = data is List
-        ? asNewsMapList(data)
-        : asNewsMapList(asNewsMap(data));
-    return list.map(RegionalNewsItem.fromJson).toList(growable: false);
+    if (data is List) return asNewsMapList(data);
+    if (data is Map) return asNewsMapList(asNewsMap(data));
+    return asNewsMapList(root);
   }
+
+  RegionalNewsItem _itemFromRow(Map<String, dynamic> row) {
+    final nested = row['article'];
+    if (nested is Map) {
+      final article = RegionalNewsItem.fromJson(asNewsMap(nested));
+      return article.copyWith(
+        favorite: article.favorite ||
+            row['favorite'] == true ||
+            row['is_favorite'] == true,
+      );
+    }
+    final articleId = asNewsString(row['article_id']);
+    if (articleId != null &&
+        (row['title'] == null && row['headline'] == null)) {
+      return RegionalNewsItem.fromJson(<String, dynamic>{
+        ...row,
+        'id': articleId,
+        'mentions_politician': true,
+      });
+    }
+    if (row['body'] != null && row['title'] != null && articleId != null) {
+      return RegionalNewsItem.fromJson(<String, dynamic>{
+        'id': articleId,
+        'title': row['title'],
+        'summary': row['body'],
+        'mentions_politician': true,
+        'category': row['category'],
+        'published_at': row['created_at'],
+      });
+    }
+    return RegionalNewsItem.fromJson(row);
+  }
+
+  List<RegionalNewsItem> _itemsOf(Map<String, dynamic> root) =>
+      _rowsOf(root).map(_itemFromRow).toList(growable: false);
+
+  Future<RegionalNewsItem> _fetchArticle({
+    required String tenantSlug,
+    required AuthMode mode,
+    required String articleId,
+    bool mentionsPolitician = false,
+  }) async {
+    final item = await detail(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      id: articleId,
+    );
+    if (mentionsPolitician && !item.mentionsPolitician) {
+      return RegionalNewsItem(
+        id: item.id,
+        title: item.title,
+        summary: item.summary,
+        source: item.source,
+        city: item.city,
+        topic: item.topic,
+        imageUrl: item.imageUrl,
+        originalUrl: item.originalUrl,
+        publishedAt: item.publishedAt,
+        mentionsPolitician: true,
+        favorite: item.favorite,
+        raw: item.raw,
+      );
+    }
+    return item;
+  }
+
+  Future<List<RegionalNewsItem>> _hydrateArticles({
+    required String tenantSlug,
+    required AuthMode mode,
+    required List<RegionalNewsItem> seeds,
+    int? limit,
+    bool mentionsOnly = false,
+  }) async {
+    final seen = <String>{};
+    final out = <RegionalNewsItem>[];
+    for (final seed in seeds) {
+      if (limit != null && out.length >= limit) break;
+      final articleId = seed.id;
+      if (articleId.isEmpty || seen.contains(articleId)) continue;
+      seen.add(articleId);
+      final needsHydration =
+          seed.title == 'Notícia' ||
+          (seed.summary == null || seed.summary!.isEmpty);
+      try {
+        final item = needsHydration
+            ? await _fetchArticle(
+                tenantSlug: tenantSlug,
+                mode: mode,
+                articleId: articleId,
+                mentionsPolitician: mentionsOnly || seed.mentionsPolitician,
+              )
+            : seed;
+        out.add(item);
+      } catch (_) {
+        if (!needsHydration) out.add(seed);
+      }
+    }
+    out.sort((a, b) {
+      final ad = a.publishedAt;
+      final bd = b.publishedAt;
+      if (ad == null && bd == null) return 0;
+      if (ad == null) return 1;
+      if (bd == null) return -1;
+      return bd.compareTo(ad);
+    });
+    return limit == null ? out : out.take(limit).toList(growable: false);
+  }
+
+  bool _matchesFilters(
+    RegionalNewsItem item, {
+    String? city,
+    String? source,
+    String? period,
+    String? topic,
+    String? q,
+  }) {
+    if (q != null && q.isNotEmpty) {
+      final hay = '${item.title} ${item.summary ?? ''} ${item.source ?? ''}'
+          .toLowerCase();
+      if (!hay.contains(q.toLowerCase())) return false;
+    }
+    if (city != null && city.isNotEmpty) {
+      final c = (item.city ?? '').toLowerCase();
+      if (c != city.toLowerCase() && !c.contains(city.toLowerCase())) {
+        return false;
+      }
+    }
+    if (source != null && source.isNotEmpty) {
+      final s = (item.source ?? item.raw['source_name'] ?? '').toString();
+      if (s.toLowerCase() != source.toLowerCase() &&
+          !s.toLowerCase().contains(source.toLowerCase())) {
+        return false;
+      }
+    }
+    if (topic != null && topic.isNotEmpty) {
+      final t = (item.topic ?? item.raw['category'] ?? '').toString();
+      if (t.toLowerCase() != topic.toLowerCase() &&
+          !t.toLowerCase().contains(topic.toLowerCase())) {
+        return false;
+      }
+    }
+    if (period != null && period.isNotEmpty && item.publishedAt != null) {
+      final days = switch (period) {
+        '7d' || '7' || 'week' => 7,
+        '30d' || '30' || 'month' => 30,
+        '90d' || '90' => 90,
+        _ => 0,
+      };
+      if (days > 0) {
+        final cutoff = DateTime.now().subtract(Duration(days: days));
+        if (item.publishedAt!.isBefore(cutoff)) return false;
+      }
+    }
+    return true;
+  }
+
+  Future<Map<String, dynamic>> dashboard({
+    required String tenantSlug,
+    required AuthMode mode,
+  }) => _cachedGet(
+    tenantSlug: tenantSlug,
+    mode: mode,
+    cacheKey: 'dashboard',
+    path: _paths.newsDashboardPath,
+    liveSlug: 'dashboard',
+    parse: (root, {fromCache = false, age}) => asNewsMap(root['data']),
+  );
 
   Future<List<RegionalNewsItem>> recent({
     required String tenantSlug,
     required AuthMode mode,
     int limit = 5,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'recent_$limit',
-    path: _paths.newsRecentPath,
-    liveSlug: 'recent',
-    query: {'limit': limit},
-    parse: (root, {fromCache = false, age}) =>
-        _itemsOf(root).take(limit.clamp(3, 5)).toList(growable: false),
-  );
+  }) async {
+    final mentions = await this.mentions(
+      tenantSlug: tenantSlug,
+      mode: mode,
+    );
+    return _hydrateArticles(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      seeds: mentions,
+      limit: limit.clamp(3, 5),
+    );
+  }
 
   Future<List<RegionalNewsItem>> feed({
     required String tenantSlug,
@@ -141,89 +309,149 @@ class NewsRepository {
     String? period,
     String? topic,
     String? q,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'feed_${city}_${source}_${period}_${topic}_$q',
-    path: _paths.newsFeedPath,
-    liveSlug: 'feed',
-    query: {
-      if (city != null && city.isNotEmpty) 'city': city,
-      if (source != null && source.isNotEmpty) 'source': source,
-      if (period != null && period.isNotEmpty) 'period': period,
-      if (topic != null && topic.isNotEmpty) 'topic': topic,
-      if (q != null && q.isNotEmpty) 'q': q,
-    },
-    parse: (root, {fromCache = false, age}) => _itemsOf(root),
-  );
+  }) async {
+    final mentions = await this.mentions(
+      tenantSlug: tenantSlug,
+      mode: mode,
+    );
+    final hydrated = await _hydrateArticles(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      seeds: mentions,
+    );
+    return hydrated
+        .where(
+          (item) => _matchesFilters(
+            item,
+            city: city,
+            source: source,
+            period: period,
+            topic: topic,
+            q: q,
+          ),
+        )
+        .toList(growable: false);
+  }
 
   Future<List<RegionalNewsItem>> search({
     required String tenantSlug,
     required AuthMode mode,
     required String q,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'search_$q',
-    path: _paths.newsSearchPath,
-    liveSlug: 'search',
-    query: {'q': q},
-    parse: (root, {fromCache = false, age}) => _itemsOf(root),
-  );
+  }) => feed(tenantSlug: tenantSlug, mode: mode, q: q);
 
   Future<List<NewsFilterOption>> filters({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'filters',
-    path: _paths.newsFiltersPath,
-    liveSlug: 'filters',
-    parse: (root, {fromCache = false, age}) {
-      final data = root['data'];
-      final list = data is List
-          ? asNewsMapList(data)
-          : asNewsMapList(asNewsMap(data));
-      return list.map(NewsFilterOption.fromJson).toList(growable: false);
-    },
-  );
+  }) async {
+    if (newsPathLive('filters')) {
+      return _cachedGet(
+        tenantSlug: tenantSlug,
+        mode: mode,
+        cacheKey: 'filters',
+        path: _paths.newsFiltersPath,
+        liveSlug: 'filters',
+        parse: (root, {fromCache = false, age}) {
+          final data = root['data'];
+          final list = data is List
+              ? asNewsMapList(data)
+              : asNewsMapList(asNewsMap(data));
+          return list.map(NewsFilterOption.fromJson).toList(growable: false);
+        },
+      );
+    }
+    _requireLive('sources', _paths.newsSourcesPath);
+    final sources = await _cachedGet<List<Map<String, dynamic>>>(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      cacheKey: 'sources',
+      path: _paths.newsSourcesPath,
+      liveSlug: 'sources',
+      parse: (root, {fromCache = false, age}) => _rowsOf(root),
+    );
+    final options = <NewsFilterOption>[];
+    final cities = <String>{};
+    for (final row in sources) {
+      final name = asNewsString(row['name']) ?? 'Fonte';
+      final slug = asNewsString(row['slug'] ?? row['id']) ?? name;
+      options.add(
+        NewsFilterOption(id: slug, label: name, group: 'source'),
+      );
+      final city = asNewsString(row['city']);
+      if (city != null) cities.add(city);
+    }
+    for (final city in cities) {
+      options.add(NewsFilterOption(id: city, label: city, group: 'city'));
+    }
+    for (final period in [
+      ('7d', 'Últimos 7 dias'),
+      ('30d', 'Últimos 30 dias'),
+      ('90d', 'Últimos 90 dias'),
+    ]) {
+      options.add(
+        NewsFilterOption(id: period.$1, label: period.$2, group: 'period'),
+      );
+    }
+    return options;
+  }
 
   Future<List<RegionalNewsItem>> mentions({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'mentions',
-    path: _paths.newsMentionsPath,
-    liveSlug: 'mentions',
-    parse: (root, {fromCache = false, age}) => _itemsOf(root),
-  );
+  }) async {
+    final seeds = await _cachedGet(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      cacheKey: 'mentions',
+      path: _paths.newsMentionsPath,
+      liveSlug: 'mentions',
+      parse: (root, {fromCache = false, age}) => _itemsOf(root),
+    );
+    return _hydrateArticles(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      seeds: seeds,
+      mentionsOnly: true,
+    );
+  }
 
   Future<List<RegionalNewsItem>> favorites({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'favorites',
-    path: _paths.newsFavoritesPath,
-    liveSlug: 'favorites',
-    parse: (root, {fromCache = false, age}) => _itemsOf(root),
-  );
+  }) async {
+    final seeds = await _cachedGet(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      cacheKey: 'favorites',
+      path: _paths.newsFavoritesPath,
+      liveSlug: 'favorites',
+      parse: (root, {fromCache = false, age}) {
+        return _itemsOf(root)
+            .map((e) => e.copyWith(favorite: true))
+            .toList(growable: false);
+      },
+    );
+    return _hydrateArticles(tenantSlug: tenantSlug, mode: mode, seeds: seeds);
+  }
 
   Future<List<RegionalNewsItem>> alerts({
     required String tenantSlug,
     required AuthMode mode,
-  }) => _cachedGet(
-    tenantSlug: tenantSlug,
-    mode: mode,
-    cacheKey: 'alerts',
-    path: _paths.newsAlertsPath,
-    liveSlug: 'alerts',
-    parse: (root, {fromCache = false, age}) => _itemsOf(root),
-  );
+  }) async {
+    final seeds = await _cachedGet(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      cacheKey: 'alerts',
+      path: _paths.newsAlertsPath,
+      liveSlug: 'alerts',
+      parse: (root, {fromCache = false, age}) => _itemsOf(root),
+    );
+    return _hydrateArticles(
+      tenantSlug: tenantSlug,
+      mode: mode,
+      seeds: seeds,
+      mentionsOnly: true,
+    );
+  }
 
   Future<RegionalNewsItem> detail({
     required String tenantSlug,
@@ -254,7 +482,7 @@ class NewsRepository {
     mode: mode,
     path: _paths.newsFavoritesPath,
     liveSlug: 'favorites',
-    body: {'news_id': id},
+    body: {'news_id': id, 'article_id': id},
   );
 
   Future<Map<String, dynamic>> removeFavorite({

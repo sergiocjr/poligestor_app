@@ -192,18 +192,20 @@ Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 
 ## Fase 24 — `/v1/news/*`
 
-Namespace oficial de Notícias Regionais. Probe autenticado 2026-07-20: **404 em todos**. App preparado (`kNewsLiveSlugs` vazio).
+Namespace oficial de Notícias Regionais. Probe autenticado 2026-07-20: **6 LIVE (HTTP 200)**; recent/feed/search/filters ainda 404.
 
 | Método | Path | Status app |
 |--------|------|------------|
-| GET | `/v1/news/recent` | Preparado (404) |
-| GET | `/v1/news/feed` | Preparado (404) |
-| GET | `/v1/news/search` | Preparado (404) |
-| GET | `/v1/news/filters` | Preparado (404) |
-| GET | `/v1/news/mentions` | Preparado (404) |
-| GET | `/v1/news/favorites` | Preparado (404) |
-| GET | `/v1/news/alerts` | Preparado (404) |
-| GET | `/v1/news/{id}` | Preparado (404) |
+| GET | `/v1/news/dashboard` | **LIVE** (200) |
+| GET | `/v1/news/mentions` | **LIVE** (200) |
+| GET | `/v1/news/favorites` | **LIVE** (200) |
+| GET | `/v1/news/alerts` | **LIVE** (200) |
+| GET | `/v1/news/sources` | **LIVE** (200) |
+| GET | `/v1/news/{article_id}` | **LIVE** (200) |
+| GET | `/v1/news/recent` | Preparado (404; fallback menções) |
+| GET | `/v1/news/feed` | Preparado (404; fallback menções) |
+| GET | `/v1/news/search` | Preparado (404; busca local) |
+| GET | `/v1/news/filters` | Preparado (404; filtros via `sources`) |
 
 Doc: [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md).
 

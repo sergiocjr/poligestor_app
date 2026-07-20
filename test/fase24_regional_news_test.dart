@@ -12,6 +12,7 @@ void main() {
     test('exposes official /v1/news namespace', () {
       const m = AuthMode.staff;
       expect(m.newsRootPath, '/v1/news');
+      expect(m.newsDashboardPath, '/v1/news/dashboard');
       expect(m.newsRecentPath, '/v1/news/recent');
       expect(m.newsFeedPath, '/v1/news/feed');
       expect(m.newsSearchPath, '/v1/news/search');
@@ -19,18 +20,24 @@ void main() {
       expect(m.newsMentionsPath, '/v1/news/mentions');
       expect(m.newsFavoritesPath, '/v1/news/favorites');
       expect(m.newsAlertsPath, '/v1/news/alerts');
+      expect(m.newsSourcesPath, '/v1/news/sources');
       expect(m.newsItemPath('abc'), '/v1/news/abc');
     });
   });
 
   group('News LIVE contracts', () {
-    test('kNewsLiveSlugs is empty (all VPS 404)', () {
-      expect(kNewsLiveSlugs, isEmpty);
+    test('kNewsLiveSlugs matches VPS audit 2026-07-20', () {
+      expect(newsPathLive('dashboard'), isTrue);
+      expect(newsPathLive('mentions'), isTrue);
+      expect(newsPathLive('favorites'), isTrue);
+      expect(newsPathLive('alerts'), isTrue);
+      expect(newsPathLive('sources'), isTrue);
+      expect(newsPathLive('detail'), isTrue);
       expect(newsPathLive('recent'), isFalse);
       expect(newsPathLive('feed'), isFalse);
-      expect(newsPathLive('mentions'), isFalse);
-      expect(newsPathLive('favorites'), isFalse);
-      expect(newsPathLive('alerts'), isFalse);
+      expect(newsPathLive('search'), isFalse);
+      expect(newsPathLive('filters'), isFalse);
+      expect(kNewsLiveSlugs.length, 6);
     });
   });
 
@@ -44,7 +51,7 @@ void main() {
         'source': 'Jornal Local',
         'city': 'Demo',
         'mentions_politician': true,
-        'url': 'https://example.com/noticia',
+        'canonical_url': 'https://example.com/noticia',
         'published_at': '2026-07-20T12:00:00Z',
       });
       expect(item.title, 'Obra no centro');
@@ -53,6 +60,17 @@ void main() {
       expect(item.mentionsPolitician, isTrue);
       expect(item.originalUrl, 'https://example.com/noticia');
       expect(item.raw.containsKey('content'), isTrue);
+    });
+
+    test('mention row maps article_id as id', () {
+      final item = RegionalNewsItem.fromJson({
+        'id': 'mention-1',
+        'article_id': 'article-1',
+        'match_type': 'city',
+        'matched_term': 'Volta Redonda',
+      });
+      expect(item.id, 'article-1');
+      expect(item.mentionsPolitician, isTrue);
     });
 
     test('cache strips article body keys', () async {

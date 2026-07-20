@@ -7,16 +7,22 @@
 - Card de notícias regionais na home do Gabinete (3–5 itens; destaque de menções)
 - Hub `/home/news` (recentes, menções ao político, favoritos, alertas, busca, filtros)
 - Detalhe com metadados, abrir original, compartilhar (copiar link), favoritos
-- Namespace `/v1/news/*` com `EndpointPendingState` (probe VPS 404 em todos)
 - Cache `pg_news_*` sem corpo da matéria, pull-to-refresh, realtime
 - Deep links `poligestor://news|noticias|noticias-regionais|regional-news/...`
 - Testes `test/fase24_regional_news_test.dart`
 - Documentação `docs/FASE_24_NOTICIAS_REGIONAIS.md`
 
+### Changed
+
+- Sync LIVE `/v1/news/*`: dashboard, mentions, favorites, alerts, sources, `/{article_id}`
+- `EndpointPendingState` removido dos contratos publicados
+- Recentes/feed/search/filters: fallback local enquanto paths agregados permanecem 404
+
 ### Notes
 
-- `kNewsLiveSlugs` vazio até a VPS publicar
+- `kNewsLiveSlugs`: 6 slugs LIVE; Pending só em recent, feed, search, filters
 - Sem cópia integral da matéria no app
+- Fase 24 **CONCLUÍDA**
 
 ## [1.0.0+2 — Fase 23 Homologação Final] — 2026-07-20
 

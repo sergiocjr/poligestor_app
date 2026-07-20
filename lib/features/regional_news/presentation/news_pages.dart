@@ -96,10 +96,10 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
   }
 
   Future<List<RegionalNewsItem>> _load() {
-    if (!newsPathLive('recent')) {
+    if (!newsPathLive('mentions') && !newsPathLive('dashboard')) {
       return Future.error(
         EndpointUnavailableException(
-          AuthMode.staff.newsRecentPath,
+          AuthMode.staff.newsMentionsPath,
           statusCode: 404,
         ),
       );
@@ -144,68 +144,51 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
           ),
         ),
         const SizedBox(height: 10),
-        if (!newsPathLive('recent'))
-          Card(
-            clipBehavior: Clip.antiAlias,
-            child: InkWell(
-              onTap: () => context.push('/home/news'),
-              child: const Padding(
-                padding: EdgeInsets.all(12),
-                child: EndpointPendingState(
-                  path: '/v1/news/recent',
-                  message:
-                      'Notícias regionais preparadas. Aguardando contrato '
-                      'ativo em /v1/news.',
-                ),
-              ),
-            ),
-          )
-        else
-          SizedBox(
-            height: 196,
-            child: FutureBuilder<List<RegionalNewsItem>>(
-              future: _future,
-              builder: (context, snap) {
-                if (snap.connectionState != ConnectionState.done) {
-                  return const Row(
-                    children: [
-                      Expanded(child: SkeletonBox(height: 180, radius: 16)),
-                      SizedBox(width: 12),
-                      Expanded(child: SkeletonBox(height: 180, radius: 16)),
-                    ],
-                  );
-                }
-                if (snap.error is EndpointUnavailableException) {
-                  final err = snap.error! as EndpointUnavailableException;
-                  return EndpointPendingState(path: err.path);
-                }
-                if (snap.hasError) {
-                  return AppErrorState(
-                    message: 'Não foi possível carregar notícias.',
-                    onRetry: () => setState(() => _future = _load()),
-                  );
-                }
-                final items = snap.data ?? const <RegionalNewsItem>[];
-                if (items.isEmpty) {
-                  return const AppEmptyState(
-                    message: 'Nenhuma notícia recente.',
-                  );
-                }
-                return ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: items.length.clamp(0, 5),
-                  separatorBuilder: (_, _) => const SizedBox(width: 10),
-                  itemBuilder: (context, i) {
-                    final item = items[i];
-                    return _HomeNewsCard(
-                      item: item,
-                      onTap: () => context.push('/home/news/${item.id}'),
-                    );
-                  },
+        SizedBox(
+          height: 196,
+          child: FutureBuilder<List<RegionalNewsItem>>(
+            future: _future,
+            builder: (context, snap) {
+              if (snap.connectionState != ConnectionState.done) {
+                return const Row(
+                  children: [
+                    Expanded(child: SkeletonBox(height: 180, radius: 16)),
+                    SizedBox(width: 12),
+                    Expanded(child: SkeletonBox(height: 180, radius: 16)),
+                  ],
                 );
-              },
-            ),
+              }
+              if (snap.error is EndpointUnavailableException) {
+                final err = snap.error! as EndpointUnavailableException;
+                return EndpointPendingState(path: err.path);
+              }
+              if (snap.hasError) {
+                return AppErrorState(
+                  message: 'Não foi possível carregar notícias.',
+                  onRetry: () => setState(() => _future = _load()),
+                );
+              }
+              final items = snap.data ?? const <RegionalNewsItem>[];
+              if (items.isEmpty) {
+                return const AppEmptyState(
+                  message: 'Nenhuma notícia recente.',
+                );
+              }
+              return ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: items.length.clamp(0, 5),
+                separatorBuilder: (_, _) => const SizedBox(width: 10),
+                itemBuilder: (context, i) {
+                  final item = items[i];
+                  return _HomeNewsCard(
+                    item: item,
+                    onTap: () => context.push('/home/news/${item.id}'),
+                  );
+                },
+              );
+            },
           ),
+        ),
       ],
     );
   }
@@ -355,29 +338,23 @@ class _NewsHubPageState extends State<NewsHubPage>
   }
 
   Future<List<RegionalNewsItem>> _loadFeed() {
-    if (!newsPathLive('feed') && !newsPathLive('recent')) {
+    if (!newsPathLive('mentions')) {
       return Future.error(
         EndpointUnavailableException(
-          AuthMode.staff.newsFeedPath,
+          AuthMode.staff.newsMentionsPath,
           statusCode: 404,
         ),
       );
     }
-    final repo = context.read<NewsRepository>();
-    final tenant = _tenantOf(context);
-    final mode = _modeOf(context);
-    if (newsPathLive('feed')) {
-      return repo.feed(
-        tenantSlug: tenant,
-        mode: mode,
-        city: _city,
-        source: _source,
-        period: _period,
-        topic: _topic,
-        q: _query.isEmpty ? null : _query,
-      );
-    }
-    return repo.recent(tenantSlug: tenant, mode: mode, limit: 5);
+    return context.read<NewsRepository>().feed(
+      tenantSlug: _tenantOf(context),
+      mode: _modeOf(context),
+      city: _city,
+      source: _source,
+      period: _period,
+      topic: _topic,
+      q: _query.isEmpty ? null : _query,
+    );
   }
 
   Future<List<RegionalNewsItem>> _loadMentions() {
@@ -426,7 +403,7 @@ class _NewsHubPageState extends State<NewsHubPage>
   }
 
   Future<List<NewsFilterOption>> _loadFilters() {
-    if (!newsPathLive('filters')) {
+    if (!newsPathLive('sources') && !newsPathLive('filters')) {
       return Future.value(const <NewsFilterOption>[]);
     }
     return context.read<NewsRepository>().filters(
@@ -438,7 +415,7 @@ class _NewsHubPageState extends State<NewsHubPage>
   Future<void> _openFiltersSheet() async {
     final options = await (_filtersFuture ?? _loadFilters());
     if (!mounted) return;
-    if (!newsPathLive('filters')) {
+    if (!newsPathLive('sources') && !newsPathLive('filters')) {
       await showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
@@ -580,11 +557,11 @@ class _NewsHubPageState extends State<NewsHubPage>
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.arrow_forward),
                   onPressed: () {
-                    if (!newsPathLive('search') && !newsPathLive('feed')) {
+                    if (!newsPathLive('mentions')) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text(
-                            'Busca em preparação (/v1/news/search).',
+                            'Busca indisponível no momento.',
                           ),
                         ),
                       );
@@ -852,14 +829,6 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
   }
 
   Future<RegionalNewsItem> _load() {
-    if (!newsPathLive('detail') && !newsPathLive('feed') && !newsPathLive('recent')) {
-      return Future.error(
-        EndpointUnavailableException(
-          AuthMode.staff.newsItemPath(widget.id),
-          statusCode: 404,
-        ),
-      );
-    }
     if (!newsPathLive('detail')) {
       return Future.error(
         EndpointUnavailableException(
@@ -1008,13 +977,6 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                   item.favorite ? 'Remover dos favoritos' : 'Salvar favorito',
                 ),
               ),
-              if (!newsPathLive('favorites')) ...[
-                const SizedBox(height: 8),
-                SoftNotice(
-                  message:
-                      'Favoritos em preparação (${AuthMode.staff.newsFavoritesPath}).',
-                ),
-              ],
             ],
           );
         },

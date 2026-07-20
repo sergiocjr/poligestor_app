@@ -75,9 +75,24 @@ class RegionalNewsItem {
 
   factory RegionalNewsItem.fromJson(Map<String, dynamic> json) {
     final m = asNewsMap(json);
+    final articleId = asNewsString(m['article_id']);
     final id =
         asNewsString(m['id'] ?? m['uuid'] ?? m['slug'] ?? m['code']) ??
+        articleId ??
         '${m.hashCode}';
+    if (articleId != null &&
+        (m['title'] == null && m['headline'] == null && m['name'] == null)) {
+      return RegionalNewsItem(
+        id: articleId,
+        title: 'Notícia',
+        summary: asNewsString(m['body'] ?? m['summary']),
+        mentionsPolitician: true,
+        publishedAt: DateTime.tryParse(
+          (m['created_at'] ?? m['published_at'] ?? '').toString(),
+        ),
+        raw: m,
+      );
+    }
     final title =
         asNewsString(m['title'] ?? m['headline'] ?? m['name']) ?? 'Notícia';
     final summary = asNewsString(
@@ -97,7 +112,11 @@ class RegionalNewsItem {
       m['image_url'] ?? m['image'] ?? m['thumbnail'] ?? m['cover'],
     );
     final originalUrl = asNewsString(
-      m['url'] ?? m['original_url'] ?? m['link'] ?? m['source_url'],
+      m['url'] ??
+          m['original_url'] ??
+          m['canonical_url'] ??
+          m['link'] ??
+          m['source_url'],
     );
     DateTime? publishedAt;
     for (final key in [
@@ -118,6 +137,8 @@ class RegionalNewsItem {
         m['mentions_politician'] == 1 ||
         m['is_mention'] == true ||
         m['highlight'] == true ||
+        asNewsString(m['match_type']) != null ||
+        asNewsString(m['matched_term']) != null ||
         asNewsString(m['mention_type']) != null;
     final favorite =
         m['favorite'] == true ||
