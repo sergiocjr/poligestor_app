@@ -203,6 +203,16 @@ class NotificationRouter {
               : '/home/integrations/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 24 — Notícias Regionais
+        if (uri.host == 'news' ||
+            uri.host == 'noticias' ||
+            uri.host == 'noticias-regionais' ||
+            uri.host == 'regional-news') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location =
+              rest.isEmpty ? '/home/news' : '/home/news/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Fase 20 — Portal Administrativo Web
         if (uri.host == 'platform' ||
             uri.host == 'portal-admin' ||

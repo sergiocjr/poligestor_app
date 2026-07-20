@@ -396,6 +396,17 @@ enum AuthMode {
   String get securityConsentHistoryPath => '/v1/security/consent-history';
   String get securityIncidentsPath => '/v1/security/incidents';
 
+  // --- Fase 24: Notícias Regionais — `/v1/news/*` (staff) ---
+  String get newsRootPath => '/v1/news';
+  String get newsRecentPath => '/v1/news/recent';
+  String get newsFeedPath => '/v1/news/feed';
+  String get newsSearchPath => '/v1/news/search';
+  String get newsFiltersPath => '/v1/news/filters';
+  String get newsMentionsPath => '/v1/news/mentions';
+  String get newsFavoritesPath => '/v1/news/favorites';
+  String get newsAlertsPath => '/v1/news/alerts';
+  String newsItemPath(String id) => '/v1/news/$id';
+
   // --- Fase 22: Integrações — `/v1/integrations/*` (staff) ---
   String get integrationsRootPath => '/v1/integrations';
   String get integrationsDashboardPath => '/v1/integrations/dashboard';

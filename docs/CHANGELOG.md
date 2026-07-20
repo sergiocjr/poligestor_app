@@ -1,5 +1,23 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 24 — Notícias Regionais] — 2026-07-20
+
+### Added
+
+- Card de notícias regionais na home do Gabinete (3–5 itens; destaque de menções)
+- Hub `/home/news` (recentes, menções ao político, favoritos, alertas, busca, filtros)
+- Detalhe com metadados, abrir original, compartilhar (copiar link), favoritos
+- Namespace `/v1/news/*` com `EndpointPendingState` (probe VPS 404 em todos)
+- Cache `pg_news_*` sem corpo da matéria, pull-to-refresh, realtime
+- Deep links `poligestor://news|noticias|noticias-regionais|regional-news/...`
+- Testes `test/fase24_regional_news_test.dart`
+- Documentação `docs/FASE_24_NOTICIAS_REGIONAIS.md`
+
+### Notes
+
+- `kNewsLiveSlugs` vazio até a VPS publicar
+- Sem cópia integral da matéria no app
+
 ## [1.0.0+2 — Fase 23 Homologação Final] — 2026-07-20
 
 ### Changed

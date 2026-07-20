@@ -10,6 +10,7 @@ import '../../identity/domain/tenant_controller.dart';
 import '../../mandate/data/mandate_models.dart';
 import '../../mandate/data/mandate_repository.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
+import '../../regional_news/presentation/news_pages.dart';
 
 /// Tela inicial do Gabinete — acabamento alinhado ao Início do Cidadão.
 class GabineteDashboardPage extends StatefulWidget {
@@ -289,6 +290,8 @@ class _GabineteDashboardPageState extends State<GabineteDashboardPage>
                     }),
                   ],
                 ],
+                const SizedBox(height: 16),
+                const GabineteNewsHomeSection(),
                 const SizedBox(height: 8),
                 SectionHeader(
                   title: 'Atalhos',

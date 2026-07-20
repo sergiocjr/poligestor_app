@@ -64,6 +64,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/integrations'),
           ),
           ListTile(
+            leading: const Icon(Icons.newspaper_outlined),
+            title: const Text('Notícias regionais'),
+            subtitle: const Text(
+              'Feed, menções, favoritos e alertas',
+            ),
+            onTap: () => context.push('/home/news'),
+          ),
+          ListTile(
             leading: const Icon(Icons.swap_horiz),
             title: const Text('Trocar organização'),
             onTap: () async {

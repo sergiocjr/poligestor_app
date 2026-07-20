@@ -95,6 +95,10 @@
                 <data android:scheme="poligestor" android:host="integracoes"/>
                 <data android:scheme="poligestor" android:host="integracao"/>
                 <data android:scheme="poligestor" android:host="central-integracoes"/>
+                <data android:scheme="poligestor" android:host="news"/>
+                <data android:scheme="poligestor" android:host="noticias"/>
+                <data android:scheme="poligestor" android:host="noticias-regionais"/>
+                <data android:scheme="poligestor" android:host="regional-news"/>
                 <data android:scheme="poligestor" android:host="platform"/>
                 <data android:scheme="poligestor" android:host="portal-admin"/>
                 <data android:scheme="poligestor" android:host="portal-administrativo"/>

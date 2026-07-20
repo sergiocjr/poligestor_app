@@ -190,6 +190,23 @@ Namespace oficial da Central de Integrações. Sync autenticado 2026-07-20: **LI
 
 Doc: [FASE_22_INTEGRACOES.md](FASE_22_INTEGRACOES.md).
 
+## Fase 24 — `/v1/news/*`
+
+Namespace oficial de Notícias Regionais. Probe autenticado 2026-07-20: **404 em todos**. App preparado (`kNewsLiveSlugs` vazio).
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/news/recent` | Preparado (404) |
+| GET | `/v1/news/feed` | Preparado (404) |
+| GET | `/v1/news/search` | Preparado (404) |
+| GET | `/v1/news/filters` | Preparado (404) |
+| GET | `/v1/news/mentions` | Preparado (404) |
+| GET | `/v1/news/favorites` | Preparado (404) |
+| GET | `/v1/news/alerts` | Preparado (404) |
+| GET | `/v1/news/{id}` | Preparado (404) |
+
+Doc: [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md).
+
 ## Reuso mandato / inteligência
 
 | Path | Uso no Painel |

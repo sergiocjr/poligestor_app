@@ -5,7 +5,7 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 23 — Homologação Final CONCLUÍDA · **1.0.0+2**)
+Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais entregue; backend 404)
 
 ---
 
@@ -23,14 +23,14 @@ Atualizado: 2026-07-20 (Fase 23 — Homologação Final CONCLUÍDA · **1.0.0+2*
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Fase 23 — Homologação Final** |
-| Status formal | **CONCLUÍDA** |
-| Versão | **1.0.0+2** |
-| Doc da fase | [FASE_23_HOMOLOGACAO_FINAL.md](FASE_23_HOMOLOGACAO_FINAL.md) |
-| Release | [RELEASE_NOTES.md](RELEASE_NOTES.md) |
-| Checklist | [CHECKLIST_HOMOLOGACAO.md](CHECKLIST_HOMOLOGACAO.md) |
+| Fase | **Fase 24 — Notícias Regionais** |
+| Status formal | **EM ANDAMENTO** (Flutter entregue; `/v1/news/*` 100% 404 → Pending) |
+| Hub | Mais → Notícias regionais (`/home/news`) + card no Gabinete |
+| Namespace oficial | `/api/v1/news/*` |
+| Doc da fase | [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md) |
+| Fase 23 | **CONCLUÍDA** (1.0.0+2) |
 | Fase 22 | **CONCLUÍDA** |
-| Novos módulos | **Não iniciar** sem pedido explícito |
+| Próxima fase | **Não iniciar** sem pedido explícito |
 
 ---
 
@@ -39,38 +39,53 @@ Atualizado: 2026-07-20 (Fase 23 — Homologação Final CONCLUÍDA · **1.0.0+2*
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `fce9e55` — Fase 23 Homologação Final 1.0.0+2 |
+| Último commit | (atualizar após push Fase 24) |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
 ### Navegação
 
-- Integrações: Mais → `/home/integrations`
-- Segurança: Mais → `/home/security`
-- Portal Web: `/platform` (Web)
-- Cidadão: `/citizen/*`
+- Notícias: Gabinete (card) + Mais → `/home/news`
+- Integrações: `/home/integrations`
+- Segurança: `/home/security`
 
 ---
 
-## Validação 1.0
+## Contratos LIVE (Fase 24)
 
-| Item | Resultado |
-|------|-----------|
-| `flutter analyze` | Sem errors/warnings (infos de estilo) |
-| `flutter test` | 333/333 |
-| APK release | OK (`app-release.apk` ~62 MB) |
-| Web release | OK (`build/web`) |
-| A10 | install + deep links OK |
-| Emulador | Não iniciado |
+| Método | Path | Status VPS |
+|--------|------|------------|
+| — | `/v1/news/*` | **Nenhum LIVE** (todos 404; `kNewsLiveSlugs` vazio) |
 
 ---
 
-## Pendências reais (pós-1.0)
+## Deep Links
 
-1. Aceite funcional do produto / publicação loja e hospedagem Web.
-2. Backend publicar contratos ainda 404 (security, admin, platform, search/filters de integrações, etc.).
-3. Fechamento formal opcional das fases EM ANDAMENTO quando a VPS sincronizar.
+```
+poligestor://news/...
+poligestor://noticias/...
+poligestor://noticias-regionais/...
+poligestor://regional-news/...
+```
 
-## Próximo passo
+---
 
-Manutenção e sync LIVE sob demanda. **Sem nova fase de módulos** sem pedido explícito.
+## Samsung Galaxy A10
+
+| Campo | Valor |
+|-------|--------|
+| Dispositivo oficial | SM-A105M — `RX8M70CLXKP` |
+| Emulador | **Proibido** |
+| Validação APK Fase 24 | OK (hub + EndpointPendingState) |
+
+---
+
+## Pendências reais
+
+1. Backend publicar `/v1/news/*`.
+2. Sync LIVE + auditoria HTTP 200/201/202.
+3. Aceite de produção / publicação loja (pós-1.0).
+
+## Próxima Fase
+
+**Não iniciar** sem pedido explícito.
