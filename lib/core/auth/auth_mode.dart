@@ -299,6 +299,38 @@ enum AuthMode {
   String get advancedAiBriefingSingularPath => '/v1/ai/briefing';
   String get advancedAiInsightsPath => '/v1/ai/insights';
 
+  // --- Fase 19: Administração do Sistema (staff) — `/v1/admin/*` ---
+  String get adminRootPath => '/v1/admin';
+  String get adminDashboardPath => '/v1/admin/dashboard';
+  String get adminCompaniesPath => '/v1/admin/companies';
+  String get adminOfficesPath => '/v1/admin/offices';
+  String get adminUsersPath => '/v1/admin/users';
+  String get adminProfilesPath => '/v1/admin/profiles';
+  String get adminRolesPath => '/v1/admin/roles';
+  String get adminPermissionsPath => '/v1/admin/permissions';
+  String get adminTeamsPath => '/v1/admin/teams';
+  String get adminDepartmentsPath => '/v1/admin/departments';
+  String get adminSettingsPath => '/v1/admin/settings';
+  String get adminLicensingPath => '/v1/admin/licensing';
+  String get adminSubscriptionsPath => '/v1/admin/subscriptions';
+  String get adminLogsPath => '/v1/admin/logs';
+  String get adminAuditPath => '/v1/admin/audit';
+  String get adminSessionsPath => '/v1/admin/sessions';
+  String get adminApiKeysPath => '/v1/admin/api-keys';
+  String get adminIntegrationsPath => '/v1/admin/integrations';
+  String get adminWebhooksPath => '/v1/admin/webhooks';
+  String get adminBackupPath => '/v1/admin/backup';
+  String get adminMonitoringPath => '/v1/admin/monitoring';
+  String get adminHealthPath => '/v1/admin/health';
+  String get adminEmailSettingsPath => '/v1/admin/email-settings';
+  String get adminNotificationSettingsPath =>
+      '/v1/admin/notification-settings';
+  String get adminStorageSettingsPath => '/v1/admin/storage-settings';
+  String get adminReportsPath => '/v1/admin/reports';
+  String get adminExportsPath => '/v1/admin/exports';
+  String get adminSearchPath => '/v1/admin/search';
+  String get adminFiltersPath => '/v1/admin/filters';
+
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).

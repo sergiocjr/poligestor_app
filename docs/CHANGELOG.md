@@ -1,5 +1,22 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 19 — Administração do Sistema] — 2026-07-20
+
+### Added
+
+- Hub `/home/system-admin` (painel administrativo, empresas, gabinetes, usuários, perfis, papéis, permissões, equipes, departamentos, configurações, licenciamento, assinaturas, registros, auditoria, sessões, chaves de API, integrações, webhooks, cópia de segurança, monitoramento, saúde do sistema, configuração de e-mail/notificações/armazenamento, relatórios, exportações, pesquisa, filtros)
+- Namespace oficial `/v1/admin/*` com `EndpointPendingState` (probe VPS 404 em todos)
+- Cache `pg_adm_*`, realtime via `MandateRefreshController`, cards clicáveis
+- Deep links `poligestor://system-admin|administracao|administracao-sistema|admin-sistema/...`
+- Testes `test/fase19_system_admin_test.dart`
+- Documentação `docs/FASE_19_ADMINISTRACAO_SISTEMA.md`
+
+### Notes
+
+- `kAdminLiveSlugs` vazio até a VPS publicar contratos
+- Fechamento formal pendente (backend 404)
+- Fase 20 não iniciada
+
 ## [Fase 18 — IA Avançada] — 2026-07-20
 
 ### Added

@@ -170,6 +170,17 @@ class NotificationRouter {
               : '/home/advanced-ai/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 19 — Administração do Sistema
+        if (uri.host == 'system-admin' ||
+            uri.host == 'administracao' ||
+            uri.host == 'administracao-sistema' ||
+            uri.host == 'admin-sistema') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/system-admin'
+              : '/home/system-admin/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

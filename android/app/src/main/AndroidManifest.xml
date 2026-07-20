@@ -83,6 +83,10 @@
                 <data android:scheme="poligestor" android:host="advanced-ai"/>
                 <data android:scheme="poligestor" android:host="ia-avancada"/>
                 <data android:scheme="poligestor" android:host="ia_avancada"/>
+                <data android:scheme="poligestor" android:host="system-admin"/>
+                <data android:scheme="poligestor" android:host="administracao"/>
+                <data android:scheme="poligestor" android:host="administracao-sistema"/>
+                <data android:scheme="poligestor" android:host="admin-sistema"/>
                 <data android:scheme="poligestor" android:host="org"/>
                 <data android:scheme="poligestor" android:host="tenant"/>
                 <data android:scheme="poligestor" android:host="organization"/>

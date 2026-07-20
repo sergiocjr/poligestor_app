@@ -24,6 +24,7 @@ import '../../features/institutional_communication/presentation/institutional_co
 import '../../features/political_crm/presentation/crm_pages.dart';
 import '../../features/advanced_ai/presentation/advanced_ai_pages.dart';
 import '../../features/electoral_management/presentation/elections_pages.dart';
+import '../../features/system_admin/presentation/admin_pages.dart';
 import '../../features/territorial_intelligence/presentation/territorial_intelligence_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
@@ -132,6 +133,7 @@ GoRouter createAppRouter({
       final isCrmPath = loc.startsWith('/home/crm');
       final isElectionsPath = loc.startsWith('/home/elections');
       final isAdvancedAiPath = loc.startsWith('/home/advanced-ai');
+      final isSystemAdminPath = loc.startsWith('/home/system-admin');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -162,7 +164,8 @@ GoRouter createAppRouter({
               isInstitutionalCommunicationPath ||
               isCrmPath ||
               isElectionsPath ||
-              isAdvancedAiPath) &&
+              isAdvancedAiPath ||
+              isSystemAdminPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -2517,6 +2520,240 @@ GoRouter createAppRouter({
           GoRoute(
             path: 'search',
             builder: (_, _) => const AdvancedAiSearchPage(),
+          ),
+        ],
+      ),
+
+      // Fase 19 — Administração do Sistema — staff only.
+      GoRoute(
+        path: '/home/system-admin',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const AdminHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => AdminListPage(
+              title: 'Painel administrativo',
+              emptyMessage: 'Nenhum indicador no painel.',
+              loader: (repo, tenant) => repo.dashboard(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'companies',
+            builder: (_, _) => AdminListPage(
+              title: 'Empresas',
+              emptyMessage: 'Nenhuma empresa encontrada.',
+              loader: (repo, tenant) => repo.companies(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'offices',
+            builder: (_, _) => AdminListPage(
+              title: 'Gabinetes',
+              emptyMessage: 'Nenhum gabinete encontrado.',
+              loader: (repo, tenant) => repo.offices(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'users',
+            builder: (_, _) => AdminListPage(
+              title: 'Usuários',
+              emptyMessage: 'Nenhum usuário encontrado.',
+              loader: (repo, tenant) => repo.users(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'profiles',
+            builder: (_, _) => AdminListPage(
+              title: 'Perfis',
+              emptyMessage: 'Nenhum perfil encontrado.',
+              loader: (repo, tenant) => repo.profiles(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'roles',
+            builder: (_, _) => AdminListPage(
+              title: 'Papéis',
+              emptyMessage: 'Nenhum papel encontrado.',
+              loader: (repo, tenant) => repo.roles(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'permissions',
+            builder: (_, _) => AdminListPage(
+              title: 'Permissões',
+              emptyMessage: 'Nenhuma permissão encontrada.',
+              loader: (repo, tenant) => repo.permissions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'teams',
+            builder: (_, _) => AdminListPage(
+              title: 'Equipes',
+              emptyMessage: 'Nenhuma equipe encontrada.',
+              loader: (repo, tenant) => repo.teams(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'departments',
+            builder: (_, _) => AdminListPage(
+              title: 'Departamentos',
+              emptyMessage: 'Nenhum departamento encontrado.',
+              loader: (repo, tenant) => repo.departments(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'settings',
+            builder: (_, _) => AdminListPage(
+              title: 'Configurações',
+              emptyMessage: 'Nenhuma configuração disponível.',
+              loader: (repo, tenant) => repo.settings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'licensing',
+            builder: (_, _) => AdminListPage(
+              title: 'Licenciamento',
+              emptyMessage: 'Nenhuma licença encontrada.',
+              loader: (repo, tenant) => repo.licensing(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'subscriptions',
+            builder: (_, _) => AdminListPage(
+              title: 'Assinaturas',
+              emptyMessage: 'Nenhuma assinatura encontrada.',
+              loader: (repo, tenant) =>
+                  repo.subscriptions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'logs',
+            builder: (_, _) => AdminListPage(
+              title: 'Registros',
+              emptyMessage: 'Nenhum registro encontrado.',
+              loader: (repo, tenant) => repo.logs(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'audit',
+            builder: (_, _) => AdminListPage(
+              title: 'Auditoria',
+              emptyMessage: 'Nenhum evento de auditoria encontrado.',
+              loader: (repo, tenant) => repo.audit(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'sessions',
+            builder: (_, _) => AdminListPage(
+              title: 'Sessões',
+              emptyMessage: 'Nenhuma sessão encontrada.',
+              loader: (repo, tenant) => repo.sessions(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'api-keys',
+            builder: (_, _) => AdminListPage(
+              title: 'Chaves de API',
+              emptyMessage: 'Nenhuma chave de API encontrada.',
+              loader: (repo, tenant) => repo.apiKeys(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'integrations',
+            builder: (_, _) => AdminListPage(
+              title: 'Integrações',
+              emptyMessage: 'Nenhuma integração encontrada.',
+              loader: (repo, tenant) =>
+                  repo.integrations(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'webhooks',
+            builder: (_, _) => AdminListPage(
+              title: 'Webhooks',
+              emptyMessage: 'Nenhum webhook encontrado.',
+              loader: (repo, tenant) => repo.webhooks(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'backup',
+            builder: (_, _) => AdminListPage(
+              title: 'Cópia de segurança',
+              emptyMessage: 'Nenhuma cópia de segurança encontrada.',
+              loader: (repo, tenant) => repo.backup(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'monitoring',
+            builder: (_, _) => AdminListPage(
+              title: 'Monitoramento',
+              emptyMessage: 'Nenhum dado de monitoramento.',
+              loader: (repo, tenant) => repo.monitoring(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'health',
+            builder: (_, _) => AdminListPage(
+              title: 'Saúde do sistema',
+              emptyMessage: 'Nenhum indicador de saúde.',
+              loader: (repo, tenant) => repo.health(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'email-settings',
+            builder: (_, _) => AdminListPage(
+              title: 'Configuração de e-mail',
+              emptyMessage: 'Nenhuma configuração de e-mail.',
+              loader: (repo, tenant) =>
+                  repo.emailSettings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'notification-settings',
+            builder: (_, _) => AdminListPage(
+              title: 'Configuração de notificações',
+              emptyMessage: 'Nenhuma configuração de notificação.',
+              loader: (repo, tenant) =>
+                  repo.notificationSettings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'storage-settings',
+            builder: (_, _) => AdminListPage(
+              title: 'Configuração de armazenamento',
+              emptyMessage: 'Nenhuma configuração de armazenamento.',
+              loader: (repo, tenant) =>
+                  repo.storageSettings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => AdminListPage(
+              title: 'Relatórios',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'exports',
+            builder: (_, _) => AdminListPage(
+              title: 'Exportações',
+              emptyMessage: 'Nenhuma exportação encontrada.',
+              loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const AdminSearchPage(),
+          ),
+          GoRoute(
+            path: 'filters',
+            builder: (_, _) => AdminListPage(
+              title: 'Filtros',
+              emptyMessage: 'Nenhum filtro disponível.',
+              loader: (repo, tenant) => repo.filters(tenantSlug: tenant),
+            ),
           ),
         ],
       ),

@@ -80,6 +80,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/advanced-ai'),
           ),
           ListTile(
+            leading: const Icon(Icons.admin_panel_settings_outlined),
+            title: const Text('Administração do Sistema'),
+            subtitle: const Text(
+              'Empresas, usuários, permissões, auditoria e configurações',
+            ),
+            onTap: () => context.push('/home/system-admin'),
+          ),
+          ListTile(
             leading: const Icon(Icons.groups_outlined),
             title: const Text('Equipe Virtual'),
             subtitle: const Text('Agentes, tarefas e operação'),

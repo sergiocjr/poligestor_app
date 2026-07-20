@@ -1,6 +1,6 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Fase 18 — IA Avançada entregue no Flutter; fechamento formal pendente)
+Atualizado: 2026-07-20 (Fase 19 — Administração do Sistema entregue no Flutter; fechamento formal pendente)
 
 ## Resumo
 
@@ -30,7 +30,8 @@ Atualizado: 2026-07-20 (Fase 18 — IA Avançada entregue no Flutter; fechamento
 | **Fase 16 — CRM Político** | **EM ANDAMENTO** (Flutter entregue; `/v1/crm/*` 404) |
 | **Fase 17 — Gestão Eleitoral** | **CONCLUÍDA** (14 LIVE HTTP 200; 31 Pending; pendência A10) |
 | **Fase 18 — IA Avançada** | **EM ANDAMENTO** (Flutter entregue; `/v1/ai/*` sync parcial) |
-| Fase 19 | **Não iniciada** |
+| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (Flutter entregue; `/v1/admin/*` 404) |
+| Fase 20 | **Não iniciada** |
 
 > Critérios de encerramento: `.cursor/rules/fases-completas.mdc`. Referência: [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).  
 > Nota: o arquivo de status oficial é `docs/STATUS_PROJETO.md` (não existe `STATUS.md` separado).
@@ -44,6 +45,16 @@ Hub **Mais → Gestão Eleitoral** (`/home/elections`).
 Única pendência: **validação física no Samsung Galaxy A10**.
 
 Doc: [FASE_17_GESTAO_ELEITORAL.md](FASE_17_GESTAO_ELEITORAL.md).
+
+## Fase 19 — Administração do Sistema
+
+Hub **Mais → Administração do Sistema** (`/home/system-admin`).
+
+Namespace `/v1/admin/*` — probe autenticado **404 em todos os paths**. UI completa com `EndpointPendingState`, cards clicáveis, PT-BR, Material 3. Cache `pg_adm_*`. Realtime: `MandateRefreshController`. Deep links: `poligestor://system-admin|administracao|administracao-sistema|admin-sistema/...`.
+
+Doc: [FASE_19_ADMINISTRACAO_SISTEMA.md](FASE_19_ADMINISTRACAO_SISTEMA.md).
+
+**Fase 20 — não iniciada.**
 
 ## Fase 18 — IA Avançada
 
