@@ -41,7 +41,7 @@ Atualizado: 2026-07-20 (Fase 16 — CRM Político entregue no Flutter; fechament
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (wiring Fase 16 — pendente commit sob pedido) |
+| Último commit | `cf7cae9` — Fase 16 CRM Político |
 | Push | Pendente |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
