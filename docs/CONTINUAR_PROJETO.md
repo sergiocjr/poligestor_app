@@ -42,7 +42,7 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações CONCLUÍDA)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (atualizar após push do sync LIVE) |
+| Último commit | `e6aa198` — sync LIVE Fase 22 |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
