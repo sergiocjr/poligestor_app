@@ -5,7 +5,22 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
+Atualizado: 2026-07-20 (ponto de restauração pré-auditoria + Fase 24 CONCLUÍDA)
+
+---
+
+## Ponto de restauração 1.0 (pré-auditoria)
+
+| Campo | Valor |
+|-------|--------|
+| Tag Git | **`v1.0-final-pre-auditoria`** |
+| Commit base | **`a20587f`** |
+| Versão app | **1.0.0+2** |
+| Versão APK | **1.0.0+2** |
+| Versão Web | **1.0.0+2** |
+| Doc | [PONTO_RESTAURACAO_1.0.md](PONTO_RESTAURACAO_1.0.md) |
+
+> Snapshot **antes** da auditoria final Fases 1–24. Restaurar com `git checkout v1.0-final-pre-auditoria`.
 
 ---
 
@@ -39,7 +54,9 @@ Atualizado: 2026-07-20 (Fase 24 — Notícias Regionais **CONCLUÍDA**)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `048c211` — sync LIVE Fase 24 Notícias Regionais |
+| Último commit | `a20587f` — docs pós-sync Fase 24 |
+| Tag restauração | `v1.0-final-pre-auditoria` → commit `a20587f` |
+| Versão APK / Web | **1.0.0+2** |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
