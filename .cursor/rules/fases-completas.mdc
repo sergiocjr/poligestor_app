@@ -1,0 +1,26 @@
+---
+description: Desenvolvimento por Fases completas (não por mini-sprints)
+alwaysApply: true
+---
+
+# Política permanente — Fases completas
+
+A partir da **Fase 11**, o PoliGestor/MandatoOS é desenvolvido por **Fases completas** (domínio inteiro).
+
+## Obrigatório
+
+- Concluir TODO o domínio antes de encerrar a fase.
+- **Não** subdividir artificialmente em Sprint 11.1, 11.2, 11.3…
+- Cada Fase deve entregar: models, repository, cache, UI Material 3, rotas, deep links, realtime/refresh, offline, testes, documentação, commit, push e validação completa.
+- Critérios de encerramento: Flutter concluído, APIs LIVE sincronizadas (ou `EndpointPendingState` honesto), Samsung Galaxy A10 validado, sem emulador, sem órfãos, docs atualizadas.
+
+## Backend
+
+- Não alterar backend neste repositório Flutter.
+- Consumir exclusivamente contratos LIVE da VPS.
+- Não inventar APIs nem usar mocks na entrega.
+
+## Dispositivo
+
+- Somente Samsung Galaxy A10 (`RX8M70CLXKP`).
+- Nunca iniciar Android Emulator.

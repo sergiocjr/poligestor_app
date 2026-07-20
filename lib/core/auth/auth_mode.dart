@@ -179,6 +179,32 @@ enum AuthMode {
   String get agreementsReportsPath => '/v1/grants/reports';
   String get agreementsSearchPath => '/v1/grants/search';
 
+  // --- Fase 11: Gestão Institucional — Painel de Eventos (staff) — namespace `/v1/events` ---
+  String get eventsRootPath => '/v1/events';
+  String get eventsDashboardPath => '/v1/events/dashboard';
+  String get eventsListPath => '/v1/events';
+  String eventsItemPath(String id) => '/v1/events/$id';
+  String get eventsAgendaPath => '/v1/events/agenda';
+  String get eventsCalendarPath => '/v1/events/calendar';
+  String get eventsAudiencesPath => '/v1/events/audiences';
+  String get eventsMeetingsPath => '/v1/events/meetings';
+  String get eventsParticipantsPath => '/v1/events/participants';
+  String get eventsInvitesPath => '/v1/events/invites';
+  String get eventsAttendancePath => '/v1/events/attendance';
+  String get eventsCheckInPath => '/v1/events/check-in';
+  String get eventsCheckOutPath => '/v1/events/check-out';
+  String get eventsQrCodePath => '/v1/events/qr-code';
+  String get eventsGalleryPath => '/v1/events/gallery';
+  String get eventsPhotosPath => '/v1/events/photos';
+  String get eventsVideosPath => '/v1/events/videos';
+  String get eventsDocumentsPath => '/v1/events/documents';
+  String get eventsCertificatesPath => '/v1/events/certificates';
+  String get eventsTimelinePath => '/v1/events/timeline';
+  String get eventsReportsPath => '/v1/events/reports';
+  String get eventsIndicatorsPath => '/v1/events/indicators';
+  String get eventsSearchPath => '/v1/events/search';
+  String get eventsMapPath => '/v1/events/map';
+
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';
   String get mandateMapPath => '/v1/mandate/map';

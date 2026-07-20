@@ -90,6 +90,16 @@ class NotificationRouter {
               : '/home/agreements/$rest';
           return NotificationRouteTarget(location: location);
         }
+        // Fase 11 — Painel de Eventos
+        if (uri.host == 'events' ||
+            uri.host == 'eventos' ||
+            uri.host == 'painel-eventos') {
+          final rest = uri.pathSegments.where((s) => s.isNotEmpty).join('/');
+          final location = rest.isEmpty
+              ? '/home/events'
+              : '/home/events/$rest';
+          return NotificationRouteTarget(location: location);
+        }
         // Sprint 10.5 — Assistente Inteligente
         if (uri.host == 'assistant' ||
             uri.host == 'assistente' ||

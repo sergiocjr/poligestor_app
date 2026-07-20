@@ -61,6 +61,10 @@ Fluxo **org-first** (`/org` → branding → `/login`) com contratos LIVE da VPS
 
 Detalhes: [STATUS](docs/STATUS_PROJETO.md).
 
+## Fase 11 — Painel de Eventos
+
+Staff — **Mais → Painel de Eventos** (`/home/events`): painel, eventos, agenda, calendário, audiências, reuniões, presença, galeria e demais domínios. Namespace oficial `/v1/events` (lista/detalhe LIVE; demais preparados). Ver [docs/FASE_11_EVENTOS.md](docs/FASE_11_EVENTOS.md).
+
 ## Sprint 11.0 — Painel de Convênios
 
 Staff — **Mais → Painel de Convênios** (`/home/agreements`): painel, convênios, recursos, projetos, execução, prestação de contas, cronograma, documentos e indicadores. Namespace LIVE `/v1/grants/*` (pending em recursos, cronograma, anexos, indicadores e pesquisa).
@@ -158,6 +162,7 @@ lib/
     parliament/     # Sprint 10.8 — Painel Parlamentar
     works/          # Sprint 10.9 — Painel Obras
     agreements/     # Sprint 11.0 — Painel de Convênios
+    events/         # Fase 11 — Painel de Eventos
     home/
     more/
     assistant/

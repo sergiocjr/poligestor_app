@@ -1,10 +1,40 @@
 # Integrações LIVE — PoliGestor Flutter
 
-Atualizado: 2026-07-19 (Sprint 11.0)
+Atualizado: 2026-07-20 (Fase 11)
 
 Base API: `https://poligestor.onnexis.com.br/api`
 
 Regra permanente: consumir somente contratos publicados pela VPS. Sem mocks na entrega final. Sem backend local. Ausência → `EndpointPendingState`.
+
+## Fase 11 — `/v1/events`
+
+Namespace oficial do Painel de Eventos. Sem aliases.
+
+| Método | Path | Status app |
+|--------|------|------------|
+| GET | `/v1/events` | **LIVE** (200) — lista |
+| GET | `/v1/events/{uuid}` | **LIVE** (200) — detalhe |
+| GET | `/v1/events/dashboard` | Preparado (colide com `{id}` → 500; painel usa agregação local) |
+| GET | `/v1/events/agenda` | Preparado — UI Agenda usa lista LIVE |
+| GET | `/v1/events/calendar` | Preparado — UI Calendário usa lista LIVE |
+| GET | `/v1/events/audiences` | Preparado — fallback filtro `appointment` |
+| GET | `/v1/events/meetings` | Preparado — fallback filtro `meeting` |
+| GET | `/v1/events/participants` | Preparado (pending) |
+| GET | `/v1/events/invites` | Preparado (pending) |
+| GET | `/v1/events/attendance` | Preparado (pending) |
+| GET | `/v1/events/check-in` | Preparado (pending) |
+| GET | `/v1/events/check-out` | Preparado (pending) |
+| GET | `/v1/events/qr-code` | Preparado (pending) |
+| GET | `/v1/events/gallery` | Preparado (pending) |
+| GET | `/v1/events/photos` | Preparado (pending) |
+| GET | `/v1/events/videos` | Preparado (pending) |
+| GET | `/v1/events/documents` | Preparado (pending) |
+| GET | `/v1/events/certificates` | Preparado (pending) |
+| GET | `/v1/events/timeline` | Preparado (pending) |
+| GET | `/v1/events/reports` | Preparado (pending) |
+| GET | `/v1/events/indicators` | Preparado (pending) |
+| GET | `/v1/events/search` | Preparado — pesquisa local na lista LIVE |
+| GET | `/v1/events/map` | Preparado (pending) |
 
 ## Sprint 11.0 — `/v1/grants/*`
 

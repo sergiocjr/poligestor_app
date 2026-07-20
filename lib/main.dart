@@ -21,6 +21,7 @@ import 'features/strategy/data/strategy_repository.dart';
 import 'features/parliament/data/parliament_repository.dart';
 import 'features/works/data/works_repository.dart';
 import 'features/agreements/data/agreements_repository.dart';
+import 'features/events/data/events_repository.dart';
 import 'features/identity/data/identity_cache.dart';
 import 'features/identity/data/identity_repository.dart';
 import 'features/identity/domain/tenant_controller.dart';
@@ -78,6 +79,7 @@ Future<void> main() async {
   final parliamentRepo = ParliamentRepository(api);
   final worksRepo = WorksRepository(api, mandateRepo);
   final agreementsRepo = AgreementsRepository(api);
+  final eventsRepo = EventsRepository(api);
   final communicationRepo = CommunicationRepository(api);
   final smartAssistantRepo = SmartAssistantRepository(api);
   final mandateRefresh = MandateRefreshController();
@@ -130,6 +132,7 @@ Future<void> main() async {
         Provider.value(value: parliamentRepo),
         Provider.value(value: worksRepo),
         Provider.value(value: agreementsRepo),
+        Provider.value(value: eventsRepo),
         Provider.value(value: communicationRepo),
         Provider.value(value: smartAssistantRepo),
         Provider.value(value: realtime),

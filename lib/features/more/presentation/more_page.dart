@@ -116,6 +116,14 @@ class MorePage extends StatelessWidget {
             onTap: () => context.push('/home/agreements'),
           ),
           ListTile(
+            leading: const Icon(Icons.event_outlined),
+            title: const Text('Painel de Eventos'),
+            subtitle: const Text(
+              'Agenda, calendário, audiências, reuniões e presença',
+            ),
+            onTap: () => context.push('/home/events'),
+          ),
+          ListTile(
             leading: const Icon(Icons.forum_outlined),
             title: const Text('Central de Comunicação'),
             subtitle: const Text('Canais, modelos e campanhas'),

@@ -42,6 +42,7 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 - **parliament** (Sprint 10.8) — Painel Parlamentar (`/home/parliament`)
 - **works** (Sprint 10.9) — Painel Obras (`/home/works`)
 - **agreements** (Sprint 11.0) — Painel de Convênios (`/home/agreements`)
+- **events** (Fase 11) — Painel de Eventos (`/home/events`)
 - **citizen** — portal (lista com pesquisa/ordenação, detalhe, conversa, anexos, avaliação/NPS preparado)
 - **home** — `HomeShell` (bottom nav staff)
 - **more** / **assistant**
@@ -51,9 +52,9 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 1. Bootstrap: `/splash` → `TenantController.bootstrap` + `AuthController.bootstrap`
 2. Sem org → `/org`
 3. Com org, sem sessão → `/login` (+ register/forgot)
-4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/home/strategy/*`, `/home/parliament/*`, `/account/*`)
+4. Staff autenticado → `/home/*` (+ `/home/virtual-team/*`, `/home/communication/*`, `/home/automation/*`, `/home/strategy/*`, `/home/parliament/*`, `/home/works/*`, `/home/agreements/*`, `/home/events/*`, `/account/*`)
 5. Portal autenticado → `/citizen/*` (+ `/account/*`)
-6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|strategy|parliament|org|tenant/...`
+6. Deep links: `poligestor://protocols|notifications|virtual-team|communication|assistant|automation|strategy|parliament|works|agreements|events|org|tenant/...`
 
 ## Estado
 
@@ -170,9 +171,16 @@ DI: **Provider** (+ `ChangeNotifierProvider`). Não usamos Riverpod neste projet
 ## Sprint 11.0 — Painel de Convênios
 
 - Feature `lib/features/agreements/` — hub próprio
-- Namespace preparado `/v1/agreements/{dashboard,agreements,resources,projects,execution,accountability,schedule,timeline,documents,attachments,indicators,reports,search}`
-- `EndpointPendingState` até a VPS publicar o namespace
+- Namespace LIVE `/v1/grants/{dashboard,agreements,resources,projects,execution,accountability,schedule,timeline,documents,attachments,indicators,reports,search}`
 - Cache `pg_agree_{tenant}_*`
+
+## Fase 11 — Painel de Eventos
+
+- Feature `lib/features/events/` — hub próprio de Gestão Institucional
+- Namespace oficial `/v1/events` (lista + detalhe LIVE); demais subpaths preparados
+- Agenda/Calendário/Painel/Pesquisa/Audiências/Reuniões usam dados LIVE; demais telas com `EndpointPendingState`
+- Cache `pg_events_{tenant}_*`
+- Doc: `docs/FASE_11_EVENTOS.md`
 
 ## Segurança
 

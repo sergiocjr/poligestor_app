@@ -17,7 +17,8 @@
 | **10.8** | Painel Parlamentar | **CONCLUÍDA** |
 | **10.9** | Painel Obras | **CONCLUÍDA** |
 | **11.0** | Painel de Convênios | **CONCLUÍDA** |
-| 11.1 | — | **Não iniciada** |
+| **Fase 11** | Gestão Institucional — Painel de Eventos | **CONCLUÍDA** |
+| Fase 12 | — | **Não iniciada** |
 | Próximo | OAuth nativo + detalhe de conversa omnichannel (se VPS publicar mensagens) | Em aberto |
 
 ## Retomada
@@ -25,9 +26,17 @@
 1. OAuth SDKs nativos + APNs (fora do escopo 10.4)
 2. Detalhe de conversa omnichannel quando a VPS publicar contrato de mensagens
 
+## Modelo de entrega (a partir da Fase 11)
+
+Desenvolvimento por **Fases completas** (domínio inteiro). Não subdividir artificialmente em Sprint 11.1 / 11.2 / …
+
+## Fase 11 (CONCLUÍDA)
+
+Painel de Eventos em `/home/events`. Namespace oficial `/v1/events` (lista/detalhe LIVE). Ver [FASE_11_EVENTOS.md](FASE_11_EVENTOS.md).
+
 ## Sprint 11.0 (CONCLUÍDA)
 
-Painel de Convênios em `/home/agreements`. Namespace preparado `/v1/agreements/*` com EndpointPendingState.
+Painel de Convênios em `/home/agreements`. Namespace LIVE `/v1/grants/*`.
 
 ## Sprint 10.9 (CONCLUÍDA)
 

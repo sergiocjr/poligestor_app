@@ -1,5 +1,21 @@
 # Changelog — PoliGestor Flutter
 
+## [Fase 11 — Gestão Institucional / Painel de Eventos] — 2026-07-20
+
+### Added
+
+- Hub `/home/events` (painel, eventos, agenda, calendário, audiências, reuniões, participantes, convites, presença, check-in/out, QR Code, galeria, fotos, vídeos, documentos, certificados, linha do tempo, mapa, indicadores, relatórios, pesquisa)
+- Namespace oficial `/v1/events` — lista e detalhe LIVE; demais paths preparados com `EndpointPendingState` ou fallback local
+- Cache `pg_events_*`, realtime via `MandateRefreshController`, filtros locais
+- Deep links `poligestor://events|eventos|painel-eventos`
+- Testes `test/fase11_events_test.dart`
+- Documentação `docs/FASE_11_EVENTOS.md`
+- Modelo de entrega por **Fases completas** (sem subdivisão em 11.1/11.2/…)
+
+### Not started
+
+- Fase 12
+
 ## [Sprint 11.0 — sync VPS `/v1/grants/*`] — 2026-07-19
 
 ### Changed

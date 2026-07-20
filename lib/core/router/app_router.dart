@@ -15,6 +15,7 @@ import '../../features/strategy/presentation/strategy_pages.dart';
 import '../../features/parliament/presentation/parliament_pages.dart';
 import '../../features/works/presentation/works_pages.dart';
 import '../../features/agreements/presentation/agreements_pages.dart';
+import '../../features/events/presentation/events_pages.dart';
 import '../../features/chat/presentation/chat_page.dart';
 import '../../features/smart_assistant/presentation/smart_assistant_pages.dart';
 import '../../features/assistant/presentation/assistant_chat_page.dart';
@@ -109,6 +110,7 @@ GoRouter createAppRouter({
       final isParliamentPath = loc.startsWith('/home/parliament');
       final isWorksPath = loc.startsWith('/home/works');
       final isAgreementsPath = loc.startsWith('/home/agreements');
+      final isEventsPath = loc.startsWith('/home/events');
 
       if (isSplash || isLoginFlow || isOrg) {
         return auth.mode == AuthMode.portal
@@ -131,7 +133,8 @@ GoRouter createAppRouter({
               isStrategyPath ||
               isParliamentPath ||
               isWorksPath ||
-              isAgreementsPath) &&
+              isAgreementsPath ||
+              isEventsPath) &&
           auth.mode != AuthMode.staff) {
         return '/citizen/home';
       }
@@ -765,6 +768,215 @@ GoRouter createAppRouter({
           GoRoute(
             path: 'search',
             builder: (_, _) => const AgreementsSearchPage(),
+          ),
+        ],
+      ),
+
+      // Fase 11 — Painel de Eventos (Gestão Institucional) — staff only.
+      GoRoute(
+        path: '/home/events',
+        parentNavigatorKey: rootNavigatorKey,
+        builder: (_, _) => const EventsHubPage(),
+        routes: [
+          GoRoute(
+            path: 'dashboard',
+            builder: (_, _) => const EventsDashboardPage(),
+          ),
+          GoRoute(
+            path: 'list',
+            builder: (_, _) => EventsListPage(
+              title: 'Eventos',
+              detailRoutePrefix: '/home/events/list',
+              emptyMessage: 'Nenhum evento encontrado.',
+              loader: (repo, tenant) => repo.events(tenantSlug: tenant),
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                builder: (_, state) =>
+                    EventsDetailPage(id: state.pathParameters['id']!),
+              ),
+            ],
+          ),
+          GoRoute(
+            path: 'agenda',
+            builder: (_, _) => const EventsAgendaPage(),
+          ),
+          GoRoute(
+            path: 'calendar',
+            builder: (_, _) => const EventsCalendarPage(),
+          ),
+          GoRoute(
+            path: 'audiences',
+            builder: (_, _) => EventsListPage(
+              title: 'Audiências',
+              detailRoutePrefix: '/home/events/list',
+              emptyMessage: 'Nenhuma audiência encontrada.',
+              loader: (repo, tenant) => repo.audiences(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'meetings',
+            builder: (_, _) => EventsListPage(
+              title: 'Reuniões',
+              detailRoutePrefix: '/home/events/list',
+              emptyMessage: 'Nenhuma reunião encontrada.',
+              loader: (repo, tenant) => repo.meetings(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'participants',
+            builder: (_, _) => EventsListPage(
+              title: 'Participantes',
+              detailRoutePrefix: '/home/events/participants',
+              emptyMessage: 'Nenhum participante encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.participants(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'invites',
+            builder: (_, _) => EventsListPage(
+              title: 'Convites',
+              detailRoutePrefix: '/home/events/invites',
+              emptyMessage: 'Nenhum convite encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.invites(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'attendance',
+            builder: (_, _) => EventsListPage(
+              title: 'Presença',
+              detailRoutePrefix: '/home/events/attendance',
+              emptyMessage: 'Nenhum registro de presença.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.attendance(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'check-in',
+            builder: (_, _) => EventsListPage(
+              title: 'Check-in',
+              detailRoutePrefix: '/home/events/check-in',
+              emptyMessage: 'Nenhum check-in encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.checkIn(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'check-out',
+            builder: (_, _) => EventsListPage(
+              title: 'Check-out',
+              detailRoutePrefix: '/home/events/check-out',
+              emptyMessage: 'Nenhum check-out encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.checkOut(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'qr-code',
+            builder: (_, _) => EventsListPage(
+              title: 'QR Code',
+              detailRoutePrefix: '/home/events/qr-code',
+              emptyMessage: 'Nenhum QR Code encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.qrCode(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'gallery',
+            builder: (_, _) => EventsListPage(
+              title: 'Galeria',
+              detailRoutePrefix: '/home/events/gallery',
+              emptyMessage: 'Galeria vazia.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.gallery(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'photos',
+            builder: (_, _) => EventsListPage(
+              title: 'Fotos',
+              detailRoutePrefix: '/home/events/photos',
+              emptyMessage: 'Nenhuma foto encontrada.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.photos(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'videos',
+            builder: (_, _) => EventsListPage(
+              title: 'Vídeos',
+              detailRoutePrefix: '/home/events/videos',
+              emptyMessage: 'Nenhum vídeo encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.videos(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'documents',
+            builder: (_, _) => EventsListPage(
+              title: 'Documentos',
+              detailRoutePrefix: '/home/events/documents',
+              emptyMessage: 'Nenhum documento encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.documents(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'certificates',
+            builder: (_, _) => EventsListPage(
+              title: 'Certificados',
+              detailRoutePrefix: '/home/events/certificates',
+              emptyMessage: 'Nenhum certificado encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.certificates(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'timeline',
+            builder: (_, _) => EventsListPage(
+              title: 'Linha do Tempo',
+              detailRoutePrefix: '/home/events/timeline',
+              emptyMessage: 'Linha do tempo vazia.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.timeline(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'map',
+            builder: (_, _) => EventsListPage(
+              title: 'Mapa',
+              detailRoutePrefix: '/home/events/map',
+              emptyMessage: 'Mapa indisponível.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.map(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'indicators',
+            builder: (_, _) => EventsListPage(
+              title: 'Indicadores',
+              detailRoutePrefix: '/home/events/indicators',
+              emptyMessage: 'Nenhum indicador encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.indicators(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'reports',
+            builder: (_, _) => EventsListPage(
+              title: 'Relatórios',
+              detailRoutePrefix: '/home/events/reports',
+              emptyMessage: 'Nenhum relatório encontrado.',
+              openDetail: false,
+              loader: (repo, tenant) => repo.reports(tenantSlug: tenant),
+            ),
+          ),
+          GoRoute(
+            path: 'search',
+            builder: (_, _) => const EventsSearchPage(),
           ),
         ],
       ),
