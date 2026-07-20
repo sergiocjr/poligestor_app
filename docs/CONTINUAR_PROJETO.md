@@ -42,7 +42,7 @@ Atualizado: 2026-07-20 (Fase 22 — Integrações entregue; fechamento formal pe
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | (atualizar após push da Fase 22) |
+| Último commit | `01d3b00` — feat Fase 22 Integrações |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 
