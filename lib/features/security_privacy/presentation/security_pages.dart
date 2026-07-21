@@ -84,14 +84,14 @@ class _HubEntry {
 const _hubEntries = <_HubEntry>[
   _HubEntry(
     'Autenticação em duas etapas',
-    'Ativar — /v1/security/mfa/enable',
+    'Ativar autenticação em duas etapas',
     Icons.security_outlined,
     'mfa-enable',
     '/home/security/mfa-enable',
   ),
   _HubEntry(
     'Confirmação em duas etapas',
-    'Confirmar código — /v1/security/mfa/confirm',
+    'Confirmar código de verificação',
     Icons.verified_user_outlined,
     'mfa-confirm',
     '/home/security/mfa-confirm',
@@ -105,14 +105,14 @@ const _hubEntries = <_HubEntry>[
   ),
   _HubEntry(
     'Sessões ativas',
-    'Sessões autenticadas (/v1/security/sessions)',
+    'Sessões autenticadas neste gabinete',
     Icons.devices_outlined,
     'sessions',
     '/home/security/sessions',
   ),
   _HubEntry(
     'Encerramento remoto de sessões',
-    'Revogar sessões — /v1/security/sessions/revoke-all',
+    'Revogar sessões em outros dispositivos',
     Icons.logout_outlined,
     'sessions-revoke',
     '/home/security/sessions-revoke',
@@ -147,7 +147,7 @@ const _hubEntries = <_HubEntry>[
   ),
   _HubEntry(
     'Tokens e Chaves de API',
-    'Tokens e /v1/security/api-keys',
+    'Tokens e chaves de API do gabinete',
     Icons.vpn_key_outlined,
     'tokens',
     '/home/security/tokens',
@@ -1295,7 +1295,7 @@ List<RouteBase> buildSecurityChildRoutes() => [
       liveSlug: 'sessions',
       emptyMessage: 'Nenhuma sessão registrada.',
       extraNotice:
-          'Para sessões via /v1/auth/sessions, use Conta → Sessões.',
+          'Para sessões da conta, use Conta → Sessões.',
       loader: (repo, tenant, mode) =>
           repo.sessions(tenantSlug: tenant, mode: mode),
     ),
@@ -1345,7 +1345,7 @@ List<RouteBase> buildSecurityChildRoutes() => [
       liveSlug: 'tokens',
       emptyMessage: 'Nenhum token ou chave encontrada.',
       extraNotice:
-          'Chaves de API também em ${AuthMode.staff.securityApiKeysPath}.',
+          'Tokens e chaves de API do gabinete.',
       loader: (repo, tenant, mode) async {
         final tokens = await repo.tokens(tenantSlug: tenant, mode: mode);
         try {

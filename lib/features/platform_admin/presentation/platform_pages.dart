@@ -118,7 +118,7 @@ const _hubEntries = <_HubEntry>[
   ),
   _HubEntry(
     'Perfis e permissões',
-    'Perfis de acesso e permissões (/v1/platform/permissions)',
+    'Perfis de acesso e permissões granulares',
     Icons.badge_outlined,
     'profiles',
     '/platform/profiles',
@@ -691,6 +691,55 @@ class _PlatformSearchPageState extends State<PlatformSearchPage>
       .read<PlatformRepository>()
       .search(tenantSlug: _tenantOf(context), query: q);
 
+  void _openSearchItem(PlatformItem item) {
+    final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (ctx) {
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  item.title,
+                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                if (item.code != null) Text('Código: ${item.code}'),
+                if (item.email != null) Text('E-mail: ${item.email}'),
+                if (item.scope != null) Text('Escopo: ${item.scope}'),
+                if (item.kind != null) Text('Tipo: ${item.kind}'),
+                if (item.status != null)
+                  Text('Situação: ${uiStatusLabel(item.status)}'),
+                if (item.date != null)
+                  Text('Data: ${dateFmt.format(item.date!.toLocal())}'),
+                if (item.summary != null) ...[
+                  const SizedBox(height: 8),
+                  Text(item.summary!),
+                ],
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: FilledButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('Fechar'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -773,6 +822,7 @@ class _PlatformSearchPageState extends State<PlatformSearchPage>
                               overflow: TextOverflow.ellipsis,
                             ),
                             trailing: const Icon(Icons.chevron_right_rounded),
+                            onTap: () => _openSearchItem(item),
                           ),
                         );
                       },

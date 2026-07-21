@@ -825,8 +825,7 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
               padding: const EdgeInsets.all(16),
               children: [
                 SoftNotice(
-                  message:
-                      'Configuração publicada: ${_pathForSlug(slug)}.',
+                  message: 'Configuração sincronizada com o servidor.',
                 ),
                 const SizedBox(height: 12),
                 SwitchListTile(
@@ -1066,7 +1065,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       liveSlug: 'dashboard',
       emptyMessage: 'Nenhum indicador de integração.',
       extraNotice:
-          'Painel e catálogo publicados (/v1/integrations/dashboard e /catalog).',
+          'Painel e catálogo sincronizados com o servidor.',
       loader: (repo, tenant, mode) =>
           repo.dashboard(tenantSlug: tenant, mode: mode),
     ),
@@ -1078,7 +1077,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       liveSlug: 'status',
       emptyMessage: 'Nenhum status disponível.',
       extraNotice:
-          'Status via /v1/integrations/health e /providers.',
+          'Status das integrações e provedores sincronizados.',
       loader: (repo, tenant, mode) =>
           repo.status(tenantSlug: tenant, mode: mode),
     ),

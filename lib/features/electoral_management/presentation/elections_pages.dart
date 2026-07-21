@@ -371,8 +371,7 @@ class ElectionsHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                    'Ativo = HTTP 200; Demonstração = conteúdo ilustrativo.',
+                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

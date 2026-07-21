@@ -441,7 +441,7 @@ class _ParliamentDashboardPageState extends State<ParliamentDashboardPage>
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 Text(
-                  'Fonte ativa: /v1/parliament/dashboard',
+                  'Painel parlamentar sincronizado com o servidor.',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
