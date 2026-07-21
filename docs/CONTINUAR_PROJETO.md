@@ -75,7 +75,7 @@ Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `9d51d25` — auditoria final Fases 1–24 |
+| Último commit | `3277490` — auditoria UX experiência 100% pronta |
 | Tag restauração | `v1.0-final-pre-auditoria` → commit `a20587f` |
 | Versão APK / Web | **1.0.0+3** |
 | Push | origin/master |
