@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../domain/notification_prefs.dart';
 

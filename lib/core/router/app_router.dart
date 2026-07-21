@@ -1315,7 +1315,7 @@ GoRouter createAppRouter({
             path: 'upload',
             builder: (_, _) => DocumentsListPage(
               title: 'Upload',
-              emptyMessage: 'Upload preparado. Aguardando contrato LIVE.',
+              emptyMessage: 'Nenhum arquivo enviado ainda.',
               loader: (repo, tenant) => repo.upload(tenantSlug: tenant),
             ),
           ),

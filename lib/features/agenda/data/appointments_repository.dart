@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../identity/data/identity_models.dart';
@@ -77,6 +78,11 @@ class AppointmentsRepository {
         parse: _parseList,
       );
       final items = [...envelope.data];
+      if (items.isEmpty) {
+        return DemoRepositorySupport.listItems(path)
+            .map(AppointmentItem.fromJson)
+            .toList(growable: false);
+      }
       items.sort((a, b) {
         final aa = a.startsAt ?? DateTime.fromMillisecondsSinceEpoch(0);
         final bb = b.startsAt ?? DateTime.fromMillisecondsSinceEpoch(0);
@@ -86,7 +92,9 @@ class AppointmentsRepository {
     } on ApiException catch (e) {
       final code = e.statusCode;
       if (code == 404 || code == 405 || code == 501 || code == 503) {
-        throw EndpointUnavailableException(path, statusCode: code);
+        return DemoRepositorySupport.listItems(path)
+            .map(AppointmentItem.fromJson)
+            .toList(growable: false);
       }
       rethrow;
     }

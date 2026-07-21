@@ -558,7 +558,7 @@ class NeighborhoodCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                'Avisos, serviços e oportunidades da sua região em breve.',
+                'Avisos, serviços e oportunidades da sua região (demonstração).',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.75),
                   height: 1.35,

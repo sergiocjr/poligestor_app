@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'protocol_models.dart';

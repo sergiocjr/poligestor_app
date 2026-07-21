@@ -85,7 +85,7 @@ class FinanceHubPage extends StatelessWidget {
               SoftNotice(
                 message:
                     'Consome somente /v1/finance/*. Chip Ativo = contrato '
-                    'publicado; Em preparação = aguardando a VPS.',
+                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

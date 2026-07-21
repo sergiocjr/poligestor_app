@@ -66,6 +66,6 @@ String uiTrendLabel(String? raw) {
   };
 }
 
-/// Chip de disponibilidade de contrato (não usar "LIVE" / "Prep.").
+/// Chip de disponibilidade de contrato.
 String uiContractChip({required bool available}) =>
-    available ? 'Ativo' : 'Em preparação';
+    available ? 'Ativo' : 'Demonstração';

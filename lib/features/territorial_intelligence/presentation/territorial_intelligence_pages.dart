@@ -200,7 +200,7 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
               SoftNotice(
                 message:
                     'Consome somente /v1/intelligence/*. Chip Ativo = contrato '
-                    'publicado na VPS; Em preparação = aguardando publicação.',
+                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo até sincronizar.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

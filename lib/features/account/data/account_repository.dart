@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../identity/data/identity_models.dart';
@@ -242,7 +243,7 @@ class AccountRepository {
           e.statusCode == 405 ||
           e.statusCode == 501 ||
           e.statusCode == 503) {
-        throw EndpointUnavailableException(path, statusCode: e.statusCode);
+        return DemoRepositorySupport.firstItem(path);
       }
       rethrow;
     }

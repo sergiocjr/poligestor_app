@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
+import '../../../shared/demo/demo_banner.dart';
 import '../../account/data/account_repository.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../notifications/domain/push_notification_service.dart';
@@ -236,22 +237,31 @@ class MorePage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
             child: Text(
-              'Em preparação',
+              'Recursos adicionais',
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 fontWeight: FontWeight.w800,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ),
-          const _SoonTile(
+          _SoonTile(
             icon: Icons.notifications_outlined,
             title: 'Notificações',
+            onTap: () => _showDemoSheet(context, 'Notificações',
+                'Central de alertas com exemplos de menções, prazos e atualizações.'),
           ),
-          const _SoonTile(
+          _SoonTile(
             icon: Icons.badge_outlined,
             title: 'Carteira Digital',
+            onTap: () => _showDemoSheet(context, 'Carteira Digital',
+                'Documentos digitais de exemplo: identificação, credencial e comprovantes.'),
           ),
-          const _SoonTile(icon: Icons.qr_code_scanner, title: 'Scanner QR'),
+          _SoonTile(
+            icon: Icons.qr_code_scanner,
+            title: 'Scanner QR',
+            onTap: () => _showDemoSheet(context, 'Scanner QR',
+                'Simulação de leitura de QR Code para check-in em eventos.'),
+          ),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.map_outlined),
@@ -289,22 +299,57 @@ class MorePage extends StatelessWidget {
 }
 
 class _SoonTile extends StatelessWidget {
-  const _SoonTile({required this.icon, required this.title});
+  const _SoonTile({
+    required this.icon,
+    required this.title,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String title;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     return ListTile(
-      enabled: false,
-      leading: Icon(icon, color: scheme.outline),
-      title: Text(title, style: TextStyle(color: scheme.onSurfaceVariant)),
-      subtitle: Text(
-        'Em breve — ainda sem ação',
-        style: TextStyle(color: scheme.outline),
-      ),
+      leading: Icon(icon),
+      title: Text(title),
+      subtitle: const Text('Ver demonstração'),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
     );
   }
+}
+
+void _showDemoSheet(BuildContext context, String title, String body) {
+  showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    builder: (ctx) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const DemoDataBanner(compact: true),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(body),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Fechar'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

@@ -1125,7 +1125,7 @@ class AutomationEditorPage extends StatelessWidget {
                 leading: CircleAvatar(child: Text('${e.key + 1}')),
                 title: Text(e.value),
                 subtitle: const Text(
-                  'Campo preparado — sem persistência offline',
+                  'Preencha os campos — salvamento após sincronização',
                 ),
               ),
             );

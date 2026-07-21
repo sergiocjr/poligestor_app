@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'mandate_cache.dart';
 import 'mandate_models.dart';

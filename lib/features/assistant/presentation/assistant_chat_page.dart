@@ -245,10 +245,10 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
 
   void _onPickAttachment(ChatAttachmentKind kind) {
     final label = switch (kind) {
-      ChatAttachmentKind.image => 'Imagem (em breve)',
-      ChatAttachmentKind.document => 'Documento (em breve)',
-      ChatAttachmentKind.location => 'Localização (em breve)',
-      ChatAttachmentKind.audio => 'Áudio (em breve)',
+      ChatAttachmentKind.image => 'Imagem (demonstração)',
+      ChatAttachmentKind.document => 'Documento (demonstração)',
+      ChatAttachmentKind.location => 'Localização (demonstração)',
+      ChatAttachmentKind.audio => 'Áudio (demonstração)',
       ChatAttachmentKind.none => 'Anexo',
     };
 
@@ -258,7 +258,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
           id: _nextId('att'),
           sender: ChatSender.user,
           createdAt: DateTime.now(),
-          text: 'Anexo preparado para envio futuro.',
+          text: 'Anexo de demonstração ($label).',
           attachmentKind: kind,
           attachmentLabel: label,
         ),
@@ -268,7 +268,7 @@ class _AssistantChatPageState extends State<AssistantChatPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('$label — interface pronta, envio ainda não ativo.'),
+        content: Text('$label — anexo ilustrativo na conversa.'),
       ),
     );
   }

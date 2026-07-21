@@ -335,7 +335,7 @@ class PlatformHubPage extends StatelessWidget {
             SoftNotice(
               message:
                   'Namespace /v1/platform/* sincronizado. Chip Ativo = contrato '
-                  'publicado; Em preparação = ainda 404 na VPS.',
+                  'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
             ),
             const SizedBox(height: 12),
             GridView.builder(

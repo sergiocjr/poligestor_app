@@ -1,5 +1,25 @@
 # Changelog — PoliGestor Flutter
 
+## [Auditoria UX — Experiência 100% pronta] — 2026-07-20
+
+### Added
+
+- `lib/shared/demo/*` — gerador central, banner e painel de demonstração
+- [AUDITORIA_UX_EXPERIENCIA.md](AUDITORIA_UX_EXPERIENCIA.md)
+- `test/demo_repository_support_test.dart`
+
+### Changed
+
+- Repositórios Fases 11–24: fallback demo em 404 e listas vazias (`coerceRoot`)
+- `EndpointPendingState` → `DemoExperiencePane` (sem mensagens “aguardando contrato”)
+- Chip de contrato: **Demonstração** (UI)
+- Hubs, agenda, bairro, anexos e buscas: textos PT-BR sem “em preparação / em breve”
+- Versão app **1.0.0+3**
+
+### Validation
+
+- `flutter analyze` · `flutter test` · APK + Web · A10
+
 ## [Auditoria Final Fases 1–24] — 2026-07-20
 
 ### Added

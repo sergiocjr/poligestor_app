@@ -12,6 +12,7 @@ import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../data/news_contracts.dart';
 import '../data/news_models.dart';
 import '../data/news_repository.dart';
@@ -419,9 +420,9 @@ class _NewsHubPageState extends State<NewsHubPage>
       await showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
-        builder: (_) => const Padding(
-          padding: EdgeInsets.all(16),
-          child: EndpointPendingState(path: '/v1/news/filters'),
+        builder: (_) => Padding(
+          padding: const EdgeInsets.all(16),
+          child: DemoExperiencePane(path: '/v1/news/filters'),
         ),
       );
       return;

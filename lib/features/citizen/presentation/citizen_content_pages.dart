@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../shared/demo/demo_banner.dart';
 import '../data/mock_news.dart';
 
 class CitizenNewsListPage extends StatelessWidget {
@@ -163,12 +164,27 @@ class CitizenNeighborhoodPage extends StatelessWidget {
                   : null,
             ),
           ),
+          const DemoDataBanner(compact: true),
           const SizedBox(height: 12),
-          if (!hasAlerts)
-            const SoftEmptyNotice(
-              message:
-                  'Ainda não há conteúdos extras do bairro. Em breve: serviços e oportunidades da região.',
+          Text(
+            'Serviços e oportunidades',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w700,
             ),
+          ),
+          const SizedBox(height: 8),
+          ...MockNewsCatalog.items.take(3).map((item) {
+            return Card(
+              margin: const EdgeInsets.only(bottom: 10),
+              child: ListTile(
+                leading: const Icon(Icons.place_outlined),
+                title: Text(item.title),
+                subtitle: Text(item.category),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => context.push('/citizen/news/${item.id}'),
+              ),
+            );
+          }),
           const SizedBox(height: 24),
           OutlinedButton.icon(
             onPressed: () => context.pop(),

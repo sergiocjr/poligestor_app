@@ -5,7 +5,7 @@ import '../../domain/chat_message.dart';
 
 typedef AttachmentPick = void Function(ChatAttachmentKind kind);
 
-/// Campo de composição com ações futuras (imagem, documento, localização, áudio).
+/// Campo de composição com anexos demonstrativos.
 class ChatComposer extends StatelessWidget {
   const ChatComposer({
     super.key,
@@ -40,9 +40,7 @@ class ChatComposer extends StatelessWidget {
                   _AttachButton(
                     icon: Icons.add_circle_outline_rounded,
                     tooltip: 'Anexar',
-                    onPressed: !enabled
-                        ? null
-                        : () => _showAttachSheet(context),
+                    onPressed: !enabled ? null : () => _showAttachSheet(context),
                   ),
                   const SizedBox(width: 6),
                   Expanded(
@@ -116,26 +114,28 @@ class ChatComposer extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.image_outlined),
                   title: const Text('Imagem'),
-                  subtitle: const Text('Em breve'),
-                  enabled: false,
+                  subtitle: const Text('Demonstração — arquivo de exemplo'),
+                  onTap: () => Navigator.pop(context, ChatAttachmentKind.image),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: const Text('Documento'),
-                  subtitle: const Text('Em breve'),
-                  enabled: false,
+                  subtitle: const Text('Demonstração — PDF de exemplo'),
+                  onTap: () =>
+                      Navigator.pop(context, ChatAttachmentKind.document),
                 ),
                 ListTile(
                   leading: const Icon(Icons.location_on_outlined),
                   title: const Text('Localização'),
-                  subtitle: const Text('Em breve'),
-                  enabled: false,
+                  subtitle: const Text('Demonstração — Volta Redonda'),
+                  onTap: () =>
+                      Navigator.pop(context, ChatAttachmentKind.location),
                 ),
                 ListTile(
                   leading: const Icon(Icons.mic_none_rounded),
                   title: const Text('Áudio'),
-                  subtitle: const Text('Em breve'),
-                  enabled: false,
+                  subtitle: const Text('Demonstração — gravação curta'),
+                  onTap: () => Navigator.pop(context, ChatAttachmentKind.audio),
                 ),
               ],
             ),
@@ -143,8 +143,24 @@ class ChatComposer extends StatelessWidget {
         );
       },
     );
-    if (kind != null) onPickAttachment?.call(kind);
+    if (kind == null || !context.mounted) return;
+    onPickAttachment?.call(kind);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Anexo de demonstração (${_labelOf(kind)}) adicionado à mensagem.',
+        ),
+      ),
+    );
   }
+
+  String _labelOf(ChatAttachmentKind kind) => switch (kind) {
+    ChatAttachmentKind.none => 'anexo',
+    ChatAttachmentKind.image => 'imagem',
+    ChatAttachmentKind.document => 'documento',
+    ChatAttachmentKind.location => 'localização',
+    ChatAttachmentKind.audio => 'áudio',
+  };
 }
 
 class _AttachButton extends StatelessWidget {
@@ -160,6 +176,10 @@ class _AttachButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(onPressed: onPressed, tooltip: tooltip, icon: Icon(icon));
+    return IconButton(
+      onPressed: onPressed,
+      tooltip: tooltip,
+      icon: Icon(icon),
+    );
   }
 }

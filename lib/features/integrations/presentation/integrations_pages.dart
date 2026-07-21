@@ -278,7 +278,7 @@ class IntegrationsHubPage extends StatelessWidget {
               const SoftNotice(
                 message:
                     'Namespace /v1/integrations/* sincronizado com a VPS. '
-                    'Chip Ativo = contrato publicado; Em preparação = ainda 404 '
+                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo '
                     '(pesquisa e filtros).',
               ),
               const SizedBox(height: 12),

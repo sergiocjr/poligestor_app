@@ -18,7 +18,7 @@ void main() {
 
     test('contract chip', () {
       expect(uiContractChip(available: true), 'Ativo');
-      expect(uiContractChip(available: false), 'Em preparação');
+      expect(uiContractChip(available: false), 'Demonstração');
     });
   });
 }

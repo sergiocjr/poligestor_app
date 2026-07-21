@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
+import '../../../shared/demo/demo_banner.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
@@ -204,6 +206,11 @@ class _AgendaPageState extends State<AgendaPage>
               }
             }
 
+            final showDemo = items.any(
+              (e) => DemoRepositorySupport.isDemoId(e.id),
+            );
+            final bannerOffset = showDemo ? 1 : 0;
+
             String? lastDayKey;
             return ListView.builder(
               controller: _scrollController,
@@ -211,22 +218,26 @@ class _AgendaPageState extends State<AgendaPage>
                 parent: BouncingScrollPhysics(),
               ),
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-              itemCount: items.length,
+              itemCount: items.length + bannerOffset,
               itemBuilder: (context, index) {
-                final e = items[index];
+                if (showDemo && index == 0) {
+                  return const DemoDataBanner(compact: true);
+                }
+                final itemIndex = index - bannerOffset;
+                final e = items[itemIndex];
                 final dayKey = e.startsAt == null
                     ? 'Sem data'
                     : dayFmt.format(e.startsAt!.toLocal());
                 final showHeader = dayKey != lastDayKey;
                 lastDayKey = dayKey;
-                final highlighted = focusIndex == index;
+                final highlighted = focusIndex == itemIndex;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (showHeader)
                       Padding(
-                        padding: EdgeInsets.fromLTRB(4, index == 0 ? 4 : 16, 4, 8),
+                        padding: EdgeInsets.fromLTRB(4, itemIndex == 0 ? 4 : 16, 4, 8),
                         child: Text(
                           dayKey,
                           maxLines: 1,

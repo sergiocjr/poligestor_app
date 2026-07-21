@@ -5,7 +5,17 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
+Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
+
+---
+
+## Auditoria UX (experiência do usuário)
+
+| Campo | Valor |
+|-------|--------|
+| Doc | [AUDITORIA_UX_EXPERIENCIA.md](AUDITORIA_UX_EXPERIENCIA.md) |
+| Política | Dados de demonstração rotulados até sincronização real |
+| Versão | **1.0.0+3** |
 
 ---
 
@@ -49,8 +59,8 @@ Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Auditoria Final Fases 1–24** |
-| Status formal | **Auditoria concluída** — sync dashboard LIVE Fases 15–21 |
+| Fase | **Auditoria UX — experiência 100% pronta** |
+| Status formal | **Concluída** — demo rotulada em todos os domínios preparados |
 | Hub | Mais → Notícias regionais (`/home/news`) + card no Gabinete |
 | Namespace oficial | `/api/v1/news/*` |
 | Doc da fase | [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md) |
@@ -67,7 +77,7 @@ Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
 | Branch | `master` |
 | Último commit | `9d51d25` — auditoria final Fases 1–24 |
 | Tag restauração | `v1.0-final-pre-auditoria` → commit `a20587f` |
-| Versão APK / Web | **1.0.0+2** |
+| Versão APK / Web | **1.0.0+3** |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 

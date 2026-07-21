@@ -1,8 +1,10 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Auditoria Final Fases 1–24)
+Atualizado: 2026-07-20 (Auditoria UX)
 
 ## Resumo
+
+> **Experiência do usuário:** demonstração rotulada substitui estados “em preparação”. Ver [AUDITORIA_UX_EXPERIENCIA.md](AUDITORIA_UX_EXPERIENCIA.md).
 
 | Área | Status |
 |------|--------|

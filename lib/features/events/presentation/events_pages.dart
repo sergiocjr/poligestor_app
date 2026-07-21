@@ -1071,7 +1071,7 @@ class _EventsSearchPageState extends State<EventsSearchPage>
               ),
               const SizedBox(height: 8),
               Text(
-                'Busca local sobre /v1/events. Endpoint dedicado /v1/events/search ainda em preparação.',
+                'Busca local nos eventos ativos. Resultados ilustrativos quando necessário.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
               const SizedBox(height: 12),

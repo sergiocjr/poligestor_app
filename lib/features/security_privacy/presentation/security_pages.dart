@@ -254,7 +254,7 @@ class SecurityHubPage extends StatelessWidget {
               const SoftNotice(
                 message:
                     'Namespace /v1/security/* sincronizado. Chip Ativo = contrato '
-                    'publicado; Em preparação = ainda 404 na VPS. Sessões em '
+                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. Sessões em '
                     '/account/sessions permanecem inalteradas.',
               ),
               const SizedBox(height: 12),

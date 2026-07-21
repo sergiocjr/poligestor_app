@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../identity/data/identity_models.dart';
@@ -44,12 +45,23 @@ class TerritorialIntelligenceRepository {
         mode: _staff,
         parse: (raw) => raw,
       );
-      final root = _rootOf(envelope.data, envelope.meta);
+      final root = DemoRepositorySupport.coerceRoot(
+        path,
+        _rootOf(envelope.data, envelope.meta),
+      );
       await _cache.putMap(tenantSlug, cacheKey, root);
-      return parse(root, fromCache: false, age: null);
+      return parse(
+        root,
+        fromCache: false,
+        age: DemoRepositorySupport.ageForRoot(root),
+      );
     } on ApiException catch (e) {
       if (_pending(e.statusCode)) {
-        throw EndpointUnavailableException(path, statusCode: e.statusCode);
+        return parse(
+          DemoRepositorySupport.rootFor(path),
+          fromCache: false,
+          age: DemoRepositorySupport.ageLabel,
+        );
       }
       if (allowCache) {
         final cached = await _cache.getMap(tenantSlug, cacheKey);

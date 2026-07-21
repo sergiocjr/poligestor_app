@@ -250,7 +250,7 @@ class AdminHubPage extends StatelessWidget {
               SoftNotice(
                 message:
                     'Namespace /v1/admin/* sincronizado. Chip Ativo = '
-                    'contrato publicado; Em preparação = ainda 404 na VPS.',
+                    'contrato Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
               GridView.builder(

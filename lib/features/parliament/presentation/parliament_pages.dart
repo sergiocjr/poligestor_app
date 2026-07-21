@@ -848,7 +848,7 @@ class _ParliamentSearchPageState extends State<ParliamentSearchPage> {
             const SizedBox(height: 8),
             if (_serverPendingPath != null)
               Text(
-                'Pesquisa dedicada pendente ($_serverPendingPath). Exibindo busca local nas listas ativas.',
+                'Busca local nas listas ativas. Exemplos marcados como dados de demonstração.',
                 style: Theme.of(context).textTheme.bodySmall,
               ),
             const SizedBox(height: 8),

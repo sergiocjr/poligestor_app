@@ -1,4 +1,5 @@
 import '../../../core/api/api_client.dart';
+import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../identity/data/identity_models.dart';
@@ -145,7 +146,7 @@ class AutomationRepository {
       await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
     } on ApiException catch (e) {
       if (_pending(e.statusCode)) {
-        throw EndpointUnavailableException(path, statusCode: e.statusCode);
+        return;
       }
       rethrow;
     }
