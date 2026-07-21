@@ -1,54 +1,76 @@
-# Notas de versão — PoliGestor / MandatoOS 1.0.0
+# Notas de versão — PoliGestor / MandatoOS 1.0.0+6
 
-**Versão:** `1.0.0+2`  
-**Data:** 2026-07-20  
-**Fase:** 23 — Homologação Final  
+**Versão:** `1.0.0+6`  
+**Data:** 2026-07-21  
+**Commit:** `a528f15`  
+**Catálogo backend:** c29c2ad  
 
 ## Resumo
 
-Primeira versão de produção do aplicativo Flutter PoliGestor/MandatoOS, com operação em campo (staff/gabinete) e portal do cidadão, consumindo exclusivamente a API LIVE `https://poligestor.onnexis.com.br/api`.
+Sincronização definitiva do aplicativo Flutter com o catálogo LIVE publicado na VPS. **Todos os cards de hub exibem “Ativo”** e consomem a API real — sem telas “Em preparação”, “Demonstração” ou mensagens “aguardando contrato na VPS”.
 
-## Destaques
+## Destaques desta versão
 
-- Autenticação dual (staff / portal) com tokens em armazenamento seguro
-- Portal do cidadão: protocolos, conversa, anexos, notificações, perfil
-- Gabinete: mandato, inteligência, equipe virtual, automação, estratégia, parlamento, obras, convênios, eventos
-- Módulos institucionais: documentos, finanças, comunicação, CRM, gestão eleitoral, IA avançada
-- Administração do sistema, portal administrativo Web, segurança/privacidade, central de integrações
-- Push (Firebase), realtime (Reverb), deep links `poligestor://…`
-- Cache offline por módulo, estados de carregamento/vazio/erro e `EndpointPendingState` onde o contrato ainda não foi publicado
-- UI 100% Português do Brasil, Material 3, responsiva (A10 e Web)
+### Sincronização LIVE (c29c2ad)
 
-## Correções da homologação (Fase 23)
+- Namespace **Automação** migrado para `/v1/automation/*` (singular)
+- Remapeamento de paths em Financeiro, CRM, Admin, Plataforma, Segurança, Eventos, Parlamento, Estratégia, Obras, Convênios, IA e Inteligência Territorial
+- **15** arquivos de contratos `*_contracts.dart` + automação
+- `/v1/events/viewer` permanece **proibido**
 
-- Correção de layout em `MandateIndicatorCard` (flex com altura ilimitada)
-- Auditoria PT-BR (Baixar/Enviar, Lista de verificação, Versões, Indicadores, etc.)
-- Remoção de código morto (`citizen_chat_page`, `LoadingView`, `ErrorView`)
-- Anexos “Em breve” do assistente desabilitados (sem ação enganosa)
-- Altura de cards de hub aumentada em telas estreitas (A10)
-- Build number `+2` para o pacote de homologação
+### Experiência do usuário
 
-## Pendências conhecidas (não bloqueiam 1.0)
+- Chip de contrato: sempre **Ativo**
+- Remoção de avisos “Demonstração / contrato publicado” nos hubs
+- Listas LIVE vazias: estado vazio honesto (sem dados fictícios automáticos)
+- Erro de sessão (401): mensagem clara para novo login
+- Telas de módulos sem painel “aguardando VPS”
 
-Contratos ainda em preparação (404) em partes de: segurança (`/v1/security/*`), admin (`/v1/admin/*`), platform (`/v1/platform/*`), comunicação institucional, CRM, inteligência territorial (parcial), integrações (`search`/`filters`), e demais chips **Em preparação** documentados por fase.
+### Módulos com consumo LIVE ampliado
+
+- Automação (dashboard, regras, execuções, aprovações, alertas, métricas, agendas, agentes)
+- Gestão Financeira, CRM, Eleições, Documentos, Comunicação Institucional
+- Administração, Plataforma, Segurança, Integrações
+- Eventos, Obras, Convênios, Parlamento, Estratégia, IA Avançada, Inteligência Territorial, Notícias
+
+## Dados de demonstração
+
+| Situação | Comportamento |
+|----------|---------------|
+| API retorna lista vazia | Tela vazia (“Nenhum registro encontrado”) |
+| API marca `meta.demo=true` | Rótulo “Dados de referência” |
+| Portal cidadão (bairro) | Conteúdo ilustrativo local em telas específicas |
+
+## Pendências conhecidas
+
+1. Validação visual completa no Samsung Galaxy A10 (todos os hubs).
+2. Suíte completa `flutter test` (~348) após bump +6.
+3. Build Web release `1.0.0+6`.
+4. Alguns cards de hub usam **alias** para endpoint agregado do catálogo (ex.: vários cards CRM → `/contacts`).
+5. Escrita de autonomia na automação (`autonomy-write`) sem POST publicado.
+6. OAuth nativo register/forgot (backend Sprint 10.2).
+7. Aceite produção / publicação em loja.
 
 ## Validação
 
 | Item | Resultado |
 |------|-----------|
-| `flutter analyze` | Sem erros/warnings (apenas infos de estilo) |
-| `flutter test` | 333/333 |
-| APK release | OK |
-| Web release | OK |
-| Samsung Galaxy A10 `RX8M70CLXKP` | OK |
+| Testes de contrato (fases 11–22 + sprints) | **142/142** |
+| `flutter analyze` (escopo alterado) | Sem erros |
+| APK debug A10 `RX8M70CLXKP` | Instalado + aberto |
+| Probe VPS (paths críticos) | HTTP 200 |
 | Emulador | Não utilizado |
 
 ## Instalação
 
-- Android: APK release gerado em `build/app/outputs/flutter-apk/`
-- Web: artefatos em `build/web/`
-- Dispositivo oficial de QA: SM-A105M via USB ADB
+- Android: `build/app/outputs/flutter-apk/app-debug.apk` (debug validado) / release pendente
+- Web: artefatos em `build/web/` (rebuild pendente para +6)
+- Dispositivo oficial de QA: SM-A105M via USB ADB (`RX8M70CLXKP`)
 
-## Contato / continuidade
+## Continuidade
 
-Ver `docs/CONTINUAR_PROJETO.md`, `docs/STATUS_PROJETO.md` e `docs/CHECKLIST_HOMOLOGACAO.md`.
+Leia **obrigatoriamente** antes de qualquer implementação:
+
+1. `docs/CONTINUAR_PROJETO.md`
+2. `docs/STATUS_PROJETO.md`
+3. `docs/CHANGELOG.md`

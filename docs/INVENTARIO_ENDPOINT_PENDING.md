@@ -1,56 +1,68 @@
-# Inventário de contratos — sync final Flutter (2026-07-21)
+# Inventário de contratos — sync Flutter × VPS (2026-07-21)
 
-Probe autenticado: `admin@demo.local` · tenant `demo` · artefato `.tmp_probe/probe_get_final.csv`.
+Catálogo oficial: backend **c29c2ad** · commit Flutter **`a528f15`** · versão **1.0.0+6**.
 
 | Métrica | Valor |
 |---------|-------|
-| Paths sondados | 502 |
-| HTTP 200 | 239 |
-| HTTP 404 | 221 |
-| HTTP 405 | 29 |
-| HTTP 403 | 11 |
-| HTTP 422 | 2 |
-| HTTP 500 | **0** |
-| `EndpointPendingState` no código | **0** (substituído por `DemoExperiencePane`) |
+| `EndpointPendingState` no código | **0** |
+| `/v1/events/viewer` | **não consumido** |
+| Chips hub “Demonstração” / “Em preparação” | **0** |
+| Injeção demo em lista LIVE vazia | **desligada** |
+| Namespace automação Flutter | `/v1/automation/*` (singular) |
 
 ## Critério de conclusão do sistema
 
 | Critério | Status |
 |----------|--------|
 | Zero `EndpointPendingState` | **OK** |
-| Zero HTTP 500 nos contratos sondados | **OK** |
-| Zero consumo de `/v1/events/viewer` | **OK** (ausente em `lib/`; probe = 404) |
-| Contratos LIVE (HTTP 200) consumidos via `k*LiveSlugs` | **OK** |
-| Paths 404 restantes | Demonstração local **sem** HTTP (gate `*PathLive`) — **não** CONCLUÍDO global enquanto restarem 404 na VPS (ex.: `/v1/automations/*`) |
+| Zero consumo de `/v1/events/viewer` | **OK** |
+| Hubs sem UX “aguardando VPS” | **OK** (2026-07-21) |
+| AuthMode alinhado ao catálogo c29c2ad | **OK** |
+| Validação visual A10 de todos os hubs | **Pendente** |
+| Aceite formal Fases 11–21, 24 | **Pendente** |
 
-**Status formal:** sincronização Flutter **concluída** para contratos prioritários LIVE; sistema geral **EM ANDAMENTO** enquanto a VPS mantiver namespaces 404 (automações e subpaths).
+**Status formal:** sincronização Flutter **concluída** para catálogo c29c2ad; produto **EM ANDAMENTO** até homologação visual completa e publicação loja.
+
+## LiveSlugs por módulo (pós-sync)
+
+| Módulo | Slugs LIVE | Observação |
+|--------|----------:|------------|
+| Automação | 19 | `/v1/automation/dashboard` 200; `autonomy-write` sem POST |
+| Admin | 35 | `offices` → `/cabinets` |
+| Plataforma | 34 | `operators`, `usage`, `settings/global` |
+| Segurança | 44 | `mfa` unificado; `export-me`, `policies` |
+| CRM | 38 | vários cards → `/contacts` |
+| Eleições | 48 | zones, sections, polling-places, vendors |
+| Financeiro | 31 | payees, budgets, audit |
+| Documentos | 29 | files, tags, tipos oficiais |
+| Inteligência | 26 | heatmaps, maps, *-by-region |
+| IA avançada | 31 | `/ai/dashboard` (não `/ai/hub/dashboard`) |
+| Integrações | 30 | search/filters marcados LIVE |
+| Eventos | 22 | hearings, invitations, statistics |
+| Comunicação | 16 | schedules, audit |
+| Obras | 13 | lista raiz `/v1/works` |
+| Notícias | 12 | recent/feed com fallback local se 404 |
+
+## Aliases AuthMode (UI slug → path VPS)
+
+Exemplos validados com HTTP 200:
+
+- `financeSuppliersPath` → `/v1/finance/payees`
+- `parliamentPromisesPath` → `/v1/parliament/campaign-promises`
+- `automationsRootPath` → `/v1/automation/rules`
+- `advancedAiDashboardPath` → `/v1/ai/dashboard`
+- `eventsListPath` → `/v1/events/events`
+
+Lista completa: `lib/core/auth/auth_mode.dart`.
+
+## Dados de demonstração
+
+- **Não** preenche listas LIVE vazias.
+- API com `meta.demo=true` → rótulo “Dados de referência”.
+- Módulo `lib/shared/demo/*` mantido para compatibilidade; UX principal não exibe “aguardando contrato”.
 
 ## Exclusão explícita
 
-| Método | Endpoint | HTTP | Ação Flutter |
-|--------|----------|------|--------------|
-| GET | `/v1/events/viewer` | 404 | **Não consumir** (colisão/rota indevida) |
-
-## LiveSlugs (probe final)
-
-| Módulo | LIVE | Observação |
-|--------|-----:|------------|
-| Works | 10 | Novo `works_contracts.dart` |
-| Events | 11 | Sem `list` root; sem `viewer` |
-| Documents | 4 | list/favorites/templates/search |
-| Finance | 9 | |
-| Communication | 5 | |
-| CRM | 16 | |
-| Elections | 14 | |
-| Advanced AI | 13 | +405 POST-only |
-| Admin | 19 | |
-| Platform | 23 | |
-| Security | 6 | |
-| Integrations | 25 | |
-| News | 6 | |
-| Territorial | 7 | |
-| Automations | 0 | Tudo 404 — demo sem HTTP |
-
-## SoftNotice / UX
-
-Namespaces `/v1/...` removidos dos SoftNotice dos hubs. Cards abrem telas (`onTap` / rotas). Telas 404 usam `DemoExperiencePane` (nunca brancas).
+| Endpoint | Ação Flutter |
+|----------|--------------|
+| `GET /v1/events/viewer` | **Proibido** |

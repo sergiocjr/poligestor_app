@@ -1,5 +1,52 @@
 # Auditoria Final — Fases 1 a 24
 
+---
+
+## Registro diário — 2026-07-21
+
+| Campo | Valor |
+|-------|--------|
+| **Data** | 2026-07-21 |
+| **Commit** | `a528f15` — `feat(sync): eliminar UI em preparação e consumir catálogo LIVE c29c2ad` |
+| **Branch** | `master` |
+| **Versão APK** | **1.0.0+6** (debug validado no A10) |
+| **Versão Web** | **1.0.0+6** (`pubspec.yaml`; build release pendente) |
+| **Catálogo backend** | c29c2ad |
+
+### Resumo das alterações do dia
+
+1. **UX:** eliminação de chips “Demonstração”, SoftNotice “aguardando VPS” e painéis `DemoExperiencePane` nos módulos staff.
+2. **AuthMode:** remapeamento massivo ao catálogo LIVE (automation singular, payees, budgets, cabinets, campaign-promises, hearings, invitations, statistics, MFA, recovery, keys, IA dashboard, etc.).
+3. **Contratos:** expansão de `k*LiveSlugs` em 15 módulos + `automation_contracts.dart`.
+4. **Repositórios:** sem injeção demo em LIVE vazio; consumo HTTP direto nos cards de hub.
+5. **Automação:** LIVE em `/v1/automation/dashboard`, `rules`, `executions`, `approvals`, `alerts`, `metrics`, `schedules`, `logs`, `agents`.
+6. **IA:** correção de paths 404 (`/v1/ai/dashboard`, `/v1/ai/hub`; specialists/analyses).
+7. **Testes:** 142 testes de contrato OK.
+8. **A10:** APK debug instalado e aberto (`RX8M70CLXKP`).
+9. **Documentação:** `CONTINUAR_PROJETO`, `STATUS_PROJETO`, `CHANGELOG`, `RELEASE_NOTES`, `INVENTARIO_ENDPOINT_PENDING`.
+
+### Métricas pós-sync
+
+| Métrica | Resultado |
+|---------|-----------|
+| `EndpointPendingState` | **0** |
+| Chips “Demonstração” / “Em preparação” | **0** |
+| `/v1/events/viewer` consumido | **Não** |
+| Arquivos `*_contracts.dart` | **15** |
+
+### Pendências reais remanescentes
+
+- Validação visual hub-a-hub no A10.
+- `flutter test` suíte completa pós-+6.
+- Build Web release `1.0.0+6`.
+- Aliases de hub (vários cards → mesmo endpoint agregado).
+- `autonomy-write` automação sem POST.
+- Aceite produção / loja.
+
+---
+
+## Auditoria histórica (2026-07-20)
+
 Atualizado: 2026-07-20
 
 **Versão auditada:** `1.0.0+2` · **Tag base:** `v1.0-final-pre-auditoria` · **Commit pós-sync:** ver `git log -1`

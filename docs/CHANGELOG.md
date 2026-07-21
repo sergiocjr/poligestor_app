@@ -1,5 +1,29 @@
 # Changelog — PoliGestor Flutter
 
+## [1.0.0+6 — Sync catálogo LIVE c29c2ad] — 2026-07-21
+
+### Added
+
+- `automation_contracts.dart` — slugs LIVE `/v1/automation/*`
+- Documentação atualizada: `CONTINUAR_PROJETO`, `STATUS_PROJETO`, `RELEASE_NOTES`, `AUDITORIA_FINAL`, `INVENTARIO_ENDPOINT_PENDING`
+
+### Changed
+
+- **Eliminação de UX em preparação:** chips sempre **Ativo**; remoção de SoftNotice “Demonstração / aguardando VPS”
+- `AuthMode` remapeado ao catálogo backend **c29c2ad** (automation singular, payees, budgets, cabinets, campaign-promises, hearings, invitations, statistics, MFA, recovery, keys, IA dashboard, etc.)
+- `k*LiveSlugs` expandidos em **15** módulos — todos os cards de hub consumindo API
+- `coerceRoot`: **não** injeta dados fictícios em respostas LIVE vazias
+- Repositórios: remoção de gates HTTP em paths fora do catálogo; telas com `AppEmptyState` / `AppErrorState`
+- Automação, Parlamento (promessas), Estratégia (comparativos), Eventos (agenda/calendário): rotas LIVE
+- Mensagem 401: “Sessão expirada. Entre novamente.”
+- Versão **1.0.0+6**
+
+### Validation
+
+- Testes de contrato: **142** OK
+- APK debug A10 `RX8M70CLXKP`: install + launch
+- Probe VPS paths críticos: HTTP 200
+
 ## [Sync final Flutter × VPS prioritária] — 2026-07-21
 
 ### Added

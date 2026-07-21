@@ -1,11 +1,11 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-21 (Sync final Flutter × VPS)
+Atualizado: **2026-07-21** (sync catálogo LIVE c29c2ad · versão **1.0.0+6**)
 
 ## Resumo
 
-> **Sync VPS prioritária:** 239×HTTP 200 · **0×500** · `EndpointPendingState` **0** · `/v1/events/viewer` **não consumido**.  
-> Sistema **EM ANDAMENTO** enquanto restarem 404 na VPS (ex.: automations). Ver [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md).
+> **Sync VPS c29c2ad:** hubs sem “Demonstração” / “Em preparação” · `EndpointPendingState` **0** · `/v1/events/viewer` **não consumido** · automação **`/v1/automation/*`**.  
+> Sistema **EM ANDAMENTO** — homologação visual A10 completa e aceite loja pendentes. Ver [CONTINUAR_PROJETO.md](CONTINUAR_PROJETO.md).
 
 | Área | Status |
 |------|--------|
@@ -19,38 +19,42 @@ Atualizado: 2026-07-21 (Sync final Flutter × VPS)
 | Sprint 10.1 — Equipe Virtual | CONCLUÍDA (Final) |
 | Sprint 10.2 — Identidade / Auth / Multi-tenant | **FECHADA** |
 | Sprint 10.4 — Central de Comunicação | **CONCLUÍDA** |
-| Sprint 10.5 — Assistente Inteligente | **CONCLUÍDA** |
-| Sprint 10.6 — Automação Inteligente | **EM ANDAMENTO** (`/v1/automations*` 404 → demo sem HTTP) |
-| Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** (dashboard/goals LIVE) |
-| Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** (12 LIVE) |
-| Sprint 10.9 — Painel Obras | **CONCLUÍDA** (10 LIVE) |
-| Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** (8 LIVE grants) |
-| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (11 LIVE; viewer **não usado**) |
-| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 LIVE) |
-| **Fase 13 — Gestão Documental** | **CONCLUÍDA** (4 LIVE estáveis) |
-| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (9 LIVE) |
-| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (5 LIVE) |
-| **Fase 16 — CRM Político** | **EM ANDAMENTO** (16 LIVE) |
-| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (14 LIVE) |
-| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (13 LIVE) |
-| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (19 LIVE) |
-| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (23 LIVE) |
-| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (6 LIVE) |
-| **Fase 22 — Integrações** | **CONCLUÍDA** (25 LIVE) |
-| **Fase 23 — Homologação Final** | **CONCLUÍDA** (versão **1.0.0+5**) |
-| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** (6 LIVE) |
+| Sprint 10.5 — Assistente Inteligente | **CONCLUÍDA** (Flutter LIVE; mandate/ai legado mapeado) |
+| Sprint 10.6 — Automação Inteligente | **EM ANDAMENTO** formal · Flutter **LIVE** `/v1/automation/*` |
+| Sprint 10.7 — Painel Estratégico | **EM ANDAMENTO** formal · comparativos LIVE |
+| Sprint 10.8 — Painel Parlamentar | **EM ANDAMENTO** formal · promessas LIVE |
+| Sprint 10.9 — Painel Obras | **EM ANDAMENTO** formal · **13 LIVE** |
+| Sprint 11.0 — Painel de Convênios | **EM ANDAMENTO** formal · grants LIVE |
+| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** formal · **22 LIVE** |
+| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** formal · **26 LIVE** |
+| **Fase 13 — Gestão Documental** | **EM ANDAMENTO** formal · **29 LIVE** |
+| **Fase 14 — Gestão Financeira** | **EM ANDAMENTO** formal · **31 LIVE** |
+| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** formal · **16 LIVE** |
+| **Fase 16 — CRM Político** | **EM ANDAMENTO** formal · **38 LIVE** |
+| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** formal · **48 LIVE** |
+| **Fase 18 — IA Avançada** | **EM ANDAMENTO** formal · **31 LIVE** |
+| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** formal · **35 LIVE** |
+| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** formal · **34 LIVE** |
+| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** formal · **44 LIVE** |
+| **Fase 22 — Integrações** | **CONCLUÍDA** · **30 LIVE** |
+| **Fase 23 — Homologação Final** | **CONCLUÍDA** (processo 1.0) |
+| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** formal · **12 LIVE** |
 
-> Auditoria completa: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). Inventário: [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md).
+> Auditoria: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). Inventário: [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md).
 
-## Validação 2026-07-21
+## Validação 2026-07-21 (encerramento do dia)
 
 | Item | Resultado |
 |------|-----------|
-| `flutter analyze` | 0 erros |
-| `flutter test` | 348 OK |
-| APK / Web | OK |
-| A10 `RX8M70CLXKP` | Install + launch + org/login (sem “Em preparação”) |
+| Commit | `a528f15` — sync catálogo LIVE c29c2ad |
+| Versão | **1.0.0+6** |
+| `flutter analyze` (arquivos tocados) | 0 erros |
+| Testes de contrato (fases 11–22 + sprints) | **142** OK |
+| `flutter test` suíte completa | Pendente reexecução pós-+6 |
+| APK debug A10 `RX8M70CLXKP` | Instalado + launch OK |
+| Web release `1.0.0+6` | Pendente build |
 | Emulador | Nenhum |
+| UX hubs | Sem chip “Demonstração” / “Em preparação” |
 
 ## Fase 17 — Gestão Eleitoral
 
