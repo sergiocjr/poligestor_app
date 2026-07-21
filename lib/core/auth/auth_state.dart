@@ -10,6 +10,7 @@ class AuthUser {
     this.district,
     this.city,
     this.document,
+    this.phone,
     this.raw,
   });
 
@@ -21,6 +22,7 @@ class AuthUser {
   final String? district;
   final String? city;
   final String? document;
+  final String? phone;
   final Map<String, dynamic>? raw;
 
   String get firstName {
@@ -80,6 +82,11 @@ class AuthUser {
       district: address?['district']?.toString(),
       city: address?['city']?.toString(),
       document: (person?['document'] ?? json['document'])?.toString(),
+      phone: (json['phone'] ??
+              person?['phone'] ??
+              json['telefone'] ??
+              json['mobile'])
+          ?.toString(),
       raw: json,
     );
   }

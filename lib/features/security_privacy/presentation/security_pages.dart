@@ -7,6 +7,7 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -263,7 +264,7 @@ class SecurityHubPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: cross == 1 ? 104 : 112,
+                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -301,16 +302,17 @@ class SecurityHubPage extends StatelessWidget {
                                 children: [
                                   Text(
                                     e.title,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                    softWrap: true,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
+                                      height: 1.2,
                                     ),
                                   ),
                                   Text(
                                     e.subtitle,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                    softWrap: true,
                                     style: Theme.of(
                                       context,
                                     ).textTheme.bodySmall,

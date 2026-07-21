@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/api/api_exception.dart';
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../data/mandate_models.dart';
 import '../data/mandate_repository.dart';
@@ -191,8 +192,7 @@ class _MandateOverviewPageState extends State<MandateOverviewPage> {
                           ),
                           MandateIndicatorCard(
                             label: 'Tempo médio',
-                            value:
-                                '${d.avgResolutionHours.toStringAsFixed(1)} h',
+                            value: pgFormatResolutionHours(d.avgResolutionHours),
                             hint: 'Prazo de atendimento',
                             icon: Icons.timer_outlined,
                           ),

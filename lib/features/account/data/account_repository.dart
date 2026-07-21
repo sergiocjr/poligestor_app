@@ -16,7 +16,51 @@ class AccountRepository {
       mode: mode,
       parse: (raw) => raw,
     );
-    return idAsMapList(envelope.data).map(AuthSessionInfo.fromJson).toList();
+    final parsed =
+        idAsMapList(envelope.data).map(AuthSessionInfo.fromJson).toList();
+    final byId = <String, AuthSessionInfo>{};
+    for (final s in parsed) {
+      final key = s.sessionId.isNotEmpty
+          ? s.sessionId
+          : '${s.deviceName}|${s.ip ?? ''}|${s.platform ?? ''}';
+      final prev = byId[key];
+      if (prev == null) {
+        byId[key] = s;
+        continue;
+      }
+      final prevAt = prev.lastUsedAt ?? prev.createdAt;
+      final curAt = s.lastUsedAt ?? s.createdAt;
+      if (prevAt == null || (curAt != null && curAt.isAfter(prevAt))) {
+        byId[key] = s;
+      }
+    }
+    final items = byId.values.toList()
+      ..sort((a, b) {
+        final aa = a.lastUsedAt ?? a.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        final bb = b.lastUsedAt ?? b.createdAt ?? DateTime.fromMillisecondsSinceEpoch(0);
+        return bb.compareTo(aa);
+      });
+    return items;
+  }
+
+  /// LIVE: `GET /v1/auth/profile` (staff) / portal espelho.
+  Future<Map<String, dynamic>> getProfile({required AuthMode mode}) async {
+    try {
+      final envelope = await _api.getEnvelope<Map<String, dynamic>>(
+        mode.profilePath,
+        mode: mode,
+        parse: idAsMap,
+      );
+      return envelope.data;
+    } on ApiException catch (e) {
+      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 500) {
+        throw EndpointUnavailableException(
+          mode.profilePath,
+          statusCode: e.statusCode,
+        );
+      }
+      rethrow;
+    }
   }
 
   /// LIVE: `DELETE /v1/auth/sessions/{id}`

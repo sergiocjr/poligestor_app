@@ -108,7 +108,7 @@ class SmartAssistantHubPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: cross,
-              mainAxisExtent: 108,
+              mainAxisExtent: 124,
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),

@@ -43,6 +43,17 @@ class _ProtocolDetailPageState extends State<ProtocolDetailPage> {
     await next;
   }
 
+  String? _originLabel(ProtocolDetail p) {
+    final raw = p.raw;
+    final value = raw?['origin'] ??
+        raw?['source'] ??
+        raw?['channel'] ??
+        raw?['origem'] ??
+        raw?['canal'];
+    final text = value?.toString().trim();
+    return (text == null || text.isEmpty) ? null : text;
+  }
+
   Future<void> _openAttachment(ProtocolAttachment a) async {
     final raw = a.url?.trim();
     if (raw == null || raw.isEmpty) {
@@ -163,6 +174,32 @@ class _ProtocolDetailPageState extends State<ProtocolDetailPage> {
                     'Responsável: ${p.publicAssignee}',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (p.category != null && p.category!.trim().isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  SectionHeader(title: 'Classificação'),
+                  const SizedBox(height: 8),
+                  Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.category_outlined),
+                      title: const Text('Categoria'),
+                      subtitle: Text(p.category!, maxLines: 3, softWrap: true),
+                    ),
+                  ),
+                ],
+                if (_originLabel(p) != null) ...[
+                  Card(
+                    margin: const EdgeInsets.only(top: 8),
+                    child: ListTile(
+                      leading: const Icon(Icons.source_outlined),
+                      title: const Text('Origem'),
+                      subtitle: Text(
+                        _originLabel(p)!,
+                        maxLines: 3,
+                        softWrap: true,
+                      ),
                     ),
                   ),
                 ],

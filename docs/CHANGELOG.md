@@ -1,5 +1,25 @@
 # Changelog — PoliGestor Flutter
 
+## [Auditoria RC Mobile — Release Candidate] — 2026-07-21
+
+### Added
+
+- `lib/shared/widgets/pg_design_system.dart` — chips, AppBar, busca, hub tile, formatação KPI
+- [AUDITORIA_RC_MOBILE.md](AUDITORIA_RC_MOBILE.md)
+- `test/pg_design_system_test.dart`
+
+### Changed
+
+- Hubs 18 módulos: títulos completos, grid mais alto
+- Perfil: sync `GET /v1/auth/profile`; telefone parseado
+- Sessões: dedupe, ordenação, cards detalhados
+- Protocolo: categoria/origem; KPI mandato sem `0.0 h`
+- Versão **1.0.0+4**
+
+### Validation
+
+- `flutter analyze` 0 erros · `flutter test` 347 OK · APK + Web OK
+
 ## [Auditoria UX — Experiência 100% pronta] — 2026-07-20
 
 ### Added

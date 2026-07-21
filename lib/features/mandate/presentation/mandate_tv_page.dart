@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../data/mandate_models.dart';
 import '../data/mandate_repository.dart';
@@ -102,7 +103,7 @@ class _MandateTvPageState extends State<MandateTvPage> {
             ),
             MandateIndicatorCard(
               label: 'Tempo médio',
-              value: '${k.avgResolutionHours.toStringAsFixed(1)} h',
+              value: pgFormatResolutionHours(k.avgResolutionHours),
               hint: 'Prazo de atendimento',
             ),
           ];

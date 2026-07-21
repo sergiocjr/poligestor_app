@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -143,7 +144,7 @@ class WorksHubPage extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(12, 12, 12, 24),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: cross,
-              mainAxisExtent: cross == 1 ? 104 : 112,
+              mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
               crossAxisSpacing: 10,
               mainAxisSpacing: 10,
             ),

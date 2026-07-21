@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -343,7 +344,7 @@ class PlatformHubPage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: cross,
-                mainAxisExtent: cross == 1 ? 104 : 112,
+                mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),

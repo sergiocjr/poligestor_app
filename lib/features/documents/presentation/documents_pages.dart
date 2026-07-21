@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -168,7 +169,7 @@ class DocumentsHubPage extends StatelessWidget {
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: cross == 1 ? 104 : 112,
+                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -214,8 +215,8 @@ class DocumentsHubPage extends StatelessWidget {
                                   ),
                                   Text(
                                     e.subtitle,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                    softWrap: true,
                                     style: Theme.of(context)
                                         .textTheme
                                         .bodySmall,
@@ -384,7 +385,7 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
     final scheme = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+        title: Text(widget.title, maxLines: 2, softWrap: true),
         actions: [
           IconButton(
             tooltip: 'Atualizar',

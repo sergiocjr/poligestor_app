@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../shared/widgets/pg_design_system.dart';
+
 /// Card compacto de indicador (número + rótulo).
 class MandateIndicatorCard extends StatelessWidget {
   const MandateIndicatorCard({
@@ -43,11 +45,12 @@ class MandateIndicatorCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                      softWrap: true,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: scheme.onSurfaceVariant,
                         fontWeight: FontWeight.w600,
+                        height: 1.2,
                       ),
                     ),
                   ),
@@ -75,22 +78,16 @@ class MandateIndicatorCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   hint!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                  softWrap: true,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: scheme.onSurfaceVariant,
+                    height: 1.2,
                   ),
                 ),
               ] else if (!actionable) ...[
                 const SizedBox(height: 2),
-                Text(
-                  'Informativo',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: scheme.outline,
-                  ),
-                ),
+                PgStatusChip(label: 'Informativo', tone: PgStatusTone.neutral, compact: true),
               ],
             ],
           ),
