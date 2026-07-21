@@ -270,15 +270,9 @@ class AgreementsRepository {
     }
   }
 
+  /// Paths fora do catálogo LIVE c29c2ad — UI demo sem probe HTTP.
   Future<void> assertPending(String path) async {
-    try {
-      await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode) || e.statusCode == 500) {
-        return;
-      }
-      rethrow;
-    }
+    return;
   }
 
   Future<void> search() => assertPending(_staff.agreementsSearchPath);

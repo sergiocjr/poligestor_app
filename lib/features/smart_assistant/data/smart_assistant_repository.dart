@@ -149,16 +149,12 @@ class SmartAssistantRepository {
     }
   }
 
-  /// Paths ainda sem contrato publicado — UI usa pending após esta chamada.
+  /// Fluxos sem contrato no catálogo LIVE `c29c2ad`.
+  ///
+  /// A UI mantém a experiência demonstrativa sem emitir requests para paths
+  /// ausentes do catálogo oficial.
   Future<void> assertPending(String path) async {
-    try {
-      await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
-    } on ApiException catch (e) {
-      if (_isPending(e.statusCode)) {
-        return;
-      }
-      rethrow;
-    }
+    return;
   }
 
   Future<void> weeklySummary() =>

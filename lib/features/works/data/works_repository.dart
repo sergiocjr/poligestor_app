@@ -44,14 +44,6 @@ class WorksRepository {
     bool allowCache = true,
     String? liveSlug,
   }) async {
-    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
-    if (!worksPathLive(slug)) {
-      return parse(
-        DemoRepositorySupport.rootFor(path),
-        fromCache: false,
-        age: DemoRepositorySupport.ageLabel,
-      );
-    }
     try {
       final envelope = await _api.getEnvelope<dynamic>(
         path,
@@ -118,12 +110,7 @@ class WorksRepository {
   Future<List<WorksItem>> projects({
     required String tenantSlug,
     bool allowCache = true,
-  }) => _list(
-    tenantSlug,
-    'list',
-    _staff.worksListPath,
-    allowCache,
-  );
+  }) => _list(tenantSlug, 'list', _staff.worksListPath, allowCache);
 
   Future<List<WorksItem>> demands({
     required String tenantSlug,
@@ -202,24 +189,25 @@ class WorksRepository {
     }
   }
 
+  /// Paths fora do catálogo LIVE c29c2ad — UI demo sem probe HTTP.
   Future<void> assertPending(String path) async {
-    try {
-      await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode) || e.statusCode == 500) {
-        return;
-      }
-      rethrow;
-    }
+    return;
   }
 
   Future<void> worksMapContract() async {
-    if (!worksPathLive('map')) return;
+    await _api.getEnvelope<dynamic>(
+      _staff.worksMapPath,
+      mode: _staff,
+      parse: (raw) => raw,
+    );
   }
 
   Future<void> search() async {
-    // /v1/works/search permanece 404 — não consumir.
-    return;
+    await _api.getEnvelope<dynamic>(
+      _staff.worksSearchPath,
+      mode: _staff,
+      parse: (raw) => raw,
+    );
   }
 
   /// Mapa territorial — LIVE `/v1/works/map` ou reuse mandato.

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../shared/demo/demo_banner.dart';
 import '../data/mock_news.dart';
 
 class CitizenNewsListPage extends StatelessWidget {
@@ -164,8 +163,6 @@ class CitizenNeighborhoodPage extends StatelessWidget {
                   : null,
             ),
           ),
-          const DemoDataBanner(compact: true),
-          const SizedBox(height: 12),
           Text(
             'Serviços e oportunidades',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(

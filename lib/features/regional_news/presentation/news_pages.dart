@@ -10,9 +10,7 @@ import '../../../core/auth/auth_mode.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../data/news_contracts.dart';
 import '../data/news_models.dart';
 import '../data/news_repository.dart';
@@ -20,8 +18,7 @@ import '../data/news_repository.dart';
 String _tenantOf(BuildContext context) =>
     context.read<TenantController>().organization?.slug ?? 'demo';
 
-AuthMode _modeOf(BuildContext context) =>
-    context.read<AuthController>().mode;
+AuthMode _modeOf(BuildContext context) => context.read<AuthController>().mode;
 
 mixin _NewsRefresh<T extends StatefulWidget> on State<T> {
   MandateRefreshController? _refresh;
@@ -48,9 +45,9 @@ Future<void> openNewsOriginal(BuildContext context, String? url) async {
   }
   final uri = Uri.tryParse(url);
   if (uri == null) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Link inválido.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Link inválido.')));
     return;
   }
   final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -125,9 +122,9 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
                 'Notícias regionais',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800),
               ),
             ),
             TextButton(
@@ -140,9 +137,9 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
           'Atualizações da região e menções',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: scheme.onSurfaceVariant,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 10),
         SizedBox(
@@ -160,8 +157,9 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
                 );
               }
               if (snap.error is EndpointUnavailableException) {
-                final err = snap.error! as EndpointUnavailableException;
-                return DemoExperiencePane(path: err.path);
+                return const AppEmptyState(
+                  message: 'Nenhum registro encontrado.',
+                );
               }
               if (snap.hasError) {
                 return AppErrorState(
@@ -171,9 +169,7 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
               }
               final items = snap.data ?? const <RegionalNewsItem>[];
               if (items.isEmpty) {
-                return const AppEmptyState(
-                  message: 'Nenhuma notícia recente.',
-                );
+                return const AppEmptyState(message: 'Nenhuma notícia recente.');
               }
               return ListView.separated(
                 scrollDirection: Axis.horizontal,
@@ -422,7 +418,7 @@ class _NewsHubPageState extends State<NewsHubPage>
         showDragHandle: true,
         builder: (_) => Padding(
           padding: const EdgeInsets.all(16),
-          child: DemoExperiencePane(path: '/v1/news/filters'),
+          child: const AppEmptyState(message: 'Nenhum registro encontrado.'),
         ),
       );
       return;
@@ -445,7 +441,12 @@ class _NewsHubPageState extends State<NewsHubPage>
                       o.group == null,
                 )
                 .toList();
-            Widget chipRow(String label, List<NewsFilterOption> opts, String? selected, ValueChanged<String?> onPick) {
+            Widget chipRow(
+              String label,
+              List<NewsFilterOption> opts,
+              String? selected,
+              ValueChanged<String?> onPick,
+            ) {
               if (opts.isEmpty) {
                 return Text(
                   '$label: nenhum filtro publicado.',
@@ -455,7 +456,10 @@ class _NewsHubPageState extends State<NewsHubPage>
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  Text(
+                    label,
+                    style: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
                   const SizedBox(height: 6),
                   Wrap(
                     spacing: 8,
@@ -478,6 +482,7 @@ class _NewsHubPageState extends State<NewsHubPage>
                 ],
               );
             }
+
             return SafeArea(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
@@ -493,11 +498,26 @@ class _NewsHubPageState extends State<NewsHubPage>
                     const SizedBox(height: 12),
                     chipRow('Cidade', ofGroup('city'), city, (v) => city = v),
                     const SizedBox(height: 12),
-                    chipRow('Fonte', ofGroup('source'), source, (v) => source = v),
+                    chipRow(
+                      'Fonte',
+                      ofGroup('source'),
+                      source,
+                      (v) => source = v,
+                    ),
                     const SizedBox(height: 12),
-                    chipRow('Período', ofGroup('period'), period, (v) => period = v),
+                    chipRow(
+                      'Período',
+                      ofGroup('period'),
+                      period,
+                      (v) => period = v,
+                    ),
                     const SizedBox(height: 12),
-                    chipRow('Assunto', ofGroup('topic'), topic, (v) => topic = v),
+                    chipRow(
+                      'Assunto',
+                      ofGroup('topic'),
+                      topic,
+                      (v) => topic = v,
+                    ),
                     const SizedBox(height: 16),
                     FilledButton(
                       onPressed: () {
@@ -561,9 +581,7 @@ class _NewsHubPageState extends State<NewsHubPage>
                     if (!newsPathLive('mentions')) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text(
-                            'Busca indisponível no momento.',
-                          ),
+                          content: Text('Busca indisponível no momento.'),
                         ),
                       );
                       return;
@@ -656,11 +674,10 @@ class _NewsListPane extends StatelessWidget {
             );
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
-              children: [
-                DemoExperiencePane(path: err.path),
+              children: const [
+                AppEmptyState(message: 'Nenhum registro encontrado.'),
               ],
             );
           }
@@ -881,8 +898,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
             );
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -895,9 +911,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
             children: [
               if (item.mentionsPolitician)
-                SoftNotice(
-                  message: 'Esta notícia menciona o político.',
-                ),
+                SoftNotice(message: 'Esta notícia menciona o político.'),
               if (item.mentionsPolitician) const SizedBox(height: 10),
               if (item.imageUrl != null)
                 ClipRRect(
@@ -919,9 +933,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
               if (item.imageUrl != null) const SizedBox(height: 12),
               Text(
                 item.title,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 8),
               Text(
@@ -931,9 +945,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
                   if (item.publishedAt != null)
                     dateFmt.format(item.publishedAt!.toLocal()),
                 ].join(' · '),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurfaceVariant,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
               ),
               if (item.summary != null) ...[
                 const SizedBox(height: 14),
@@ -942,9 +956,9 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
               const SizedBox(height: 8),
               Text(
                 'A matéria completa permanece no site de origem.',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: scheme.outline,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.labelMedium?.copyWith(color: scheme.outline),
               ),
               const SizedBox(height: 16),
               FilledButton.icon(

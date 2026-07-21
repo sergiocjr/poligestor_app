@@ -7,12 +7,10 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/security_contracts.dart';
 import '../data/security_models.dart';
@@ -21,8 +19,7 @@ import '../data/security_repository.dart';
 String _tenantOf(BuildContext context) =>
     context.read<TenantController>().organization?.slug ?? 'demo';
 
-AuthMode _modeOf(BuildContext context) =>
-    context.read<AuthController>().mode;
+AuthMode _modeOf(BuildContext context) => context.read<AuthController>().mode;
 
 /// Títulos PT-BR por slug de rota (`/home/security/{slug}`).
 const securitySlugTitles = <String, String>{
@@ -67,13 +64,7 @@ mixin _SecurityRefresh<T extends StatefulWidget> on State<T> {
 }
 
 class _HubEntry {
-  const _HubEntry(
-    this.title,
-    this.subtitle,
-    this.icon,
-    this.slug,
-    this.route,
-  );
+  const _HubEntry(this.title, this.subtitle, this.icon, this.slug, this.route);
   final String title;
   final String subtitle;
   final IconData icon;
@@ -254,19 +245,14 @@ class SecurityHubPage extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              const SoftNotice(
-                message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. Sessões em '
-                    '/account/sessions permanecem inalteradas.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -412,9 +398,9 @@ class _SecurityListPageState extends State<SecurityListPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Referência: ${item.code}'),
@@ -448,14 +434,6 @@ class _SecurityListPageState extends State<SecurityListPage>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final slug = widget.liveSlug;
-    if (slug != null && !securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: Text(widget.title)),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: RefreshIndicator(
@@ -478,11 +456,10 @@ class _SecurityListPageState extends State<SecurityListPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  DemoExperiencePane(path: err.path),
+                children: const [
+                  AppEmptyState(message: 'Nenhum registro encontrado.'),
                 ],
               );
             }
@@ -587,35 +564,6 @@ class _SecurityListPageState extends State<SecurityListPage>
   }
 }
 
-String _pathForSlug(String slug) {
-  const m = AuthMode.staff;
-  return switch (slug) {
-    'mfa-enable' => m.securityMfaEnablePath,
-    'mfa-confirm' => m.securityMfaConfirmPath,
-    'account-recovery' => m.securityAccountRecoveryPath,
-    'sessions' => m.securitySessionsPath,
-    'sessions-revoke' => m.securitySessionsRevokeAllPath,
-    'access-history' => m.securityAccessHistoryPath,
-    'devices' => m.securityDevicesPath,
-    'password-change' => m.securityPasswordChangePath,
-    'password-policies' => m.securityPasswordPoliciesPath,
-    'tokens' => m.securityTokensPath,
-    'alerts' => m.securityAlertsPath,
-    'privacy' => m.securityPrivacyPath,
-    'consents' => m.securityConsentsPath,
-    'terms' => m.securityTermsPath,
-    'privacy-policy' => m.securityPrivacyPolicyPath,
-    'data-request' => m.securityDataRequestPath,
-    'data-export' => m.securityDataExportPath,
-    'data-correction' => m.securityDataCorrectionPath,
-    'account-deletion' => m.securityAccountDeletionPath,
-    'privacy-preferences' => m.securityPrivacyPreferencesPath,
-    'consent-history' => m.securityConsentHistoryPath,
-    'incidents' => m.securityIncidentsPath,
-    _ => '/v1/security/$slug',
-  };
-}
-
 class SecurityMfaEnablePage extends StatefulWidget {
   const SecurityMfaEnablePage({super.key});
 
@@ -665,13 +613,6 @@ class _SecurityMfaEnablePageState extends State<SecurityMfaEnablePage> {
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'mfa-enable';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Autenticação em duas etapas')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Autenticação em duas etapas')),
       body: ListView(
@@ -680,7 +621,7 @@ class _SecurityMfaEnablePageState extends State<SecurityMfaEnablePage> {
           const SoftNotice(
             message:
                 'Autenticação em duas etapas. Informe sua senha atual se '
-                'solicitado pelo contrato.',
+                'o serviço solicitar.',
           ),
           const SizedBox(height: 12),
           TextField(
@@ -707,7 +648,10 @@ class _SecurityMfaEnablePageState extends State<SecurityMfaEnablePage> {
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -775,13 +719,6 @@ class _SecurityMfaConfirmPageState extends State<SecurityMfaConfirmPage> {
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'mfa-confirm';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Confirmação em duas etapas')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Confirmação em duas etapas')),
       body: ListView(
@@ -813,7 +750,10 @@ class _SecurityMfaConfirmPageState extends State<SecurityMfaConfirmPage> {
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -841,7 +781,8 @@ class SecurityPasswordChangePage extends StatefulWidget {
       _SecurityPasswordChangePageState();
 }
 
-class _SecurityPasswordChangePageState extends State<SecurityPasswordChangePage> {
+class _SecurityPasswordChangePageState
+    extends State<SecurityPasswordChangePage> {
   final _currentCtrl = TextEditingController();
   final _newCtrl = TextEditingController();
   bool _sending = false;
@@ -890,13 +831,6 @@ class _SecurityPasswordChangePageState extends State<SecurityPasswordChangePage>
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'password-change';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Alteração de senha')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Alteração de senha')),
       body: ListView(
@@ -937,7 +871,10 @@ class _SecurityPasswordChangePageState extends State<SecurityPasswordChangePage>
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -1003,13 +940,6 @@ class _SecurityDataExportPageState extends State<SecurityDataExportPage> {
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'data-export';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Exportação de dados')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Exportação de dados')),
       body: ListView(
@@ -1044,7 +974,10 @@ class _SecurityDataExportPageState extends State<SecurityDataExportPage> {
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -1115,13 +1048,6 @@ class _SecurityAccountDeletionPageState
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'account-deletion';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Exclusão de conta')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Exclusão de conta')),
       body: ListView(
@@ -1158,7 +1084,10 @@ class _SecurityAccountDeletionPageState
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -1186,7 +1115,8 @@ class SecuritySessionsRevokePage extends StatefulWidget {
       _SecuritySessionsRevokePageState();
 }
 
-class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage> {
+class _SecuritySessionsRevokePageState
+    extends State<SecuritySessionsRevokePage> {
   bool _sending = false;
   String? _error;
   Map<String, dynamic>? _result;
@@ -1218,13 +1148,6 @@ class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage>
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'sessions-revoke';
-    if (!securityPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Encerramento remoto de sessões')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Encerramento remoto de sessões')),
       body: ListView(
@@ -1233,7 +1156,7 @@ class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage>
           const SoftNotice(
             message:
                 'Encerra sessões ativas em outros dispositivos. A sessão '
-                'atual pode permanecer ativa conforme o contrato.',
+                'atual pode permanecer ativa neste aparelho.',
           ),
           const SizedBox(height: 12),
           FilledButton.icon(
@@ -1249,7 +1172,10 @@ class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage>
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+            Text(
+              _error!,
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
           ],
           if (_result != null) ...[
             const SizedBox(height: 16),
@@ -1270,10 +1196,7 @@ class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage>
 }
 
 List<RouteBase> buildSecurityChildRoutes() => [
-  GoRoute(
-    path: 'mfa-enable',
-    builder: (_, _) => const SecurityMfaEnablePage(),
-  ),
+  GoRoute(path: 'mfa-enable', builder: (_, _) => const SecurityMfaEnablePage()),
   GoRoute(
     path: 'mfa-confirm',
     builder: (_, _) => const SecurityMfaConfirmPage(),
@@ -1294,8 +1217,7 @@ List<RouteBase> buildSecurityChildRoutes() => [
       title: 'Sessões ativas',
       liveSlug: 'sessions',
       emptyMessage: 'Nenhuma sessão registrada.',
-      extraNotice:
-          'Para sessões da conta, use Conta → Sessões.',
+      extraNotice: 'Para sessões da conta, use Conta → Sessões.',
       loader: (repo, tenant, mode) =>
           repo.sessions(tenantSlug: tenant, mode: mode),
     ),
@@ -1344,8 +1266,7 @@ List<RouteBase> buildSecurityChildRoutes() => [
       title: 'Tokens e Chaves de API',
       liveSlug: 'tokens',
       emptyMessage: 'Nenhum token ou chave encontrada.',
-      extraNotice:
-          'Tokens e chaves de API do gabinete.',
+      extraNotice: 'Tokens e chaves de API do gabinete.',
       loader: (repo, tenant, mode) async {
         final tokens = await repo.tokens(tenantSlug: tenant, mode: mode);
         try {
@@ -1393,7 +1314,8 @@ List<RouteBase> buildSecurityChildRoutes() => [
       title: 'Termos de uso',
       liveSlug: 'terms',
       emptyMessage: 'Nenhum termo publicado.',
-      loader: (repo, tenant, mode) => repo.terms(tenantSlug: tenant, mode: mode),
+      loader: (repo, tenant, mode) =>
+          repo.terms(tenantSlug: tenant, mode: mode),
     ),
   ),
   GoRoute(

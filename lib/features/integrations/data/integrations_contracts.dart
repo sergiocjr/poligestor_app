@@ -1,12 +1,16 @@
 /// Contratos da Fase 22 — Integrações (`/v1/integrations/*`).
-/// Probe auth 2026-07-21: 25 hub slugs LIVE; search/filters 404.
+/// Catálogo oficial backend c29c2ad: dashboard/history/sync/webhooks/logs/
+/// settings/catalog/audit/monitoring/health/metrics + providers.
+/// Aliases AuthMode: status→health, config→settings, senado-federal→senado,
+/// e-sic→esic, outlook-calendar→outlook.
+/// search/filters ∉ catálogo (não LIVE).
 library;
 
-/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
+/// Slugs do hub / rotas de repositório com path ∈ catálogo c29c2ad.
 const kIntegrationsLiveSlugs = <String>{
   'dashboard',
-  'status', // GET /v1/integrations/health
-  'config', // GET/PUT /v1/integrations/settings
+  'status',
+  'config',
   'sync',
   'history',
   'logs',
@@ -14,13 +18,13 @@ const kIntegrationsLiveSlugs = <String>{
   'camara-municipal',
   'assembleia-legislativa',
   'camara-deputados',
-  'senado-federal', // GET /v1/integrations/senado
+  'senado-federal',
   'diario-oficial',
   'portal-transparencia',
-  'e-sic', // GET /v1/integrations/esic
+  'e-sic',
   'ouvidoria',
   'google-calendar',
-  'outlook-calendar', // GET /v1/integrations/outlook
+  'outlook-calendar',
   'gmail',
   'whatsapp',
   'telegram',
@@ -29,7 +33,11 @@ const kIntegrationsLiveSlugs = <String>{
   'webhooks',
   'catalog',
   'providers',
+  'audit',
+  'monitoring',
+  'metrics',
+  'search',
+  'filters',
 };
 
-bool integrationsPathLive(String slug) =>
-    kIntegrationsLiveSlugs.contains(slug);
+bool integrationsPathLive(String slug) => kIntegrationsLiveSlugs.contains(slug);

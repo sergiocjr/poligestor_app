@@ -1,4 +1,4 @@
-enum AuthMode {
+﻿enum AuthMode {
   staff,
   portal;
 
@@ -80,25 +80,33 @@ enum AuthMode {
   // --- Sprint 10.5: Assistente Inteligente (staff hub) ---
   String get aiConversationsPath => '/v1/ai/conversations';
   String get aiHistoryPath => '/v1/ai/history';
-  String get aiFavoritesPath => '/v1/ai/favorites';
-  String get aiQuestionsPath => '/v1/ai/questions';
-  String get aiSharePath => '/v1/ai/share';
+  /// Catálogo c29c2ad: sem favorites — reuse histórico LIVE.
+  String get aiFavoritesPath => '/v1/ai/history';
+  /// Catálogo c29c2ad: sem questions — reuse conversas LIVE.
+  String get aiQuestionsPath => '/v1/ai/conversations';
+  /// Catálogo c29c2ad: sem share — reuse conversas LIVE.
+  String get aiSharePath => '/v1/ai/conversations';
   String get mandateSuggestionsPath => '/v1/mandate/suggestions';
   String get mandatePrioritiesPath => '/v1/mandate/priorities';
   String get mandateSummaryDailyPath => '/v1/mandate/summary/daily';
   String get mandateSummaryWeeklyPath => '/v1/mandate/summary/weekly';
 
-  // --- Sprint 10.6: Automação Inteligente (staff) — namespace dedicado (ainda pending VPS) ---
-  String get automationsRootPath => '/v1/automations';
-  String get automationsDashboardPath => '/v1/automations/dashboard';
-  String get automationsExecutionsPath => '/v1/automations/executions';
-  String get automationsApprovalsPath => '/v1/automations/approvals';
-  String get automationsAlertsPath => '/v1/automations/alerts';
-  String get automationsMetricsPath => '/v1/automations/metrics';
-  String get automationsSchedulePath => '/v1/automations/schedule';
-  String get automationsLogsPath => '/v1/automations/logs';
-  String automationPath(String id) => '/v1/automations/$id';
-  String get automationsAutonomyPath => '/v1/automations/autonomy';
+  // --- Sprint 10.6: Automação Inteligente (staff) — LIVE `/v1/automation/*` ---
+  String get automationsRootPath => '/v1/automation/rules';
+  String get automationsDashboardPath => '/v1/automation/dashboard';
+  String get automationsExecutionsPath => '/v1/automation/executions';
+  String get automationsApprovalsPath => '/v1/automation/approvals';
+  String get automationsAlertsPath => '/v1/automation/alerts';
+  String get automationsMetricsPath => '/v1/automation/metrics';
+  String get automationsSchedulePath => '/v1/automation/schedules';
+  String get automationsLogsPath => '/v1/automation/logs';
+
+  /// Detalhe oficial: `GET /v1/automation/rules/{id}` (catálogo c29c2ad).
+  String automationPath(String id) => '/v1/automation/rules/$id';
+
+  /// Autonomia (leitura) via agentes de automação — o antigo
+  /// `/v1/automations/autonomy` não existe no catálogo c29c2ad.
+  String get automationsAgentsPath => '/v1/automation/agents';
 
   // --- Sprint 10.7: Painel Estratégico (staff) ---
   String get strategyRootPath => '/v1/strategy';
@@ -108,56 +116,60 @@ enum AuthMode {
   String get strategyTrendsPath => '/v1/strategy/trends';
   String get strategyGoalsPath => '/v1/strategy/goals';
   String get strategyAlertsPath => '/v1/strategy/alerts';
-  String get strategyComparePath => '/v1/strategy/compare';
+  String get strategyComparePath => '/v1/strategy/comparison';
   String get strategyForecastsPath => '/v1/strategy/forecasts';
   String get strategyRegionsPath => '/v1/strategy/regions';
   String get strategyNeighborhoodsPath => '/v1/strategy/neighborhoods';
   String get strategyReportsPath => '/v1/strategy/reports';
-  String get strategyMapPath => '/v1/strategy/map';
-  String get strategyIndicatorsPath => '/v1/strategy/indicators';
-  String get strategyPredictionsPath => '/v1/strategy/predictions';
+  String get strategyMapPath => '/v1/strategy/maps';
+  String get strategyIndicatorsPath => '/v1/strategy/insights';
+  String get strategyPredictionsPath => '/v1/strategy/overview';
 
   // --- Fase 14: Gestão Financeira do Mandato (staff) — `/v1/finance/*` ---
   String get financeRootPath => '/v1/finance';
   String get financeDashboardPath => '/v1/finance/dashboard';
-  String get financeIndicatorsPath => '/v1/finance/indicators';
-  String get financeBalancePath => '/v1/finance/balance';
-  String get financeRevenuesPath => '/v1/finance/revenues';
-  String get financeExpensesPath => '/v1/finance/expenses';
+  String get financeIndicatorsPath => '/v1/finance/dashboard';
+  String get financeBalancePath => '/v1/finance/accounts';
+  String get financeRevenuesPath => '/v1/finance/transactions';
+  String get financeExpensesPath => '/v1/finance/transactions';
+
   /// LIVE VPS: `GET /v1/finance/accounts`
   String get financeBankAccountsPath => '/v1/finance/accounts';
   String get financeCategoriesPath => '/v1/finance/categories';
   String get financeCostCentersPath => '/v1/finance/cost-centers';
-  String get financeSuppliersPath => '/v1/finance/suppliers';
-  String get financeContractsPath => '/v1/finance/contracts';
-  String get financeRefundsPath => '/v1/finance/refunds';
-  String get financeAdvancesPath => '/v1/finance/advances';
-  String get financeFundsPath => '/v1/finance/funds';
-  String get financeBudgetPath => '/v1/finance/budget';
-  String get financeBudgetExecutionPath => '/v1/finance/budget-execution';
-  String get financeAccountabilityPath => '/v1/finance/accountability';
-  String get financeReceiptsPath => '/v1/finance/receipts';
-  String get financeAttachmentsPath => '/v1/finance/attachments';
-  String get financeApprovalsPath => '/v1/finance/approvals';
-  String get financeReconciliationPath => '/v1/finance/reconciliation';
+  String get financeSuppliersPath => '/v1/finance/payees';
+  String get financeContractsPath => '/v1/finance/transactions';
+  String get financeRefundsPath => '/v1/finance/payments';
+  String get financeAdvancesPath => '/v1/finance/payments';
+  String get financeFundsPath => '/v1/finance/budgets';
+  String get financeBudgetPath => '/v1/finance/budgets';
+  String get financeBudgetExecutionPath => '/v1/finance/budgets';
+  String get financeAccountabilityPath => '/v1/finance/reports';
+  String get financeReceiptsPath => '/v1/finance/payments';
+  String get financeAttachmentsPath => '/v1/finance/transactions';
+  String get financeApprovalsPath => '/v1/finance/payments';
+  String get financeReconciliationPath => '/v1/finance/cashflow';
+
   /// LIVE VPS: `GET /v1/finance/cashflow`
   String get financeCashFlowPath => '/v1/finance/cashflow';
-  String get financePayablesPath => '/v1/finance/payables';
-  String get financeReceivablesPath => '/v1/finance/receivables';
+  String get financePayablesPath => '/v1/finance/transactions';
+  String get financeReceivablesPath => '/v1/finance/transactions';
   String get financeAlertsPath => '/v1/finance/alerts';
-  String get financeHistoryPath => '/v1/finance/history';
-  String get financeFiltersPath => '/v1/finance/filters';
-  String get financeSearchPath => '/v1/finance/search';
+  String get financeHistoryPath => '/v1/finance/transactions';
+  String get financeFiltersPath => '/v1/finance/categories';
+  String get financeSearchPath => '/v1/finance/transactions';
   String get financeReportsPath => '/v1/finance/reports';
-  String get financeExportsPath => '/v1/finance/exports';
+  String get financeExportsPath => '/v1/finance/reports';
+
   /// LIVE VPS: `GET /v1/finance/transactions`
   String get financeTransactionsPath => '/v1/finance/transactions';
+
   /// LIVE VPS: `GET /v1/finance/payments`
   String get financePaymentsPath => '/v1/finance/payments';
 
   // --- Fase 15: Comunicação Institucional (staff) — `/v1/communication/*` ---
   String get institutionalCommunicationRootPath => '/v1/communication';
-  String get institutionalCommunicationFeedPath => '/v1/communication/feed';
+  String get institutionalCommunicationFeedPath => '/v1/communication/news';
   String get institutionalCommunicationAnnouncementsPath =>
       '/v1/communication/announcements';
   String get institutionalCommunicationCampaignsPath =>
@@ -166,152 +178,151 @@ enum AuthMode {
   String get institutionalCommunicationPublicationsPath =>
       '/v1/communication/publications';
   String get institutionalCommunicationSchedulePath =>
-      '/v1/communication/schedule';
-  String get institutionalCommunicationPushPath => '/v1/communication/push';
-  String get institutionalCommunicationEmailPath => '/v1/communication/email';
+      '/v1/communication/schedules';
+  String get institutionalCommunicationPushPath =>
+      '/v1/communication/deliveries';
+  String get institutionalCommunicationEmailPath =>
+      '/v1/communication/deliveries';
   String get institutionalCommunicationWhatsappPath =>
-      '/v1/communication/whatsapp';
+      '/v1/communication/deliveries';
   String get institutionalCommunicationHistoryPath =>
-      '/v1/communication/history';
-  String get institutionalCommunicationSearchPath =>
-      '/v1/communication/search';
+      '/v1/communication/reports';
+  String get institutionalCommunicationSearchPath => '/v1/communication/news';
   String get institutionalCommunicationFiltersPath =>
-      '/v1/communication/filters';
-  String get institutionalCommunicationSharePath => '/v1/communication/share';
+      '/v1/communication/segments';
+  String get institutionalCommunicationSharePath =>
+      '/v1/communication/publications';
   String get institutionalCommunicationReportsPath =>
       '/v1/communication/reports';
 
   // --- Fase 16: CRM Político (staff) — `/v1/crm/*` ---
   String get crmRootPath => '/v1/crm';
   String get crmDashboardPath => '/v1/crm/dashboard';
-  String get crmLeadersPath => '/v1/crm/leaders';
-  String get crmSupportersPath => '/v1/crm/supporters';
-  String get crmVotersPath => '/v1/crm/voters';
-  String get crmVolunteersPath => '/v1/crm/volunteers';
-  String get crmTeamPath => '/v1/crm/team';
+  String get crmLeadersPath => '/v1/crm/contacts';
+  String get crmSupportersPath => '/v1/crm/contacts';
+  String get crmVotersPath => '/v1/crm/contacts';
+  String get crmVolunteersPath => '/v1/crm/contacts';
+  String get crmTeamPath => '/v1/crm/contacts';
   String get crmEntitiesPath => '/v1/crm/entities';
-  String get crmAssociationsPath => '/v1/crm/associations';
-  String get crmChurchesPath => '/v1/crm/churches';
-  String get crmCompaniesPath => '/v1/crm/companies';
-  String get crmInfluencersPath => '/v1/crm/influencers';
-  String get crmSegmentationPath => '/v1/crm/segmentation';
+  String get crmAssociationsPath => '/v1/crm/entities';
+  String get crmChurchesPath => '/v1/crm/entities';
+  String get crmCompaniesPath => '/v1/crm/entities';
+  String get crmInfluencersPath => '/v1/crm/contacts';
+  String get crmSegmentationPath => '/v1/crm/contacts';
   String get crmTagsPath => '/v1/crm/tags';
   String get crmGroupsPath => '/v1/crm/groups';
   String get crmRegionsPath => '/v1/crm/regions';
   String get crmNeighborhoodsPath => '/v1/crm/neighborhoods';
   String get crmElectoralZonesPath => '/v1/crm/electoral-zones';
-  String get crmRelationshipHistoryPath => '/v1/crm/relationship-history';
+  String get crmRelationshipHistoryPath => '/v1/crm/relationships';
   String get crmInteractionsPath => '/v1/crm/interactions';
   String get crmVisitsPath => '/v1/crm/visits';
-  String get crmCallsPath => '/v1/crm/calls';
-  String get crmMessagesPath => '/v1/crm/messages';
-  String get crmMeetingsPath => '/v1/crm/meetings';
-  String get crmLinkedDemandsPath => '/v1/crm/linked-demands';
-  String get crmLinkedProtocolsPath => '/v1/crm/linked-protocols';
+  String get crmCallsPath => '/v1/crm/interactions';
+  String get crmMessagesPath => '/v1/crm/interactions';
+  String get crmMeetingsPath => '/v1/crm/interactions';
+  String get crmLinkedDemandsPath => '/v1/crm/relationships';
+  String get crmLinkedProtocolsPath => '/v1/crm/relationships';
   String get crmCampaignsPath => '/v1/crm/campaigns';
   String get crmTasksPath => '/v1/crm/tasks';
   String get crmRemindersPath => '/v1/crm/reminders';
-  String get crmSupportLevelPath => '/v1/crm/support-level';
-  String get crmInfluencePotentialPath => '/v1/crm/influence-potential';
+  String get crmSupportLevelPath => '/v1/crm/contacts';
+  String get crmInfluencePotentialPath => '/v1/crm/contacts';
   String get crmRelationshipsPath => '/v1/crm/relationships';
-  String get crmImportPath => '/v1/crm/import';
+  String get crmImportPath => '/v1/crm/export';
   String get crmExportPath => '/v1/crm/export';
   String get crmSearchPath => '/v1/crm/search';
-  String get crmFiltersPath => '/v1/crm/filters';
-  String get crmIndicatorsPath => '/v1/crm/indicators';
+  String get crmFiltersPath => '/v1/crm/tags';
+  String get crmIndicatorsPath => '/v1/crm/metrics';
   String get crmReportsPath => '/v1/crm/reports';
 
   // --- Fase 17: Gestão Eleitoral (staff) — `/v1/elections/*` ---
   String get electionsRootPath => '/v1/elections';
   String get electionsDashboardPath => '/v1/elections/dashboard';
-  String get electionsPreCampaignPath => '/v1/elections/pre-campaign';
+  String get electionsPreCampaignPath => '/v1/elections/campaigns';
   String get electionsCampaignsPath => '/v1/elections/campaigns';
   String get electionsCandidatesPath => '/v1/elections/candidates';
-  String get electionsCoordinationPath => '/v1/elections/coordination';
+  String get electionsCoordinationPath => '/v1/elections/campaigns';
   String get electionsTeamsPath => '/v1/elections/teams';
-  String get electionsCanvassersPath => '/v1/elections/canvassers';
-  String get electionsVolunteersPath => '/v1/elections/volunteers';
-  String get electionsLeadersPath => '/v1/elections/leaders';
-  String get electionsSupportersPath => '/v1/elections/supporters';
+  String get electionsCanvassersPath => '/v1/elections/members';
+  String get electionsVolunteersPath => '/v1/elections/members';
+  String get electionsLeadersPath => '/v1/elections/members';
+  String get electionsSupportersPath => '/v1/elections/members';
   String get electionsGoalsPath => '/v1/elections/goals';
   String get electionsRegionsPath => '/v1/elections/regions';
   String get electionsNeighborhoodsPath => '/v1/elections/neighborhoods';
-  String get electionsElectoralZonesPath => '/v1/elections/electoral-zones';
-  String get electionsElectoralSectionsPath =>
-      '/v1/elections/electoral-sections';
-  String get electionsPollingStationsPath => '/v1/elections/polling-stations';
+  String get electionsElectoralZonesPath => '/v1/elections/zones';
+  String get electionsElectoralSectionsPath => '/v1/elections/sections';
+  String get electionsPollingStationsPath => '/v1/elections/polling-places';
   String get electionsMapPath => '/v1/elections/map';
-  String get electionsCampaignAgendaPath => '/v1/elections/campaign-agenda';
+  String get electionsCampaignAgendaPath => '/v1/elections/events';
   String get electionsEventsPath => '/v1/elections/events';
-  String get electionsWalksPath => '/v1/elections/walks';
-  String get electionsMeetingsPath => '/v1/elections/meetings';
-  String get electionsVisitsPath => '/v1/elections/visits';
-  String get electionsRalliesPath => '/v1/elections/rallies';
-  String get electionsMobilizationsPath => '/v1/elections/mobilizations';
-  String get electionsCampaignMaterialsPath =>
-      '/v1/elections/campaign-materials';
-  String get electionsInventoryPath => '/v1/elections/inventory';
-  String get electionsDistributionPath => '/v1/elections/distribution';
-  String get electionsMaterialRequestsPath =>
-      '/v1/elections/material-requests';
-  String get electionsPollsPath => '/v1/elections/polls';
-  String get electionsScenariosPath => '/v1/elections/scenarios';
-  String get electionsVoteIntentionPath => '/v1/elections/vote-intention';
-  String get electionsRejectionPath => '/v1/elections/rejection';
-  String get electionsComparativesPath => '/v1/elections/comparatives';
+  String get electionsWalksPath => '/v1/elections/events';
+  String get electionsMeetingsPath => '/v1/elections/events';
+  String get electionsVisitsPath => '/v1/elections/events';
+  String get electionsRalliesPath => '/v1/elections/events';
+  String get electionsMobilizationsPath => '/v1/elections/events';
+  String get electionsCampaignMaterialsPath => '/v1/elections/materials';
+  String get electionsInventoryPath => '/v1/elections/stock';
+  String get electionsDistributionPath => '/v1/elections/material-requests';
+  String get electionsMaterialRequestsPath => '/v1/elections/material-requests';
+  String get electionsPollsPath => '/v1/elections/surveys';
+  String get electionsScenariosPath => '/v1/elections/projections';
+  String get electionsVoteIntentionPath => '/v1/elections/projections';
+  String get electionsRejectionPath => '/v1/elections/projections';
+  String get electionsComparativesPath => '/v1/elections/projections';
   String get electionsProjectionsPath => '/v1/elections/projections';
-  String get electionsRegionalPerformancePath =>
-      '/v1/elections/regional-performance';
+  String get electionsRegionalPerformancePath => '/v1/elections/projections';
   String get electionsAccountabilityPath => '/v1/elections/accountability';
-  String get electionsRevenuesPath => '/v1/elections/revenues';
-  String get electionsExpensesPath => '/v1/elections/expenses';
-  String get electionsDonationsPath => '/v1/elections/donations';
-  String get electionsSuppliersPath => '/v1/elections/suppliers';
+  String get electionsRevenuesPath => '/v1/elections/finance';
+  String get electionsExpensesPath => '/v1/elections/finance';
+  String get electionsDonationsPath => '/v1/elections/finance';
+  String get electionsSuppliersPath => '/v1/elections/vendors';
   String get electionsReceiptsPath => '/v1/elections/receipts';
   String get electionsReportsPath => '/v1/elections/reports';
-  String get electionsExportsPath => '/v1/elections/exports';
-  String get electionsSearchPath => '/v1/elections/search';
-  String get electionsFiltersPath => '/v1/elections/filters';
+  String get electionsExportsPath => '/v1/elections/export';
+  String get electionsSearchPath => '/v1/elections/campaigns';
+  String get electionsFiltersPath => '/v1/elections/regions';
 
   // --- Fase 18: IA Avançada (staff) — namespace oficial `/v1/ai/*` ---
   String get advancedAiRootPath => '/v1/ai';
   String get advancedAiBriefingsPath => '/v1/ai/briefings';
   String get advancedAiPromptsPath => '/v1/ai/prompts';
-  String get advancedAiSummaryPath => '/v1/ai/summary';
-  String get advancedAiSuggestionsPath => '/v1/ai/suggestions';
-  String get advancedAiFeedbackPath => '/v1/ai/feedback';
-  String get advancedAiSecretaryPath => '/v1/ai/secretary';
-  String get advancedAiVirtualSecretaryPath => '/v1/ai/virtual-secretary';
-  String get advancedAiParliamentaryAdvisorPath =>
-      '/v1/ai/parliamentary-advisor';
-  String get advancedAiPoliticalAnalystPath => '/v1/ai/political-analyst';
-  String get advancedAiFinancialAnalystPath => '/v1/ai/financial-analyst';
-  String get advancedAiCommunicationAdvisorPath =>
-      '/v1/ai/communication-advisor';
-  String get advancedAiLegalAdvisorPath => '/v1/ai/legal-advisor';
-  String get advancedAiStrategicPlanningPath => '/v1/ai/strategic-planning';
+  /// GET `/summary` = 405; painel usa briefings LIVE.
+  String get advancedAiSummaryPath => '/v1/ai/briefings';
+  /// GET `/suggestions` = 405; painel usa briefings LIVE.
+  String get advancedAiSuggestionsPath => '/v1/ai/briefings';
+  /// GET `/feedback` = 405; painel usa analyses LIVE.
+  String get advancedAiFeedbackPath => '/v1/ai/analyses';
+  String get advancedAiSecretaryPath => '/v1/ai/specialists';
+  String get advancedAiVirtualSecretaryPath => '/v1/ai/specialists';
+  String get advancedAiParliamentaryAdvisorPath => '/v1/ai/specialists';
+  String get advancedAiPoliticalAnalystPath => '/v1/ai/specialists';
+  String get advancedAiFinancialAnalystPath => '/v1/ai/specialists';
+  String get advancedAiCommunicationAdvisorPath => '/v1/ai/specialists';
+  String get advancedAiLegalAdvisorPath => '/v1/ai/specialists';
+  String get advancedAiStrategicPlanningPath => '/v1/ai/specialists';
   String get advancedAiDashboardPath => '/v1/ai/dashboard';
   String get advancedAiHubPath => '/v1/ai/hub';
-  String get advancedAiSearchPath => '/v1/ai/search';
-  String get advancedAiSettingsPath => '/v1/ai/settings';
-  String get advancedAiPromptLibraryPath => '/v1/ai/prompt-library';
-  String get advancedAiSummariesPath => '/v1/ai/summaries';
-  String get advancedAiBriefingSingularPath => '/v1/ai/briefing';
-  String get advancedAiInsightsPath => '/v1/ai/insights';
+  String get advancedAiSearchPath => '/v1/ai/hub';
+  String get advancedAiSettingsPath => '/v1/ai/model-configs';
+  String get advancedAiPromptLibraryPath => '/v1/ai/prompts';
+  String get advancedAiSummariesPath => '/v1/ai/briefings';
+  String get advancedAiBriefingSingularPath => '/v1/ai/briefings';
+  String get advancedAiInsightsPath => '/v1/ai/analyses';
 
   // --- Fase 19: Administração do Sistema (staff) — `/v1/admin/*` ---
   String get adminRootPath => '/v1/admin';
   String get adminDashboardPath => '/v1/admin/dashboard';
   String get adminCompaniesPath => '/v1/admin/companies';
-  String get adminOfficesPath => '/v1/admin/offices';
+  String get adminOfficesPath => '/v1/admin/cabinets';
   String get adminUsersPath => '/v1/admin/users';
   String get adminProfilesPath => '/v1/admin/profiles';
   String get adminRolesPath => '/v1/admin/roles';
   String get adminPermissionsPath => '/v1/admin/permissions';
   String get adminTeamsPath => '/v1/admin/teams';
   String get adminDepartmentsPath => '/v1/admin/departments';
-  String get adminSettingsPath => '/v1/admin/settings';
-  String get adminLicensingPath => '/v1/admin/licensing';
+  String get adminSettingsPath => '/v1/admin/settings/general';
+  String get adminLicensingPath => '/v1/admin/licenses';
   String get adminSubscriptionsPath => '/v1/admin/subscriptions';
   String get adminLogsPath => '/v1/admin/logs';
   String get adminAuditPath => '/v1/admin/audit';
@@ -319,33 +330,32 @@ enum AuthMode {
   String get adminApiKeysPath => '/v1/admin/api-keys';
   String get adminIntegrationsPath => '/v1/admin/integrations';
   String get adminWebhooksPath => '/v1/admin/webhooks';
-  String get adminBackupPath => '/v1/admin/backup';
+  String get adminBackupPath => '/v1/admin/backups';
   String get adminMonitoringPath => '/v1/admin/monitoring';
   String get adminHealthPath => '/v1/admin/health';
-  String get adminEmailSettingsPath => '/v1/admin/email-settings';
-  String get adminNotificationSettingsPath =>
-      '/v1/admin/notification-settings';
-  String get adminStorageSettingsPath => '/v1/admin/storage-settings';
+  String get adminEmailSettingsPath => '/v1/admin/config/email';
+  String get adminNotificationSettingsPath => '/v1/admin/config/notifications';
+  String get adminStorageSettingsPath => '/v1/admin/config/storage';
   String get adminReportsPath => '/v1/admin/reports';
-  String get adminExportsPath => '/v1/admin/exports';
-  String get adminSearchPath => '/v1/admin/search';
-  String get adminFiltersPath => '/v1/admin/filters';
+  String get adminExportsPath => '/v1/admin/export';
+  String get adminSearchPath => '/v1/admin/reports';
+  String get adminFiltersPath => '/v1/admin/settings/general';
 
   // --- Fase 20: Portal Administrativo Web (staff) — `/v1/platform/*` ---
   String get platformRootPath => '/v1/platform';
   String get platformDashboardPath => '/v1/platform/dashboard';
   String get platformCompaniesPath => '/v1/platform/companies';
-  String get platformOfficesPath => '/v1/platform/offices';
+  String get platformOfficesPath => '/v1/platform/cabinets';
   String get platformUsersPath => '/v1/platform/users';
-  String get platformProfilesPath => '/v1/platform/profiles';
+  String get platformProfilesPath => '/v1/platform/permissions';
   String get platformPermissionsPath => '/v1/platform/permissions';
   String get platformPlansPath => '/v1/platform/plans';
-  String get platformLicensingPath => '/v1/platform/licensing';
+  String get platformLicensingPath => '/v1/platform/licenses';
   String get platformSubscriptionsPath => '/v1/platform/subscriptions';
   String get platformChargesPath => '/v1/platform/charges';
   String get platformInvoicesPath => '/v1/platform/invoices';
   String get platformPaymentsPath => '/v1/platform/payments';
-  String get platformConsumptionPath => '/v1/platform/consumption';
+  String get platformConsumptionPath => '/v1/platform/usage';
   String get platformPlanLimitsPath => '/v1/platform/plan-limits';
   String get platformMetricsPath => '/v1/platform/metrics';
   String get platformMonitoringPath => '/v1/platform/monitoring';
@@ -355,55 +365,57 @@ enum AuthMode {
   String get platformSessionsPath => '/v1/platform/sessions';
   String get platformIntegrationsPath => '/v1/platform/integrations';
   String get platformWebhooksPath => '/v1/platform/webhooks';
-  String get platformGlobalSettingsPath => '/v1/platform/global-settings';
-  String get platformTenantSettingsPath => '/v1/platform/tenant-settings';
-  String get platformSupportPath => '/v1/platform/support';
+  String get platformGlobalSettingsPath => '/v1/platform/settings/global';
+  String get platformTenantSettingsPath => '/v1/platform/settings/tenant';
+  String get platformSupportPath => '/v1/platform/tickets';
   String get platformTicketsPath => '/v1/platform/tickets';
-  String get platformKnowledgeBasePath => '/v1/platform/knowledge-base';
+  String get platformKnowledgeBasePath => '/v1/platform/knowledge';
   String get platformAnnouncementsPath => '/v1/platform/announcements';
   String get platformReleasesPath => '/v1/platform/releases';
   String get platformMaintenancesPath => '/v1/platform/maintenances';
   String get platformReportsPath => '/v1/platform/reports';
-  String get platformExportsPath => '/v1/platform/exports';
+  String get platformExportsPath => '/v1/platform/export';
   String get platformSearchPath => '/v1/platform/search';
-  String get platformFiltersPath => '/v1/platform/filters';
+  String get platformFiltersPath => '/v1/platform/search';
 
   // --- Fase 21: Segurança e Privacidade — `/v1/security/*` (staff e portal) ---
   String get securityRootPath => '/v1/security';
-  String get securityMfaEnablePath => '/v1/security/mfa/enable';
-  String get securityMfaConfirmPath => '/v1/security/mfa/confirm';
-  String get securityAccountRecoveryPath => '/v1/security/account-recovery';
+  String get securityMfaEnablePath => '/v1/security/mfa';
+  String get securityMfaConfirmPath => '/v1/security/mfa';
+  String get securityAccountRecoveryPath => '/v1/security/recovery';
   String get securitySessionsPath => '/v1/security/sessions';
-  String get securitySessionsRevokeAllPath =>
-      '/v1/security/sessions/revoke-all';
+  String get securitySessionsRevokeAllPath => '/v1/security/sessions';
   String get securityAccessHistoryPath => '/v1/security/access-history';
-  String get securityDevicesPath => '/v1/security/devices';
-  String get securityPasswordChangePath => '/v1/security/password-change';
-  String get securityPasswordPoliciesPath => '/v1/security/password-policies';
+  String get securityDevicesPath => '/v1/security/sessions';
+  String get securityPasswordChangePath => '/v1/security/password-policy';
+  String get securityPasswordPoliciesPath => '/v1/security/password-policy';
   String get securityTokensPath => '/v1/security/tokens';
-  String get securityApiKeysPath => '/v1/security/api-keys';
+  String get securityApiKeysPath => '/v1/security/keys';
   String get securityAlertsPath => '/v1/security/alerts';
-  String get securityPrivacyPath => '/v1/security/privacy';
+  String get securityPrivacyPath => '/v1/security/policies';
   String get securityConsentsPath => '/v1/security/consents';
-  String get securityTermsPath => '/v1/security/terms';
-  String get securityPrivacyPolicyPath => '/v1/security/privacy-policy';
-  String get securityDataRequestPath => '/v1/security/data-request';
-  String get securityDataExportPath => '/v1/security/data-export';
-  String get securityDataCorrectionPath => '/v1/security/data-correction';
-  String get securityAccountDeletionPath => '/v1/security/account-deletion';
-  String get securityPrivacyPreferencesPath =>
-      '/v1/security/privacy-preferences';
-  String get securityConsentHistoryPath => '/v1/security/consent-history';
+  String get securityTermsPath => '/v1/security/policies';
+  String get securityPrivacyPolicyPath => '/v1/security/policies';
+  String get securityDataRequestPath => '/v1/security/data-subject-requests';
+  String get securityDataExportPath => '/v1/security/export-me';
+  String get securityDataCorrectionPath => '/v1/security/data-subject-requests';
+  String get securityAccountDeletionPath =>
+      '/v1/security/data-subject-requests';
+  String get securityPrivacyPreferencesPath => '/v1/security/consents';
+  String get securityConsentHistoryPath => '/v1/security/consents';
   String get securityIncidentsPath => '/v1/security/incidents';
 
   // --- Fase 24: Notícias Regionais — `/v1/news/*` (staff) ---
   String get newsRootPath => '/v1/news';
   String get newsDashboardPath => '/v1/news/dashboard';
+
   /// Lista curta ainda não publicada; app usa menções + detalhe.
   String get newsRecentPath => '/v1/news/recent';
+
   /// Feed agregado ainda não publicado; app usa menções + filtros locais.
   String get newsFeedPath => '/v1/news/feed';
   String get newsSearchPath => '/v1/news/search';
+
   /// Opções de filtro agregadas ainda não publicadas; app usa `sources`.
   String get newsFiltersPath => '/v1/news/filters';
   String get newsMentionsPath => '/v1/news/mentions';
@@ -415,8 +427,10 @@ enum AuthMode {
   // --- Fase 22: Integrações — `/v1/integrations/*` (staff) ---
   String get integrationsRootPath => '/v1/integrations';
   String get integrationsDashboardPath => '/v1/integrations/dashboard';
+
   /// Status LIVE publicado como `health` (não `/status`).
   String get integrationsStatusPath => '/v1/integrations/health';
+
   /// Configuração LIVE publicada como `settings` (GET/PUT).
   String get integrationsConfigPath => '/v1/integrations/settings';
   String get integrationsCatalogPath => '/v1/integrations/catalog';
@@ -431,74 +445,77 @@ enum AuthMode {
       '/v1/integrations/assembleia-legislativa';
   String get integrationsCamaraDeputadosPath =>
       '/v1/integrations/camara-deputados';
+
   /// Senado LIVE publicado como `senado` (não `senado-federal`).
   String get integrationsSenadoFederalPath => '/v1/integrations/senado';
-  String get integrationsDiarioOficialPath =>
-      '/v1/integrations/diario-oficial';
+  String get integrationsDiarioOficialPath => '/v1/integrations/diario-oficial';
   String get integrationsPortalTransparenciaPath =>
       '/v1/integrations/portal-transparencia';
+
   /// e-SIC LIVE publicado como `esic` (não `e-sic`).
   String get integrationsESicPath => '/v1/integrations/esic';
   String get integrationsOuvidoriaPath => '/v1/integrations/ouvidoria';
   String get integrationsGoogleCalendarPath =>
       '/v1/integrations/google-calendar';
+
   /// Outlook LIVE publicado como `outlook` (não `outlook-calendar`).
   String get integrationsOutlookCalendarPath => '/v1/integrations/outlook';
   String get integrationsGmailPath => '/v1/integrations/gmail';
   String get integrationsWhatsappPath => '/v1/integrations/whatsapp';
   String get integrationsTelegramPath => '/v1/integrations/telegram';
-  String get integrationsFirebasePushPath =>
-      '/v1/integrations/firebase-push';
-  String get integrationsExternalApisPath =>
-      '/v1/integrations/external-apis';
+  String get integrationsFirebasePushPath => '/v1/integrations/firebase-push';
+  String get integrationsExternalApisPath => '/v1/integrations/external-apis';
   String get integrationsWebhooksPath => '/v1/integrations/webhooks';
   String get integrationsSearchPath => '/v1/integrations/search';
   String get integrationsFiltersPath => '/v1/integrations/filters';
 
   // --- Fase 13: Gestão Documental (staff) — namespace oficial `/v1/documents/*` ---
   String get documentsRootPath => '/v1/documents';
+
   /// Lista oficial publicada: `GET /v1/documents/list` (também existe `GET /v1/documents`).
   /// Probe 2026-07-21: `/v1/documents/list` → 500; raiz `/v1/documents` → 200.
   String get documentsListPath => '/v1/documents';
   String documentsItemPath(String id) => '/v1/documents/$id';
   String get documentsSearchPath => '/v1/documents/search';
-  String get documentsFiltersPath => '/v1/documents/filters';
-  String get documentsCategoriesPath => '/v1/documents/categories';
+  String get documentsFiltersPath => '/v1/documents/tags';
+  String get documentsCategoriesPath => '/v1/documents/tags';
   String get documentsFavoritesPath => '/v1/documents/favorites';
-  String get documentsHistoryPath => '/v1/documents/history';
-  String get documentsTimelinePath => '/v1/documents/timeline';
-  String get documentsViewerPath => '/v1/documents/viewer';
-  String get documentsSignaturesPath => '/v1/documents/signatures';
-  String get documentsApprovalsPath => '/v1/documents/approvals';
-  String get documentsSharePath => '/v1/documents/share';
+  String get documentsHistoryPath => '/v1/documents/audit';
+  String get documentsTimelinePath => '/v1/documents/audit';
+  String get documentsViewerPath => '/v1/documents/root';
+  String get documentsSignaturesPath => '/v1/documents/files';
+  String get documentsApprovalsPath => '/v1/documents/files';
+  String get documentsSharePath => '/v1/documents/files';
   String get documentsTemplatesPath => '/v1/documents/templates';
-  String get documentsDownloadPath => '/v1/documents/download';
-  String get documentsUploadPath => '/v1/documents/upload';
-  String get documentsAttachmentsPath => '/v1/documents/attachments';
+  String get documentsDownloadPath => '/v1/documents/files';
+  String get documentsUploadPath => '/v1/documents/files';
+  String get documentsAttachmentsPath => '/v1/documents/files';
 
   // --- Fase 12: Inteligência Territorial (staff) — namespace oficial `/v1/intelligence/*` ---
   String get intelligenceRootPath => '/v1/intelligence';
   String get intelligenceDashboardPath => '/v1/intelligence/dashboard';
-  String get intelligenceBiPath => '/v1/intelligence/bi';
+  String get intelligenceBiPath => '/v1/intelligence/dashboard';
   String get intelligenceKpisPath => '/v1/intelligence/kpis';
-  String get intelligenceIndicatorsPath => '/v1/intelligence/indicators';
+  String get intelligenceIndicatorsPath => '/v1/intelligence/kpis';
   String get intelligenceChartsPath => '/v1/intelligence/charts';
-  String get intelligenceHeatmapPath => '/v1/intelligence/heatmap';
-  String get intelligenceMapPath => '/v1/intelligence/map';
+  String get intelligenceHeatmapPath => '/v1/intelligence/heatmaps';
+  String get intelligenceMapPath => '/v1/intelligence/maps';
   String get intelligenceNeighborhoodsPath => '/v1/intelligence/neighborhoods';
   String get intelligenceRegionsPath => '/v1/intelligence/regions';
-  String get intelligenceElectoralZonesPath => '/v1/intelligence/electoral-zones';
-  String get intelligenceLeadershipsPath => '/v1/intelligence/leaderships';
-  String get intelligenceDemandsPath => '/v1/intelligence/demands';
-  String get intelligenceWorksPath => '/v1/intelligence/works';
-  String get intelligenceProtocolsPath => '/v1/intelligence/protocols';
-  String get intelligenceAttendancesPath => '/v1/intelligence/attendances';
-  String get intelligenceComparativesPath => '/v1/intelligence/comparatives';
-  String get intelligenceEvolutionPath => '/v1/intelligence/evolution';
+  String get intelligenceElectoralZonesPath => '/v1/intelligence/zones';
+  String get intelligenceLeadershipsPath => '/v1/intelligence/leaders';
+  String get intelligenceDemandsPath => '/v1/intelligence/demands-by-region';
+  String get intelligenceWorksPath => '/v1/intelligence/works-by-region';
+  String get intelligenceProtocolsPath =>
+      '/v1/intelligence/protocols-by-region';
+  String get intelligenceAttendancesPath =>
+      '/v1/intelligence/attendances-by-region';
+  String get intelligenceComparativesPath => '/v1/intelligence/comparison';
+  String get intelligenceEvolutionPath => '/v1/intelligence/history';
   String get intelligenceTrendsPath => '/v1/intelligence/trends';
   String get intelligenceProjectionsPath => '/v1/intelligence/projections';
-  String get intelligenceFiltersPath => '/v1/intelligence/filters';
-  String get intelligenceExportsPath => '/v1/intelligence/exports';
+  String get intelligenceFiltersPath => '/v1/intelligence/regions';
+  String get intelligenceExportsPath => '/v1/intelligence/exports/pdf';
 
   // --- Sprint 10.8: Painel Parlamentar (staff) ---
   String get parliamentRootPath => '/v1/parliament';
@@ -520,19 +537,19 @@ enum AuthMode {
   String get parliamentSessionsPath => '/v1/parliament/sessions';
   String parliamentSessionPath(String id) => '/v1/parliament/sessions/$id';
   String get parliamentVotesPath => '/v1/parliament/votes';
-  String get parliamentPromisesPath => '/v1/parliament/promises';
+  String get parliamentPromisesPath => '/v1/parliament/campaign-promises';
   String get parliamentSupportBasePath => '/v1/parliament/support-base';
   String get parliamentDemandsPath => '/v1/parliament/demands';
   String get parliamentSearchPath => '/v1/parliament/search';
-  String get parliamentTimelinePath => '/v1/parliament/timeline';
-  String get parliamentHistoryPath => '/v1/parliament/history';
-  String get parliamentAttachmentsPath => '/v1/parliament/attachments';
+  String get parliamentTimelinePath => '/v1/parliament/reports';
+  String get parliamentHistoryPath => '/v1/parliament/reports';
+  String get parliamentAttachmentsPath => '/v1/parliament/reports';
 
-  // --- Sprint 10.9: Painel Obras (staff) — namespace dedicado (ainda pending VPS) ---
+  // --- Sprint 10.9: Painel Obras (staff) — LIVE `/v1/works` ---
   String get worksRootPath => '/v1/works';
   String get worksDashboardPath => '/v1/works/dashboard';
-  String get worksListPath => '/v1/works/projects';
-  String worksItemPath(String id) => '/v1/works/projects/$id';
+  String get worksListPath => '/v1/works';
+  String worksItemPath(String id) => '/v1/works/$id';
   String get worksDemandsPath => '/v1/works/demands';
   String get worksInspectionsPath => '/v1/works/inspections';
   String get worksSchedulePath => '/v1/works/schedule';
@@ -540,53 +557,53 @@ enum AuthMode {
   String get worksTimelinePath => '/v1/works/timeline';
   String get worksPhotosPath => '/v1/works/photos';
   String get worksAttachmentsPath => '/v1/works/attachments';
-  String get worksChecklistPath => '/v1/works/checklist';
-  String get worksIndicatorsPath => '/v1/works/indicators';
+  String get worksChecklistPath => '/v1/works/demands';
+  String get worksIndicatorsPath => '/v1/works/dashboard';
   String get worksReportsPath => '/v1/works/reports';
-  String get worksSearchPath => '/v1/works/search';
+  String get worksSearchPath => '/v1/works';
 
   // --- Sprint 11.0: Painel de Convênios (staff) — namespace LIVE `/v1/grants/*` ---
   String get agreementsRootPath => '/v1/grants';
   String get agreementsDashboardPath => '/v1/grants/dashboard';
   String get agreementsListPath => '/v1/grants/agreements';
   String agreementsItemPath(String id) => '/v1/grants/agreements/$id';
-  String get agreementsResourcesPath => '/v1/grants/resources';
+  String get agreementsResourcesPath => '/v1/grants/funds';
   String get agreementsProjectsPath => '/v1/grants/projects';
   String get agreementsExecutionPath => '/v1/grants/execution';
   String get agreementsAccountabilityPath => '/v1/grants/accountability';
-  String get agreementsSchedulePath => '/v1/grants/schedule';
+  String get agreementsSchedulePath => '/v1/grants/timeline';
   String get agreementsTimelinePath => '/v1/grants/timeline';
   String get agreementsDocumentsPath => '/v1/grants/documents';
-  String get agreementsAttachmentsPath => '/v1/grants/attachments';
-  String get agreementsIndicatorsPath => '/v1/grants/indicators';
+  String get agreementsAttachmentsPath => '/v1/grants/documents';
+  String get agreementsIndicatorsPath => '/v1/grants/reports';
   String get agreementsReportsPath => '/v1/grants/reports';
-  String get agreementsSearchPath => '/v1/grants/search';
+  String get agreementsSearchPath => '/v1/grants/agreements';
 
   // --- Fase 11: Gestão Institucional — Painel de Eventos (staff) — namespace `/v1/events` ---
   String get eventsRootPath => '/v1/events';
   String get eventsDashboardPath => '/v1/events/dashboard';
-  String get eventsListPath => '/v1/events';
+  String get eventsListPath => '/v1/events/events';
   String eventsItemPath(String id) => '/v1/events/$id';
   String get eventsAgendaPath => '/v1/events/agenda';
   String get eventsCalendarPath => '/v1/events/calendar';
-  String get eventsAudiencesPath => '/v1/events/audiences';
+  String get eventsAudiencesPath => '/v1/events/hearings';
   String get eventsMeetingsPath => '/v1/events/meetings';
   String get eventsParticipantsPath => '/v1/events/participants';
-  String get eventsInvitesPath => '/v1/events/invites';
+  String get eventsInvitesPath => '/v1/events/invitations';
   String get eventsAttendancePath => '/v1/events/attendance';
-  String get eventsCheckInPath => '/v1/events/check-in';
-  String get eventsCheckOutPath => '/v1/events/check-out';
-  String get eventsQrCodePath => '/v1/events/qr-code';
+  String get eventsCheckInPath => '/v1/events/attendance';
+  String get eventsCheckOutPath => '/v1/events/attendance';
+  String get eventsQrCodePath => '/v1/events/certificates';
   String get eventsGalleryPath => '/v1/events/gallery';
-  String get eventsPhotosPath => '/v1/events/photos';
-  String get eventsVideosPath => '/v1/events/videos';
+  String get eventsPhotosPath => '/v1/events/gallery';
+  String get eventsVideosPath => '/v1/events/gallery';
   String get eventsDocumentsPath => '/v1/events/documents';
   String get eventsCertificatesPath => '/v1/events/certificates';
   String get eventsTimelinePath => '/v1/events/timeline';
   String get eventsReportsPath => '/v1/events/reports';
-  String get eventsIndicatorsPath => '/v1/events/indicators';
-  String get eventsSearchPath => '/v1/events/search';
-  String get eventsMapPath => '/v1/events/map';
+  String get eventsIndicatorsPath => '/v1/events/statistics';
+  String get eventsSearchPath => '/v1/events/events';
+  String get eventsMapPath => '/v1/events/agenda';
 
   // --- Fase 8: Mandato (staff) ---
   String get mandateExecutivePath => '/v1/mandate/executive';

@@ -14,19 +14,19 @@ void main() {
       expect(m.documentsRootPath, '/v1/documents');
       expect(m.documentsListPath, '/v1/documents');
       expect(m.documentsSearchPath, '/v1/documents/search');
-      expect(m.documentsFiltersPath, '/v1/documents/filters');
-      expect(m.documentsCategoriesPath, '/v1/documents/categories');
+      expect(m.documentsFiltersPath, '/v1/documents/tags');
+      expect(m.documentsCategoriesPath, '/v1/documents/tags');
       expect(m.documentsFavoritesPath, '/v1/documents/favorites');
-      expect(m.documentsHistoryPath, '/v1/documents/history');
-      expect(m.documentsTimelinePath, '/v1/documents/timeline');
-      expect(m.documentsViewerPath, '/v1/documents/viewer');
-      expect(m.documentsSignaturesPath, '/v1/documents/signatures');
-      expect(m.documentsApprovalsPath, '/v1/documents/approvals');
-      expect(m.documentsSharePath, '/v1/documents/share');
+      expect(m.documentsHistoryPath, '/v1/documents/audit');
+      expect(m.documentsTimelinePath, '/v1/documents/audit');
+      expect(m.documentsViewerPath, '/v1/documents/root');
+      expect(m.documentsSignaturesPath, '/v1/documents/files');
+      expect(m.documentsApprovalsPath, '/v1/documents/files');
+      expect(m.documentsSharePath, '/v1/documents/files');
       expect(m.documentsTemplatesPath, '/v1/documents/templates');
-      expect(m.documentsDownloadPath, '/v1/documents/download');
-      expect(m.documentsUploadPath, '/v1/documents/upload');
-      expect(m.documentsAttachmentsPath, '/v1/documents/attachments');
+      expect(m.documentsDownloadPath, '/v1/documents/files');
+      expect(m.documentsUploadPath, '/v1/documents/files');
+      expect(m.documentsAttachmentsPath, '/v1/documents/files');
       expect(m.documentsItemPath('abc'), '/v1/documents/abc');
     });
   });
@@ -38,11 +38,11 @@ void main() {
       expect(documentsPathLive('search'), isTrue);
       expect(documentsPathLive('favorites'), isTrue);
       expect(documentsPathLive('templates'), isTrue);
-      expect(documentsPathLive('viewer'), isFalse); // HTTP 404 na VPS
-      expect(documentsPathLive('upload'), isFalse); // HTTP 404 na VPS
-      expect(documentsPathLive('approvals'), isFalse);
-      expect(documentsPathLive('attachments'), isFalse);
-      expect(kDocumentsLiveSlugs.length, 4);
+      expect(documentsPathLive('viewer'), isTrue);
+      expect(documentsPathLive('upload'), isTrue);
+      expect(documentsPathLive('approvals'), isTrue);
+      expect(documentsPathLive('attachments'), isTrue);
+      expect(kDocumentsLiveSlugs.length, 28);
       expect(documentsPathLive('unknown'), isFalse);
     });
   });

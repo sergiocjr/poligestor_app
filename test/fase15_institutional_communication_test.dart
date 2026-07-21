@@ -12,7 +12,7 @@ void main() {
     test('exposes official /v1/communication namespace', () {
       const m = AuthMode.staff;
       expect(m.institutionalCommunicationRootPath, '/v1/communication');
-      expect(m.institutionalCommunicationFeedPath, '/v1/communication/feed');
+      expect(m.institutionalCommunicationFeedPath, '/v1/communication/news');
       expect(
         m.institutionalCommunicationAnnouncementsPath,
         '/v1/communication/announcements',
@@ -28,27 +28,33 @@ void main() {
       );
       expect(
         m.institutionalCommunicationSchedulePath,
-        '/v1/communication/schedule',
+        '/v1/communication/schedules',
       );
-      expect(m.institutionalCommunicationPushPath, '/v1/communication/push');
-      expect(m.institutionalCommunicationEmailPath, '/v1/communication/email');
+      expect(
+        m.institutionalCommunicationPushPath,
+        '/v1/communication/deliveries',
+      );
+      expect(
+        m.institutionalCommunicationEmailPath,
+        '/v1/communication/deliveries',
+      );
       expect(
         m.institutionalCommunicationWhatsappPath,
-        '/v1/communication/whatsapp',
+        '/v1/communication/deliveries',
       );
       expect(
         m.institutionalCommunicationHistoryPath,
-        '/v1/communication/history',
+        '/v1/communication/reports',
       );
-      expect(
-        m.institutionalCommunicationSearchPath,
-        '/v1/communication/search',
-      );
+      expect(m.institutionalCommunicationSearchPath, '/v1/communication/news');
       expect(
         m.institutionalCommunicationFiltersPath,
-        '/v1/communication/filters',
+        '/v1/communication/segments',
       );
-      expect(m.institutionalCommunicationSharePath, '/v1/communication/share');
+      expect(
+        m.institutionalCommunicationSharePath,
+        '/v1/communication/publications',
+      );
       expect(
         m.institutionalCommunicationReportsPath,
         '/v1/communication/reports',
@@ -63,9 +69,10 @@ void main() {
       expect(institutionalCommunicationPathLive('campaigns'), isTrue);
       expect(institutionalCommunicationPathLive('publications'), isTrue);
       expect(institutionalCommunicationPathLive('reports'), isTrue);
-      expect(institutionalCommunicationPathLive('dashboard'), isFalse);
-      expect(institutionalCommunicationPathLive('feed'), isFalse);
-      expect(kInstitutionalCommunicationLiveSlugs.length, 5);
+      expect(institutionalCommunicationPathLive('schedule'), isTrue);
+      expect(institutionalCommunicationPathLive('dashboard'), isTrue);
+      expect(institutionalCommunicationPathLive('feed'), isTrue);
+      expect(kInstitutionalCommunicationLiveSlugs.length, 16);
     });
   });
 

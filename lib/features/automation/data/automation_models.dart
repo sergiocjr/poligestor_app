@@ -1,7 +1,8 @@
 /// Sprint 10.6 — modelos da Central de Automação (PoliGestor).
 library;
 
-/// Níveis de autonomia (UI). Fonte LIVE atual: `autonomy_level` em `/v1/ai/team`.
+/// Níveis de autonomia (UI). Fonte LIVE: `autonomy_level` em
+/// `/v1/automation/agents` (fallback legado `/v1/ai/team`).
 enum AutonomyLevel {
   disabled(0, 'Desativado'),
   observe(1, 'Observar'),
@@ -80,9 +81,114 @@ class AutoDashboardSnapshot {
   final int pendingApprovals;
   final bool fromCache;
   final String? cacheAgeLabel;
+
+  /// Parsing tolerante do painel LIVE `GET /v1/automation/dashboard`.
+  factory AutoDashboardSnapshot.fromJson(
+    Map<String, dynamic> json, {
+    bool fromCache = false,
+    String? cacheAgeLabel,
+  }) {
+    final source = json['summary'] is Map ? asAutoMap(json['summary']) : json;
+    int i(List<String> keys) {
+      for (final k in keys) {
+        final v = source[k];
+        if (v != null) return int.tryParse('$v') ?? 0;
+      }
+      return 0;
+    }
+
+    double d(List<String> keys) {
+      for (final k in keys) {
+        final v = source[k];
+        if (v != null) return double.tryParse('$v') ?? 0;
+      }
+      return 0;
+    }
+
+    return AutoDashboardSnapshot(
+      agentsActive: i(['agents_active', 'active_agents']),
+      agentsTotal: i(['agents_total', 'total_agents', 'agents']),
+      executionsToday: i([
+        'executions_today',
+        'executions_24h',
+        'executions',
+      ]),
+      successToday: i([
+        'success_today',
+        'executions_success_24h',
+        'success',
+        'completed_24h',
+      ]),
+      failuresToday: i([
+        'failures_today',
+        'executions_failed_24h',
+        'failed',
+        'failures',
+      ]),
+      queueDepth: i(['queue_depth', 'queue', 'pending_executions']),
+      alertsCritical: i([
+        'alerts_critical',
+        'critical_alerts',
+        'alerts_open',
+      ]),
+      efficiencyPct: d([
+        'efficiency_pct',
+        'success_rate_pct',
+        'success_rate',
+      ]),
+      pendingApprovals: i(['pending_approvals', 'approvals_pending']),
+      fromCache: fromCache,
+      cacheAgeLabel: cacheAgeLabel,
+    );
+  }
 }
 
-/// Modelo preparado para `/v1/automations` (quando publicado).
+/// Item da fila de aprovações — `GET /v1/automation/approvals`.
+class AutoApproval {
+  const AutoApproval({
+    required this.id,
+    required this.title,
+    this.status,
+    this.ruleName,
+    this.agentSlug,
+    this.requestedAt,
+  });
+
+  final String id;
+  final String title;
+  final String? status;
+  final String? ruleName;
+  final String? agentSlug;
+  final DateTime? requestedAt;
+
+  factory AutoApproval.fromJson(Map<String, dynamic> json) {
+    DateTime? dt(dynamic v) =>
+        v == null ? null : DateTime.tryParse(v.toString());
+    return AutoApproval(
+      id: (json['id'] ?? json['uuid'] ?? '').toString(),
+      title: (json['title'] ?? json['name'] ?? json['action'] ?? 'Aprovação')
+          .toString(),
+      status: json['status']?.toString(),
+      ruleName:
+          (json['rule_name'] ?? json['rule'] ?? json['automation_name'])
+              ?.toString(),
+      agentSlug: (json['agent_slug'] ?? json['agent'])?.toString(),
+      requestedAt: dt(json['requested_at'] ?? json['created_at']),
+    );
+  }
+
+  String get statusLabel => switch ((status ?? '').toLowerCase()) {
+    'pending' || 'waiting' || 'pendente' => 'Pendente',
+    'approved' || 'aprovada' => 'Aprovada',
+    'rejected' || 'denied' || 'recusada' => 'Recusada',
+    'expired' || 'expirada' => 'Expirada',
+    '' => '—',
+    _ => status!,
+  };
+}
+
+/// Automação/regra — `GET /v1/automation/rules` e agenda
+/// `GET /v1/automation/schedules`.
 class AutoAutomation {
   const AutoAutomation({
     required this.id,

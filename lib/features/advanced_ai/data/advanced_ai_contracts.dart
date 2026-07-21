@@ -1,29 +1,53 @@
 /// Contratos da Fase 18 — IA Avançada (`/v1/ai/*`).
-/// Probe auth 2026-07-21: GET 200 / POST-only 405 = LIVE.
+/// Catálogo oficial backend c29c2ad: hub, dashboard, specialists, invocations,
+/// documents/generated, analyses, prioritizations, context-memory,
+/// model-configs, response-audit, hub/audit, hub/metrics, hub/reports.
+/// Papéis de assessoria assumem o remapeamento do catálogo legado `agents`
+/// para o contrato oficial `specialists`.
 library;
 
-/// Slugs com endpoint dedicado LIVE na VPS.
+/// Slugs com path AuthMode ∈ catálogo c29c2ad (sem card de hub dedicado).
 const kAdvancedAiLiveSlugs = <String>{
-  'chat', // POST (GET 405)
+  'hub',
+  'dashboard',
+  'chat',
   'conversations',
   'history',
   'briefings',
   'prompts',
   'agents',
-  'summary', // POST (GET 405)
-  'suggestions', // POST (GET 405)
-  'feedback', // POST (GET 405)
-  'hub',
-  'team',
-  'handoffs',
-  'dashboard',
+  'summary',
+  'suggestions',
+  'feedback',
+  'secretary',
+  'parliamentary-advisor',
+  'political-analyst',
+  'financial-analyst',
+  'communication-advisor',
+  'legal-advisor',
+  'strategic-planning',
+  'settings',
+  'search',
+  'specialists',
+  'invocations',
+  'documents-generated',
+  'analyses',
+  'prioritizations',
+  'context-memory',
+  'model-configs',
+  'response-audit',
+  'audit',
+  'metrics',
+  'reports',
 };
 
-/// Hub → `agent_slug` em `GET /v1/ai/agents` (LIVE). Sem agente = Pending.
+/// Hub → `agent_slug` em `GET /v1/ai/agents` (legado; catálogo: specialists).
+/// Mantido para chips de papéis; PathLive via mapa ≠ path dedicado LIVE.
 const kAdvancedAiAgentRoleMap = <String, String>{
   'secretary': 'secretary',
   'parliamentary-advisor': 'parliamentary_advisor',
   'political-analyst': 'analyst',
+  'financial-analyst': 'financial',
   'communication-advisor': 'communication',
   'legal-advisor': 'legal',
   'strategic-planning': 'strategy',

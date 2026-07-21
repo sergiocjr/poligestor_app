@@ -4,12 +4,10 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/territorial_intelligence_contracts.dart';
 import '../data/territorial_intelligence_models.dart';
@@ -200,18 +198,14 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
           final grid = ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              SoftNotice(
-                message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo até sincronizar.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -259,18 +253,16 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
                                     e.subtitle,
                                     maxLines: 3,
                                     softWrap: true,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
                             ),
                             const SizedBox(width: 8),
                             Chip(
-                              label: Text(
-                                uiContractChip(available: live),
-                              ),
+                              label: Text(uiContractChip(available: live)),
                               visualDensity: VisualDensity.compact,
                               materialTapTargetSize:
                                   MaterialTapTargetSize.shrinkWrap,
@@ -299,13 +291,7 @@ class TerritorialIntelligenceHubPage extends StatelessWidget {
 }
 
 class _Entry {
-  const _Entry(
-    this.title,
-    this.subtitle,
-    this.icon,
-    this.slug,
-    this.route,
-  );
+  const _Entry(this.title, this.subtitle, this.icon, this.slug, this.route);
   final String title;
   final String subtitle;
   final IconData icon;
@@ -390,8 +376,9 @@ class _TerritorialIntelligenceListPageState
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -449,8 +436,7 @@ class _TerritorialIntelligenceListPageState
                               if (item.status != null)
                                 uiStatusLabel(item.status),
                               if (item.region != null) item.region!,
-                              if (item.neighborhood != null)
-                                item.neighborhood!,
+                              if (item.neighborhood != null) item.neighborhood!,
                               if (item.value != null)
                                 item.value!.toStringAsFixed(0),
                               if (item.summary != null) item.summary!,
@@ -538,14 +524,12 @@ class _TerritorialIntelligenceDashboardPageState
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
-              return AppErrorState(
-                error: snap.error,
-                onRetry: _reload,
-              );
+              return AppErrorState(error: snap.error, onRetry: _reload);
             }
             final d = snap.data!;
             final items = <(String, String, IconData, String?)>[
@@ -637,7 +621,11 @@ class _TerritorialIntelligenceDashboardPageState
                                   children: [
                                     Row(
                                       children: [
-                                        Icon(icon, size: 20, color: scheme.primary),
+                                        Icon(
+                                          icon,
+                                          size: 20,
+                                          color: scheme.primary,
+                                        ),
                                         const Spacer(),
                                         Icon(
                                           Icons.chevron_right_rounded,

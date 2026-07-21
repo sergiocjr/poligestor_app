@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
-import '../../../shared/demo/demo_banner.dart';
 import '../../account/data/account_repository.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../notifications/domain/push_notification_service.dart';
@@ -332,8 +331,6 @@ void _showDemoSheet(BuildContext context, String title, String body) {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const DemoDataBanner(compact: true),
-            const SizedBox(height: 12),
             Text(
               title,
               style: Theme.of(ctx).textTheme.titleLarge?.copyWith(

@@ -3,11 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/ux/user_messages.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../data/account_repository.dart';
 
 /// Sessões ativas — consome `GET /v1/auth/sessions` (staff LIVE).
@@ -68,12 +66,10 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
         const SnackBar(content: Text('Sessões revogadas.')),
       );
       await auth.logout();
-    } on EndpointUnavailableException catch (e) {
+    } on EndpointUnavailableException catch (_) {
       if (!mounted) return;
-      await pgShowStandardBottomSheet<void>(
-        context: context,
-        title: 'Indisponível',
-        child: DemoExperiencePane(path: e.path),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Não foi possível encerrar as sessões.')),
       );
     } catch (e) {
       if (!mounted) return;
@@ -121,9 +117,6 @@ class _AccountSessionsPageState extends State<AccountSessionsPage> {
           }
           if (snap.hasError && !snap.hasData) {
             final err = snap.error;
-            if (err is EndpointUnavailableException) {
-              return DemoExperiencePane(path: err.path);
-            }
             return AppErrorState(
               error: err,
               message: UserMessages.fromError(err),

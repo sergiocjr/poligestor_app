@@ -74,7 +74,12 @@ class UserMessages {
       return error.message;
     }
     if (error is ApiException) {
-      if (error.isUnauthorized || error.isForbidden) return syncFailed;
+      if (error.isUnauthorized) {
+        return 'Sessão expirada. Entre novamente para continuar.';
+      }
+      if (error.isForbidden) {
+        return 'Você não tem permissão para este recurso.';
+      }
       if (error.message.toLowerCase().contains('tempo esgotado') ||
           error.message.toLowerCase().contains('timeout')) {
         return assistantFailed;

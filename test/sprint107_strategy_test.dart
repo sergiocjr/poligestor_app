@@ -16,7 +16,7 @@ void main() {
       expect(m.strategyAlertsPath, '/v1/strategy/alerts');
       expect(m.strategyRegionsPath, '/v1/strategy/regions');
       expect(m.strategyForecastsPath, '/v1/strategy/forecasts');
-      expect(m.strategyComparePath, '/v1/strategy/compare');
+      expect(m.strategyComparePath, '/v1/strategy/comparison');
       expect(m.strategyGoalsPath, '/v1/strategy/goals');
       expect(m.mandateExecutivePath, '/v1/mandate/executive');
       expect(m.mandateMapPath, '/v1/mandate/map');

@@ -532,10 +532,11 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: 'promises',
-            builder: (_, _) => ParliamentPendingPage(
-              title: 'Promessas',
-              path: AuthMode.staff.parliamentPromisesPath,
-              probe: (repo) => repo.promises(),
+            builder: (_, _) => ParliamentListPage(
+              title: 'Promessas de campanha',
+              detailRoutePrefix: '/home/parliament/promises',
+              emptyMessage: 'Nenhuma promessa de campanha encontrada.',
+              loader: (repo, tenant) => repo.promises(tenantSlug: tenant),
             ),
           ),
           GoRoute(
@@ -2833,11 +2834,7 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: 'compare',
-            builder: (_, _) => StrategyPendingPage(
-              title: 'Comparativos',
-              path: AuthMode.staff.strategyComparePath,
-              probe: (repo) => repo.compare(),
-            ),
+            builder: (_, _) => const StrategyComparePage(),
           ),
           GoRoute(
             path: 'regions',
@@ -2890,14 +2887,8 @@ GoRouter createAppRouter({
             routes: [
               GoRoute(
                 path: ':id',
-                builder: (_, state) => AutomationPendingPage(
-                  title: 'Detalhe da automação',
-                  path: AuthMode.staff.automationPath(
-                    state.pathParameters['id']!,
-                  ),
-                  probe: (repo) => repo.assertPending(
-                    AuthMode.staff.automationPath(state.pathParameters['id']!),
-                  ),
+                builder: (_, state) => AutomationRuleDetailPage(
+                  id: state.pathParameters['id']!,
                 ),
               ),
             ],
@@ -2908,11 +2899,7 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: 'approvals',
-            builder: (_, _) => AutomationPendingPage(
-              title: 'Aprovações',
-              path: AuthMode.staff.automationsApprovalsPath,
-              probe: (repo) => repo.approvals(),
-            ),
+            builder: (_, _) => const AutomationApprovalsPage(),
           ),
           GoRoute(
             path: 'alerts',
@@ -2924,11 +2911,7 @@ GoRouter createAppRouter({
           ),
           GoRoute(
             path: 'schedule',
-            builder: (_, _) => AutomationPendingPage(
-              title: 'Agenda de execuções',
-              path: AuthMode.staff.automationsSchedulePath,
-              probe: (repo) => repo.schedule(),
-            ),
+            builder: (_, _) => const AutomationSchedulePage(),
           ),
           GoRoute(
             path: 'history',

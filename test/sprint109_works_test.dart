@@ -13,8 +13,8 @@ void main() {
       const m = AuthMode.staff;
       expect(m.worksRootPath, '/v1/works');
       expect(m.worksDashboardPath, '/v1/works/dashboard');
-      expect(m.worksListPath, '/v1/works/projects');
-      expect(m.worksItemPath('x'), '/v1/works/projects/x');
+      expect(m.worksListPath, '/v1/works');
+      expect(m.worksItemPath('x'), '/v1/works/x');
       expect(m.worksDemandsPath, '/v1/works/demands');
       expect(m.worksInspectionsPath, '/v1/works/inspections');
       expect(m.worksSchedulePath, '/v1/works/schedule');
@@ -22,16 +22,16 @@ void main() {
       expect(m.worksTimelinePath, '/v1/works/timeline');
       expect(m.worksPhotosPath, '/v1/works/photos');
       expect(m.worksAttachmentsPath, '/v1/works/attachments');
-      expect(m.worksChecklistPath, '/v1/works/checklist');
-      expect(m.worksIndicatorsPath, '/v1/works/indicators');
+      expect(m.worksChecklistPath, '/v1/works/demands');
+      expect(m.worksIndicatorsPath, '/v1/works/dashboard');
       expect(m.worksReportsPath, '/v1/works/reports');
-      expect(m.worksSearchPath, '/v1/works/search');
+      expect(m.worksSearchPath, '/v1/works');
     });
   });
 
   group('Works LIVE contracts', () {
-    test('marks HTTP 200 VPS routes as live', () {
-      expect(kWorksLiveSlugs.length, 10);
+    test('marks catalog cards live with assumed AuthMode remaps', () {
+      expect(kWorksLiveSlugs.length, 13);
       expect(worksPathLive('list'), isTrue);
       expect(worksPathLive('dashboard'), isTrue);
       expect(worksPathLive('demands'), isTrue);
@@ -42,10 +42,10 @@ void main() {
       expect(worksPathLive('photos'), isTrue);
       expect(worksPathLive('attachments'), isTrue);
       expect(worksPathLive('reports'), isTrue);
-      expect(worksPathLive('checklist'), isFalse);
-      expect(worksPathLive('indicators'), isFalse);
+      expect(worksPathLive('checklist'), isTrue);
+      expect(worksPathLive('indicators'), isTrue);
       expect(worksPathLive('projects'), isFalse);
-      expect(worksPathLive('search'), isFalse);
+      expect(worksPathLive('search'), isTrue);
     });
   });
 
@@ -149,10 +149,7 @@ void main() {
         ('poligestor://obras/inspections', '/home/works/inspections'),
       ]) {
         final target = router.resolve(
-          PushPayload(
-            type: PushEventType.systemNotice,
-            deepLink: input.$1,
-          ),
+          PushPayload(type: PushEventType.systemNotice, deepLink: input.$1),
         );
         expect(target?.location, input.$2, reason: input.$1);
       }

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 
 import '../../../core/api/api_client.dart';
-import '../../../shared/demo/demo_repository_support.dart';
 import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import 'assistant_models.dart';
@@ -70,28 +69,13 @@ class AssistantRepository {
     );
   }
 
-  /// Limpa o histórico no servidor para iniciar uma nova conversa.
+  /// Inicia uma nova visualização local da conversa.
+  ///
+  /// O catálogo LIVE `c29c2ad` publica somente GET da conversa e POST da
+  /// mensagem. Não há contrato DELETE nem `/new`, portanto nenhuma chamada
+  /// HTTP é feita aqui.
   Future<void> clearConversation({String? tenantSlug}) async {
-    try {
-      await _api.deleteEnvelope<bool>(
-        conversationPath,
-        mode: AuthMode.portal,
-        tenantSlug: tenantSlug,
-        parse: (_) => true,
-      );
-    } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 405) {
-        await _api.postEnvelope<bool>(
-          '$conversationPath/new',
-          data: const <String, dynamic>{},
-          mode: AuthMode.portal,
-          tenantSlug: tenantSlug,
-          parse: (_) => true,
-        );
-        return;
-      }
-      rethrow;
-    }
+    return;
   }
 
   Future<AssistantReply> sendMessage(

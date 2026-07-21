@@ -22,7 +22,7 @@ void main() {
       expect(m.parliamentVotesPath, '/v1/parliament/votes');
       expect(m.parliamentSupportBasePath, '/v1/parliament/support-base');
       expect(m.parliamentDemandsPath, '/v1/parliament/demands');
-      expect(m.parliamentPromisesPath, '/v1/parliament/promises');
+      expect(m.parliamentPromisesPath, '/v1/parliament/campaign-promises');
       expect(m.parliamentSearchPath, '/v1/parliament/search');
     });
   });

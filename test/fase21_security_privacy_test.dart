@@ -13,37 +13,34 @@ void main() {
     test('exposes official /v1/security namespace', () {
       const m = AuthMode.staff;
       expect(m.securityRootPath, '/v1/security');
-      expect(m.securityMfaEnablePath, '/v1/security/mfa/enable');
-      expect(m.securityMfaConfirmPath, '/v1/security/mfa/confirm');
-      expect(m.securityAccountRecoveryPath, '/v1/security/account-recovery');
+      expect(m.securityMfaEnablePath, '/v1/security/mfa');
+      expect(m.securityMfaConfirmPath, '/v1/security/mfa');
+      expect(m.securityAccountRecoveryPath, '/v1/security/recovery');
       expect(m.securitySessionsPath, '/v1/security/sessions');
-      expect(
-        m.securitySessionsRevokeAllPath,
-        '/v1/security/sessions/revoke-all',
-      );
+      expect(m.securitySessionsRevokeAllPath, '/v1/security/sessions');
       expect(m.securityAccessHistoryPath, '/v1/security/access-history');
-      expect(m.securityDevicesPath, '/v1/security/devices');
-      expect(m.securityPasswordChangePath, '/v1/security/password-change');
-      expect(
-        m.securityPasswordPoliciesPath,
-        '/v1/security/password-policies',
-      );
+      expect(m.securityDevicesPath, '/v1/security/sessions');
+      expect(m.securityPasswordChangePath, '/v1/security/password-policy');
+      expect(m.securityPasswordPoliciesPath, '/v1/security/password-policy');
       expect(m.securityTokensPath, '/v1/security/tokens');
-      expect(m.securityApiKeysPath, '/v1/security/api-keys');
+      expect(m.securityApiKeysPath, '/v1/security/keys');
       expect(m.securityAlertsPath, '/v1/security/alerts');
-      expect(m.securityPrivacyPath, '/v1/security/privacy');
+      expect(m.securityPrivacyPath, '/v1/security/policies');
       expect(m.securityConsentsPath, '/v1/security/consents');
-      expect(m.securityTermsPath, '/v1/security/terms');
-      expect(m.securityPrivacyPolicyPath, '/v1/security/privacy-policy');
-      expect(m.securityDataRequestPath, '/v1/security/data-request');
-      expect(m.securityDataExportPath, '/v1/security/data-export');
-      expect(m.securityDataCorrectionPath, '/v1/security/data-correction');
-      expect(m.securityAccountDeletionPath, '/v1/security/account-deletion');
+      expect(m.securityTermsPath, '/v1/security/policies');
+      expect(m.securityPrivacyPolicyPath, '/v1/security/policies');
+      expect(m.securityDataRequestPath, '/v1/security/data-subject-requests');
+      expect(m.securityDataExportPath, '/v1/security/export-me');
       expect(
-        m.securityPrivacyPreferencesPath,
-        '/v1/security/privacy-preferences',
+        m.securityDataCorrectionPath,
+        '/v1/security/data-subject-requests',
       );
-      expect(m.securityConsentHistoryPath, '/v1/security/consent-history');
+      expect(
+        m.securityAccountDeletionPath,
+        '/v1/security/data-subject-requests',
+      );
+      expect(m.securityPrivacyPreferencesPath, '/v1/security/consents');
+      expect(m.securityConsentHistoryPath, '/v1/security/consents');
       expect(m.securityIncidentsPath, '/v1/security/incidents');
     });
 
@@ -60,9 +57,14 @@ void main() {
     test('kSecurityLiveSlugs sync probe auth 2026-07-21', () {
       expect(securityPathLive('sessions'), isTrue);
       expect(securityPathLive('alerts'), isTrue);
-      expect(securityPathLive('dashboard'), isFalse);
-      expect(securityPathLive('mfa-enable'), isFalse);
-      expect(kSecurityLiveSlugs.length, 6);
+      expect(securityPathLive('dashboard'), isTrue);
+      expect(securityPathLive('mfa-enable'), isTrue);
+      expect(securityPathLive('mfa-confirm'), isTrue);
+      expect(securityPathLive('account-recovery'), isTrue);
+      expect(securityPathLive('password-policies'), isTrue);
+      expect(securityPathLive('data-request'), isTrue);
+      expect(securityPathLive('data-export'), isTrue);
+      expect(kSecurityLiveSlugs.length, 44);
     });
   });
 
@@ -85,16 +87,15 @@ void main() {
     });
 
     test('stripSecuritySecrets removes tokens from map', () {
-      final cleaned = stripSecuritySecrets({
-        'id': '1',
-        'title': 'Token app',
-        'access_token': 'secret-value',
-        'password': '123456',
-        'nested': {
-          'api_key': 'key-abc',
-          'label': 'ok',
-        },
-      }) as Map<String, dynamic>;
+      final cleaned =
+          stripSecuritySecrets({
+                'id': '1',
+                'title': 'Token app',
+                'access_token': 'secret-value',
+                'password': '123456',
+                'nested': {'api_key': 'key-abc', 'label': 'ok'},
+              })
+              as Map<String, dynamic>;
       expect(cleaned.containsKey('access_token'), isFalse);
       expect(cleaned.containsKey('password'), isFalse);
       expect((cleaned['nested'] as Map).containsKey('api_key'), isFalse);
@@ -112,11 +113,7 @@ void main() {
       final cache = SecurityCache();
       await cache.putMap('demo', 'sessions', {
         'data': [
-          {
-            'id': '1',
-            'title': 'Web',
-            'refresh_token': 'must-not-persist',
-          },
+          {'id': '1', 'title': 'Web', 'refresh_token': 'must-not-persist'},
         ],
       });
       final stored = await cache.getMap('demo', 'sessions');

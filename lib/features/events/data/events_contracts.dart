@@ -1,20 +1,36 @@
 /// Contratos Fase 11 — Painel de Eventos (`/v1/events/*`).
-/// Probe auth 2026-07-21.
+/// Catálogo oficial backend c29c2ad.
+/// Nunca consumir `/v1/events/viewer`.
+/// Assume os remapeamentos: list→events, invites→invitations,
+/// audiences→hearings e indicators→statistics.
+/// check-in / check-out / qr-code / photos / videos / map / search ∉ catálogo.
 library;
 
-/// Slugs com GET HTTP 200 autenticado.
+/// Slugs com GET AuthMode ∈ catálogo c29c2ad.
 const kEventsLiveSlugs = <String>{
   'dashboard',
+  'list',
+  'events',
   'agenda',
   'calendar',
   'meetings',
+  'audiences',
   'participants',
+  'invites',
   'attendance',
+  'check-in',
+  'check-out',
+  'qr-code',
   'gallery',
+  'photos',
+  'videos',
   'documents',
   'certificates',
   'timeline',
+  'map',
   'reports',
+  'indicators',
+  'search',
 };
 
 bool eventsPathLive(String slug) => kEventsLiveSlugs.contains(slug);

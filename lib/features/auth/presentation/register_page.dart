@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_states.dart';
 import '../../account/data/account_repository.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
@@ -89,7 +90,10 @@ class _RegisterPageState extends State<RegisterPage> {
         padding: const EdgeInsets.all(24),
         children: [
           if (_pendingPath != null)
-            DemoExperiencePane(path: _pendingPath!)
+            AppErrorState(
+              message: 'Não foi possível concluir o cadastro. Tente novamente.',
+              onRetry: () => setState(() => _pendingPath = null),
+            )
           else
             Form(
               key: _formKey,

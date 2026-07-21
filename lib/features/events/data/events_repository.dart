@@ -40,16 +40,8 @@ class EventsRepository {
     bool allowCache = true,
     String? liveSlug,
   }) async {
-    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
     // Nunca consumir viewer (colisão indevida).
     if (path.endsWith('/viewer') || path.contains('/events/viewer')) {
-      return parse(
-        DemoRepositorySupport.rootFor(path),
-        fromCache: false,
-        age: DemoRepositorySupport.ageLabel,
-      );
-    }
-    if (!eventsPathLive(slug)) {
       return parse(
         DemoRepositorySupport.rootFor(path),
         fromCache: false,
@@ -112,6 +104,16 @@ class EventsRepository {
     bool allowCache = true,
   }) => _list(tenantSlug, 'events', _staff.eventsListPath, allowCache);
 
+  Future<List<EventsItem>> agenda({
+    required String tenantSlug,
+    bool allowCache = true,
+  }) => _list(tenantSlug, 'agenda', _staff.eventsAgendaPath, allowCache);
+
+  Future<List<EventsItem>> calendar({
+    required String tenantSlug,
+    bool allowCache = true,
+  }) => _list(tenantSlug, 'calendar', _staff.eventsCalendarPath, allowCache);
+
   Future<EventsDashboard> dashboard({
     required String tenantSlug,
     bool allowCache = true,
@@ -129,7 +131,10 @@ class EventsRepository {
         ),
       );
     } on EndpointUnavailableException {
-      final items = await events(tenantSlug: tenantSlug, allowCache: allowCache);
+      final items = await events(
+        tenantSlug: tenantSlug,
+        allowCache: allowCache,
+      );
       return EventsDashboard.fromItems(items);
     }
   }
@@ -304,20 +309,11 @@ class EventsRepository {
     }
   }
 
-  Future<void> assertPending(String path) async {
-    try {
-      await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode)) {
-        return;
-      }
-      rethrow;
-    }
+  Future<void> search() async {
+    await _api.getEnvelope<dynamic>(
+      _staff.eventsSearchPath,
+      mode: _staff,
+      parse: (raw) => raw,
+    );
   }
-
-  Future<void> search() => assertPending(_staff.eventsSearchPath);
-
-  Future<void> agendaEndpoint() => assertPending(_staff.eventsAgendaPath);
-
-  Future<void> calendarEndpoint() => assertPending(_staff.eventsCalendarPath);
 }

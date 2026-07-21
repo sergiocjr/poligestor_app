@@ -3,16 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../../virtual_team/data/virtual_team_models.dart';
 import '../../virtual_team/presentation/widgets/virtual_team_widgets.dart';
+import '../data/automation_contracts.dart';
 import '../data/automation_models.dart';
 import '../data/automation_repository.dart';
 
@@ -20,90 +18,90 @@ import '../data/automation_repository.dart';
 class AutomationHubPage extends StatelessWidget {
   const AutomationHubPage({super.key});
 
-  static const _entries = <_AutoEntry>[
+  static final _entries = <_AutoEntry>[
     _AutoEntry(
       'Painel',
       'Indicadores operacionais ativos',
       Icons.dashboard_outlined,
       '/home/automation/dashboard',
-      true,
+      automationPathLive('dashboard'),
     ),
     _AutoEntry(
       'Automações',
-      'Catálogo e editor',
+      'Catálogo de regras',
       Icons.account_tree_outlined,
       '/home/automation/list',
-      false,
+      automationPathLive('rules'),
     ),
     _AutoEntry(
       'Execuções',
       'Histórico operacional',
       Icons.play_circle_outline,
       '/home/automation/executions',
-      true,
+      automationPathLive('executions'),
     ),
     _AutoEntry(
       'Aprovações',
       'Fila de aprovadores',
       Icons.verified_outlined,
       '/home/automation/approvals',
-      false,
+      automationPathLive('approvals'),
     ),
     _AutoEntry(
       'Alertas',
       'SLA e falhas',
       Icons.notification_important_outlined,
       '/home/automation/alerts',
-      true,
+      automationPathLive('alerts'),
     ),
     _AutoEntry(
       'Agentes',
       'Equipe Virtual',
       Icons.smart_toy_outlined,
       '/home/automation/agents',
-      true,
+      true, // LIVE via Equipe Virtual
     ),
     _AutoEntry(
       'Agenda',
       'Próximas execuções',
       Icons.schedule_outlined,
       '/home/automation/schedule',
-      false,
+      automationPathLive('schedules'),
     ),
     _AutoEntry(
       'Histórico',
       'Linha do tempo operacional',
       Icons.history,
       '/home/automation/history',
-      true,
+      true, // LIVE via Equipe Virtual (linha do tempo)
     ),
     _AutoEntry(
       'Registros',
       'Auditoria e eventos',
       Icons.article_outlined,
       '/home/automation/logs',
-      true,
+      automationPathLive('logs'),
     ),
     _AutoEntry(
       'Métricas',
       'Eficiência e fila',
       Icons.analytics_outlined,
       '/home/automation/metrics',
-      true,
+      automationPathLive('metrics'),
     ),
     _AutoEntry(
       'Autonomia',
       'Níveis 0–5',
       Icons.tune_outlined,
       '/home/automation/autonomy',
-      true,
+      automationPathLive('agents'),
     ),
     _AutoEntry(
       'Edição',
       'Fluxo guiado',
       Icons.edit_note_outlined,
       '/home/automation/editor',
-      false,
+      true,
     ),
   ];
 
@@ -191,54 +189,284 @@ class _AutoEntry {
   final bool live;
 }
 
-class AutomationPendingPage extends StatefulWidget {
-  const AutomationPendingPage({
-    super.key,
-    required this.title,
-    required this.path,
-    required this.probe,
-  });
-
-  final String title;
-  final String path;
-  final Future<void> Function(AutomationRepository repo) probe;
+/// Fila de aprovações — LIVE `GET /v1/automation/approvals`.
+class AutomationApprovalsPage extends StatefulWidget {
+  const AutomationApprovalsPage({super.key});
 
   @override
-  State<AutomationPendingPage> createState() => _AutomationPendingPageState();
+  State<AutomationApprovalsPage> createState() =>
+      _AutomationApprovalsPageState();
 }
 
-class _AutomationPendingPageState extends State<AutomationPendingPage> {
-  Future<void>? _future;
+class _AutomationApprovalsPageState extends State<AutomationApprovalsPage>
+    with _AutoRefresh {
+  Future<List<AutoApproval>>? _future;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _future ??= widget.probe(context.read<AutomationRepository>());
+    bindAutoRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
+  }
+
+  Future<List<AutoApproval>> _load() =>
+      context.read<AutomationRepository>().approvals();
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = DateFormat('dd/MM HH:mm');
+    return Scaffold(
+      appBar: AppBar(title: const Text('Aprovações')),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() => _future = _load());
+          await _future;
+        },
+        child: FutureBuilder<List<AutoApproval>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState != ConnectionState.done) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 120),
+                  Center(child: CircularProgressIndicator()),
+                ],
+              );
+            }
+            if (snap.hasError) {
+              return AppErrorState(
+                error: snap.error,
+                onRetry: () => setState(() => _future = _load()),
+              );
+            }
+            final items = snap.data ?? const [];
+            if (items.isEmpty) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 120),
+                  AppEmptyState(message: 'Nenhuma aprovação pendente.'),
+                ],
+              );
+            }
+            return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(12),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              itemBuilder: (context, i) {
+                final a = items[i];
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.verified_outlined),
+                    title: Text(
+                      a.title,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(
+                      [
+                        a.statusLabel,
+                        if (a.ruleName != null && a.ruleName!.isNotEmpty)
+                          a.ruleName!,
+                        if (a.agentSlug != null && a.agentSlug!.isNotEmpty)
+                          a.agentSlug!,
+                        if (a.requestedAt != null)
+                          fmt.format(a.requestedAt!.toLocal()),
+                      ].join(' · '),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+/// Agenda de execuções — LIVE `GET /v1/automation/schedules`.
+class AutomationSchedulePage extends StatefulWidget {
+  const AutomationSchedulePage({super.key});
+
+  @override
+  State<AutomationSchedulePage> createState() => _AutomationSchedulePageState();
+}
+
+class _AutomationSchedulePageState extends State<AutomationSchedulePage>
+    with _AutoRefresh {
+  Future<List<AutoAutomation>>? _future;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    bindAutoRefresh(() => setState(() => _future = _load()));
+    _future ??= _load();
+  }
+
+  Future<List<AutoAutomation>> _load() =>
+      context.read<AutomationRepository>().schedules();
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = DateFormat('dd/MM HH:mm');
+    return Scaffold(
+      appBar: AppBar(title: const Text('Agenda de execuções')),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          setState(() => _future = _load());
+          await _future;
+        },
+        child: FutureBuilder<List<AutoAutomation>>(
+          future: _future,
+          builder: (context, snap) {
+            if (snap.connectionState != ConnectionState.done) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 120),
+                  Center(child: CircularProgressIndicator()),
+                ],
+              );
+            }
+            if (snap.hasError) {
+              return AppErrorState(
+                error: snap.error,
+                onRetry: () => setState(() => _future = _load()),
+              );
+            }
+            final items = snap.data ?? const [];
+            if (items.isEmpty) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: const [
+                  SizedBox(height: 120),
+                  AppEmptyState(message: 'Nenhuma execução agendada.'),
+                ],
+              );
+            }
+            return ListView.separated(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.all(12),
+              itemCount: items.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 8),
+              itemBuilder: (context, i) {
+                final s = items[i];
+                return Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.schedule_outlined),
+                    title: Text(
+                      s.name,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    subtitle: Text(
+                      [
+                        s.statusLabel,
+                        if (s.nextRunAt != null)
+                          'Próxima: ${fmt.format(s.nextRunAt!.toLocal())}',
+                        if (s.lastRunAt != null)
+                          'Última: ${fmt.format(s.lastRunAt!.toLocal())}',
+                      ].join(' · '),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+/// Detalhe da automação — LIVE `GET /v1/automation/rules/{id}`.
+class AutomationRuleDetailPage extends StatefulWidget {
+  const AutomationRuleDetailPage({super.key, required this.id});
+
+  final String id;
+
+  @override
+  State<AutomationRuleDetailPage> createState() =>
+      _AutomationRuleDetailPageState();
+}
+
+class _AutomationRuleDetailPageState extends State<AutomationRuleDetailPage> {
+  Future<AutoAutomation>? _future;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _future ??= context.read<AutomationRepository>().automationDetail(
+      widget.id,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final fmt = DateFormat('dd/MM/yyyy HH:mm');
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
-      body: FutureBuilder<void>(
+      appBar: AppBar(title: const Text('Detalhe da automação')),
+      body: FutureBuilder<AutoAutomation>(
         future: _future,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
             return const Center(child: CircularProgressIndicator());
           }
-          final err = snap.error;
-          if (err is EndpointUnavailableException) {
-            return DemoExperiencePane(path: err.path);
-          }
           if (snap.hasError) {
             return AppErrorState(
               error: snap.error,
               onRetry: () => setState(() {
-                _future = widget.probe(context.read<AutomationRepository>());
+                _future = context.read<AutomationRepository>().automationDetail(
+                  widget.id,
+                );
               }),
             );
           }
-          return DemoExperiencePane(path: widget.path);
+          final a = snap.data!;
+          final rows = <(String, String?)>[
+            ('Estado', a.statusLabel),
+            ('Agente', a.agentSlug),
+            ('Gatilho', a.trigger),
+            ('Autonomia', a.autonomy?.label),
+            (
+              'Próxima execução',
+              a.nextRunAt == null ? null : fmt.format(a.nextRunAt!.toLocal()),
+            ),
+            (
+              'Última execução',
+              a.lastRunAt == null ? null : fmt.format(a.lastRunAt!.toLocal()),
+            ),
+            ('Sucessos', '${a.successCount}'),
+            ('Falhas', '${a.failureCount}'),
+          ];
+          return ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              Text(
+                a.name,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
+              ),
+              if (a.description != null && a.description!.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                Text(a.description!),
+              ],
+              const SizedBox(height: 12),
+              for (final (label, value) in rows)
+                if (value != null && value.isNotEmpty)
+                  ListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(label),
+                    trailing: Text(
+                      value,
+                      style: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+            ],
+          );
         },
       ),
     );
@@ -331,7 +559,7 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
                 '${d.efficiencyPct.toStringAsFixed(0)}%',
                 Icons.speed_outlined,
               ),
-              ('Aprovações*', '${d.pendingApprovals}', Icons.verified_outlined),
+              ('Aprovações', '${d.pendingApprovals}', Icons.verified_outlined),
             ];
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -343,7 +571,7 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 Text(
-                  'Fonte ativa: Equipe Virtual até publicar o painel de automações',
+                  'Fonte ativa: painel de automação',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
@@ -391,11 +619,6 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
                   },
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  '* Aprovações dedicadas aguardam publicação do contrato.',
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-                const SizedBox(height: 8),
                 FilledButton.tonal(
                   onPressed: () => context.push('/home/virtual-team'),
                   child: const Text('Abrir Equipe Virtual'),
@@ -446,8 +669,7 @@ class _AutomationAutomationsPageState extends State<AutomationAutomationsPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -987,16 +1209,13 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
     if (ok != true || !mounted) return;
     try {
       await context.read<AutomationRepository>().autonomyWrite();
-    } on EndpointUnavailableException catch (e) {
+    } on EndpointUnavailableException {
       if (!mounted) return;
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Contrato pendente'),
-          content: DemoExperiencePane(
-            path: e.path,
-            message: 'Leitura ativa ok. Escrita de autonomia aguarda publicação.',
-          ),
+          title: const Text('Ação indisponível'),
+          content: const Text('Não foi possível concluir a ação no momento.'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
@@ -1083,7 +1302,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
   }
 }
 
-/// Editor guiado (10 passos) — persistência aguarda /v1/automations.
+/// Editor guiado (10 passos) — contrato de escrita ainda não publicado.
 class AutomationEditorPage extends StatelessWidget {
   const AutomationEditorPage({super.key});
 
@@ -1107,10 +1326,7 @@ class AutomationEditorPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          DemoExperiencePane(
-            path: AuthMode.staff.automationsRootPath,
-            message: 'Edição preparada. O salvamento aguarda contrato ativo.',
-          ),
+          const AppEmptyState(message: 'Nenhum registro encontrado.'),
           const SizedBox(height: 12),
           ..._steps.asMap().entries.map((e) {
             return Card(

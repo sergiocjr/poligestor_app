@@ -99,10 +99,6 @@ class PlatformRepository {
     bool allowCache = true,
     String? liveSlug,
   }) async {
-    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
-    if (!platformPathLive(slug)) {
-      return _itemsOf(DemoRepositorySupport.rootFor(path));
-    }
     return _cachedGet(
       tenantSlug: tenantSlug,
       cacheKey: cacheKey,
@@ -152,13 +148,12 @@ class PlatformRepository {
   Future<List<PlatformItem>> consumption({required String tenantSlug}) =>
       _list(tenantSlug, 'consumption', _staff.platformConsumptionPath);
 
-  Future<List<PlatformItem>> planLimits({required String tenantSlug}) =>
-      _list(
-        tenantSlug,
-        'plan_limits',
-        _staff.platformPlanLimitsPath,
-        liveSlug: 'plan-limits',
-      );
+  Future<List<PlatformItem>> planLimits({required String tenantSlug}) => _list(
+    tenantSlug,
+    'plan_limits',
+    _staff.platformPlanLimitsPath,
+    liveSlug: 'plan-limits',
+  );
 
   Future<List<PlatformItem>> metrics({required String tenantSlug}) =>
       _list(tenantSlug, 'metrics', _staff.platformMetricsPath);

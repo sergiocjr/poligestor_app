@@ -17,38 +17,35 @@ void main() {
       expect(m.aiHistoryPath, '/v1/ai/history');
       expect(m.advancedAiBriefingsPath, '/v1/ai/briefings');
       expect(m.advancedAiPromptsPath, '/v1/ai/prompts');
-      expect(m.advancedAiSummaryPath, '/v1/ai/summary');
-      expect(m.advancedAiSuggestionsPath, '/v1/ai/suggestions');
-      expect(m.advancedAiFeedbackPath, '/v1/ai/feedback');
-      expect(m.advancedAiSecretaryPath, '/v1/ai/secretary');
-      expect(m.advancedAiVirtualSecretaryPath, '/v1/ai/virtual-secretary');
-      expect(
-        m.advancedAiParliamentaryAdvisorPath,
-        '/v1/ai/parliamentary-advisor',
-      );
-      expect(m.advancedAiPoliticalAnalystPath, '/v1/ai/political-analyst');
-      expect(m.advancedAiFinancialAnalystPath, '/v1/ai/financial-analyst');
-      expect(
-        m.advancedAiCommunicationAdvisorPath,
-        '/v1/ai/communication-advisor',
-      );
-      expect(m.advancedAiLegalAdvisorPath, '/v1/ai/legal-advisor');
-      expect(m.advancedAiStrategicPlanningPath, '/v1/ai/strategic-planning');
+      expect(m.advancedAiSummaryPath, '/v1/ai/briefings');
+      expect(m.advancedAiSuggestionsPath, '/v1/ai/briefings');
+      expect(m.advancedAiFeedbackPath, '/v1/ai/analyses');
+      expect(m.advancedAiSecretaryPath, '/v1/ai/specialists');
+      expect(m.advancedAiVirtualSecretaryPath, '/v1/ai/specialists');
+      expect(m.advancedAiParliamentaryAdvisorPath, '/v1/ai/specialists');
+      expect(m.advancedAiPoliticalAnalystPath, '/v1/ai/specialists');
+      expect(m.advancedAiFinancialAnalystPath, '/v1/ai/specialists');
+      expect(m.advancedAiCommunicationAdvisorPath, '/v1/ai/specialists');
+      expect(m.advancedAiLegalAdvisorPath, '/v1/ai/specialists');
+      expect(m.advancedAiStrategicPlanningPath, '/v1/ai/specialists');
       expect(m.advancedAiDashboardPath, '/v1/ai/dashboard');
       expect(m.advancedAiHubPath, '/v1/ai/hub');
-      expect(m.advancedAiSearchPath, '/v1/ai/search');
-      expect(m.advancedAiSettingsPath, '/v1/ai/settings');
-      expect(m.advancedAiPromptLibraryPath, '/v1/ai/prompt-library');
-      expect(m.advancedAiSummariesPath, '/v1/ai/summaries');
-      expect(m.advancedAiBriefingSingularPath, '/v1/ai/briefing');
-      expect(m.advancedAiInsightsPath, '/v1/ai/insights');
+      expect(m.advancedAiSearchPath, '/v1/ai/hub');
+      expect(m.advancedAiSettingsPath, '/v1/ai/model-configs');
+      expect(m.advancedAiPromptLibraryPath, '/v1/ai/prompts');
+      expect(m.advancedAiSummariesPath, '/v1/ai/briefings');
+      expect(m.advancedAiBriefingSingularPath, '/v1/ai/briefings');
+      expect(m.advancedAiInsightsPath, '/v1/ai/analyses');
       expect(m.aiAgentsCatalogPath, '/v1/ai/agents');
+      expect(m.aiFavoritesPath, '/v1/ai/history');
+      expect(m.aiQuestionsPath, '/v1/ai/conversations');
+      expect(m.aiSharePath, '/v1/ai/conversations');
     });
   });
 
   group('IA Avançada LIVE contracts', () {
     test('marks VPS live slugs and agent roles', () {
-      expect(kAdvancedAiLiveSlugs.length, 13);
+      expect(kAdvancedAiLiveSlugs.length, 31);
       expect(advancedAiPathLive('dashboard'), isTrue);
       expect(advancedAiPathLive('chat'), isTrue);
       expect(advancedAiPathLive('conversations'), isTrue);
@@ -57,8 +54,8 @@ void main() {
       expect(advancedAiPathLive('prompts'), isTrue);
       expect(advancedAiPathLive('agents'), isTrue);
       expect(advancedAiPathLive('hub'), isTrue);
-      expect(advancedAiPathLive('team'), isTrue);
-      expect(advancedAiPathLive('handoffs'), isTrue);
+      expect(advancedAiPathLive('team'), isFalse);
+      expect(advancedAiPathLive('handoffs'), isFalse);
       expect(advancedAiPathLive('summary'), isTrue);
       expect(advancedAiPathLive('suggestions'), isTrue);
       expect(advancedAiPathLive('feedback'), isTrue);
@@ -70,9 +67,9 @@ void main() {
         advancedAiAgentSlugForHub('parliamentary-advisor'),
         'parliamentary_advisor',
       );
-      expect(advancedAiPathLive('financial-analyst'), isFalse);
-      expect(advancedAiPathLive('settings'), isFalse);
-      expect(advancedAiPathLive('search'), isFalse);
+      expect(advancedAiPathLive('financial-analyst'), isTrue);
+      expect(advancedAiPathLive('settings'), isTrue);
+      expect(advancedAiPathLive('search'), isTrue);
     });
   });
 

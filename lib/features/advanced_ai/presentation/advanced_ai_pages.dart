@@ -7,12 +7,10 @@ import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/advanced_ai_contracts.dart';
 import '../data/advanced_ai_models.dart';
@@ -175,17 +173,14 @@ class AdvancedAiHubPage extends StatelessWidget {
           final body = ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              SoftNotice(
-                message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -342,9 +337,9 @@ class _AdvancedAiListPageState extends State<AdvancedAiListPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.role != null) Text('Papel: ${item.role}'),
@@ -407,8 +402,9 @@ class _AdvancedAiListPageState extends State<AdvancedAiListPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -567,7 +563,7 @@ class _AdvancedAiChatPageState extends State<AdvancedAiChatPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: Text(_title)),
-        body: DemoExperiencePane(path: _pending!.path),
+        body: const AppEmptyState(message: 'Nenhum registro encontrado.'),
       );
     }
 
@@ -739,8 +735,7 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -750,7 +745,7 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
           }
           final item = snap.data;
           if (item == null) {
-            return DemoExperiencePane(path: widget.pendingPath);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           return ListView(
             padding: const EdgeInsets.all(16),
@@ -769,8 +764,9 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
                     children: [
                       Text(
                         item.title,
-                        style: Theme.of(context).textTheme.titleLarge
-                            ?.copyWith(fontWeight: FontWeight.w800),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
                       ),
                       if (item.summary != null) ...[
                         const SizedBox(height: 8),
@@ -793,10 +789,7 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
                     ? null
                     : () => context.push(
                         '/home/advanced-ai/chat',
-                        extra: {
-                          'agentSlug': agentSlug,
-                          'title': widget.title,
-                        },
+                        extra: {'agentSlug': agentSlug, 'title': widget.title},
                       ),
                 icon: const Icon(Icons.forum_outlined),
                 label: const Text('Abrir conversa com este agente'),
@@ -870,7 +863,8 @@ class _AdvancedAiPostFormPageState extends State<AdvancedAiPostFormPage> {
   }
 
   String _formatResult(Map<String, dynamic> data) {
-    final content = data['content'] ??
+    final content =
+        data['content'] ??
         data['summary'] ??
         data['text'] ??
         data['message'] ??
@@ -891,7 +885,7 @@ class _AdvancedAiPostFormPageState extends State<AdvancedAiPostFormPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: DemoExperiencePane(path: _pending!.path),
+        body: const AppEmptyState(message: 'Nenhum registro encontrado.'),
       );
     }
 
@@ -1008,7 +1002,7 @@ class _AdvancedAiFeedbackPageState extends State<AdvancedAiFeedbackPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Avaliação')),
-        body: DemoExperiencePane(path: _pending!.path),
+        body: const AppEmptyState(message: 'Nenhum registro encontrado.'),
       );
     }
 
@@ -1162,9 +1156,9 @@ class _AdvancedAiSearchPageState extends State<AdvancedAiSearchPage>
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snap.error is EndpointUnavailableException) {
-                        final err =
-                            snap.error! as EndpointUnavailableException;
-                        return DemoExperiencePane(path: err.path);
+                        return const AppEmptyState(
+                          message: 'Nenhum registro encontrado.',
+                        );
                       }
                       if (snap.hasError) {
                         return AppErrorState(

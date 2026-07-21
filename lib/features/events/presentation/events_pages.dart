@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/events_models.dart';
 import '../data/events_repository.dart';
@@ -102,105 +100,105 @@ class EventsHubPage extends StatelessWidget {
       'Lista de participantes',
       Icons.people_outline,
       '/home/events/participants',
-      false,
+      true,
     ),
     _Entry(
       'Convites',
       'Convites enviados',
       Icons.mail_outline,
       '/home/events/invites',
-      false,
+      true,
     ),
     _Entry(
       'Presença',
       'Controle de presença',
       Icons.how_to_reg_outlined,
       '/home/events/attendance',
-      false,
+      true,
     ),
     _Entry(
       'Check-in',
       'Entrada no evento',
       Icons.login,
       '/home/events/check-in',
-      false,
+      true,
     ),
     _Entry(
       'Check-out',
       'Saída do evento',
       Icons.logout,
       '/home/events/check-out',
-      false,
+      true,
     ),
     _Entry(
       'QR Code',
       'Códigos de acesso',
       Icons.qr_code_2,
       '/home/events/qr-code',
-      false,
+      true,
     ),
     _Entry(
       'Galeria',
       'Mídia do evento',
       Icons.photo_library_outlined,
       '/home/events/gallery',
-      false,
+      true,
     ),
     _Entry(
       'Fotos',
       'Registro fotográfico',
       Icons.photo_outlined,
       '/home/events/photos',
-      false,
+      true,
     ),
     _Entry(
       'Vídeos',
       'Registro em vídeo',
       Icons.videocam_outlined,
       '/home/events/videos',
-      false,
+      true,
     ),
     _Entry(
       'Documentos',
       'Documentação oficial',
       Icons.description_outlined,
       '/home/events/documents',
-      false,
+      true,
     ),
     _Entry(
       'Certificados',
       'Certificados emitidos',
       Icons.workspace_premium_outlined,
       '/home/events/certificates',
-      false,
+      true,
     ),
     _Entry(
       'Linha do Tempo',
       'Eventos do histórico',
       Icons.timeline,
       '/home/events/timeline',
-      false,
+      true,
     ),
     _Entry(
       'Mapa',
       'Localização dos eventos',
       Icons.map_outlined,
       '/home/events/map',
-      false,
+      true,
     ),
     _Entry(
       'Indicadores',
       'Métricas de desempenho',
       Icons.analytics_outlined,
       '/home/events/indicators',
-      false,
+      true,
     ),
     _Entry(
       'Relatórios',
       'Exportações',
       Icons.summarize_outlined,
       '/home/events/reports',
-      false,
+      true,
     ),
     _Entry(
       'Pesquisa',
@@ -372,8 +370,9 @@ class _EventsListPageState extends State<EventsListPage> with _EventsRefresh {
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -449,7 +448,8 @@ class _EventsListPageState extends State<EventsListPage> with _EventsRefresh {
                           subtitle: Text(
                             [
                               _kindLabel(item.kind),
-                              if (item.status != null) uiStatusLabel(item.status),
+                              if (item.status != null)
+                                uiStatusLabel(item.status),
                               if (item.location != null) item.location!,
                               if (item.startsAt != null)
                                 fmt.format(item.startsAt!.toLocal()),
@@ -495,9 +495,9 @@ class _EventsDashboardPageState extends State<EventsDashboardPage>
     _future ??= _load();
   }
 
-  Future<EventsDashboard> _load() => context
-      .read<EventsRepository>()
-      .dashboard(tenantSlug: _tenantOf(context));
+  Future<EventsDashboard> _load() => context.read<EventsRepository>().dashboard(
+    tenantSlug: _tenantOf(context),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -510,8 +510,7 @@ class _EventsDashboardPageState extends State<EventsDashboardPage>
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -615,8 +614,7 @@ class _EventsDetailPageState extends State<EventsDetailPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -710,9 +708,8 @@ class _EventsAgendaPageState extends State<EventsAgendaPage>
     _future ??= _load();
   }
 
-  Future<List<EventsItem>> _load() => context
-      .read<EventsRepository>()
-      .events(tenantSlug: _tenantOf(context));
+  Future<List<EventsItem>> _load() =>
+      context.read<EventsRepository>().agenda(tenantSlug: _tenantOf(context));
 
   @override
   Widget build(BuildContext context) {
@@ -828,9 +825,8 @@ class _EventsCalendarPageState extends State<EventsCalendarPage>
     _future ??= _load();
   }
 
-  Future<List<EventsItem>> _load() => context
-      .read<EventsRepository>()
-      .events(tenantSlug: _tenantOf(context));
+  Future<List<EventsItem>> _load() =>
+      context.read<EventsRepository>().calendar(tenantSlug: _tenantOf(context));
 
   @override
   Widget build(BuildContext context) {
@@ -934,9 +930,9 @@ class _EventsCalendarPageState extends State<EventsCalendarPage>
             children: [
               Text(
                 monthLabel,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 12),
               GridView.count(
@@ -959,11 +955,7 @@ class _EventsCalendarPageState extends State<EventsCalendarPage>
 }
 
 class _DayCell extends StatelessWidget {
-  const _DayCell({
-    required this.day,
-    required this.count,
-    required this.onTap,
-  });
+  const _DayCell({required this.day, required this.count, required this.onTap});
 
   final int day;
   final int count;
@@ -987,10 +979,7 @@ class _DayCell extends StatelessWidget {
           children: [
             Text('$day', style: const TextStyle(fontWeight: FontWeight.w700)),
             if (has)
-              Text(
-                '$count',
-                style: Theme.of(context).textTheme.labelSmall,
-              ),
+              Text('$count', style: Theme.of(context).textTheme.labelSmall),
           ],
         ),
       ),
@@ -1017,9 +1006,8 @@ class _EventsSearchPageState extends State<EventsSearchPage>
     _future ??= _load();
   }
 
-  Future<List<EventsItem>> _load() => context
-      .read<EventsRepository>()
-      .events(tenantSlug: _tenantOf(context));
+  Future<List<EventsItem>> _load() =>
+      context.read<EventsRepository>().events(tenantSlug: _tenantOf(context));
 
   @override
   Widget build(BuildContext context) {
@@ -1084,8 +1072,7 @@ class _EventsSearchPageState extends State<EventsSearchPage>
                             fmt.format(item.startsAt!.toLocal()),
                         ].join(' · '),
                       ),
-                      onTap: () =>
-                          context.push('/home/events/list/${item.id}'),
+                      onTap: () => context.push('/home/events/list/${item.id}'),
                     ),
                   ),
                 ),

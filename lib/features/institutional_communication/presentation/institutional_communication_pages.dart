@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/institutional_communication_contracts.dart';
 import '../data/institutional_communication_models.dart';
@@ -152,18 +150,14 @@ class InstitutionalCommunicationHubPage extends StatelessWidget {
           final body = ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              SoftNotice(
-                message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -322,9 +316,9 @@ class _InstitutionalCommunicationListPageState
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Código: ${item.code}'),
@@ -388,8 +382,9 @@ class _InstitutionalCommunicationListPageState
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -558,9 +553,9 @@ class _InstitutionalCommunicationSearchPageState
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snap.error is EndpointUnavailableException) {
-                        final err =
-                            snap.error! as EndpointUnavailableException;
-                        return DemoExperiencePane(path: err.path);
+                        return const AppEmptyState(
+                          message: 'Nenhum registro encontrado.',
+                        );
                       }
                       if (snap.hasError) {
                         return AppErrorState(
@@ -570,8 +565,7 @@ class _InstitutionalCommunicationSearchPageState
                         );
                       }
                       final items =
-                          snap.data ??
-                          const <InstitutionalCommunicationItem>[];
+                          snap.data ?? const <InstitutionalCommunicationItem>[];
                       if (items.isEmpty) {
                         return const AppEmptyState(
                           message: 'Nenhum conteúdo encontrado.',

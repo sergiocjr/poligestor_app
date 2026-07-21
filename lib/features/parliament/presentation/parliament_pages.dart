@@ -5,10 +5,8 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/parliament_models.dart';
 import '../data/parliament_repository.dart';
@@ -112,7 +110,7 @@ class ParliamentHubPage extends StatelessWidget {
       'Compromissos públicos',
       Icons.handshake_outlined,
       '/home/parliament/promises',
-      false,
+      true,
     ),
     _Entry(
       'Base de Apoio',
@@ -140,21 +138,21 @@ class ParliamentHubPage extends StatelessWidget {
       'Eventos legislativos',
       Icons.timeline,
       '/home/parliament/timeline',
-      false,
+      true,
     ),
     _Entry(
       'Histórico',
       'Auditoria parlamentar',
       Icons.history,
       '/home/parliament/history',
-      false,
+      true,
     ),
     _Entry(
       'Anexos',
       'Documentos anexos',
       Icons.attach_file,
       '/home/parliament/attachments',
-      false,
+      true,
     ),
   ];
 
@@ -279,7 +277,7 @@ class _ParliamentPendingPageState extends State<ParliamentPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -289,7 +287,7 @@ class _ParliamentPendingPageState extends State<ParliamentPendingPage> {
               }),
             );
           }
-          return DemoExperiencePane(path: widget.path);
+          return const AppEmptyState(message: 'Nenhum registro encontrado.');
         },
       ),
     );
@@ -712,8 +710,7 @@ class _ParliamentDetailPageState extends State<ParliamentDetailPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(

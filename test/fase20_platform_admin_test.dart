@@ -15,17 +15,17 @@ void main() {
       expect(m.platformRootPath, '/v1/platform');
       expect(m.platformDashboardPath, '/v1/platform/dashboard');
       expect(m.platformCompaniesPath, '/v1/platform/companies');
-      expect(m.platformOfficesPath, '/v1/platform/offices');
+      expect(m.platformOfficesPath, '/v1/platform/cabinets');
       expect(m.platformUsersPath, '/v1/platform/users');
-      expect(m.platformProfilesPath, '/v1/platform/profiles');
+      expect(m.platformProfilesPath, '/v1/platform/permissions');
       expect(m.platformPermissionsPath, '/v1/platform/permissions');
       expect(m.platformPlansPath, '/v1/platform/plans');
-      expect(m.platformLicensingPath, '/v1/platform/licensing');
+      expect(m.platformLicensingPath, '/v1/platform/licenses');
       expect(m.platformSubscriptionsPath, '/v1/platform/subscriptions');
       expect(m.platformChargesPath, '/v1/platform/charges');
       expect(m.platformInvoicesPath, '/v1/platform/invoices');
       expect(m.platformPaymentsPath, '/v1/platform/payments');
-      expect(m.platformConsumptionPath, '/v1/platform/consumption');
+      expect(m.platformConsumptionPath, '/v1/platform/usage');
       expect(m.platformPlanLimitsPath, '/v1/platform/plan-limits');
       expect(m.platformMetricsPath, '/v1/platform/metrics');
       expect(m.platformMonitoringPath, '/v1/platform/monitoring');
@@ -35,18 +35,18 @@ void main() {
       expect(m.platformSessionsPath, '/v1/platform/sessions');
       expect(m.platformIntegrationsPath, '/v1/platform/integrations');
       expect(m.platformWebhooksPath, '/v1/platform/webhooks');
-      expect(m.platformGlobalSettingsPath, '/v1/platform/global-settings');
-      expect(m.platformTenantSettingsPath, '/v1/platform/tenant-settings');
-      expect(m.platformSupportPath, '/v1/platform/support');
+      expect(m.platformGlobalSettingsPath, '/v1/platform/settings/global');
+      expect(m.platformTenantSettingsPath, '/v1/platform/settings/tenant');
+      expect(m.platformSupportPath, '/v1/platform/tickets');
       expect(m.platformTicketsPath, '/v1/platform/tickets');
-      expect(m.platformKnowledgeBasePath, '/v1/platform/knowledge-base');
+      expect(m.platformKnowledgeBasePath, '/v1/platform/knowledge');
       expect(m.platformAnnouncementsPath, '/v1/platform/announcements');
       expect(m.platformReleasesPath, '/v1/platform/releases');
       expect(m.platformMaintenancesPath, '/v1/platform/maintenances');
       expect(m.platformReportsPath, '/v1/platform/reports');
-      expect(m.platformExportsPath, '/v1/platform/exports');
+      expect(m.platformExportsPath, '/v1/platform/export');
       expect(m.platformSearchPath, '/v1/platform/search');
-      expect(m.platformFiltersPath, '/v1/platform/filters');
+      expect(m.platformFiltersPath, '/v1/platform/search');
     });
   });
 
@@ -55,9 +55,13 @@ void main() {
       expect(platformPathLive('dashboard'), isTrue);
       expect(platformPathLive('users'), isTrue);
       expect(platformPathLive('permissions'), isTrue);
-      expect(platformPathLive('profiles'), isFalse);
-      expect(platformPathLive('offices'), isFalse);
-      expect(kPlatformLiveSlugs.length, 23);
+      expect(platformPathLive('profiles'), isTrue);
+      expect(platformPathLive('offices'), isTrue);
+      expect(platformPathLive('licensing'), isTrue);
+      expect(platformPathLive('global-settings'), isTrue);
+      expect(platformPathLive('knowledge-base'), isTrue);
+      expect(platformPathLive('search'), isTrue);
+      expect(kPlatformLiveSlugs.length, 34);
     });
   });
 
@@ -84,11 +88,7 @@ void main() {
     test('flattens dashboard summary into indicator rows', () {
       final rows = asPlatformMapList({
         'product': 'poligestor',
-        'summary': {
-          'companies': 2,
-          'users': 5,
-          'sessions': 1,
-        },
+        'summary': {'companies': 2, 'users': 5, 'sessions': 1},
       });
       expect(rows.length, 3);
       expect(rows.first['title'], 'Empresas');

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_mode.dart';
 import '../../../core/ux/user_messages.dart';
+import '../../../shared/widgets/app_states.dart';
 import '../../account/data/account_repository.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
@@ -103,7 +104,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         padding: const EdgeInsets.all(24),
         children: [
           if (_pendingPath != null)
-            DemoExperiencePane(path: _pendingPath!)
+            AppErrorState(
+              message:
+                  'Não foi possível recuperar a senha agora. Tente novamente.',
+              onRetry: () => setState(() => _pendingPath = null),
+            )
           else ...[
             if (_step == 0) ...[
               TextField(

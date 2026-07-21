@@ -3,13 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/works_contracts.dart';
 import '../data/works_models.dart';
@@ -263,7 +261,7 @@ class _WorksPendingPageState extends State<WorksPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -273,7 +271,7 @@ class _WorksPendingPageState extends State<WorksPendingPage> {
               }),
             );
           }
-          return DemoExperiencePane(path: widget.path);
+          return const AppEmptyState(message: 'Nenhum registro encontrado.');
         },
       ),
     );
@@ -348,8 +346,9 @@ class _WorksListPageState extends State<WorksListPage> with _WorksRefresh {
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -485,8 +484,7 @@ class _WorksDashboardPageState extends State<WorksDashboardPage>
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -510,7 +508,11 @@ class _WorksDashboardPageState extends State<WorksDashboardPage>
               '${d.scheduleUpcoming}',
               Icons.calendar_month_outlined,
             ),
-            ('Lista de verificação', '${d.checklistOpen}', Icons.checklist_outlined),
+            (
+              'Lista de verificação',
+              '${d.checklistOpen}',
+              Icons.checklist_outlined,
+            ),
             ('Fotos', '${d.photosCount}', Icons.photo_library_outlined),
           ];
           return ListView(
@@ -598,8 +600,7 @@ class _WorksDetailPageState extends State<WorksDetailPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -722,7 +723,7 @@ class _WorksMapPageState extends State<WorksMapPage> {
             padding: const EdgeInsets.all(16),
             children: [
               if (!dedicated)
-                DemoExperiencePane(path: AuthMode.staff.worksMapPath)
+                const AppEmptyState(message: 'Nenhum registro encontrado.')
               else
                 SoftNotice(
                   message:
@@ -781,8 +782,7 @@ class _WorksSearchPageState extends State<WorksSearchPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -792,7 +792,7 @@ class _WorksSearchPageState extends State<WorksSearchPage> {
               }),
             );
           }
-          return DemoExperiencePane(path: AuthMode.staff.worksSearchPath);
+          return const AppEmptyState(message: 'Nenhum registro encontrado.');
         },
       ),
     );

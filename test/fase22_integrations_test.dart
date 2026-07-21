@@ -53,14 +53,8 @@ void main() {
       expect(m.integrationsGmailPath, '/v1/integrations/gmail');
       expect(m.integrationsWhatsappPath, '/v1/integrations/whatsapp');
       expect(m.integrationsTelegramPath, '/v1/integrations/telegram');
-      expect(
-        m.integrationsFirebasePushPath,
-        '/v1/integrations/firebase-push',
-      );
-      expect(
-        m.integrationsExternalApisPath,
-        '/v1/integrations/external-apis',
-      );
+      expect(m.integrationsFirebasePushPath, '/v1/integrations/firebase-push');
+      expect(m.integrationsExternalApisPath, '/v1/integrations/external-apis');
       expect(m.integrationsWebhooksPath, '/v1/integrations/webhooks');
       expect(m.integrationsSearchPath, '/v1/integrations/search');
       expect(m.integrationsFiltersPath, '/v1/integrations/filters');
@@ -69,7 +63,7 @@ void main() {
 
   group('Integrations LIVE contracts', () {
     test('marks published hub slugs as LIVE', () {
-      expect(kIntegrationsLiveSlugs.length, 25);
+      expect(kIntegrationsLiveSlugs.length, 30);
       expect(integrationsPathLive('dashboard'), isTrue);
       expect(integrationsPathLive('status'), isTrue);
       expect(integrationsPathLive('config'), isTrue);
@@ -91,11 +85,11 @@ void main() {
       expect(integrationsPathLive('providers'), isTrue);
     });
 
-    test('keeps search and filters pending', () {
-      expect(integrationsPathLive('search'), isFalse);
-      expect(integrationsPathLive('filters'), isFalse);
-      expect(kIntegrationsLiveSlugs.contains('search'), isFalse);
-      expect(kIntegrationsLiveSlugs.contains('filters'), isFalse);
+    test('marks search and filters as LIVE', () {
+      expect(integrationsPathLive('search'), isTrue);
+      expect(integrationsPathLive('filters'), isTrue);
+      expect(kIntegrationsLiveSlugs.contains('search'), isTrue);
+      expect(kIntegrationsLiveSlugs.contains('filters'), isTrue);
     });
   });
 

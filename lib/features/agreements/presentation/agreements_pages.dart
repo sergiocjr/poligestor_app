@@ -3,15 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/agreements_models.dart';
 import '../data/agreements_repository.dart';
@@ -59,7 +56,7 @@ class AgreementsHubPage extends StatelessWidget {
       'Fontes e valores',
       Icons.account_balance_wallet_outlined,
       '/home/agreements/resources',
-      false,
+      true,
     ),
     _Entry(
       'Projetos',
@@ -87,7 +84,7 @@ class AgreementsHubPage extends StatelessWidget {
       'Marcos e prazos',
       Icons.calendar_month_outlined,
       '/home/agreements/schedule',
-      false,
+      true,
     ),
     _Entry(
       'Linha do Tempo',
@@ -108,14 +105,14 @@ class AgreementsHubPage extends StatelessWidget {
       'Arquivos anexos',
       Icons.attach_file,
       '/home/agreements/attachments',
-      false,
+      true,
     ),
     _Entry(
       'Indicadores',
       'Métricas de desempenho',
       Icons.analytics_outlined,
       '/home/agreements/indicators',
-      false,
+      true,
     ),
     _Entry(
       'Relatórios',
@@ -129,7 +126,7 @@ class AgreementsHubPage extends StatelessWidget {
       'Busca de convênios',
       Icons.search,
       '/home/agreements/search',
-      false,
+      true,
     ),
   ];
 
@@ -297,8 +294,9 @@ class _AgreementsListPageState extends State<AgreementsListPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -438,8 +436,7 @@ class _AgreementsDashboardPageState extends State<AgreementsDashboardPage>
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -573,8 +570,7 @@ class _AgreementsDetailPageState extends State<AgreementsDetailPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -681,8 +677,7 @@ class _AgreementsSearchPageState extends State<AgreementsSearchPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -692,9 +687,7 @@ class _AgreementsSearchPageState extends State<AgreementsSearchPage> {
               }),
             );
           }
-          return DemoExperiencePane(
-            path: AuthMode.staff.agreementsSearchPath,
-          );
+          return const AppEmptyState(message: 'Nenhum registro encontrado.');
         },
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:poligestor_app/core/auth/auth_mode.dart';
 import 'package:poligestor_app/features/automation/data/automation_cache.dart';
+import 'package:poligestor_app/features/automation/data/automation_contracts.dart';
 import 'package:poligestor_app/features/automation/data/automation_models.dart';
 import 'package:poligestor_app/features/notifications/data/push_payload.dart';
 import 'package:poligestor_app/features/notifications/domain/notification_router.dart';
@@ -8,19 +9,47 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('AuthMode sprint 10.6 paths', () {
-    test('exposes automation pending namespace + VT reuse targets', () {
+    test('exposes automation LIVE namespace (catálogo c29c2ad) + VT reuse', () {
       const m = AuthMode.staff;
-      expect(m.automationsRootPath, '/v1/automations');
-      expect(m.automationsDashboardPath, '/v1/automations/dashboard');
-      expect(m.automationsApprovalsPath, '/v1/automations/approvals');
-      expect(m.automationsSchedulePath, '/v1/automations/schedule');
-      expect(m.automationsAutonomyPath, '/v1/automations/autonomy');
-      expect(m.automationPath('x'), '/v1/automations/x');
+      expect(m.automationsRootPath, '/v1/automation/rules');
+      expect(m.automationsDashboardPath, '/v1/automation/dashboard');
+      expect(m.automationsExecutionsPath, '/v1/automation/executions');
+      expect(m.automationsApprovalsPath, '/v1/automation/approvals');
+      expect(m.automationsAlertsPath, '/v1/automation/alerts');
+      expect(m.automationsMetricsPath, '/v1/automation/metrics');
+      expect(m.automationsSchedulePath, '/v1/automation/schedules');
+      expect(m.automationsLogsPath, '/v1/automation/logs');
+      expect(m.automationsAgentsPath, '/v1/automation/agents');
+      expect(m.automationPath('x'), '/v1/automation/rules/x');
       expect(m.virtualTeamDashboardPath, '/v1/virtual-team/dashboard');
       expect(m.virtualTeamAgentsPath, '/v1/virtual-team/agents');
       expect(m.virtualTeamExecutionsPath, '/v1/virtual-team/executions');
       expect(m.virtualTeamAlertsPath, '/v1/virtual-team/alerts');
       expect(m.aiTeamPath, '/v1/ai/team');
+    });
+  });
+
+  group('automation contracts', () {
+    test('LIVE slugs cover published catalog paths', () {
+      expect(
+        kAutomationLiveSlugs,
+        containsAll(<String>{
+          'dashboard',
+          'rules',
+          'rule-detail',
+          'executions',
+          'approvals',
+          'alerts',
+          'metrics',
+          'logs',
+          'schedules',
+          'agents',
+        }),
+      );
+      expect(automationPathLive('rules'), isTrue);
+      expect(automationPathLive('schedules'), isTrue);
+      expect(automationPathLive('editor'), isTrue);
+      expect(automationPathLive('autonomy'), isTrue);
     });
   });
 
@@ -34,7 +63,7 @@ void main() {
   });
 
   group('automation models', () {
-    test('parses automation draft payload', () {
+    test('parses automation rule payload', () {
       final a = AutoAutomation.fromJson({
         'id': 'a1',
         'name': 'SLA reminder',
@@ -45,6 +74,43 @@ void main() {
       });
       expect(a.statusLabel, 'Ativa');
       expect(a.autonomy, AutonomyLevel.approve);
+    });
+
+    test('parses live dashboard payload tolerantly', () {
+      final d = AutoDashboardSnapshot.fromJson({
+        'agents_active': 3,
+        'agents_total': '6',
+        'executions_24h': 12,
+        'success_today': 10,
+        'failures_today': 2,
+        'queue_depth': 1,
+        'alerts_critical': 4,
+        'efficiency_pct': '83.3',
+        'pending_approvals': 5,
+      });
+      expect(d.agentsActive, 3);
+      expect(d.agentsTotal, 6);
+      expect(d.executionsToday, 12);
+      expect(d.successToday, 10);
+      expect(d.failuresToday, 2);
+      expect(d.queueDepth, 1);
+      expect(d.alertsCritical, 4);
+      expect(d.efficiencyPct, closeTo(83.3, 0.001));
+      expect(d.pendingApprovals, 5);
+    });
+
+    test('parses approval payload', () {
+      final a = AutoApproval.fromJson({
+        'id': 'ap1',
+        'title': 'Publicar resumo',
+        'status': 'pending',
+        'rule_name': 'Resumo diário',
+        'agent_slug': 'director',
+        'created_at': '2026-07-20T10:00:00Z',
+      });
+      expect(a.statusLabel, 'Pendente');
+      expect(a.ruleName, 'Resumo diário');
+      expect(a.requestedAt, isNotNull);
     });
   });
 

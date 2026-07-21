@@ -40,7 +40,9 @@ class ChatComposer extends StatelessWidget {
                   _AttachButton(
                     icon: Icons.add_circle_outline_rounded,
                     tooltip: 'Anexar',
-                    onPressed: !enabled ? null : () => _showAttachSheet(context),
+                    onPressed: !enabled
+                        ? null
+                        : () => _showAttachSheet(context),
                   ),
                   const SizedBox(width: 6),
                   Expanded(
@@ -114,27 +116,27 @@ class ChatComposer extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.image_outlined),
                   title: const Text('Imagem'),
-                  subtitle: const Text('Demonstração — arquivo de exemplo'),
+                  subtitle: const Text('Arquivo de exemplo'),
                   onTap: () => Navigator.pop(context, ChatAttachmentKind.image),
                 ),
                 ListTile(
                   leading: const Icon(Icons.description_outlined),
                   title: const Text('Documento'),
-                  subtitle: const Text('Demonstração — PDF de exemplo'),
+                  subtitle: const Text('PDF de exemplo'),
                   onTap: () =>
                       Navigator.pop(context, ChatAttachmentKind.document),
                 ),
                 ListTile(
                   leading: const Icon(Icons.location_on_outlined),
                   title: const Text('Localização'),
-                  subtitle: const Text('Demonstração — Volta Redonda'),
+                  subtitle: const Text('Volta Redonda'),
                   onTap: () =>
                       Navigator.pop(context, ChatAttachmentKind.location),
                 ),
                 ListTile(
                   leading: const Icon(Icons.mic_none_rounded),
                   title: const Text('Áudio'),
-                  subtitle: const Text('Demonstração — gravação curta'),
+                  subtitle: const Text('Gravação curta'),
                   onTap: () => Navigator.pop(context, ChatAttachmentKind.audio),
                 ),
               ],
@@ -176,10 +178,6 @@ class _AttachButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: onPressed,
-      tooltip: tooltip,
-      icon: Icon(icon),
-    );
+    return IconButton(onPressed: onPressed, tooltip: tooltip, icon: Icon(icon));
   }
 }

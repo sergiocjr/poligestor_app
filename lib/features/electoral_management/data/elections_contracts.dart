@@ -1,23 +1,58 @@
 /// Contratos da Fase 17 — Gestão Eleitoral (`/v1/elections/*`).
-/// Probe auth 2026-07-21: 14 paths HTTP 200.
+/// Catálogo oficial backend c29c2ad.
+/// Assume os remapeamentos: electoral-zones→zones, electoral-sections→sections,
+/// polling-stations→polling-places, campaign-materials→materials,
+/// inventory→stock, polls→surveys, suppliers→vendors, exports→export.
 library;
 
-/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
+/// Slugs do hub com path AuthMode ∈ catálogo c29c2ad.
 const kElectionsLiveSlugs = <String>{
   'dashboard',
+  'pre-campaign',
   'campaigns',
   'candidates',
+  'coordination',
   'teams',
+  'canvassers',
+  'volunteers',
+  'leaders',
+  'supporters',
   'goals',
   'regions',
   'neighborhoods',
+  'electoral-zones',
+  'electoral-sections',
+  'polling-stations',
   'map',
+  'campaign-agenda',
   'events',
+  'walks',
+  'meetings',
+  'visits',
+  'rallies',
+  'mobilizations',
+  'campaign-materials',
+  'inventory',
+  'distribution',
   'projections',
+  'scenarios',
+  'vote-intention',
+  'rejection',
+  'comparatives',
+  'regional-performance',
   'accountability',
+  'revenues',
+  'expenses',
+  'donations',
   'receipts',
   'material-requests',
+  'polls',
+  'suppliers',
   'reports',
+  'exports',
+  'search',
+  'filters',
+  'audit',
 };
 
 bool electionsPathLive(String slug) => kElectionsLiveSlugs.contains(slug);

@@ -13,29 +13,32 @@ void main() {
       const m = AuthMode.staff;
       expect(m.intelligenceRootPath, '/v1/intelligence');
       expect(m.intelligenceDashboardPath, '/v1/intelligence/dashboard');
-      expect(m.intelligenceBiPath, '/v1/intelligence/bi');
+      expect(m.intelligenceBiPath, '/v1/intelligence/dashboard');
       expect(m.intelligenceKpisPath, '/v1/intelligence/kpis');
-      expect(m.intelligenceIndicatorsPath, '/v1/intelligence/indicators');
+      expect(m.intelligenceIndicatorsPath, '/v1/intelligence/kpis');
       expect(m.intelligenceChartsPath, '/v1/intelligence/charts');
-      expect(m.intelligenceHeatmapPath, '/v1/intelligence/heatmap');
-      expect(m.intelligenceMapPath, '/v1/intelligence/map');
+      expect(m.intelligenceHeatmapPath, '/v1/intelligence/heatmaps');
+      expect(m.intelligenceMapPath, '/v1/intelligence/maps');
       expect(m.intelligenceNeighborhoodsPath, '/v1/intelligence/neighborhoods');
       expect(m.intelligenceRegionsPath, '/v1/intelligence/regions');
+      expect(m.intelligenceElectoralZonesPath, '/v1/intelligence/zones');
+      expect(m.intelligenceLeadershipsPath, '/v1/intelligence/leaders');
+      expect(m.intelligenceDemandsPath, '/v1/intelligence/demands-by-region');
+      expect(m.intelligenceWorksPath, '/v1/intelligence/works-by-region');
       expect(
-        m.intelligenceElectoralZonesPath,
-        '/v1/intelligence/electoral-zones',
+        m.intelligenceProtocolsPath,
+        '/v1/intelligence/protocols-by-region',
       );
-      expect(m.intelligenceLeadershipsPath, '/v1/intelligence/leaderships');
-      expect(m.intelligenceDemandsPath, '/v1/intelligence/demands');
-      expect(m.intelligenceWorksPath, '/v1/intelligence/works');
-      expect(m.intelligenceProtocolsPath, '/v1/intelligence/protocols');
-      expect(m.intelligenceAttendancesPath, '/v1/intelligence/attendances');
-      expect(m.intelligenceComparativesPath, '/v1/intelligence/comparatives');
-      expect(m.intelligenceEvolutionPath, '/v1/intelligence/evolution');
+      expect(
+        m.intelligenceAttendancesPath,
+        '/v1/intelligence/attendances-by-region',
+      );
+      expect(m.intelligenceComparativesPath, '/v1/intelligence/comparison');
+      expect(m.intelligenceEvolutionPath, '/v1/intelligence/history');
       expect(m.intelligenceTrendsPath, '/v1/intelligence/trends');
       expect(m.intelligenceProjectionsPath, '/v1/intelligence/projections');
-      expect(m.intelligenceFiltersPath, '/v1/intelligence/filters');
-      expect(m.intelligenceExportsPath, '/v1/intelligence/exports');
+      expect(m.intelligenceFiltersPath, '/v1/intelligence/regions');
+      expect(m.intelligenceExportsPath, '/v1/intelligence/exports/pdf');
     });
   });
 
@@ -48,9 +51,11 @@ void main() {
       expect(territorialIntelligencePathLive('regions'), isTrue);
       expect(territorialIntelligencePathLive('trends'), isTrue);
       expect(territorialIntelligencePathLive('projections'), isTrue);
-      expect(territorialIntelligencePathLive('bi'), isFalse);
-      expect(territorialIntelligencePathLive('heatmap'), isFalse);
-      expect(territorialIntelligencePathLive('exports'), isFalse);
+      expect(territorialIntelligencePathLive('heatmap'), isTrue);
+      expect(territorialIntelligencePathLive('map'), isTrue);
+      expect(territorialIntelligencePathLive('exports'), isTrue);
+      expect(kTerritorialIntelligenceLiveSlugs.length, 26);
+      expect(territorialIntelligencePathLive('bi'), isTrue);
     });
   });
 

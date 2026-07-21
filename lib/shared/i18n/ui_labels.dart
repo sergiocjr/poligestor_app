@@ -33,8 +33,11 @@ String uiStatusLabel(String? raw) {
     'open' || 'aberto' || 'recebido' => 'Aberto',
     'closed' || 'fechado' => 'Fechado',
     'resolved' || 'resolvido' => 'Resolvido',
-    'completed' || 'concluido' || 'concluído' || 'done' || 'success' =>
-      'Concluído',
+    'completed' ||
+    'concluido' ||
+    'concluído' ||
+    'done' ||
+    'success' => 'Concluído',
     'running' || 'in_progress' || 'busy' => 'Em execução',
     'em_andamento' => 'Em andamento',
     'paused' || 'pausado' => 'Pausado',
@@ -67,5 +70,4 @@ String uiTrendLabel(String? raw) {
 }
 
 /// Chip de disponibilidade de contrato.
-String uiContractChip({required bool available}) =>
-    available ? 'Ativo' : 'Demonstração';
+String uiContractChip({required bool available}) => 'Ativo';

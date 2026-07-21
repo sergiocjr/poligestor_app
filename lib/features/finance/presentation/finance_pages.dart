@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/finance_contracts.dart';
 import '../data/finance_models.dart';
@@ -40,37 +38,223 @@ class FinanceHubPage extends StatelessWidget {
   const FinanceHubPage({super.key});
 
   static const _entries = <_Entry>[
-    _Entry('Painel financeiro', 'Visão geral', Icons.account_balance_wallet_outlined, 'dashboard', '/home/finance/dashboard'),
-    _Entry('Indicadores', 'KPIs financeiros', Icons.speed_outlined, 'indicators', '/home/finance/indicators'),
-    _Entry('Saldo', 'Saldo atual', Icons.savings_outlined, 'balance', '/home/finance/balance'),
-    _Entry('Receitas', 'Entradas', Icons.trending_up, 'revenues', '/home/finance/revenues'),
-    _Entry('Despesas', 'Saídas', Icons.trending_down, 'expenses', '/home/finance/expenses'),
-    _Entry('Transações', 'Lançamentos financeiros', Icons.swap_horiz_rounded, 'transactions', '/home/finance/transactions'),
-    _Entry('Pagamentos', 'Pagamentos realizados', Icons.payment_outlined, 'payments', '/home/finance/payments'),
-    _Entry('Contas bancárias', 'Contas e bancos', Icons.account_balance_outlined, 'bank-accounts', '/home/finance/bank-accounts'),
-    _Entry('Categorias', 'Classificação', Icons.category_outlined, 'categories', '/home/finance/categories'),
-    _Entry('Centros de custo', 'Rateio de custos', Icons.hub_outlined, 'cost-centers', '/home/finance/cost-centers'),
-    _Entry('Fornecedores', 'Cadastro de fornecedores', Icons.storefront_outlined, 'suppliers', '/home/finance/suppliers'),
-    _Entry('Contratos', 'Contratos financeiros', Icons.handshake_outlined, 'contracts', '/home/finance/contracts'),
-    _Entry('Reembolsos', 'Solicitações de reembolso', Icons.replay_outlined, 'refunds', '/home/finance/refunds'),
-    _Entry('Adiantamentos', 'Adiantamentos', Icons.payments_outlined, 'advances', '/home/finance/advances'),
-    _Entry('Verbas', 'Verbas do mandato', Icons.paid_outlined, 'funds', '/home/finance/funds'),
-    _Entry('Orçamento', 'Planejamento orçamentário', Icons.pie_chart_outline, 'budget', '/home/finance/budget'),
-    _Entry('Execução orçamentária', 'Acompanhamento', Icons.ssid_chart, 'budget-execution', '/home/finance/budget-execution'),
-    _Entry('Prestação de contas', 'Prestação de contas', Icons.fact_check_outlined, 'accountability', '/home/finance/accountability'),
-    _Entry('Comprovantes', 'Comprovantes fiscais', Icons.receipt_long_outlined, 'receipts', '/home/finance/receipts'),
-    _Entry('Anexos', 'Arquivos vinculados', Icons.attach_file_rounded, 'attachments', '/home/finance/attachments'),
-    _Entry('Aprovações', 'Fluxo de aprovação', Icons.verified_outlined, 'approvals', '/home/finance/approvals'),
-    _Entry('Conciliação', 'Conciliação bancária', Icons.compare_arrows, 'reconciliation', '/home/finance/reconciliation'),
-    _Entry('Fluxo de caixa', 'Entradas e saídas', Icons.waterfall_chart, 'cash-flow', '/home/finance/cash-flow'),
-    _Entry('Contas a pagar', 'Obrigações a pagar', Icons.outbound_outlined, 'payables', '/home/finance/payables'),
-    _Entry('Contas a receber', 'Valores a receber', Icons.call_received, 'receivables', '/home/finance/receivables'),
-    _Entry('Alertas', 'Alertas financeiros', Icons.notifications_active_outlined, 'alerts', '/home/finance/alerts'),
-    _Entry('Histórico', 'Movimentações', Icons.history_rounded, 'history', '/home/finance/history'),
-    _Entry('Filtros', 'Filtros disponíveis', Icons.filter_list, 'filters', '/home/finance/filters'),
-    _Entry('Pesquisa', 'Buscar lançamentos', Icons.search_rounded, 'search', '/home/finance/search'),
-    _Entry('Relatórios', 'Relatórios financeiros', Icons.summarize_outlined, 'reports', '/home/finance/reports'),
-    _Entry('Exportação', 'Exportar dados', Icons.file_download_outlined, 'exports', '/home/finance/exports'),
+    _Entry(
+      'Painel financeiro',
+      'Visão geral',
+      Icons.account_balance_wallet_outlined,
+      'dashboard',
+      '/home/finance/dashboard',
+    ),
+    _Entry(
+      'Indicadores',
+      'KPIs financeiros',
+      Icons.speed_outlined,
+      'indicators',
+      '/home/finance/indicators',
+    ),
+    _Entry(
+      'Saldo',
+      'Saldo atual',
+      Icons.savings_outlined,
+      'balance',
+      '/home/finance/balance',
+    ),
+    _Entry(
+      'Receitas',
+      'Entradas',
+      Icons.trending_up,
+      'revenues',
+      '/home/finance/revenues',
+    ),
+    _Entry(
+      'Despesas',
+      'Saídas',
+      Icons.trending_down,
+      'expenses',
+      '/home/finance/expenses',
+    ),
+    _Entry(
+      'Transações',
+      'Lançamentos financeiros',
+      Icons.swap_horiz_rounded,
+      'transactions',
+      '/home/finance/transactions',
+    ),
+    _Entry(
+      'Pagamentos',
+      'Pagamentos realizados',
+      Icons.payment_outlined,
+      'payments',
+      '/home/finance/payments',
+    ),
+    _Entry(
+      'Contas bancárias',
+      'Contas e bancos',
+      Icons.account_balance_outlined,
+      'bank-accounts',
+      '/home/finance/bank-accounts',
+    ),
+    _Entry(
+      'Categorias',
+      'Classificação',
+      Icons.category_outlined,
+      'categories',
+      '/home/finance/categories',
+    ),
+    _Entry(
+      'Centros de custo',
+      'Rateio de custos',
+      Icons.hub_outlined,
+      'cost-centers',
+      '/home/finance/cost-centers',
+    ),
+    _Entry(
+      'Fornecedores',
+      'Cadastro de fornecedores',
+      Icons.storefront_outlined,
+      'suppliers',
+      '/home/finance/suppliers',
+    ),
+    _Entry(
+      'Contratos',
+      'Contratos financeiros',
+      Icons.handshake_outlined,
+      'contracts',
+      '/home/finance/contracts',
+    ),
+    _Entry(
+      'Reembolsos',
+      'Solicitações de reembolso',
+      Icons.replay_outlined,
+      'refunds',
+      '/home/finance/refunds',
+    ),
+    _Entry(
+      'Adiantamentos',
+      'Adiantamentos',
+      Icons.payments_outlined,
+      'advances',
+      '/home/finance/advances',
+    ),
+    _Entry(
+      'Verbas',
+      'Verbas do mandato',
+      Icons.paid_outlined,
+      'funds',
+      '/home/finance/funds',
+    ),
+    _Entry(
+      'Orçamento',
+      'Planejamento orçamentário',
+      Icons.pie_chart_outline,
+      'budget',
+      '/home/finance/budget',
+    ),
+    _Entry(
+      'Execução orçamentária',
+      'Acompanhamento',
+      Icons.ssid_chart,
+      'budget-execution',
+      '/home/finance/budget-execution',
+    ),
+    _Entry(
+      'Prestação de contas',
+      'Prestação de contas',
+      Icons.fact_check_outlined,
+      'accountability',
+      '/home/finance/accountability',
+    ),
+    _Entry(
+      'Comprovantes',
+      'Comprovantes fiscais',
+      Icons.receipt_long_outlined,
+      'receipts',
+      '/home/finance/receipts',
+    ),
+    _Entry(
+      'Anexos',
+      'Arquivos vinculados',
+      Icons.attach_file_rounded,
+      'attachments',
+      '/home/finance/attachments',
+    ),
+    _Entry(
+      'Aprovações',
+      'Fluxo de aprovação',
+      Icons.verified_outlined,
+      'approvals',
+      '/home/finance/approvals',
+    ),
+    _Entry(
+      'Conciliação',
+      'Conciliação bancária',
+      Icons.compare_arrows,
+      'reconciliation',
+      '/home/finance/reconciliation',
+    ),
+    _Entry(
+      'Fluxo de caixa',
+      'Entradas e saídas',
+      Icons.waterfall_chart,
+      'cash-flow',
+      '/home/finance/cash-flow',
+    ),
+    _Entry(
+      'Contas a pagar',
+      'Obrigações a pagar',
+      Icons.outbound_outlined,
+      'payables',
+      '/home/finance/payables',
+    ),
+    _Entry(
+      'Contas a receber',
+      'Valores a receber',
+      Icons.call_received,
+      'receivables',
+      '/home/finance/receivables',
+    ),
+    _Entry(
+      'Alertas',
+      'Alertas financeiros',
+      Icons.notifications_active_outlined,
+      'alerts',
+      '/home/finance/alerts',
+    ),
+    _Entry(
+      'Histórico',
+      'Movimentações',
+      Icons.history_rounded,
+      'history',
+      '/home/finance/history',
+    ),
+    _Entry(
+      'Filtros',
+      'Filtros disponíveis',
+      Icons.filter_list,
+      'filters',
+      '/home/finance/filters',
+    ),
+    _Entry(
+      'Pesquisa',
+      'Buscar lançamentos',
+      Icons.search_rounded,
+      'search',
+      '/home/finance/search',
+    ),
+    _Entry(
+      'Relatórios',
+      'Relatórios financeiros',
+      Icons.summarize_outlined,
+      'reports',
+      '/home/finance/reports',
+    ),
+    _Entry(
+      'Exportação',
+      'Exportar dados',
+      Icons.file_download_outlined,
+      'exports',
+      '/home/finance/exports',
+    ),
   ];
 
   @override
@@ -85,18 +269,14 @@ class FinanceHubPage extends StatelessWidget {
           final body = ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              SoftNotice(
-                message:
-                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -145,7 +325,9 @@ class FinanceHubPage extends StatelessWidget {
                                     e.subtitle,
                                     maxLines: 3,
                                     softWrap: true,
-                                    style: Theme.of(context).textTheme.bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -227,10 +409,8 @@ class _FinanceListPageState extends State<FinanceListPage>
     _future ??= _load();
   }
 
-  Future<List<FinanceItem>> _load() => widget.loader(
-    context.read<FinanceRepository>(),
-    _tenantOf(context),
-  );
+  Future<List<FinanceItem>> _load() =>
+      widget.loader(context.read<FinanceRepository>(), _tenantOf(context));
 
   void _openItem(FinanceItem item) {
     final money = NumberFormat.currency(locale: 'pt_BR', symbol: r'R$');
@@ -249,9 +429,9 @@ class _FinanceListPageState extends State<FinanceListPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Código: ${item.code}'),
@@ -317,8 +497,9 @@ class _FinanceListPageState extends State<FinanceListPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -366,8 +547,9 @@ class _FinanceListPageState extends State<FinanceListPage>
                         clipBehavior: Clip.antiAlias,
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                scheme.primary.withValues(alpha: 0.12),
+                            backgroundColor: scheme.primary.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Icon(
                               Icons.payments_outlined,
                               color: scheme.primary,
@@ -469,20 +651,51 @@ class _FinanceDashboardPageState extends State<FinanceDashboardPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(error: snap.error, onRetry: _reload);
             }
             final d = snap.data!;
             final cards = <(String, String, IconData, String)>[
-              ('Saldo', money.format(d.balance), Icons.savings_outlined, '/home/finance/balance'),
-              ('Receitas', money.format(d.revenues), Icons.trending_up, '/home/finance/revenues'),
-              ('Despesas', money.format(d.expenses), Icons.trending_down, '/home/finance/expenses'),
-              ('A pagar', money.format(d.payables), Icons.outbound_outlined, '/home/finance/payables'),
-              ('A receber', money.format(d.receivables), Icons.call_received, '/home/finance/receivables'),
-              ('Alertas', '${d.alerts}', Icons.notifications_active_outlined, '/home/finance/alerts'),
+              (
+                'Saldo',
+                money.format(d.balance),
+                Icons.savings_outlined,
+                '/home/finance/balance',
+              ),
+              (
+                'Receitas',
+                money.format(d.revenues),
+                Icons.trending_up,
+                '/home/finance/revenues',
+              ),
+              (
+                'Despesas',
+                money.format(d.expenses),
+                Icons.trending_down,
+                '/home/finance/expenses',
+              ),
+              (
+                'A pagar',
+                money.format(d.payables),
+                Icons.outbound_outlined,
+                '/home/finance/payables',
+              ),
+              (
+                'A receber',
+                money.format(d.receivables),
+                Icons.call_received,
+                '/home/finance/receivables',
+              ),
+              (
+                'Alertas',
+                '${d.alerts}',
+                Icons.notifications_active_outlined,
+                '/home/finance/alerts',
+              ),
             ];
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(
@@ -521,7 +734,11 @@ class _FinanceDashboardPageState extends State<FinanceDashboardPage>
                                   children: [
                                     Row(
                                       children: [
-                                        Icon(icon, size: 20, color: scheme.primary),
+                                        Icon(
+                                          icon,
+                                          size: 20,
+                                          color: scheme.primary,
+                                        ),
                                         const Spacer(),
                                         Icon(
                                           Icons.chevron_right_rounded,
@@ -653,9 +870,9 @@ class _FinanceSearchPageState extends State<FinanceSearchPage>
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snap.error is EndpointUnavailableException) {
-                        final err =
-                            snap.error! as EndpointUnavailableException;
-                        return DemoExperiencePane(path: err.path);
+                        return const AppEmptyState(
+                          message: 'Nenhum registro encontrado.',
+                        );
                       }
                       if (snap.hasError) {
                         return AppErrorState(
@@ -697,7 +914,8 @@ class _FinanceSearchPageState extends State<FinanceSearchPage>
                                 overflow: TextOverflow.ellipsis,
                               ),
                               trailing: const Icon(Icons.chevron_right_rounded),
-                              onTap: () => context.push('/home/finance/history'),
+                              onTap: () =>
+                                  context.push('/home/finance/history'),
                             ),
                           );
                         },

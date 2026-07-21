@@ -6,12 +6,10 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/documents_contracts.dart';
 import '../data/documents_models.dart';
@@ -160,18 +158,14 @@ class DocumentsHubPage extends StatelessWidget {
           final grid = ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              SoftNotice(
-                message:
-                    'Contratos documentais sincronizados. Todos os '
-                    'módulos abaixo estão Ativos e consomem o contrato publicado.',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -219,9 +213,9 @@ class DocumentsHubPage extends StatelessWidget {
                                     e.subtitle,
                                     maxLines: 3,
                                     softWrap: true,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                   ),
                                 ],
                               ),
@@ -287,7 +281,8 @@ class DocumentsListPage extends StatefulWidget {
   State<DocumentsListPage> createState() => _DocumentsListPageState();
 }
 
-class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh {
+class _DocumentsListPageState extends State<DocumentsListPage>
+    with _DocsRefresh {
   Future<List<DocumentItem>>? _future;
   String _query = '';
 
@@ -298,10 +293,8 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
     _future ??= _load();
   }
 
-  Future<List<DocumentItem>> _load() => widget.loader(
-    context.read<DocumentsRepository>(),
-    _tenantOf(context),
-  );
+  Future<List<DocumentItem>> _load() =>
+      widget.loader(context.read<DocumentsRepository>(), _tenantOf(context));
 
   void _openItem(DocumentItem item) {
     final dateFmt = DateFormat('dd/MM/yyyy HH:mm');
@@ -320,9 +313,9 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Código: ${item.code}'),
@@ -369,9 +362,9 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
                       'Detalhe informativo — sem arquivo vinculado.',
-                      style: Theme.of(ctx).textTheme.labelSmall?.copyWith(
-                        color: scheme.outline,
-                      ),
+                      style: Theme.of(
+                        ctx,
+                      ).textTheme.labelSmall?.copyWith(color: scheme.outline),
                     ),
                   ),
               ],
@@ -416,8 +409,9 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
+              return const AppEmptyState(
+                message: 'Nenhum registro encontrado.',
+              );
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -465,8 +459,9 @@ class _DocumentsListPageState extends State<DocumentsListPage> with _DocsRefresh
                         clipBehavior: Clip.antiAlias,
                         child: ListTile(
                           leading: CircleAvatar(
-                            backgroundColor:
-                                scheme.primary.withValues(alpha: 0.12),
+                            backgroundColor: scheme.primary.withValues(
+                              alpha: 0.12,
+                            ),
                             child: Icon(
                               item.isPdf
                                   ? Icons.picture_as_pdf_outlined
@@ -586,16 +581,15 @@ class _DocumentsSearchPageState extends State<DocumentsSearchPage>
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snap.error is EndpointUnavailableException) {
-                        final err =
-                            snap.error! as EndpointUnavailableException;
-                        return DemoExperiencePane(path: err.path);
+                        return const AppEmptyState(
+                          message: 'Nenhum registro encontrado.',
+                        );
                       }
                       if (snap.hasError) {
                         return AppErrorState(
                           error: snap.error,
-                          onRetry: () => setState(
-                            () => _future = _search(_last),
-                          ),
+                          onRetry: () =>
+                              setState(() => _future = _search(_last)),
                         );
                       }
                       final items = snap.data ?? const <DocumentItem>[];
@@ -630,9 +624,8 @@ class _DocumentsSearchPageState extends State<DocumentsSearchPage>
                                 overflow: TextOverflow.ellipsis,
                               ),
                               trailing: const Icon(Icons.chevron_right_rounded),
-                              onTap: () => context.push(
-                                '/home/documents/viewer',
-                              ),
+                              onTap: () =>
+                                  context.push('/home/documents/viewer'),
                             ),
                           );
                         },

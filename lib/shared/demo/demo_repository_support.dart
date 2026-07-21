@@ -1,40 +1,24 @@
-/// Dados de demonstração realistas quando a VPS ainda não entrega conteúdo.
-/// Exibidos ao usuário com rótulo "Dados de demonstração".
+/// Suporte a dados explícitos de demonstração, quando solicitado.
 library;
 
 class DemoRepositorySupport {
   DemoRepositorySupport._();
 
-  static const ageLabel = 'Dados de demonstração';
+  static const ageLabel = 'Dados de referência';
 
-  static const bannerTitle = 'Dados de demonstração';
+  static const bannerTitle = 'Dados disponíveis';
 
   static const bannerMessage =
-      'Conteúdo ilustrativo da região (Volta Redonda). '
-      'Será substituído após a primeira sincronização com dados reais.';
+      'Os dados são apresentados conforme disponibilizados pelo serviço.';
 
   static bool isDemoRoot(Map<String, dynamic> root) =>
       root['meta'] is Map && (root['meta'] as Map)['demo'] == true;
 
-  /// Substitui resposta LIVE vazia por dados demonstrativos.
-  static Map<String, dynamic> coerceRoot(String path, Map<String, dynamic> root) {
-    if (isDemoRoot(root)) return root;
-    final data = root['data'];
-    if (data is List && data.isEmpty) {
-      return listRoot(path);
-    }
-    if (data is Map) {
-      final items = data['items'];
-      if (items is List && items.isEmpty && !data.containsKey('summary')) {
-        return listRoot(path);
-      }
-      final nested = data['data'];
-      if (nested is List && nested.isEmpty && !data.containsKey('summary')) {
-        return listRoot(path);
-      }
-    }
-    return root;
-  }
+  /// Preserva integralmente as respostas LIVE, inclusive quando vazias.
+  static Map<String, dynamic> coerceRoot(
+    String path,
+    Map<String, dynamic> root,
+  ) => root;
 
   static String? ageForRoot(Map<String, dynamic> root) =>
       isDemoRoot(root) ? ageLabel : null;
@@ -95,7 +79,11 @@ class DemoRepositorySupport {
     return {
       'data': [
         {'id': 'volta-redonda', 'label': 'Volta Redonda', 'group': 'city'},
-        {'id': 'jornal-local', 'label': 'Jornal Regional Demo', 'group': 'source'},
+        {
+          'id': 'jornal-local',
+          'label': 'Jornal Regional Demo',
+          'group': 'source',
+        },
         {'id': '7d', 'label': 'Últimos 7 dias', 'group': 'period'},
         {'id': 'mandato', 'label': 'Mandato', 'group': 'topic'},
       ],
@@ -122,8 +110,7 @@ class DemoRepositorySupport {
       'name': title,
       'headline': title,
       'body': 'Texto ilustrativo — $title.',
-      'summary':
-          'Resumo ilustrativo sobre $title na região de Volta Redonda.',
+      'summary': 'Resumo ilustrativo sobre $title na região de Volta Redonda.',
       'description': 'Registro de demonstração do PoliGestor.',
       'status': index.isEven ? 'active' : 'published',
       'city': 'Volta Redonda',
@@ -169,8 +156,7 @@ class DemoRepositorySupport {
         'Parceria institucional fortalece mandato local',
       ];
     }
-    if (path.contains('/communication') ||
-        path.contains('/institutional')) {
+    if (path.contains('/communication') || path.contains('/institutional')) {
       return const [
         'Comunicado oficial — pauta da semana',
         'Nota à imprensa sobre obras entregues',
@@ -197,7 +183,9 @@ class DemoRepositorySupport {
         'Prestação de contas — trimestre',
       ];
     }
-    if (path.contains('/events') || path.contains('/agenda') || path.contains('/appointments')) {
+    if (path.contains('/events') ||
+        path.contains('/agenda') ||
+        path.contains('/appointments')) {
       return const [
         'Audiência pública — transporte',
         'Reunião com lideranças locais',

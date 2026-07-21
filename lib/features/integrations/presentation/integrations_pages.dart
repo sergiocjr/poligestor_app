@@ -7,12 +7,10 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/integrations_contracts.dart';
 import '../data/integrations_models.dart';
@@ -21,8 +19,7 @@ import '../data/integrations_repository.dart';
 String _tenantOf(BuildContext context) =>
     context.read<TenantController>().organization?.slug ?? 'demo';
 
-AuthMode _modeOf(BuildContext context) =>
-    context.read<AuthController>().mode;
+AuthMode _modeOf(BuildContext context) => context.read<AuthController>().mode;
 
 /// Títulos PT-BR por slug de rota (`/home/integrations/{slug}`).
 const integrationsSlugTitles = <String, String>{
@@ -70,13 +67,7 @@ mixin _IntegrationsRefresh<T extends StatefulWidget> on State<T> {
 }
 
 class _HubEntry {
-  const _HubEntry(
-    this.title,
-    this.subtitle,
-    this.icon,
-    this.slug,
-    this.route,
-  );
+  const _HubEntry(this.title, this.subtitle, this.icon, this.slug, this.route);
   final String title;
   final String subtitle;
   final IconData icon;
@@ -278,19 +269,14 @@ class IntegrationsHubPage extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
             children: [
-              const SoftNotice(
-                message:
-                    'Integrações sincronizadas com o servidor. '
-                    'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo '
-                    '(pesquisa e filtros).',
-              ),
-              const SizedBox(height: 12),
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: cross,
-                  mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                  mainAxisExtent: PgHubModuleTile.gridExtent(
+                    crossAxisCount: cross,
+                  ),
                   crossAxisSpacing: 10,
                   mainAxisSpacing: 10,
                 ),
@@ -464,9 +450,9 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Referência: ${item.code}'),
@@ -499,14 +485,6 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final slug = widget.liveSlug;
-    if (slug != null && !integrationsPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: Text(widget.title)),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -545,11 +523,10 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [
-                  DemoExperiencePane(path: err.path),
+                children: const [
+                  AppEmptyState(message: 'Nenhum registro encontrado.'),
                 ],
               );
             }
@@ -642,9 +619,7 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium
-                                            ?.copyWith(
-                                              color: scheme.primary,
-                                            ),
+                                            ?.copyWith(color: scheme.primary),
                                       ),
                                   ],
                                 ),
@@ -663,38 +638,6 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
       ),
     );
   }
-}
-
-String _pathForSlug(String slug) {
-  const m = AuthMode.staff;
-  return switch (slug) {
-    'dashboard' => m.integrationsDashboardPath,
-    'status' => m.integrationsStatusPath,
-    'config' => m.integrationsConfigPath,
-    'sync' => m.integrationsSyncPath,
-    'history' => m.integrationsHistoryPath,
-    'logs' => m.integrationsLogsPath,
-    'govbr' => m.integrationsGovbrPath,
-    'camara-municipal' => m.integrationsCamaraMunicipalPath,
-    'assembleia-legislativa' => m.integrationsAssembleiaLegislativaPath,
-    'camara-deputados' => m.integrationsCamaraDeputadosPath,
-    'senado-federal' => m.integrationsSenadoFederalPath,
-    'diario-oficial' => m.integrationsDiarioOficialPath,
-    'portal-transparencia' => m.integrationsPortalTransparenciaPath,
-    'e-sic' => m.integrationsESicPath,
-    'ouvidoria' => m.integrationsOuvidoriaPath,
-    'google-calendar' => m.integrationsGoogleCalendarPath,
-    'outlook-calendar' => m.integrationsOutlookCalendarPath,
-    'gmail' => m.integrationsGmailPath,
-    'whatsapp' => m.integrationsWhatsappPath,
-    'telegram' => m.integrationsTelegramPath,
-    'firebase-push' => m.integrationsFirebasePushPath,
-    'external-apis' => m.integrationsExternalApisPath,
-    'webhooks' => m.integrationsWebhooksPath,
-    'search' => m.integrationsSearchPath,
-    'filters' => m.integrationsFiltersPath,
-    _ => '/v1/integrations/$slug',
-  };
 }
 
 class IntegrationsConfigPage extends StatefulWidget {
@@ -773,13 +716,6 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'config';
-    if (!integrationsPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Configuração')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Configuração')),
       body: RefreshIndicator(
@@ -802,10 +738,11 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
               );
             }
             if (snap.error is EndpointUnavailableException) {
-              final err = snap.error! as EndpointUnavailableException;
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [DemoExperiencePane(path: err.path)],
+                children: const [
+                  AppEmptyState(message: 'Nenhum registro encontrado.'),
+                ],
               );
             }
             if (snap.hasError) {
@@ -951,22 +888,12 @@ class _IntegrationsSearchPageState extends State<IntegrationsSearchPage>
     });
   }
 
-  Future<List<IntegrationItem>> _load(String q) =>
-      context.read<IntegrationsRepository>().search(
-        tenantSlug: _tenantOf(context),
-        mode: _modeOf(context),
-        q: q,
-      );
+  Future<List<IntegrationItem>> _load(String q) => context
+      .read<IntegrationsRepository>()
+      .search(tenantSlug: _tenantOf(context), mode: _modeOf(context), q: q);
 
   @override
   Widget build(BuildContext context) {
-    const slug = 'search';
-    if (!integrationsPathLive(slug)) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Pesquisa')),
-        body: DemoExperiencePane(path: _pathForSlug(slug)),
-      );
-    }
     return Scaffold(
       appBar: AppBar(title: const Text('Pesquisa')),
       body: Column(
@@ -1007,9 +934,9 @@ class _IntegrationsSearchPageState extends State<IntegrationsSearchPage>
                         return const Center(child: CircularProgressIndicator());
                       }
                       if (snap.error is EndpointUnavailableException) {
-                        final err =
-                            snap.error! as EndpointUnavailableException;
-                        return DemoExperiencePane(path: err.path);
+                        return const AppEmptyState(
+                          message: 'Nenhum registro encontrado.',
+                        );
                       }
                       if (snap.hasError) {
                         return AppErrorState(
@@ -1064,8 +991,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'Painel',
       liveSlug: 'dashboard',
       emptyMessage: 'Nenhum indicador de integração.',
-      extraNotice:
-          'Painel e catálogo sincronizados com o servidor.',
+      extraNotice: 'Painel e catálogo sincronizados com o servidor.',
       loader: (repo, tenant, mode) =>
           repo.dashboard(tenantSlug: tenant, mode: mode),
     ),
@@ -1076,16 +1002,12 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'Status das integrações',
       liveSlug: 'status',
       emptyMessage: 'Nenhum status disponível.',
-      extraNotice:
-          'Status das integrações e provedores sincronizados.',
+      extraNotice: 'Status das integrações e provedores sincronizados.',
       loader: (repo, tenant, mode) =>
           repo.status(tenantSlug: tenant, mode: mode),
     ),
   ),
-  GoRoute(
-    path: 'config',
-    builder: (_, _) => const IntegrationsConfigPage(),
-  ),
+  GoRoute(path: 'config', builder: (_, _) => const IntegrationsConfigPage()),
   GoRoute(
     path: 'sync',
     builder: (_, _) => IntegrationsListPage(
@@ -1093,8 +1015,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       liveSlug: 'sync',
       emptyMessage: 'Nenhuma sincronização registrada.',
       showSyncAction: true,
-      loader: (repo, tenant, mode) =>
-          repo.sync(tenantSlug: tenant, mode: mode),
+      loader: (repo, tenant, mode) => repo.sync(tenantSlug: tenant, mode: mode),
     ),
   ),
   GoRoute(
@@ -1113,8 +1034,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'Registros',
       liveSlug: 'logs',
       emptyMessage: 'Nenhum registro encontrado.',
-      loader: (repo, tenant, mode) =>
-          repo.logs(tenantSlug: tenant, mode: mode),
+      loader: (repo, tenant, mode) => repo.logs(tenantSlug: tenant, mode: mode),
     ),
   ),
   GoRoute(
@@ -1193,8 +1113,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
       title: 'e-SIC',
       liveSlug: 'e-sic',
       emptyMessage: 'Nenhuma solicitação e-SIC.',
-      loader: (repo, tenant, mode) =>
-          repo.eSic(tenantSlug: tenant, mode: mode),
+      loader: (repo, tenant, mode) => repo.eSic(tenantSlug: tenant, mode: mode),
     ),
   ),
   GoRoute(
@@ -1287,10 +1206,7 @@ List<RouteBase> buildIntegrationsChildRoutes() => [
           repo.webhooks(tenantSlug: tenant, mode: mode),
     ),
   ),
-  GoRoute(
-    path: 'search',
-    builder: (_, _) => const IntegrationsSearchPage(),
-  ),
+  GoRoute(path: 'search', builder: (_, _) => const IntegrationsSearchPage()),
   GoRoute(
     path: 'filters',
     builder: (_, _) => IntegrationsListPage(

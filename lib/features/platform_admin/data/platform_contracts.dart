@@ -1,18 +1,25 @@
 /// Contratos da Fase 20 — Portal Administrativo Web (`/v1/platform/*`).
-/// Probe auth 2026-07-21: 23 paths HTTP 200; profiles/search-sem-query 404/422.
+/// Catálogo oficial backend c29c2ad.
+/// Assume os remapeamentos: offices→cabinets, licensing→licenses,
+/// consumption→usage, global-settings→settings/global,
+/// tenant-settings→settings/tenant, knowledge-base→knowledge, exports→export.
 library;
 
-/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
+/// Slugs com path AuthMode ∈ catálogo (hub card ou rota de repositório).
 const kPlatformLiveSlugs = <String>{
   'dashboard',
   'companies',
+  'offices',
   'users',
+  'profiles',
   'permissions',
   'plans',
+  'licensing',
   'subscriptions',
   'charges',
   'invoices',
   'payments',
+  'consumption',
   'plan-limits',
   'metrics',
   'logs',
@@ -20,13 +27,20 @@ const kPlatformLiveSlugs = <String>{
   'sessions',
   'integrations',
   'webhooks',
+  'global-settings',
+  'tenant-settings',
   'tickets',
+  'knowledge-base',
   'announcements',
   'releases',
   'maintenances',
   'monitoring',
   'health',
   'reports',
+  'exports',
+  'search',
+  'filters',
+  'operators',
 };
 
 bool platformPathLive(String slug) => kPlatformLiveSlugs.contains(slug);

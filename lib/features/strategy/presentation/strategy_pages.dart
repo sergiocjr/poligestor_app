@@ -2,12 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/strategy_models.dart';
 import '../data/strategy_repository.dart';
@@ -57,7 +55,7 @@ class StrategyHubPage extends StatelessWidget {
       'Objetivos estratégicos',
       Icons.flag_outlined,
       '/home/strategy/goals',
-      false,
+      true,
     ),
     _Entry(
       'Alertas',
@@ -71,7 +69,7 @@ class StrategyHubPage extends StatelessWidget {
       'Períodos e regiões',
       Icons.compare_arrows,
       '/home/strategy/compare',
-      false,
+      true,
     ),
     _Entry(
       'Regiões',
@@ -243,7 +241,7 @@ class _StrategyPendingPageState extends State<StrategyPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -253,7 +251,7 @@ class _StrategyPendingPageState extends State<StrategyPendingPage> {
               }),
             );
           }
-          return DemoExperiencePane(path: widget.path);
+          return const AppEmptyState(message: 'Nenhum registro encontrado.');
         },
       ),
     );
@@ -928,10 +926,7 @@ class _StrategyRegionsPageState extends State<StrategyRegionsPage>
                   ),
                 ),
                 const SizedBox(height: 12),
-                Text(
-                  'Achados',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
+                Text('Achados', style: Theme.of(context).textTheme.titleMedium),
                 ...d.findings.map(
                   (f) => Card(
                     child: ListTile(
@@ -1239,6 +1234,73 @@ class _StrategyReportsPageState extends State<StrategyReportsPage> {
   }
 }
 
+/// Comparativos LIVE — `GET /v1/strategy/comparison`.
+class StrategyComparePage extends StatefulWidget {
+  const StrategyComparePage({super.key});
+
+  @override
+  State<StrategyComparePage> createState() => _StrategyComparePageState();
+}
+
+class _StrategyComparePageState extends State<StrategyComparePage> {
+  Future<List<StrategyReportItem>>? _future;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _future ??= context.read<StrategyRepository>().comparison(
+      tenantSlug: _tenantOf(context),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Comparativos')),
+      body: FutureBuilder<List<StrategyReportItem>>(
+        future: _future,
+        builder: (context, snap) {
+          if (snap.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snap.hasError) {
+            return AppErrorState(
+              error: snap.error,
+              onRetry: () => setState(() {
+                _future = context.read<StrategyRepository>().comparison(
+                  tenantSlug: _tenantOf(context),
+                );
+              }),
+            );
+          }
+          final items = snap.data ?? const [];
+          if (items.isEmpty) {
+            return const AppEmptyState(
+              message: 'Nenhum comparativo disponível ainda.',
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(12),
+            itemCount: items.length,
+            separatorBuilder: (_, _) => const SizedBox(height: 8),
+            itemBuilder: (context, i) {
+              final r = items[i];
+              return Card(
+                child: ListTile(
+                  title: Text(r.title),
+                  subtitle: r.status == null
+                      ? null
+                      : Text(uiStatusLabel(r.status)),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
 class StrategyGoalsPage extends StatefulWidget {
   const StrategyGoalsPage({super.key});
 
@@ -1268,8 +1330,7 @@ class _StrategyGoalsPageState extends State<StrategyGoalsPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
-            return DemoExperiencePane(path: err.path);
+            return const AppEmptyState(message: 'Nenhum registro encontrado.');
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -1360,11 +1421,7 @@ class _StrategyMapPageState extends State<StrategyMapPage> {
             padding: const EdgeInsets.all(16),
             children: [
               if (!dedicated)
-                DemoExperiencePane(
-                  path: AuthMode.staff.strategyMapPath,
-                  message:
-                      'Mapa estratégico dedicado pendente. Reutilize o mapa territorial do mandato.',
-                ),
+                const AppEmptyState(message: 'Nenhum registro encontrado.'),
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () => context.push('/home/mandate/map'),

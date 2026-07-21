@@ -5,15 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
-import '../../../shared/demo/demo_banner.dart';
-import '../../../shared/demo/demo_repository_support.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
-import '../../identity/data/identity_models.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
-import '../../mandate/domain/mandate_refresh_controller.dart';
-import '../data/appointments_repository.dart';
+import '../../mandate/domain/mandate_refresh_controller.dart';import '../data/appointments_repository.dart';
 
 class AgendaPage extends StatefulWidget {
   const AgendaPage({super.key, this.focusId});
@@ -161,10 +155,6 @@ class _AgendaPageState extends State<AgendaPage>
                 ],
               );
             }
-            if (snapshot.error is EndpointUnavailableException) {
-              final err = snapshot.error! as EndpointUnavailableException;
-              return DemoExperiencePane(path: err.path);
-            }
             if (snapshot.hasError) {
               return AppErrorState(
                 error: snapshot.error,
@@ -203,11 +193,6 @@ class _AgendaPageState extends State<AgendaPage>
               }
             }
 
-            final showDemo = items.any(
-              (e) => DemoRepositorySupport.isDemoId(e.id),
-            );
-            final bannerOffset = showDemo ? 1 : 0;
-
             String? lastDayKey;
             return ListView.builder(
               controller: _scrollController,
@@ -215,26 +200,22 @@ class _AgendaPageState extends State<AgendaPage>
                 parent: BouncingScrollPhysics(),
               ),
               padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
-              itemCount: items.length + bannerOffset,
+              itemCount: items.length,
               itemBuilder: (context, index) {
-                if (showDemo && index == 0) {
-                  return const DemoDataBanner(compact: true);
-                }
-                final itemIndex = index - bannerOffset;
-                final e = items[itemIndex];
+                final e = items[index];
                 final dayKey = e.startsAt == null
                     ? 'Sem data'
                     : dayFmt.format(e.startsAt!.toLocal());
                 final showHeader = dayKey != lastDayKey;
                 lastDayKey = dayKey;
-                final highlighted = focusIndex == itemIndex;
+                final highlighted = focusIndex == index;
 
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (showHeader)
                       Padding(
-                        padding: EdgeInsets.fromLTRB(4, itemIndex == 0 ? 4 : 16, 4, 8),
+                        padding: EdgeInsets.fromLTRB(4, index == 0 ? 4 : 16, 4, 8),
                         child: Text(
                           dayKey,
                           maxLines: 1,

@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/auth/auth_controller.dart';
-import '../../../shared/widgets/app_states.dart';
 import 'platform_pages.dart';
 
 /// Shell do Portal Administrativo Web — NavigationRail (≥900) ou gaveta (<900).
@@ -65,10 +64,7 @@ class PlatformShell extends StatelessWidget {
       ),
       destinations: [
         for (final g in _groups)
-          NavigationRailDestination(
-            icon: Icon(g.icon),
-            label: Text(g.label),
-          ),
+          NavigationRailDestination(icon: Icon(g.icon), label: Text(g.label)),
       ],
     );
   }
@@ -137,22 +133,9 @@ class PlatformShell extends StatelessWidget {
       ],
     );
 
-    final notice = SoftNotice(
-      message: role == null || role.isEmpty
-          ? 'Acesso conforme o perfil do operador. Sem perfil associado — '
-              'visualização limitada ao hub até a publicação das permissões '
-              'granulares.'
-          : 'Acesso conforme o perfil do operador. Permissões granulares '
-              'conforme o perfil publicado na VPS.',
-    );
-
     final content = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        notice,
-        const SizedBox(height: 8),
-        Expanded(child: child),
-      ],
+      children: [Expanded(child: child)],
     );
 
     if (wide) {

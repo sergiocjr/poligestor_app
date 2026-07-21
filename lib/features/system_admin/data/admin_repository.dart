@@ -99,10 +99,6 @@ class AdminRepository {
     bool allowCache = true,
     String? liveSlug,
   }) async {
-    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
-    if (!adminPathLive(slug)) {
-      return _itemsOf(DemoRepositorySupport.rootFor(path));
-    }
     return _cachedGet(
       tenantSlug: tenantSlug,
       cacheKey: cacheKey,
@@ -158,8 +154,12 @@ class AdminRepository {
   Future<List<AdminItem>> sessions({required String tenantSlug}) =>
       _list(tenantSlug, 'sessions', _staff.adminSessionsPath);
 
-  Future<List<AdminItem>> apiKeys({required String tenantSlug}) =>
-      _list(tenantSlug, 'api_keys', _staff.adminApiKeysPath, liveSlug: 'api-keys');
+  Future<List<AdminItem>> apiKeys({required String tenantSlug}) => _list(
+    tenantSlug,
+    'api_keys',
+    _staff.adminApiKeysPath,
+    liveSlug: 'api-keys',
+  );
 
   Future<List<AdminItem>> integrations({required String tenantSlug}) =>
       _list(tenantSlug, 'integrations', _staff.adminIntegrationsPath);
@@ -176,22 +176,20 @@ class AdminRepository {
   Future<List<AdminItem>> health({required String tenantSlug}) =>
       _list(tenantSlug, 'health', _staff.adminHealthPath);
 
-  Future<List<AdminItem>> emailSettings({required String tenantSlug}) =>
+  Future<List<AdminItem>> emailSettings({required String tenantSlug}) => _list(
+    tenantSlug,
+    'email_settings',
+    _staff.adminEmailSettingsPath,
+    liveSlug: 'email-settings',
+  );
+
+  Future<List<AdminItem>> notificationSettings({required String tenantSlug}) =>
       _list(
         tenantSlug,
-        'email_settings',
-        _staff.adminEmailSettingsPath,
-        liveSlug: 'email-settings',
+        'notification_settings',
+        _staff.adminNotificationSettingsPath,
+        liveSlug: 'notification-settings',
       );
-
-  Future<List<AdminItem>> notificationSettings({
-    required String tenantSlug,
-  }) => _list(
-    tenantSlug,
-    'notification_settings',
-    _staff.adminNotificationSettingsPath,
-    liveSlug: 'notification-settings',
-  );
 
   Future<List<AdminItem>> storageSettings({required String tenantSlug}) =>
       _list(

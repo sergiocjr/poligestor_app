@@ -256,21 +256,44 @@ class StrategyRepository {
     );
   }
 
+  Future<List<StrategyReportItem>> comparison({
+    required String tenantSlug,
+    bool allowCache = true,
+  }) => _cachedGet(
+    tenantSlug: tenantSlug,
+    cacheKey: 'comparison',
+    path: _staff.strategyComparePath,
+    allowCache: allowCache,
+    parse: (root, {fromCache = false, age}) {
+      final data = root['data'];
+      final list = data is List
+          ? asStrategyMapList(data)
+          : asStrategyMapList(
+              asStrategyMap(data)['items'] ?? asStrategyMap(data)['comparisons'],
+            );
+      return list.map(StrategyReportItem.fromJson).toList(growable: false);
+    },
+  );
+
+  /// Paths fora do catálogo LIVE c29c2ad — UI demo sem probe HTTP.
   Future<void> assertPending(String path) async {
+    return;
+  }
+
+  Future<void> indicators() => assertPending(_staff.strategyIndicatorsPath);
+  Future<void> predictions() => assertPending(_staff.strategyPredictionsPath);
+
+  Future<void> strategyMapContract() async {
+    final path = _staff.strategyMapPath;
     try {
       await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
     } on ApiException catch (e) {
       if (_pending(e.statusCode) || e.statusCode == 500) {
-        return;
+        throw EndpointUnavailableException(path, statusCode: e.statusCode);
       }
       rethrow;
     }
   }
-
-  Future<void> compare() => assertPending(_staff.strategyComparePath);
-  Future<void> indicators() => assertPending(_staff.strategyIndicatorsPath);
-  Future<void> predictions() => assertPending(_staff.strategyPredictionsPath);
-  Future<void> strategyMapContract() => assertPending(_staff.strategyMapPath);
 
   /// Mapa territorial — reuse contrato mandato LIVE.
   Future<MandateMapData> mandateMap({

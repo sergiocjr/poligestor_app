@@ -5,12 +5,10 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
-import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
 
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
-import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
 import '../data/platform_contracts.dart';
 import '../data/platform_models.dart';
@@ -73,13 +71,7 @@ mixin _PlatformRefresh<T extends StatefulWidget> on State<T> {
 }
 
 class _HubEntry {
-  const _HubEntry(
-    this.title,
-    this.subtitle,
-    this.icon,
-    this.slug,
-    this.route,
-  );
+  const _HubEntry(this.title, this.subtitle, this.icon, this.slug, this.route);
   final String title;
   final String subtitle;
   final IconData icon;
@@ -335,18 +327,14 @@ class PlatformHubPage extends StatelessWidget {
         return ListView(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 24),
           children: [
-            SoftNotice(
-              message:
-                  'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
-                  'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
-            ),
-            const SizedBox(height: 12),
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: cross,
-                mainAxisExtent: PgHubModuleTile.gridExtent(crossAxisCount: cross),
+                mainAxisExtent: PgHubModuleTile.gridExtent(
+                  crossAxisCount: cross,
+                ),
                 crossAxisSpacing: 10,
                 mainAxisSpacing: 10,
               ),
@@ -394,9 +382,7 @@ class PlatformHubPage extends StatelessWidget {
                                   e.subtitle,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.bodySmall,
+                                  style: Theme.of(context).textTheme.bodySmall,
                                 ),
                               ],
                             ),
@@ -481,9 +467,9 @@ class _PlatformListPageState extends State<PlatformListPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Código: ${item.code}'),
@@ -537,11 +523,10 @@ class _PlatformListPageState extends State<PlatformListPage>
             );
           }
           if (snap.error is EndpointUnavailableException) {
-            final err = snap.error! as EndpointUnavailableException;
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                DemoExperiencePane(path: err.path),
+                const AppEmptyState(message: 'Nenhum registro encontrado.'),
               ],
             );
           }
@@ -638,8 +623,7 @@ class _PlatformListPageState extends State<PlatformListPage>
                           [
                             if (item.scope != null) item.scope!,
                             if (item.email != null) item.email!,
-                            if (item.status != null)
-                              uiStatusLabel(item.status),
+                            if (item.status != null) uiStatusLabel(item.status),
                           ].where((s) => s.isNotEmpty).join(' · '),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -707,9 +691,9 @@ class _PlatformSearchPageState extends State<PlatformSearchPage>
               children: [
                 Text(
                   item.title,
-                  style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: Theme.of(
+                    ctx,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800),
                 ),
                 const SizedBox(height: 12),
                 if (item.code != null) Text('Código: ${item.code}'),
@@ -783,14 +767,14 @@ class _PlatformSearchPageState extends State<PlatformSearchPage>
                       return const Center(child: CircularProgressIndicator());
                     }
                     if (snap.error is EndpointUnavailableException) {
-                      final err = snap.error! as EndpointUnavailableException;
-                      return DemoExperiencePane(path: err.path);
+                      return const AppEmptyState(
+                        message: 'Nenhum registro encontrado.',
+                      );
                     }
                     if (snap.hasError) {
                       return AppErrorState(
                         error: snap.error,
-                        onRetry: () =>
-                            setState(() => _future = _search(_last)),
+                        onRetry: () => setState(() => _future = _search(_last)),
                       );
                     }
                     final items = snap.data ?? const <PlatformItem>[];
@@ -1088,10 +1072,7 @@ List<RouteBase> buildPlatformChildRoutes() => [
       loader: (repo, tenant) => repo.exports(tenantSlug: tenant),
     ),
   ),
-  GoRoute(
-    path: 'search',
-    builder: (_, _) => const PlatformSearchPage(),
-  ),
+  GoRoute(path: 'search', builder: (_, _) => const PlatformSearchPage()),
   GoRoute(
     path: 'filters',
     builder: (_, _) => PlatformListPage(

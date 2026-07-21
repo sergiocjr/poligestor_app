@@ -13,34 +13,34 @@ void main() {
       const m = AuthMode.staff;
       expect(m.financeRootPath, '/v1/finance');
       expect(m.financeDashboardPath, '/v1/finance/dashboard');
-      expect(m.financeIndicatorsPath, '/v1/finance/indicators');
-      expect(m.financeBalancePath, '/v1/finance/balance');
-      expect(m.financeRevenuesPath, '/v1/finance/revenues');
-      expect(m.financeExpensesPath, '/v1/finance/expenses');
+      expect(m.financeIndicatorsPath, '/v1/finance/dashboard');
+      expect(m.financeBalancePath, '/v1/finance/accounts');
+      expect(m.financeRevenuesPath, '/v1/finance/transactions');
+      expect(m.financeExpensesPath, '/v1/finance/transactions');
       expect(m.financeBankAccountsPath, '/v1/finance/accounts');
       expect(m.financeCategoriesPath, '/v1/finance/categories');
       expect(m.financeCostCentersPath, '/v1/finance/cost-centers');
-      expect(m.financeSuppliersPath, '/v1/finance/suppliers');
-      expect(m.financeContractsPath, '/v1/finance/contracts');
-      expect(m.financeRefundsPath, '/v1/finance/refunds');
-      expect(m.financeAdvancesPath, '/v1/finance/advances');
-      expect(m.financeFundsPath, '/v1/finance/funds');
-      expect(m.financeBudgetPath, '/v1/finance/budget');
-      expect(m.financeBudgetExecutionPath, '/v1/finance/budget-execution');
-      expect(m.financeAccountabilityPath, '/v1/finance/accountability');
-      expect(m.financeReceiptsPath, '/v1/finance/receipts');
-      expect(m.financeAttachmentsPath, '/v1/finance/attachments');
-      expect(m.financeApprovalsPath, '/v1/finance/approvals');
-      expect(m.financeReconciliationPath, '/v1/finance/reconciliation');
+      expect(m.financeSuppliersPath, '/v1/finance/payees');
+      expect(m.financeContractsPath, '/v1/finance/transactions');
+      expect(m.financeRefundsPath, '/v1/finance/payments');
+      expect(m.financeAdvancesPath, '/v1/finance/payments');
+      expect(m.financeFundsPath, '/v1/finance/budgets');
+      expect(m.financeBudgetPath, '/v1/finance/budgets');
+      expect(m.financeBudgetExecutionPath, '/v1/finance/budgets');
+      expect(m.financeAccountabilityPath, '/v1/finance/reports');
+      expect(m.financeReceiptsPath, '/v1/finance/payments');
+      expect(m.financeAttachmentsPath, '/v1/finance/transactions');
+      expect(m.financeApprovalsPath, '/v1/finance/payments');
+      expect(m.financeReconciliationPath, '/v1/finance/cashflow');
       expect(m.financeCashFlowPath, '/v1/finance/cashflow');
-      expect(m.financePayablesPath, '/v1/finance/payables');
-      expect(m.financeReceivablesPath, '/v1/finance/receivables');
+      expect(m.financePayablesPath, '/v1/finance/transactions');
+      expect(m.financeReceivablesPath, '/v1/finance/transactions');
       expect(m.financeAlertsPath, '/v1/finance/alerts');
-      expect(m.financeHistoryPath, '/v1/finance/history');
-      expect(m.financeFiltersPath, '/v1/finance/filters');
-      expect(m.financeSearchPath, '/v1/finance/search');
+      expect(m.financeHistoryPath, '/v1/finance/transactions');
+      expect(m.financeFiltersPath, '/v1/finance/categories');
+      expect(m.financeSearchPath, '/v1/finance/transactions');
       expect(m.financeReportsPath, '/v1/finance/reports');
-      expect(m.financeExportsPath, '/v1/finance/exports');
+      expect(m.financeExportsPath, '/v1/finance/reports');
       expect(m.financeTransactionsPath, '/v1/finance/transactions');
       expect(m.financePaymentsPath, '/v1/finance/payments');
     });
@@ -54,6 +54,8 @@ void main() {
           'dashboard',
           'categories',
           'cost-centers',
+          'suppliers',
+          'budget',
           'alerts',
           'reports',
           'bank-accounts',
@@ -64,8 +66,11 @@ void main() {
       );
       expect(financePathLive('dashboard'), isTrue);
       expect(financePathLive('transactions'), isTrue);
-      expect(financePathLive('balance'), isFalse);
-      expect(financePathLive('exports'), isFalse);
+      expect(financePathLive('suppliers'), isTrue);
+      expect(financePathLive('budget'), isTrue);
+      expect(kFinanceLiveSlugs.length, 32);
+      expect(financePathLive('balance'), isTrue);
+      expect(financePathLive('exports'), isTrue);
     });
   });
 

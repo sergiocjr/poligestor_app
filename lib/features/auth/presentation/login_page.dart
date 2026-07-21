@@ -308,10 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                         .where((p) => p.canUse)
                         .toList();
                     if (_providersPath != null) {
-                      return DemoExperiencePane(
-                        path: _providersPath!,
-                        message: 'Provedores sociais ainda indisponíveis',
-                      );
+                      return const SizedBox.shrink();
                     }
                     if (_providers == null) {
                       return const Padding(

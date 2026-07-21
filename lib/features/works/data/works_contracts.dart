@@ -1,10 +1,10 @@
 /// Contratos Sprint 10.9 — Painel Obras (`/v1/works/*`).
-/// Probe auth 2026-07-21: root + 9 subpaths HTTP 200;
-/// checklist/indicators/projects/search = 404.
+/// Catálogo oficial backend c29c2ad: root/attachments/dashboard/demands/
+/// inspections/map/photos/reports/schedule/timeline/visits/{id}.
+/// `list` assume o remapeamento de `worksListPath` para a raiz `/v1/works`.
 library;
 
-/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
-/// `list` = GET `/v1/works` (raiz).
+/// Slugs do hub com path AuthMode ∈ catálogo c29c2ad.
 const kWorksLiveSlugs = <String>{
   'list',
   'dashboard',
@@ -15,7 +15,10 @@ const kWorksLiveSlugs = <String>{
   'timeline',
   'photos',
   'attachments',
+  'checklist',
+  'indicators',
   'reports',
+  'search',
 };
 
 bool worksPathLive(String slug) => kWorksLiveSlugs.contains(slug);

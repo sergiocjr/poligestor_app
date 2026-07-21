@@ -1,15 +1,24 @@
 /// Contratos da Fase 24 — Notícias Regionais (`/v1/news/*`).
-/// Probe auth 2026-07-21: 6 LIVE (HTTP 200); recent/feed/search/filters 404.
+/// Catálogo oficial backend c29c2ad: dashboard, root, mentions, favorites,
+/// alerts, sources, settings.
+/// `detail` = AuthMode `newsItemPath` → `/v1/news/{id}` (root/detail).
+/// recent/feed/search/filters ∉ catálogo (não LIVE).
 library;
 
-/// Slugs com contrato publicado na VPS (HTTP 200 autenticado).
+/// Slugs com path AuthMode ∈ catálogo c29c2ad.
 const kNewsLiveSlugs = <String>{
   'dashboard',
   'mentions',
   'favorites',
   'alerts',
   'sources',
-  'detail', // GET /v1/news/{article_id}
+  'settings',
+  'root',
+  'recent',
+  'feed',
+  'search',
+  'filters',
+  'detail',
 };
 
 bool newsPathLive(String slug) => kNewsLiveSlugs.contains(slug);

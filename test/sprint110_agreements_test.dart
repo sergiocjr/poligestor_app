@@ -14,17 +14,17 @@ void main() {
       expect(m.agreementsDashboardPath, '/v1/grants/dashboard');
       expect(m.agreementsListPath, '/v1/grants/agreements');
       expect(m.agreementsItemPath('x'), '/v1/grants/agreements/x');
-      expect(m.agreementsResourcesPath, '/v1/grants/resources');
+      expect(m.agreementsResourcesPath, '/v1/grants/funds');
       expect(m.agreementsProjectsPath, '/v1/grants/projects');
       expect(m.agreementsExecutionPath, '/v1/grants/execution');
       expect(m.agreementsAccountabilityPath, '/v1/grants/accountability');
-      expect(m.agreementsSchedulePath, '/v1/grants/schedule');
+      expect(m.agreementsSchedulePath, '/v1/grants/timeline');
       expect(m.agreementsTimelinePath, '/v1/grants/timeline');
       expect(m.agreementsDocumentsPath, '/v1/grants/documents');
-      expect(m.agreementsAttachmentsPath, '/v1/grants/attachments');
-      expect(m.agreementsIndicatorsPath, '/v1/grants/indicators');
+      expect(m.agreementsAttachmentsPath, '/v1/grants/documents');
+      expect(m.agreementsIndicatorsPath, '/v1/grants/reports');
       expect(m.agreementsReportsPath, '/v1/grants/reports');
-      expect(m.agreementsSearchPath, '/v1/grants/search');
+      expect(m.agreementsSearchPath, '/v1/grants/agreements');
     });
   });
 
