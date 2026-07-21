@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/config.dart';
 import '../../../shared/widgets/app_logo.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../data/identity_models.dart';
 import '../domain/tenant_controller.dart';
 import 'widgets/identity_states.dart';
@@ -153,7 +154,7 @@ class _OrganizationSelectPageState extends State<OrganizationSelectPage> {
                 ],
                 if (tenant.resolveUnavailable) ...[
                   const SizedBox(height: 12),
-                  const EndpointPendingState(
+                  const DemoExperiencePane(
                     path: '/v1/identity/tenants/resolve',
                     message:
                         'Resolução remota indisponível — usando identificador local.',

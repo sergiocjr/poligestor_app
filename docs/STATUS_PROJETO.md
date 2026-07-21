@@ -1,10 +1,11 @@
 # Status do projeto — PoliGestor Flutter
 
-Atualizado: 2026-07-20 (Auditoria UX)
+Atualizado: 2026-07-21 (Sync final Flutter × VPS)
 
 ## Resumo
 
-> **Experiência do usuário:** demonstração rotulada substitui estados “em preparação”. Ver [AUDITORIA_UX_EXPERIENCIA.md](AUDITORIA_UX_EXPERIENCIA.md).
+> **Sync VPS prioritária:** 239×HTTP 200 · **0×500** · `EndpointPendingState` **0** · `/v1/events/viewer` **não consumido**.  
+> Sistema **EM ANDAMENTO** enquanto restarem 404 na VPS (ex.: automations). Ver [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md).
 
 | Área | Status |
 |------|--------|
@@ -19,27 +20,37 @@ Atualizado: 2026-07-20 (Auditoria UX)
 | Sprint 10.2 — Identidade / Auth / Multi-tenant | **FECHADA** |
 | Sprint 10.4 — Central de Comunicação | **CONCLUÍDA** |
 | Sprint 10.5 — Assistente Inteligente | **CONCLUÍDA** |
-| Sprint 10.6 — Automação Inteligente | **CONCLUÍDA** |
-| Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** |
-| Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** |
-| Sprint 10.9 — Painel Obras | **CONCLUÍDA** |
-| Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** |
-| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (`/v1/events/dashboard` LIVE; subpaths Pending) |
-| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 LIVE; restante 404 → Pending) |
-| **Fase 13 — Gestão Documental** | **CONCLUÍDA** (15 LIVE; Flutter sincronizado) |
-| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (9 LIVE; hub parcial Pending) |
-| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
-| **Fase 16 — CRM Político** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
-| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (14 LIVE; 31 Pending) |
-| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (sync parcial `/v1/ai/*`) |
-| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
-| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (`dashboard` LIVE; demais 404) |
-| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (`dashboard` VPS LIVE; hub sem rota) |
-| **Fase 22 — Integrações** | **CONCLUÍDA** (25 LIVE; Pending search/filters) |
-| **Fase 23 — Homologação Final** | **CONCLUÍDA** (versão **1.0.0+2**) |
-| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** (6 LIVE; recent/feed/search/filters 404) |
+| Sprint 10.6 — Automação Inteligente | **EM ANDAMENTO** (`/v1/automations*` 404 → demo sem HTTP) |
+| Sprint 10.7 — Painel Estratégico | **CONCLUÍDA** (dashboard/goals LIVE) |
+| Sprint 10.8 — Painel Parlamentar | **CONCLUÍDA** (12 LIVE) |
+| Sprint 10.9 — Painel Obras | **CONCLUÍDA** (10 LIVE) |
+| Sprint 11.0 — Painel de Convênios | **CONCLUÍDA** (8 LIVE grants) |
+| Fase 11 — Gestão Institucional (Eventos) | **EM ANDAMENTO** (11 LIVE; viewer **não usado**) |
+| **Fase 12 — Inteligência Territorial** | **EM ANDAMENTO** (7 LIVE) |
+| **Fase 13 — Gestão Documental** | **CONCLUÍDA** (4 LIVE estáveis) |
+| **Fase 14 — Gestão Financeira** | **CONCLUÍDA** (9 LIVE) |
+| **Fase 15 — Comunicação Institucional** | **EM ANDAMENTO** (5 LIVE) |
+| **Fase 16 — CRM Político** | **EM ANDAMENTO** (16 LIVE) |
+| **Fase 17 — Gestão Eleitoral** | **EM ANDAMENTO** (14 LIVE) |
+| **Fase 18 — IA Avançada** | **EM ANDAMENTO** (13 LIVE) |
+| **Fase 19 — Administração do Sistema** | **EM ANDAMENTO** (19 LIVE) |
+| **Fase 20 — Portal Administrativo Web** | **EM ANDAMENTO** (23 LIVE) |
+| **Fase 21 — Segurança e Privacidade** | **EM ANDAMENTO** (6 LIVE) |
+| **Fase 22 — Integrações** | **CONCLUÍDA** (25 LIVE) |
+| **Fase 23 — Homologação Final** | **CONCLUÍDA** (versão **1.0.0+5**) |
+| **Fase 24 — Notícias Regionais** | **EM ANDAMENTO** (6 LIVE) |
 
-> Auditoria completa: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). Ponto de restauração: [PONTO_RESTAURACAO_1.0.md](PONTO_RESTAURACAO_1.0.md) · tag `v1.0-final-pre-auditoria`.
+> Auditoria completa: [AUDITORIA_FINAL.md](AUDITORIA_FINAL.md). Inventário: [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md).
+
+## Validação 2026-07-21
+
+| Item | Resultado |
+|------|-----------|
+| `flutter analyze` | 0 erros |
+| `flutter test` | 348 OK |
+| APK / Web | OK |
+| A10 `RX8M70CLXKP` | Install + launch + org/login (sem “Em preparação”) |
+| Emulador | Nenhum |
 
 ## Fase 17 — Gestão Eleitoral
 

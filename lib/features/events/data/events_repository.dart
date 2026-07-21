@@ -4,9 +4,11 @@ import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../identity/data/identity_models.dart';
 import 'events_cache.dart';
+import 'events_contracts.dart';
 import 'events_models.dart';
 
-/// Painel de Eventos — namespace oficial LIVE `/v1/events`.
+/// Painel de Eventos — namespace oficial LIVE `/v1/events/*`.
+/// Não consumir `/v1/events/viewer` (rota indevida / 404).
 class EventsRepository {
   EventsRepository(this._api, {EventsCache? cache})
     : _cache = cache ?? EventsCache();
@@ -15,9 +17,7 @@ class EventsRepository {
   final EventsCache _cache;
   static const _staff = AuthMode.staff;
 
-  /// 500: subpaths ainda colidem com `{id}` na VPS (não são contratos publicados).
-  bool _pending(int? c) =>
-      c == 404 || c == 405 || c == 501 || c == 503 || c == 500;
+  bool _pending(int? c) => c == 404 || c == 405 || c == 501 || c == 503;
 
   Map<String, dynamic> _rootOf(dynamic data, Map<String, dynamic>? meta) {
     final root = <String, dynamic>{
@@ -38,7 +38,24 @@ class EventsRepository {
     })
     parse,
     bool allowCache = true,
+    String? liveSlug,
   }) async {
+    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
+    // Nunca consumir viewer (colisão indevida).
+    if (path.endsWith('/viewer') || path.contains('/events/viewer')) {
+      return parse(
+        DemoRepositorySupport.rootFor(path),
+        fromCache: false,
+        age: DemoRepositorySupport.ageLabel,
+      );
+    }
+    if (!eventsPathLive(slug)) {
+      return parse(
+        DemoRepositorySupport.rootFor(path),
+        fromCache: false,
+        age: DemoRepositorySupport.ageLabel,
+      );
+    }
     try {
       final envelope = await _api.getEnvelope<dynamic>(
         path,

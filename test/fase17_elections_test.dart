@@ -79,6 +79,7 @@ void main() {
       expect(electionsPathLive('candidates'), isTrue);
       expect(electionsPathLive('campaigns'), isTrue);
       expect(electionsPathLive('reports'), isTrue);
+      expect(electionsPathLive('material-requests'), isTrue);
       expect(electionsPathLive('pre-campaign'), isFalse);
       expect(electionsPathLive('coordination'), isFalse);
     });

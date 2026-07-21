@@ -5,7 +5,20 @@
 
 **Referência oficial do aplicativo.** Atualizar ao final de toda Fase e ao encerrar o dia de trabalho.
 
-Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
+Atualizado: 2026-07-21 (Sync final Flutter × VPS prioritária)
+
+---
+
+## Sync final Flutter (pós-auditoria VPS)
+
+| Campo | Valor |
+|-------|--------|
+| Doc inventário | [INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md) |
+| Probe | 239×200 · **0×500** · `.tmp_probe/probe_get_final.csv` |
+| `EndpointPendingState` | **0** no código |
+| `/v1/events/viewer` | **não consumido** |
+| Versão app | **1.0.0+5** |
+| Status | Sync LIVE **OK**; sistema **EM ANDAMENTO** (404 VPS remanescentes) |
 
 ---
 
@@ -15,7 +28,7 @@ Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
 |-------|--------|
 | Doc | [AUDITORIA_UX_EXPERIENCIA.md](AUDITORIA_UX_EXPERIENCIA.md) |
 | Política | Dados de demonstração rotulados até sincronização real |
-| Versão | **1.0.0+3** |
+| Versão | **1.0.0+5** |
 
 ---
 
@@ -59,14 +72,10 @@ Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
 
 | Campo | Valor |
 |-------|--------|
-| Fase | **Auditoria UX — experiência 100% pronta** |
-| Status formal | **Concluída** — demo rotulada em todos os domínios preparados |
-| Hub | Mais → Notícias regionais (`/home/news`) + card no Gabinete |
-| Namespace oficial | `/api/v1/news/*` |
-| Doc da fase | [FASE_24_NOTICIAS_REGIONAIS.md](FASE_24_NOTICIAS_REGIONAIS.md) |
-| Fase 23 | **CONCLUÍDA** (1.0.0+2) |
-| Fase 22 | **CONCLUÍDA** |
-| Próxima fase | **Não iniciar** sem pedido explícito |
+| Fase | **Sync final Flutter × VPS prioritária** |
+| Status formal | Flutter LIVE sync **concluído**; sistema **EM ANDAMENTO** (automations + subpaths 404) |
+| Versão | **1.0.0+5** |
+| Próxima fase | Ampliar LiveSlugs quando VPS publicar `/v1/automations*` e restantes 404 |
 
 ---
 
@@ -75,9 +84,8 @@ Atualizado: 2026-07-20 (Auditoria UX — experiência 100% pronta)
 | Campo | Valor |
 |-------|--------|
 | Branch | `master` |
-| Último commit | `3277490` — auditoria UX experiência 100% pronta |
 | Tag restauração | `v1.0-final-pre-auditoria` → commit `a20587f` |
-| Versão APK / Web | **1.0.0+3** |
+| Versão APK / Web | **1.0.0+5** |
 | Push | origin/master |
 | Dispositivo | SM-A105M `RX8M70CLXKP` |
 

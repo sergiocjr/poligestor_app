@@ -69,14 +69,23 @@ void main() {
 
   group('Integrations LIVE contracts', () {
     test('marks published hub slugs as LIVE', () {
+      expect(kIntegrationsLiveSlugs.length, 25);
       expect(integrationsPathLive('dashboard'), isTrue);
       expect(integrationsPathLive('status'), isTrue);
       expect(integrationsPathLive('config'), isTrue);
       expect(integrationsPathLive('sync'), isTrue);
       expect(integrationsPathLive('govbr'), isTrue);
+      expect(integrationsPathLive('camara-municipal'), isTrue);
+      expect(integrationsPathLive('assembleia-legislativa'), isTrue);
+      expect(integrationsPathLive('camara-deputados'), isTrue);
       expect(integrationsPathLive('senado-federal'), isTrue);
+      expect(integrationsPathLive('diario-oficial'), isTrue);
+      expect(integrationsPathLive('portal-transparencia'), isTrue);
       expect(integrationsPathLive('e-sic'), isTrue);
+      expect(integrationsPathLive('google-calendar'), isTrue);
       expect(integrationsPathLive('outlook-calendar'), isTrue);
+      expect(integrationsPathLive('firebase-push'), isTrue);
+      expect(integrationsPathLive('external-apis'), isTrue);
       expect(integrationsPathLive('webhooks'), isTrue);
       expect(integrationsPathLive('catalog'), isTrue);
       expect(integrationsPathLive('providers'), isTrue);

@@ -121,35 +121,16 @@ class AutomationRepository {
   }
 
   Future<List<AutoAutomation>> automations() async {
-    try {
-      final envelope = await _api.getEnvelope<List<AutoAutomation>>(
-        _staff.automationsRootPath,
-        mode: _staff,
-        parse: (raw) => asAutoMapList(
-          raw,
-        ).map(AutoAutomation.fromJson).toList(growable: false),
-      );
-      return envelope.data;
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode)) {
-        throw EndpointUnavailableException(
-          _staff.automationsRootPath,
-          statusCode: e.statusCode,
-        );
-      }
-      rethrow;
-    }
+    // Namespace `/v1/automations*` ainda 404 na VPS — não consumir.
+    final root = DemoRepositorySupport.rootFor(_staff.automationsRootPath);
+    final data = root['data'];
+    if (data is! List) return const <AutoAutomation>[];
+    return asAutoMapList(data).map(AutoAutomation.fromJson).toList(growable: false);
   }
 
   Future<void> assertPending(String path) async {
-    try {
-      await _api.getEnvelope<dynamic>(path, mode: _staff, parse: (raw) => raw);
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode)) {
-        return;
-      }
-      rethrow;
-    }
+    // Evita HTTP 404 em contratos ainda não publicados.
+    return;
   }
 
   Future<void> approvals() => assertPending(_staff.automationsApprovalsPath);

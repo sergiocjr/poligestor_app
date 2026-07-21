@@ -57,10 +57,15 @@ void main() {
   });
 
   group('institutional communication LIVE contracts', () {
-    test('dashboard LIVE on VPS audit 2026-07-20', () {
-      expect(institutionalCommunicationPathLive('dashboard'), isTrue);
+    test('media LIVE on VPS probe auth 2026-07-21', () {
+      expect(institutionalCommunicationPathLive('media'), isTrue);
+      expect(institutionalCommunicationPathLive('announcements'), isTrue);
+      expect(institutionalCommunicationPathLive('campaigns'), isTrue);
+      expect(institutionalCommunicationPathLive('publications'), isTrue);
+      expect(institutionalCommunicationPathLive('reports'), isTrue);
+      expect(institutionalCommunicationPathLive('dashboard'), isFalse);
       expect(institutionalCommunicationPathLive('feed'), isFalse);
-      expect(kInstitutionalCommunicationLiveSlugs.length, 1);
+      expect(kInstitutionalCommunicationLiveSlugs.length, 5);
     });
   });
 

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
@@ -232,11 +233,7 @@ class _SmartAssistantPendingPageState extends State<SmartAssistantPendingPage> {
           if (snap.hasError) {
             final err = snap.error;
             if (err is EndpointUnavailableException) {
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             return AppErrorState(
               error: snap.error,
@@ -248,7 +245,7 @@ class _SmartAssistantPendingPageState extends State<SmartAssistantPendingPage> {
             );
           }
           // Se algum dia passar a responder 200 sem payload útil.
-          return EndpointPendingState(
+          return DemoExperiencePane(
             path: widget.path,
             message:
                 '${widget.title} ainda sem UI de detalhe — contrato inesperado.',
@@ -340,7 +337,7 @@ class _BriefingBody extends StatelessWidget {
         if (snap.hasError) {
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return EndpointPendingState(path: err.path);
+            return DemoExperiencePane(path: err.path);
           }
           return AppErrorState(error: snap.error, onRetry: onRetry);
         }
@@ -437,7 +434,7 @@ class _SmartAssistantInsightsPageState extends State<SmartAssistantInsightsPage>
             if (snap.hasError) {
               final err = snap.error;
               if (err is EndpointUnavailableException) {
-                return EndpointPendingState(path: err.path);
+                return DemoExperiencePane(path: err.path);
               }
               return AppErrorState(
                 error: snap.error,
@@ -519,7 +516,7 @@ class _SmartAssistantHistoryPageState extends State<SmartAssistantHistoryPage> {
           if (snap.hasError) {
             final err = snap.error;
             if (err is EndpointUnavailableException) {
-              return EndpointPendingState(path: err.path);
+              return DemoExperiencePane(path: err.path);
             }
             return AppErrorState(
               error: snap.error,
@@ -629,10 +626,7 @@ class _SmartAssistantGabineteChatPageState
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Chat do Gabinete')),
-        body: EndpointPendingState(
-          path: _pending!.path,
-          message: 'Chat do Gabinete preparado. Aguardando contrato ativo.',
-        ),
+        body: DemoExperiencePane(path: _pending!.path),
       );
     }
 

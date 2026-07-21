@@ -1,7 +1,8 @@
-/// Contratos da Fase 12 — status VPS (probe sem token: 401 = rota LIVE; 404 = pendente).
+/// Contratos da Fase 12 — Inteligência Territorial (`/v1/intelligence/*`).
+/// Probe auth 2026-07-21: 7 paths HTTP 200.
 library;
 
-/// Paths sob `/v1/intelligence/*` que respondem na VPS (401 sem auth = contrato publicado).
+/// Paths sob `/v1/intelligence/*` que respondem na VPS (HTTP 200 autenticado).
 const kTerritorialIntelligenceLiveSlugs = <String>{
   'dashboard',
   'kpis',

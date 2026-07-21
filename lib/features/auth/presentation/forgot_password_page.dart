@@ -103,7 +103,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         padding: const EdgeInsets.all(24),
         children: [
           if (_pendingPath != null)
-            EndpointPendingState(path: _pendingPath!)
+            DemoExperiencePane(path: _pendingPath!)
           else ...[
             if (_step == 0) ...[
               TextField(

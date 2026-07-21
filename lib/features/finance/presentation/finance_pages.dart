@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -85,7 +87,7 @@ class FinanceHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Consome somente /v1/finance/*. Chip Ativo = contrato '
+                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
                     'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
@@ -316,11 +318,7 @@ class _FinanceListPageState extends State<FinanceListPage>
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo em /v1/finance.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -472,11 +470,7 @@ class _FinanceDashboardPageState extends State<FinanceDashboardPage>
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    'Painel financeiro preparado. Aguardando /v1/finance/dashboard.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(error: snap.error, onRetry: _reload);
@@ -661,11 +655,7 @@ class _FinanceSearchPageState extends State<FinanceSearchPage>
                       if (snap.error is EndpointUnavailableException) {
                         final err =
                             snap.error! as EndpointUnavailableException;
-                        return EndpointPendingState(
-                          path: err.path,
-                          message:
-                              'Pesquisa preparada. Aguardando /v1/finance/search.',
-                        );
+                        return DemoExperiencePane(path: err.path);
                       }
                       if (snap.hasError) {
                         return AppErrorState(

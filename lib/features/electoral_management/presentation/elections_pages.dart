@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -369,7 +371,7 @@ class ElectionsHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Namespace /v1/elections/* sincronizado. Chip Ativo = '
+                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
                     'Ativo = HTTP 200; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
@@ -602,12 +604,7 @@ class _ElectionsListPageState extends State<ElectionsListPage>
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo '
-                    'em /v1/elections.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -776,12 +773,7 @@ class _ElectionsSearchPageState extends State<ElectionsSearchPage>
                       if (snap.error is EndpointUnavailableException) {
                         final err =
                             snap.error! as EndpointUnavailableException;
-                        return EndpointPendingState(
-                          path: err.path,
-                          message:
-                              'Pesquisa preparada. Aguardando '
-                              '/v1/elections/search.',
-                        );
+                        return DemoExperiencePane(path: err.path);
                       }
                       if (snap.hasError) {
                         return AppErrorState(

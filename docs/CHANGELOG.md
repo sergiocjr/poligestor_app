@@ -1,5 +1,24 @@
 # Changelog — PoliGestor Flutter
 
+## [Sync final Flutter × VPS prioritária] — 2026-07-21
+
+### Added
+
+- `works_contracts.dart` / `events_contracts.dart` alinhados ao probe
+- Inventário atualizado ([INVENTARIO_ENDPOINT_PENDING.md](INVENTARIO_ENDPOINT_PENDING.md))
+
+### Changed
+
+- LiveSlugs sync (239×200, **0×500**); Works 10 LIVE
+- `EndpointPendingState` eliminado → `DemoExperiencePane`
+- SoftNotice sem namespaces `/v1/...`; gate sem HTTP em 404 conhecidos
+- `/v1/events/viewer` **não consumido**
+- Versão **1.0.0+5**
+
+### Validation
+
+- analyze 0 erros · test 348 OK · APK + Web OK · A10 install/launch
+
 ## [Auditoria RC Mobile — Release Candidate] — 2026-07-21
 
 ### Added

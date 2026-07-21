@@ -146,7 +146,7 @@ class _LoginPageState extends State<LoginPage> {
     } on EndpointUnavailableException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Provedor indisponível: ${e.path}')),
+        SnackBar(content: Text('Provedor de autenticação indisponível.')),
       );
     } catch (e) {
       if (!mounted) return;
@@ -308,7 +308,7 @@ class _LoginPageState extends State<LoginPage> {
                         .where((p) => p.canUse)
                         .toList();
                     if (_providersPath != null) {
-                      return EndpointPendingState(
+                      return DemoExperiencePane(
                         path: _providersPath!,
                         message: 'Provedores sociais ainda indisponíveis',
                       );

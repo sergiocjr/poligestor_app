@@ -239,31 +239,21 @@ class StrategyRepository {
   );
 
   Future<List<StrategyGoal>> goals({required String tenantSlug}) async {
-    try {
-      return await _cachedGet(
-        tenantSlug: tenantSlug,
-        cacheKey: 'goals',
-        path: _staff.strategyGoalsPath,
-        allowCache: false,
-        parse: (root, {fromCache = false, age}) {
-          final data = root['data'];
-          final list = data is List
-              ? asStrategyMapList(data)
-              : asStrategyMapList(
-                  asStrategyMap(data)['items'] ?? asStrategyMap(data)['goals'],
-                );
-          return list.map(StrategyGoal.fromJson).toList(growable: false);
-        },
-      );
-    } on ApiException catch (e) {
-      if (_pending(e.statusCode) || e.statusCode == 500) {
-        throw EndpointUnavailableException(
-          _staff.strategyGoalsPath,
-          statusCode: e.statusCode,
-        );
-      }
-      rethrow;
-    }
+    return _cachedGet(
+      tenantSlug: tenantSlug,
+      cacheKey: 'goals',
+      path: _staff.strategyGoalsPath,
+      allowCache: true,
+      parse: (root, {fromCache = false, age}) {
+        final data = root['data'];
+        final list = data is List
+            ? asStrategyMapList(data)
+            : asStrategyMapList(
+                asStrategyMap(data)['items'] ?? asStrategyMap(data)['goals'],
+              );
+        return list.map(StrategyGoal.fromJson).toList(growable: false);
+      },
+    );
   }
 
   Future<void> assertPending(String path) async {

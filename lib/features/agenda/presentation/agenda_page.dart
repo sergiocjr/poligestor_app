@@ -9,6 +9,7 @@ import '../../../shared/demo/demo_banner.dart';
 import '../../../shared/demo/demo_repository_support.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
@@ -162,11 +163,7 @@ class _AgendaPageState extends State<AgendaPage>
             }
             if (snapshot.error is EndpointUnavailableException) {
               final err = snapshot.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    'Agenda preparada. Aguardando contrato ativo na VPS.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snapshot.hasError) {
               return AppErrorState(

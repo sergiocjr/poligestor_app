@@ -3,6 +3,7 @@ import 'package:poligestor_app/core/auth/auth_mode.dart';
 import 'package:poligestor_app/features/notifications/data/push_payload.dart';
 import 'package:poligestor_app/features/notifications/domain/notification_router.dart';
 import 'package:poligestor_app/features/works/data/works_cache.dart';
+import 'package:poligestor_app/features/works/data/works_contracts.dart';
 import 'package:poligestor_app/features/works/data/works_models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -25,6 +26,26 @@ void main() {
       expect(m.worksIndicatorsPath, '/v1/works/indicators');
       expect(m.worksReportsPath, '/v1/works/reports');
       expect(m.worksSearchPath, '/v1/works/search');
+    });
+  });
+
+  group('Works LIVE contracts', () {
+    test('marks HTTP 200 VPS routes as live', () {
+      expect(kWorksLiveSlugs.length, 10);
+      expect(worksPathLive('list'), isTrue);
+      expect(worksPathLive('dashboard'), isTrue);
+      expect(worksPathLive('demands'), isTrue);
+      expect(worksPathLive('inspections'), isTrue);
+      expect(worksPathLive('schedule'), isTrue);
+      expect(worksPathLive('map'), isTrue);
+      expect(worksPathLive('timeline'), isTrue);
+      expect(worksPathLive('photos'), isTrue);
+      expect(worksPathLive('attachments'), isTrue);
+      expect(worksPathLive('reports'), isTrue);
+      expect(worksPathLive('checklist'), isFalse);
+      expect(worksPathLive('indicators'), isFalse);
+      expect(worksPathLive('projects'), isFalse);
+      expect(worksPathLive('search'), isFalse);
     });
   });
 

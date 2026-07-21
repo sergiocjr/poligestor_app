@@ -1,6 +1,5 @@
 /// Contratos da Fase 14 — Gestão Financeira (`/v1/finance/*`).
-/// Probe 2026-07-20 (sem token): HTTP 401 = LIVE; demais do hub 404 → Pending.
-/// EndpointPendingState só se a VPS voltar a responder 404/405/501/503.
+/// Probe auth 2026-07-21: 9 paths HTTP 200 (aliases bank-accounts/cash-flow).
 library;
 
 /// Slugs do hub com contrato publicado na VPS.

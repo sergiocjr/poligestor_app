@@ -7,7 +7,9 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -254,7 +256,7 @@ class SecurityHubPage extends StatelessWidget {
             children: [
               const SoftNotice(
                 message:
-                    'Namespace /v1/security/* sincronizado. Chip Ativo = contrato '
+                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
                     'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. Sessões em '
                     '/account/sessions permanecem inalteradas.',
               ),
@@ -450,11 +452,7 @@ class _SecurityListPageState extends State<SecurityListPage>
     if (slug != null && !securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: EndpointPendingState(
-          path: _pathForSlug(slug),
-          message:
-              '${widget.title} preparado. Aguardando contrato ativo em /v1/security.',
-        ),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
 
@@ -484,12 +482,7 @@ class _SecurityListPageState extends State<SecurityListPage>
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
-                  EndpointPendingState(
-                    path: err.path,
-                    message:
-                        '${widget.title} preparado. Aguardando contrato ativo '
-                        'em /v1/security.',
-                  ),
+                  DemoExperiencePane(path: err.path),
                 ],
               );
             }
@@ -676,7 +669,7 @@ class _SecurityMfaEnablePageState extends State<SecurityMfaEnablePage> {
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Autenticação em duas etapas')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -786,7 +779,7 @@ class _SecurityMfaConfirmPageState extends State<SecurityMfaConfirmPage> {
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Confirmação em duas etapas')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -901,7 +894,7 @@ class _SecurityPasswordChangePageState extends State<SecurityPasswordChangePage>
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Alteração de senha')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -1014,7 +1007,7 @@ class _SecurityDataExportPageState extends State<SecurityDataExportPage> {
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Exportação de dados')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -1126,7 +1119,7 @@ class _SecurityAccountDeletionPageState
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Exclusão de conta')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -1229,7 +1222,7 @@ class _SecuritySessionsRevokePageState extends State<SecuritySessionsRevokePage>
     if (!securityPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Encerramento remoto de sessões')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(

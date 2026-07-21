@@ -161,7 +161,7 @@ class _GabineteNewsHomeSectionState extends State<GabineteNewsHomeSection>
               }
               if (snap.error is EndpointUnavailableException) {
                 final err = snap.error! as EndpointUnavailableException;
-                return EndpointPendingState(path: err.path);
+                return DemoExperiencePane(path: err.path);
               }
               if (snap.hasError) {
                 return AppErrorState(
@@ -660,11 +660,7 @@ class _NewsListPane extends StatelessWidget {
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                EndpointPendingState(
-                  path: err.path,
-                  message:
-                      'Área preparada. Aguardando contrato ativo em /v1/news.',
-                ),
+                DemoExperiencePane(path: err.path),
               ],
             );
           }
@@ -886,11 +882,7 @@ class _NewsDetailPageState extends State<NewsDetailPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Detalhe preparado. Aguardando contrato ativo em /v1/news.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(

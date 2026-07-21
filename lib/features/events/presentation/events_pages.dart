@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -371,11 +373,7 @@ class _EventsListPageState extends State<EventsListPage> with _EventsRefresh {
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -513,11 +511,7 @@ class _EventsDashboardPageState extends State<EventsDashboardPage>
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Painel de eventos preparado. Aguardando /v1/events/dashboard.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -622,10 +616,7 @@ class _EventsDetailPageState extends State<EventsDetailPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message: 'Detalhe preparado. Aguardando contrato ativo.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(

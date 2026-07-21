@@ -140,10 +140,10 @@ class PlatformShell extends StatelessWidget {
     final notice = SoftNotice(
       message: role == null || role.isEmpty
           ? 'Acesso conforme o perfil do operador. Sem perfil associado — '
-              'visualização limitada ao hub. Contratos de permissões em '
-              '/v1/platform/permissions.'
-          : 'Acesso conforme o perfil do operador. Contratos de permissões '
-              'em /v1/platform/permissions.',
+              'visualização limitada ao hub até a publicação das permissões '
+              'granulares.'
+          : 'Acesso conforme o perfil do operador. Permissões granulares '
+              'conforme o perfil publicado na VPS.',
     );
 
     final content = Column(

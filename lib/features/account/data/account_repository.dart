@@ -53,7 +53,10 @@ class AccountRepository {
       );
       return envelope.data;
     } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 405 || e.statusCode == 500) {
+      if (e.statusCode == 403 ||
+          e.statusCode == 404 ||
+          e.statusCode == 405 ||
+          e.statusCode == 500) {
         throw EndpointUnavailableException(
           mode.profilePath,
           statusCode: e.statusCode,
@@ -226,7 +229,9 @@ class AccountRepository {
           : idAsMapList(idAsMap(envelope.data)['accounts']);
       return list.map(LinkedAccount.fromJson).toList();
     } on ApiException catch (e) {
-      if (e.statusCode == 404 || e.statusCode == 500) {
+      if (e.statusCode == 403 ||
+          e.statusCode == 404 ||
+          e.statusCode == 500) {
         throw EndpointUnavailableException(
           mode.linkedAccountsPath,
           statusCode: e.statusCode,

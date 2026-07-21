@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -278,11 +279,7 @@ class _ParliamentPendingPageState extends State<ParliamentPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -292,7 +289,7 @@ class _ParliamentPendingPageState extends State<ParliamentPendingPage> {
               }),
             );
           }
-          return EndpointPendingState(path: widget.path);
+          return DemoExperiencePane(path: widget.path);
         },
       ),
     );
@@ -716,10 +713,7 @@ class _ParliamentDetailPageState extends State<ParliamentDetailPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message: 'Detalhe preparado. Aguardando contrato ativo.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(

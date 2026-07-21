@@ -6,9 +6,10 @@ import '../../identity/data/identity_models.dart';
 import '../../mandate/data/mandate_models.dart';
 import '../../mandate/data/mandate_repository.dart';
 import 'works_cache.dart';
+import 'works_contracts.dart';
 import 'works_models.dart';
 
-/// Painel Obras — namespace `/v1/works*` preparado; mapa reusa mandato LIVE.
+/// Painel Obras — namespace LIVE `/v1/works/*` (probe 2026-07-21).
 class WorksRepository {
   WorksRepository(this._api, this._mandate, {WorksCache? cache})
     : _cache = cache ?? WorksCache();
@@ -41,7 +42,16 @@ class WorksRepository {
     })
     parse,
     bool allowCache = true,
+    String? liveSlug,
   }) async {
+    final slug = liveSlug ?? cacheKey.replaceAll('_', '-');
+    if (!worksPathLive(slug)) {
+      return parse(
+        DemoRepositorySupport.rootFor(path),
+        fromCache: false,
+        age: DemoRepositorySupport.ageLabel,
+      );
+    }
     try {
       final envelope = await _api.getEnvelope<dynamic>(
         path,
@@ -108,7 +118,12 @@ class WorksRepository {
   Future<List<WorksItem>> projects({
     required String tenantSlug,
     bool allowCache = true,
-  }) => _list(tenantSlug, 'projects', _staff.worksListPath, allowCache);
+  }) => _list(
+    tenantSlug,
+    'list',
+    _staff.worksListPath,
+    allowCache,
+  );
 
   Future<List<WorksItem>> demands({
     required String tenantSlug,
@@ -198,10 +213,16 @@ class WorksRepository {
     }
   }
 
-  Future<void> worksMapContract() => assertPending(_staff.worksMapPath);
-  Future<void> search() => assertPending(_staff.worksSearchPath);
+  Future<void> worksMapContract() async {
+    if (!worksPathLive('map')) return;
+  }
 
-  /// Mapa territorial — reuse contrato mandato LIVE enquanto obras/map pendente.
+  Future<void> search() async {
+    // /v1/works/search permanece 404 — não consumir.
+    return;
+  }
+
+  /// Mapa territorial — LIVE `/v1/works/map` ou reuse mandato.
   Future<MandateMapData> mandateMap({
     MandateFilter filter = const MandateFilter(),
   }) => _mandate.map(filter: filter);

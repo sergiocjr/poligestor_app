@@ -1,9 +1,8 @@
 /// Contratos da Fase 22 — Integrações (`/v1/integrations/*`).
-/// Auditoria 2026-07-20 (auth): 23 LIVE (HTTP 200/202); search/filters 404.
-/// EndpointPendingState somente se a VPS responder 404/405/501/503.
+/// Probe auth 2026-07-21: 25 hub slugs LIVE; search/filters 404.
 library;
 
-/// Slugs do hub com contrato publicado na VPS (HTTP 200/201/202 autenticado).
+/// Slugs do hub com contrato publicado na VPS (HTTP 200 autenticado).
 const kIntegrationsLiveSlugs = <String>{
   'dashboard',
   'status', // GET /v1/integrations/health
@@ -28,7 +27,6 @@ const kIntegrationsLiveSlugs = <String>{
   'firebase-push',
   'external-apis',
   'webhooks',
-  // Catálogo auxiliar (não é card dedicado; usado no painel)
   'catalog',
   'providers',
 };

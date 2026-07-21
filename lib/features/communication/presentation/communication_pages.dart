@@ -267,7 +267,60 @@ class _OmnichannelInboxTabState extends State<_OmnichannelInboxTab>
                       ),
                       trailing: c.unreadCount > 0
                           ? Badge(label: Text('${c.unreadCount}'))
-                          : null,
+                          : const Icon(Icons.chevron_right_rounded),
+                      onTap: () {
+                        showModalBottomSheet<void>(
+                          context: context,
+                          showDragHandle: true,
+                          builder: (ctx) {
+                            return SafeArea(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  20,
+                                  8,
+                                  20,
+                                  24,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      c.title,
+                                      style: Theme.of(ctx)
+                                          .textTheme
+                                          .titleLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text('Situação: ${c.statusLabel}'),
+                                    if (c.channelType != null)
+                                      Text('Canal: ${c.channelType}'),
+                                    if (c.contactName != null)
+                                      Text('Contato: ${c.contactName}'),
+                                    if (c.assignedTo != null)
+                                      Text('Responsável: ${c.assignedTo}'),
+                                    if (c.updatedAt != null)
+                                      Text(
+                                        'Atualizado: ${dateFmt.format(c.updatedAt!.toLocal())}',
+                                      ),
+                                    const SizedBox(height: 16),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: FilledButton(
+                                        onPressed: () => Navigator.pop(ctx),
+                                        child: const Text('Fechar'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
                     ),
                   );
                 }),

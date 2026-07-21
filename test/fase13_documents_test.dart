@@ -12,7 +12,7 @@ void main() {
     test('exposes official /v1/documents namespace', () {
       const m = AuthMode.staff;
       expect(m.documentsRootPath, '/v1/documents');
-      expect(m.documentsListPath, '/v1/documents/list');
+      expect(m.documentsListPath, '/v1/documents');
       expect(m.documentsSearchPath, '/v1/documents/search');
       expect(m.documentsFiltersPath, '/v1/documents/filters');
       expect(m.documentsCategoriesPath, '/v1/documents/categories');
@@ -36,9 +36,13 @@ void main() {
       expect(kDocumentsLiveSlugs, isNotEmpty);
       expect(documentsPathLive('list'), isTrue);
       expect(documentsPathLive('search'), isTrue);
-      expect(documentsPathLive('viewer'), isTrue);
-      expect(documentsPathLive('upload'), isTrue);
-      expect(documentsPathLive('attachments'), isTrue);
+      expect(documentsPathLive('favorites'), isTrue);
+      expect(documentsPathLive('templates'), isTrue);
+      expect(documentsPathLive('viewer'), isFalse); // HTTP 404 na VPS
+      expect(documentsPathLive('upload'), isFalse); // HTTP 404 na VPS
+      expect(documentsPathLive('approvals'), isFalse);
+      expect(documentsPathLive('attachments'), isFalse);
+      expect(kDocumentsLiveSlugs.length, 4);
       expect(documentsPathLive('unknown'), isFalse);
     });
   });

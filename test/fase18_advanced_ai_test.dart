@@ -48,11 +48,17 @@ void main() {
 
   group('IA Avançada LIVE contracts', () {
     test('marks VPS live slugs and agent roles', () {
-      expect(kAdvancedAiLiveSlugs.length, 9);
+      expect(kAdvancedAiLiveSlugs.length, 13);
+      expect(advancedAiPathLive('dashboard'), isTrue);
       expect(advancedAiPathLive('chat'), isTrue);
       expect(advancedAiPathLive('conversations'), isTrue);
+      expect(advancedAiPathLive('history'), isTrue);
       expect(advancedAiPathLive('briefings'), isTrue);
       expect(advancedAiPathLive('prompts'), isTrue);
+      expect(advancedAiPathLive('agents'), isTrue);
+      expect(advancedAiPathLive('hub'), isTrue);
+      expect(advancedAiPathLive('team'), isTrue);
+      expect(advancedAiPathLive('handoffs'), isTrue);
       expect(advancedAiPathLive('summary'), isTrue);
       expect(advancedAiPathLive('suggestions'), isTrue);
       expect(advancedAiPathLive('feedback'), isTrue);

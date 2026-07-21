@@ -10,10 +10,15 @@ class DemoExperiencePane extends StatelessWidget {
     super.key,
     required this.path,
     this.title,
+    @Deprecated('Ignorado — mantido só para migração de call sites')
+    this.message,
   });
 
   final String path;
   final String? title;
+
+  /// Ignorado (compatibilidade com call sites antigos de Pending).
+  final String? message;
 
   @override
   Widget build(BuildContext context) {

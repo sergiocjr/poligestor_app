@@ -11,6 +11,7 @@ import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
 import '../../mandate/domain/mandate_refresh_controller.dart';
+import '../data/works_contracts.dart';
 import '../data/works_models.dart';
 import '../data/works_repository.dart';
 
@@ -42,92 +43,92 @@ class WorksHubPage extends StatelessWidget {
       'Painel',
       'Indicadores de obras',
       Icons.dashboard_outlined,
+      'dashboard',
       '/home/works/dashboard',
-      false,
     ),
     _Entry(
       'Obras',
       'Lista e trâmite',
       Icons.construction_outlined,
+      'list',
       '/home/works/list',
-      false,
     ),
     _Entry(
       'Demandas',
       'Solicitações de obras',
       Icons.inbox_outlined,
+      'demands',
       '/home/works/demands',
-      false,
     ),
     _Entry(
       'Fiscalizações',
       'Visitas e laudos',
       Icons.fact_check_outlined,
+      'inspections',
       '/home/works/inspections',
-      false,
     ),
     _Entry(
       'Cronograma',
       'Marcos e prazos',
       Icons.calendar_month_outlined,
+      'schedule',
       '/home/works/schedule',
-      false,
     ),
     _Entry(
       'Mapa',
       'Território (mandato ativo)',
       Icons.map_outlined,
+      'map',
       '/home/works/map',
-      true,
     ),
     _Entry(
       'Linha do Tempo',
       'Eventos da obra',
       Icons.timeline,
+      'timeline',
       '/home/works/timeline',
-      false,
     ),
     _Entry(
       'Fotos',
       'Registro fotográfico',
       Icons.photo_library_outlined,
+      'photos',
       '/home/works/photos',
-      false,
     ),
     _Entry(
       'Anexos',
       'Documentos',
       Icons.attach_file,
+      'attachments',
       '/home/works/attachments',
-      false,
     ),
     _Entry(
       'Lista de verificação',
       'Itens de verificação',
       Icons.checklist_outlined,
+      'checklist',
       '/home/works/checklist',
-      false,
     ),
     _Entry(
       'Indicadores',
       'Métricas de execução',
       Icons.analytics_outlined,
+      'indicators',
       '/home/works/indicators',
-      false,
     ),
     _Entry(
       'Relatórios',
       'Exportações',
       Icons.description_outlined,
+      'reports',
       '/home/works/reports',
-      false,
     ),
     _Entry(
       'Pesquisa',
       'Busca de obras',
       Icons.search,
+      'search',
       '/home/works/search',
-      false,
     ),
   ];
 
@@ -151,6 +152,7 @@ class WorksHubPage extends StatelessWidget {
             itemCount: _entries.length,
             itemBuilder: (context, i) {
               final e = _entries[i];
+              final live = worksPathLive(e.slug);
               return Card(
                 clipBehavior: Clip.antiAlias,
                 child: InkWell(
@@ -188,11 +190,11 @@ class WorksHubPage extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Chip(
-                          label: Text(uiContractChip(available: e.live)),
+                          label: Text(uiContractChip(available: live)),
                           visualDensity: VisualDensity.compact,
                           materialTapTargetSize:
                               MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: e.live ? Colors.green.shade50 : null,
+                          backgroundColor: live ? Colors.green.shade50 : null,
                         ),
                       ],
                     ),
@@ -216,12 +218,12 @@ class WorksHubPage extends StatelessWidget {
 }
 
 class _Entry {
-  const _Entry(this.title, this.subtitle, this.icon, this.route, this.live);
+  const _Entry(this.title, this.subtitle, this.icon, this.slug, this.route);
   final String title;
   final String subtitle;
   final IconData icon;
+  final String slug;
   final String route;
-  final bool live;
 }
 
 class WorksPendingPage extends StatefulWidget {
@@ -261,11 +263,7 @@ class _WorksPendingPageState extends State<WorksPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -275,7 +273,7 @@ class _WorksPendingPageState extends State<WorksPendingPage> {
               }),
             );
           }
-          return EndpointPendingState(path: widget.path);
+          return DemoExperiencePane(path: widget.path);
         },
       ),
     );
@@ -351,11 +349,7 @@ class _WorksListPageState extends State<WorksListPage> with _WorksRefresh {
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -492,11 +486,7 @@ class _WorksDashboardPageState extends State<WorksDashboardPage>
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Painel de obras preparado. Aguardando /v1/works/dashboard.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -609,10 +599,7 @@ class _WorksDetailPageState extends State<WorksDetailPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message: 'Detalhe preparado. Aguardando contrato ativo.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -735,16 +722,18 @@ class _WorksMapPageState extends State<WorksMapPage> {
             padding: const EdgeInsets.all(16),
             children: [
               if (!dedicated)
-                EndpointPendingState(
-                  path: AuthMode.staff.worksMapPath,
+                DemoExperiencePane(path: AuthMode.staff.worksMapPath)
+              else
+                SoftNotice(
                   message:
-                      'Mapa dedicado de obras pendente. Use o mapa territorial do mandato.',
+                      'Mapa de obras ativo. Use o mapa do mandato para a '
+                      'visão territorial completa.',
                 ),
               const SizedBox(height: 12),
               FilledButton.icon(
                 onPressed: () => context.push('/home/mandate/map'),
                 icon: const Icon(Icons.map_outlined),
-                label: const Text('Abrir mapa do mandato (ativo)'),
+                label: const Text('Abrir mapa do mandato'),
               ),
               const SizedBox(height: 8),
               FilledButton.tonalIcon(
@@ -793,11 +782,7 @@ class _WorksSearchPageState extends State<WorksSearchPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Pesquisa dedicada preparada. Aguardando /v1/works/search.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -807,7 +792,7 @@ class _WorksSearchPageState extends State<WorksSearchPage> {
               }),
             );
           }
-          return EndpointPendingState(path: AuthMode.staff.worksSearchPath);
+          return DemoExperiencePane(path: AuthMode.staff.worksSearchPath);
         },
       ),
     );

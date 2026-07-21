@@ -5,7 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -335,7 +337,7 @@ class PlatformHubPage extends StatelessWidget {
           children: [
             SoftNotice(
               message:
-                  'Namespace /v1/platform/* sincronizado. Chip Ativo = contrato '
+                  'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
                   'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
             ),
             const SizedBox(height: 12),
@@ -539,12 +541,7 @@ class _PlatformListPageState extends State<PlatformListPage>
             return ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               children: [
-                EndpointPendingState(
-                  path: err.path,
-                  message:
-                      '${widget.title} preparado. Aguardando contrato ativo '
-                      'em /v1/platform.',
-                ),
+                DemoExperiencePane(path: err.path),
               ],
             );
           }
@@ -738,11 +735,7 @@ class _PlatformSearchPageState extends State<PlatformSearchPage>
                     }
                     if (snap.error is EndpointUnavailableException) {
                       final err = snap.error! as EndpointUnavailableException;
-                      return EndpointPendingState(
-                        path: err.path,
-                        message:
-                            'Busca preparada. Aguardando /v1/platform/search.',
-                      );
+                      return DemoExperiencePane(path: err.path);
                     }
                     if (snap.hasError) {
                       return AppErrorState(
@@ -832,8 +825,8 @@ List<RouteBase> buildPlatformChildRoutes() => [
       title: 'Perfis e permissões',
       emptyMessage: 'Nenhum perfil encontrado.',
       extraNotice:
-          'Permissões granulares em /v1/platform/permissions quando o '
-          'contrato estiver ativo.',
+          'Permissões granulares disponíveis quando o contrato de '
+          'permissões estiver ativo.',
       loader: (repo, tenant) => repo.profiles(tenantSlug: tenant),
     ),
   ),

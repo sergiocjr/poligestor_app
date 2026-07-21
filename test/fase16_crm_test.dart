@@ -53,10 +53,12 @@ void main() {
   });
 
   group('CRM LIVE contracts', () {
-    test('kCrmLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+    test('kCrmLiveSlugs sync probe auth 2026-07-21', () {
       expect(crmPathLive('dashboard'), isTrue);
+      expect(crmPathLive('entities'), isTrue);
+      expect(crmPathLive('search'), isTrue);
       expect(crmPathLive('leaders'), isFalse);
-      expect(kCrmLiveSlugs.length, 1);
+      expect(kCrmLiveSlugs.length, greaterThanOrEqualTo(16));
     });
   });
 

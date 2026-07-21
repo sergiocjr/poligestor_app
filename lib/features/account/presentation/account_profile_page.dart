@@ -38,15 +38,15 @@ class _AccountProfilePageState extends State<AccountProfilePage> {
       final remote = await account.getProfile(mode: auth.mode);
       user = AuthUser.fromJson({...?user.raw, ...remote});
     } on EndpointUnavailableException {
-      syncNote = 'Perfil local — API de perfil indisponível.';
+      syncNote = 'Perfil local — sincronização remota indisponível no momento.';
     } catch (_) {
       syncNote = UserMessages.syncFailed;
     }
     List<LinkedAccount> linked = const [];
     try {
       linked = await account.linkedAccounts(mode: auth.mode);
-    } on EndpointUnavailableException catch (e) {
-      syncNote ??= 'Contas vinculadas indisponíveis (${e.path}).';
+    } on EndpointUnavailableException {
+      syncNote ??= 'Contas vinculadas indisponíveis no momento.';
     } catch (_) {
       syncNote ??= 'Contas vinculadas não sincronizadas.';
     }

@@ -57,10 +57,12 @@ void main() {
   });
 
   group('Security LIVE contracts', () {
-    test('kSecurityLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
-      expect(securityPathLive('dashboard'), isTrue);
-      expect(securityPathLive('sessions'), isFalse);
-      expect(kSecurityLiveSlugs.length, 1);
+    test('kSecurityLiveSlugs sync probe auth 2026-07-21', () {
+      expect(securityPathLive('sessions'), isTrue);
+      expect(securityPathLive('alerts'), isTrue);
+      expect(securityPathLive('dashboard'), isFalse);
+      expect(securityPathLive('mfa-enable'), isFalse);
+      expect(kSecurityLiveSlugs.length, 6);
     });
   });
 

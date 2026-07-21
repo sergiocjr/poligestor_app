@@ -7,7 +7,9 @@ import '../../../core/api/api_exception.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -175,7 +177,7 @@ class AdvancedAiHubPage extends StatelessWidget {
             children: [
               SoftNotice(
                 message:
-                    'Namespace /v1/ai/* sincronizado. Chip Ativo = contrato '
+                    'Chip Ativo = contrato publicado; Demonstração = conteúdo ilustrativo. '
                     'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo.',
               ),
               const SizedBox(height: 12),
@@ -407,12 +409,7 @@ class _AdvancedAiListPageState extends State<AdvancedAiListPage>
             }
             if (snap.error is EndpointUnavailableException) {
               final err = snap.error! as EndpointUnavailableException;
-              return EndpointPendingState(
-                path: err.path,
-                message:
-                    '${widget.title} preparado. Aguardando contrato ativo '
-                    'em /v1/ai.',
-              );
+              return DemoExperiencePane(path: err.path);
             }
             if (snap.hasError) {
               return AppErrorState(
@@ -571,10 +568,7 @@ class _AdvancedAiChatPageState extends State<AdvancedAiChatPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: Text(_title)),
-        body: EndpointPendingState(
-          path: _pending!.path,
-          message: 'Conversa preparada. Aguardando contrato ativo.',
-        ),
+        body: DemoExperiencePane(path: _pending!.path),
       );
     }
 
@@ -747,12 +741,7 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo '
-                  'em /v1/ai.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -762,20 +751,15 @@ class _AdvancedAiAgentRolePageState extends State<AdvancedAiAgentRolePage>
           }
           final item = snap.data;
           if (item == null) {
-            return EndpointPendingState(
-              path: widget.pendingPath,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo '
-                  'em /v1/ai.',
-            );
+            return DemoExperiencePane(path: widget.pendingPath);
           }
           return ListView(
             padding: const EdgeInsets.all(16),
             children: [
               SoftNotice(
                 message:
-                    'Contrato ativo: GET /v1/ai/agents · conversa via '
-                    'POST /v1/ai/chat',
+                    'Agente sincronizado com o catálogo. Use o chat para '
+                    'continuar a conversa.',
               ),
               const SizedBox(height: 12),
               Card(
@@ -908,7 +892,7 @@ class _AdvancedAiPostFormPageState extends State<AdvancedAiPostFormPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: EndpointPendingState(path: _pending!.path),
+        body: DemoExperiencePane(path: _pending!.path),
       );
     }
 
@@ -1025,7 +1009,7 @@ class _AdvancedAiFeedbackPageState extends State<AdvancedAiFeedbackPage> {
     if (_pending != null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Avaliação')),
-        body: EndpointPendingState(path: _pending!.path),
+        body: DemoExperiencePane(path: _pending!.path),
       );
     }
 
@@ -1181,11 +1165,7 @@ class _AdvancedAiSearchPageState extends State<AdvancedAiSearchPage>
                       if (snap.error is EndpointUnavailableException) {
                         final err =
                             snap.error! as EndpointUnavailableException;
-                        return EndpointPendingState(
-                          path: err.path,
-                          message:
-                              'Pesquisa preparada. Aguardando /v1/ai/search.',
-                        );
+                        return DemoExperiencePane(path: err.path);
                       }
                       if (snap.hasError) {
                         return AppErrorState(

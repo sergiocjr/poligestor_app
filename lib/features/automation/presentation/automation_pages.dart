@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -227,11 +228,7 @@ class _AutomationPendingPageState extends State<AutomationPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo na VPS.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -241,7 +238,7 @@ class _AutomationPendingPageState extends State<AutomationPendingPage> {
               }),
             );
           }
-          return EndpointPendingState(path: widget.path);
+          return DemoExperiencePane(path: widget.path);
         },
       ),
     );
@@ -395,7 +392,7 @@ class _AutomationDashboardPageState extends State<AutomationDashboardPage>
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '* Aprovações dedicadas aguardam /v1/automations/approvals',
+                  '* Aprovações dedicadas aguardam publicação do contrato.',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
                 const SizedBox(height: 8),
@@ -450,11 +447,7 @@ class _AutomationAutomationsPageState extends State<AutomationAutomationsPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Lista e ações de automações preparadas. Aguardando /v1/automations.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -1000,7 +993,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Contrato pendente'),
-          content: EndpointPendingState(
+          content: DemoExperiencePane(
             path: e.path,
             message: 'Leitura ativa ok. Escrita de autonomia aguarda publicação.',
           ),
@@ -1041,7 +1034,7 @@ class _AutomationAutonomyPageState extends State<AutomationAutonomyPage> {
           final items = snap.data ?? const [];
           if (items.isEmpty) {
             return const AppEmptyState(
-              message: 'Nenhuma autonomia publicada em /v1/ai/team.',
+              message: 'Nenhuma autonomia publicada no momento.',
             );
           }
           return ListView(
@@ -1114,7 +1107,7 @@ class AutomationEditorPage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          EndpointPendingState(
+          DemoExperiencePane(
             path: AuthMode.staff.automationsRootPath,
             message: 'Edição preparada. O salvamento aguarda contrato ativo.',
           ),

@@ -47,10 +47,11 @@ void main() {
   });
 
   group('Admin LIVE contracts', () {
-    test('kAdminLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+    test('kAdminLiveSlugs sync probe auth 2026-07-21', () {
       expect(adminPathLive('dashboard'), isTrue);
-      expect(adminPathLive('users'), isFalse);
-      expect(kAdminLiveSlugs.length, 1);
+      expect(adminPathLive('users'), isTrue);
+      expect(adminPathLive('offices'), isFalse);
+      expect(kAdminLiveSlugs.length, greaterThanOrEqualTo(19));
     });
   });
 

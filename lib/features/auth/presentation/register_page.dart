@@ -89,7 +89,7 @@ class _RegisterPageState extends State<RegisterPage> {
         padding: const EdgeInsets.all(24),
         children: [
           if (_pendingPath != null)
-            EndpointPendingState(path: _pendingPath!)
+            DemoExperiencePane(path: _pendingPath!)
           else
             Form(
               key: _formKey,

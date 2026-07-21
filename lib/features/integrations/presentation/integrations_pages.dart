@@ -7,7 +7,9 @@ import '../../../core/auth/auth_controller.dart';
 import '../../../core/auth/auth_mode.dart';
 import '../../../shared/i18n/ui_labels.dart';
 import '../../../shared/widgets/app_states.dart';
+import '../../../shared/demo/demo_experience_pane.dart';
 import '../../../shared/widgets/pg_design_system.dart';
+
 import '../../identity/data/identity_models.dart';
 import '../../identity/domain/tenant_controller.dart';
 import '../../identity/presentation/widgets/identity_states.dart';
@@ -278,7 +280,7 @@ class IntegrationsHubPage extends StatelessWidget {
             children: [
               const SoftNotice(
                 message:
-                    'Namespace /v1/integrations/* sincronizado com a VPS. '
+                    'Integrações sincronizadas com o servidor. '
                     'Ativo = contrato publicado; Demonstração = conteúdo ilustrativo '
                     '(pesquisa e filtros).',
               ),
@@ -501,12 +503,7 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
     if (slug != null && !integrationsPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: Text(widget.title)),
-        body: EndpointPendingState(
-          path: _pathForSlug(slug),
-          message:
-              '${widget.title} preparado. Aguardando contrato ativo em '
-              '/v1/integrations.',
-        ),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
 
@@ -552,12 +549,7 @@ class _IntegrationsListPageState extends State<IntegrationsListPage>
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
-                  EndpointPendingState(
-                    path: err.path,
-                    message:
-                        '${widget.title} preparado. Aguardando contrato ativo '
-                        'em /v1/integrations.',
-                  ),
+                  DemoExperiencePane(path: err.path),
                 ],
               );
             }
@@ -785,7 +777,7 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
     if (!integrationsPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Configuração')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -813,7 +805,7 @@ class _IntegrationsConfigPageState extends State<IntegrationsConfigPage>
               final err = snap.error! as EndpointUnavailableException;
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                children: [EndpointPendingState(path: err.path)],
+                children: [DemoExperiencePane(path: err.path)],
               );
             }
             if (snap.hasError) {
@@ -973,7 +965,7 @@ class _IntegrationsSearchPageState extends State<IntegrationsSearchPage>
     if (!integrationsPathLive(slug)) {
       return Scaffold(
         appBar: AppBar(title: const Text('Pesquisa')),
-        body: EndpointPendingState(path: _pathForSlug(slug)),
+        body: DemoExperiencePane(path: _pathForSlug(slug)),
       );
     }
     return Scaffold(
@@ -1018,7 +1010,7 @@ class _IntegrationsSearchPageState extends State<IntegrationsSearchPage>
                       if (snap.error is EndpointUnavailableException) {
                         final err =
                             snap.error! as EndpointUnavailableException;
-                        return EndpointPendingState(path: err.path);
+                        return DemoExperiencePane(path: err.path);
                       }
                       if (snap.hasError) {
                         return AppErrorState(

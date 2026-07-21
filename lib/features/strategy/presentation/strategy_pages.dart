@@ -243,11 +243,7 @@ class _StrategyPendingPageState extends State<StrategyPendingPage> {
           }
           final err = snap.error;
           if (err is EndpointUnavailableException) {
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  '${widget.title} preparado. Aguardando contrato ativo estável na VPS.',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -257,7 +253,7 @@ class _StrategyPendingPageState extends State<StrategyPendingPage> {
               }),
             );
           }
-          return EndpointPendingState(path: widget.path);
+          return DemoExperiencePane(path: widget.path);
         },
       ),
     );
@@ -1273,11 +1269,7 @@ class _StrategyGoalsPageState extends State<StrategyGoalsPage> {
           }
           if (snap.error is EndpointUnavailableException) {
             final err = snap.error! as EndpointUnavailableException;
-            return EndpointPendingState(
-              path: err.path,
-              message:
-                  'Metas estratégicas preparadas. Contrato /v1/strategy/goals ainda instável (404/500).',
-            );
+            return DemoExperiencePane(path: err.path);
           }
           if (snap.hasError) {
             return AppErrorState(
@@ -1368,7 +1360,7 @@ class _StrategyMapPageState extends State<StrategyMapPage> {
             padding: const EdgeInsets.all(16),
             children: [
               if (!dedicated)
-                EndpointPendingState(
+                DemoExperiencePane(
                   path: AuthMode.staff.strategyMapPath,
                   message:
                       'Mapa estratégico dedicado pendente. Reutilize o mapa territorial do mandato.',

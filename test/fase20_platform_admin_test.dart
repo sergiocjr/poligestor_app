@@ -51,10 +51,13 @@ void main() {
   });
 
   group('Platform LIVE contracts', () {
-    test('kPlatformLiveSlugs dashboard LIVE on VPS audit 2026-07-20', () {
+    test('kPlatformLiveSlugs sync probe auth 2026-07-21', () {
       expect(platformPathLive('dashboard'), isTrue);
-      expect(platformPathLive('users'), isFalse);
-      expect(kPlatformLiveSlugs.length, 1);
+      expect(platformPathLive('users'), isTrue);
+      expect(platformPathLive('permissions'), isTrue);
+      expect(platformPathLive('profiles'), isFalse);
+      expect(platformPathLive('offices'), isFalse);
+      expect(kPlatformLiveSlugs.length, 23);
     });
   });
 
